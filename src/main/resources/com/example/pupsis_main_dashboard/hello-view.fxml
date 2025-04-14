@@ -228,7 +228,7 @@
                   <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
                </padding>
             </VBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="357.0" prefWidth="644.0" VBox.vgrow="ALWAYS">
                <children>
                   <VBox prefHeight="211.0" prefWidth="440.0">
                      <children>
@@ -237,7 +237,7 @@
                               <Font name="Work Sans Bold" size="24.0" />
                            </font>
                            <VBox.margin>
-                              <Insets top="12.0" />
+                              <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
                         <HBox prefHeight="150.0" prefWidth="420.0">
@@ -265,7 +265,7 @@
                                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                  </padding>
                                  <HBox.margin>
-                                    <Insets bottom="12.0" top="12.0" />
+                                    <Insets right="12.0" top="12.0" />
                                  </HBox.margin>
                               </VBox>
                               <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="22.0" prefHeight="138.0" prefWidth="138.0" styleClass="overview-cards">
@@ -291,7 +291,7 @@
                                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                  </padding>
                                  <HBox.margin>
-                                    <Insets bottom="12.0" left="12.0" top="12.0" />
+                                    <Insets right="12.0" top="12.0" />
                                  </HBox.margin>
                               </VBox>
                               <VBox alignment="TOP_CENTER" layoutX="148.0" layoutY="10.0" prefHeight="138.0" prefWidth="138.0" styleClass="overview-cards">
@@ -317,10 +317,13 @@
                                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                                  </padding>
                                  <HBox.margin>
-                                    <Insets bottom="12.0" left="12.0" top="12.0" />
+                                    <Insets right="12.0" top="12.0" />
                                  </HBox.margin>
                               </VBox>
                            </children>
+                           <VBox.margin>
+                              <Insets bottom="12.0" />
+                           </VBox.margin>
                         </HBox>
                         <Label layoutX="10.0" layoutY="10.0" styleClass="black-text" text="Subjects Enrolled">
                            <font>
@@ -330,30 +333,56 @@
                               <Insets bottom="12.0" />
                            </VBox.margin>
                         </Label>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="84.0" prefWidth="213.0" styleClass="overview-cards">
+                                 <children>
+                                    <Region prefHeight="200.0" prefWidth="162.0" VBox.vgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                                 </padding>
+                                 <HBox.margin>
+                                    <Insets right="12.0" />
+                                 </HBox.margin>
+                              </VBox>
+                              <VBox alignment="TOP_CENTER" prefHeight="84.0" prefWidth="213.0" styleClass="overview-cards">
+                                 <children>
+                                    <Region prefHeight="200.0" prefWidth="162.0" VBox.vgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                                 </padding>
+                                 <HBox.margin>
+                                    <Insets right="12.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <VBox alignment="TOP_CENTER" prefHeight="84.0" prefWidth="213.0" styleClass="overview-cards">
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Region prefHeight="200.0" prefWidth="162.0" VBox.vgrow="ALWAYS" />
+                        <Label styleClass="black-text" text="Notifications">
+                           <font>
+                              <Font name="Work Sans Bold" size="24.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <VBox alignment="TOP_CENTER" prefHeight="84.0" prefWidth="213.0" styleClass="overview-cards" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Region prefHeight="200.0" prefWidth="162.0" VBox.vgrow="ALWAYS" />
+                           </children>
+                           <padding>
+                              <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets left="12.0" />
+                           </VBox.margin>
+                        </VBox>
                      </children>
-                     <padding>
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets right="12.0" />
-                     </HBox.margin>
-                  </VBox>
-                  <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="84.0" prefWidth="213.0" styleClass="overview-cards">
-                     <children>
-                        <Region prefHeight="200.0" prefWidth="162.0" VBox.vgrow="ALWAYS" />
-                     </children>
-                     <padding>
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                     </padding>
                   </VBox>
                </children>
             </HBox>
@@ -363,7 +392,4 @@
          </BorderPane.margin>
       </VBox>
    </center>
-   <right>
-      <VBox prefHeight="558.0" prefWidth="205.0" BorderPane.alignment="CENTER" />
-   </right>
 </BorderPane>
