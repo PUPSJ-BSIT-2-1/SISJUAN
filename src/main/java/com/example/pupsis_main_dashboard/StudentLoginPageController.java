@@ -1,5 +1,6 @@
 package com.example.pupsis_main_dashboard;
 
+import javafx.animation.FadeTransition;
 import javafx.fxml.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
@@ -7,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.Parent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Duration;
 
 public class StudentLoginPageController {
     private String[] usernames = {"Harold"};
@@ -50,6 +52,10 @@ public class StudentLoginPageController {
                         stage.setScene(new javafx.scene.Scene(root));
                         stage.centerOnScreen();
                         stage.setResizable(false);
+                        FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), root);
+                        fadeTransition.setFromValue(0.0);
+                        fadeTransition.setToValue(1.0);
+                        fadeTransition.play();
                         stage.show();
                     } catch (java.io.IOException e) {
                         e.printStackTrace();
