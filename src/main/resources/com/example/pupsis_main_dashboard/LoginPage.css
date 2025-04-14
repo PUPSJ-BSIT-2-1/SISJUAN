@@ -1,4 +1,16 @@
 .icon{
     -fx-background-color: #a50034;
-    -fx-background-radius: 30;
+    -fx-background-radius: 16;
+}
+.text-field{
+    -fx-background-radius: 8;
+    background-color: #ffffff;
+}
+.password-field{
+    -fx-background-radius: 8;
+    background-color: #ffffff;
+}
+.button{
+    -fx-background-radius: 8;
+    -fx-background-color: #a50034;
 }
