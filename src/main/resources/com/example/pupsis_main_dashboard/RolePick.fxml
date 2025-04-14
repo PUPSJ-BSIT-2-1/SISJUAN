@@ -32,7 +32,7 @@
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="230.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="faculty" text="Faculty">
+                  <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" styleClass="faculty" text="Faculty">
                      <VBox.margin>
                         <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
                      </VBox.margin>
@@ -40,7 +40,7 @@
                         <Font name="Poppins Medium" size="16.0" />
                      </font>
                   </Button>
-                  <Button fx:id="student" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="40.0" prefWidth="200.0" styleClass="student" text="Student">
+                  <Button fx:id="student" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="35.0" prefWidth="200.0" styleClass="student" text="Student">
                      <VBox.margin>
                         <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
                      </VBox.margin>
