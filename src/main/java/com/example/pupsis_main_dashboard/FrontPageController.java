@@ -26,8 +26,10 @@ public class FrontPageController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
             Scene scene = new Scene(root);
+
             stage.setScene(scene);
             stage.centerOnScreen();
+            stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
             e.getStackTrace();

@@ -15,6 +15,7 @@ public class PUPSIS extends Application {
         stage.setTitle("PUPSIS");
         stage.setScene(scene);
         stage.centerOnScreen();
+        stage.setResizable(false);
         stage.show();
     }
 

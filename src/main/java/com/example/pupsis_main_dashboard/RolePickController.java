@@ -19,6 +19,7 @@ public class RolePickController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
         stage.centerOnScreen();
+        stage.setResizable(false);
         stage.show();
     }
 

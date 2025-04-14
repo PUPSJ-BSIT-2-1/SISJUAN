@@ -49,6 +49,7 @@ public class StudentLoginPageController {
                         javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
                         stage.setScene(new javafx.scene.Scene(root));
                         stage.centerOnScreen();
+                        stage.setResizable(false);
                         stage.show();
                     } catch (java.io.IOException e) {
                         e.printStackTrace();
