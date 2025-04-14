@@ -22,7 +22,7 @@ public class StudentMainDashoardController {
     private void initialize() {
         StudentLoginPageController loginPageController = new StudentLoginPageController();
         currentDate.setText(java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy")));
-        welcomeLabel.setText("Welcome, " + loginPageController.getUsername());
+//        welcomeLabel.setText("Welcome, " + loginPageController.getUsername());
     }
 
     @FXML
