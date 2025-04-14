@@ -1,0 +1,40 @@
+.root {
+    -fx-background-color: #f5f5f5;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.subtitle {
+    -fx-text-fill: #666;
+}
+
+.code-field {
+    -fx-font-size: 16px;
+    -fx-pref-height: 45;
+    -fx-pref-width: 250;
+}
+
+.verify-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+.verify-button:hover {
+	-fx-cursor: hand; 
+}
+
+.resend-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #800000;
+    -fx-underline: true;
+}
+
+.resend-button:hover{
+	-fx-cursor: hand; 
+}
+.error-label {
+    -fx-text-fill: #e74c3c;
+}

@@ -1,0 +1,56 @@
+.root {
+    -fx-background-color: black;
+    -fx-min-height: 720;
+    -fx-min-weight: 1280;
+}
+
+.backgroundVideo {
+    -fx-opacity: 0.5;
+}
+
+.navigationBar {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.3, 0, 5);
+}
+.buttons {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 4px;
+    -fx-border-style: none;
+    -fx-border-width: 0;
+
+}
+
+.buttons:hover {
+    -fx-font-size: 14px;
+    -fx-text-fill: #800000;
+    -fx-border-style: solid;
+    -fx-border-color: #800000;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 4px;
+    -fx-cursor: hand;
+}
+.getStarted {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+}
+.getStarted:hover {
+    -fx-background-color: #450000;
+    -fx-cursor: hand;
+}
+.pupsis {
+    -fx-font-family: "Times New Roman";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+}
+.labelHeader {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 48;
+}

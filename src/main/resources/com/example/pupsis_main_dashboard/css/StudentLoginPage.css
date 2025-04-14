@@ -1,0 +1,60 @@
+.fields{
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+    -fx-pref-width: 200;
+    -fx-text-fill: black;
+}
+.birthday-field{
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+}
+.birthday-field:hover{
+	-fx-cursor: hand; 
+}
+.birthday-field:focused{
+    -fx-border-color: maroon;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+}
+.buttons{
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+}
+.buttons:hover{
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand; 
+}
+.buttons:focused{
+    -fx-background-color: #5e0000;
+}
+.font{
+    -fx-font-family: "Inter";
+}
+.big-text{
+    -fx-font-size: 24;
+}
+.pup-sanjuan-label{
+    -fx-font-family: "system-ui";
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}
+.back-button:hover{
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand; 
+}
+.error-message{
+    -fx-text-fill: red;
+}
+.root{
+    -fx-background-radius: 20;
+}
+.border-pane {
+    -fx-background-color: #e6e6e6;
+    -fx-background-radius: 20;
+}
+
+

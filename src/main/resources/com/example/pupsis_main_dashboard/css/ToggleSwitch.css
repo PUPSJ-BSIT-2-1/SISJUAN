@@ -1,0 +1,29 @@
+/* styles.css */
+
+.switch-toggle-button {
+    -fx-pref-width: 50px;
+    -fx-pref-height: 25px;
+    -fx-background-color: lightgrey;
+    -fx-background-radius: 25px;
+    -fx-padding: 2px;
+    -fx-border-width: 0;
+    -fx-text-fill: transparent;
+    -fx-cursor: hand;
+    -fx-transition: -fx-background-color 0.2s ease-in-out;
+}
+
+.switch-toggle-button:selected {
+    -fx-background-color: #800000;
+}
+
+.switch-toggle-button .thumb {
+    -fx-pref-width: 21px;
+    -fx-pref-height: 21px;
+    -fx-background-color: white;
+    -fx-background-radius: 21px;
+    -fx-translate-x: -3px;
+}
+
+.switch-toggle-button:selected .thumb {
+    -fx-translate-x: 21px;
+}
