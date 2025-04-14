@@ -54,5 +54,13 @@
     -fx-effect: dropshadow(three-pass-box, #cfcfcf, 50, 0, 0, 0);
 }
 
+#getStartedButton {
+    -fx-background-color: #FFF59D;
+}
+
+#getStartedButton:hover {
+    -fx-background-color: #FBC02D;
+}
+
 
 

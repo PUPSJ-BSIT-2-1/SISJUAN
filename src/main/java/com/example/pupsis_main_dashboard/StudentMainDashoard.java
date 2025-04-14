@@ -10,10 +10,11 @@ import java.io.IOException;
 public class StudentMainDashoard extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(StudentMainDashoard.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(StudentMainDashoard.class.getResource("FrontPage.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("PUPSIS MAIN DASHBOARD");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
