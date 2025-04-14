@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="432.0" prefWidth="333.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.StudentLoginPageController">
    <center>
-      <VBox alignment="TOP_CENTER" prefHeight="432.0" prefWidth="294.0" stylesheets="@LoginPage.css" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="430.0" prefWidth="300.0" stylesheets="@StudentLoginPage.css" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER">
                <children>
@@ -40,11 +40,12 @@
                   <Font name="Poppins Bold" size="24.0" />
                </font>
             </Label>
+            <Label fx:id="errorLabel" styleClass="error-message" />
             <VBox alignment="TOP_CENTER">
                <children>
                   <HBox alignment="CENTER">
                      <children>
-                        <TextField prefHeight="40.0" prefWidth="200.0" promptText="Username">
+                        <TextField fx:id="usernameField" onKeyPressed="#handleKeyPressOnUsername" prefHeight="40.0" prefWidth="200.0" promptText="Username">
                            <padding>
                               <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
                            </padding>
@@ -59,7 +60,7 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="40.0" prefWidth="164.0">
                      <children>
-                        <PasswordField prefHeight="40.0" prefWidth="200.0" promptText="Password" styleClass="text-field">
+                        <PasswordField fx:id="passwordField" onKeyPressed="#handleKeyPressOnPassword" prefHeight="40.0" prefWidth="200.0" promptText="Password" styleClass="text-field">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -72,7 +73,7 @@
                         </PasswordField>
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="200.0" text="Login" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="34.0" prefWidth="200.0" text="Login" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </VBox.margin>

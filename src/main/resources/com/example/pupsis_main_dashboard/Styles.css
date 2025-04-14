@@ -6,13 +6,16 @@
     -fx-border-radius: 10;
 }
 .sidebar{
-    -fx-background-color: linear-gradient(to bottom, #a50034, #c72c41, #a50034);
+    -fx-background-color: linear-gradient(to bottom, #8e170a, #cc1c17, #8e170a);
     -fx-background-radius: 30;
     /*-fx-effect: dropshadow(three-pass-box, dimgray, 50, 0, 0, 0);*/
 }
 .student-icon{
-    -fx-background-color: linear-gradient(to bottom, #ff7900, #ffe642);
+    -fx-background-color: linear-gradient(to bottom, #fec127, #a17b1a);
     -fx-background-radius: 14;
+}
+.welcome-text{
+    -fx-text-fill: white;
 }
 .texts{
     -fx-text-fill: rgba(255, 255, 255, 0.6);

@@ -7,12 +7,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class StudentMainDashoard extends Application {
+public class PUPSIS extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(StudentMainDashoard.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource("RolePick.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("PUPSIS Main Dashboard");
+        stage.setTitle("PUPSIS");
         stage.setScene(scene);
         stage.show();
     }

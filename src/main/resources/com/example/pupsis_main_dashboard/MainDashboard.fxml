@@ -151,7 +151,7 @@
 
             <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
 
-            <HBox alignment="CENTER_LEFT" layoutX="26.0" layoutY="196.0" prefHeight="0.0" prefWidth="118.0" styleClass="sidebar-item" stylesheets="@Styles.css">
+            <HBox fx:id="LogoutButton" alignment="CENTER_LEFT" layoutX="26.0" layoutY="196.0" prefHeight="0.0" prefWidth="118.0" styleClass="sidebar-item" stylesheets="@Styles.css">
                 <ImageView fitHeight="23.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true" styleClass="icons">
                     <image>
                         <Image url="@Logout%20Icon.png" />
@@ -181,18 +181,18 @@
                 <VBox.margin>
                     <Insets />
                 </VBox.margin>
-                <Label fx:id="currentDate" styleClass="texts" text="Monday, January 5 2025" textFill="WHITE">
+                <Label fx:id="currentDate" styleClass="welcome-text" text="Monday, January 5 2025" textFill="WHITE">
                     <font>
                         <Font name="Work Sans Bold" size="12.0" />
                     </font>
                 </Label>
                 <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                <Label styleClass="texts" text="Welcome, Student!">
+                <Label fx:id="welcomeLabel" styleClass="welcome-text" text="Welcome, Student!">
                     <font>
                         <Font name="Work Sans Bold" size="24.0" />
                     </font>
                 </Label>
-                <Label fx:id="currentDate1" layoutX="40.0" layoutY="40.0" styleClass="texts" text="There are Currently (1) Notification/s" textFill="WHITE">
+                <Label fx:id="currentDate1" layoutX="40.0" layoutY="40.0" styleClass="welcome-text" text="There are Currently (1) Notification/s" textFill="WHITE">
                     <font>
                         <Font name="Work Sans Bold" size="12.0" />
                     </font>

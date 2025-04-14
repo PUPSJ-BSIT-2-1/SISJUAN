@@ -71,7 +71,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.example.pupsis_main_dashboard/com.example.pupsis_main_dashboard.StudentMainDashoard
+                                com.example.pupsis_main_dashboard/com.example.pupsis_main_dashboard.PUPSIS
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

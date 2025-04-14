@@ -1,0 +1,17 @@
+.icon{
+    -fx-background-color: linear-gradient(to top, #8e170a, #cc1c17);
+    -fx-background-radius: 16;
+}
+.text-field{
+    -fx-background-radius: 8;
+}
+.password-field{
+    -fx-background-radius: 8;
+}
+.button{
+    -fx-background-radius: 8;
+    -fx-background-color:  linear-gradient(to bottom, #fec127, #a17b1a);
+}
+.error-message{
+    -fx-text-fill: red;
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="300.0" styleClass="borderPane" stylesheets="@RolePick.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.RolePickController">
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="205.0">
+               <children>
+                  <ImageView fitHeight="85.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@PUP%20Logo.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets bottom="16.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <Label text="Hi PUPian!" textFill="#666666">
+                     <font>
+                        <Font name="Poppins Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="230.0">
+               <children>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="faculty" text="Faculty">
+                     <VBox.margin>
+                        <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="Poppins Medium" size="16.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="student" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="40.0" prefWidth="200.0" styleClass="student" text="Student">
+                     <VBox.margin>
+                        <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="Poppins Medium" size="16.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

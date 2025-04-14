@@ -1,0 +1,12 @@
+.button{
+    -fx-background-radius: 4;
+    -fx-background-color: white;
+}
+.faculty{
+    -fx-background-color: linear-gradient(to top, #8e170a, #cc1c17);
+    -fx-text-fill: white;
+}
+.student{
+    -fx-background-color: linear-gradient(to bottom, #fec127, #a17b1a);
+    -fx-text-fill: white;
+}

@@ -15,10 +15,14 @@ public class StudentMainDashoardController {
     private boolean isSidebarVisible = true;
     @FXML
     private Label currentDate;
+    @FXML
+    private Label welcomeLabel;
 
     @FXML
     private void initialize() {
+        StudentLoginPageController loginPageController = new StudentLoginPageController();
         currentDate.setText(java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy")));
+        welcomeLabel.setText("Welcome, " + loginPageController.getUsername());
     }
 
     @FXML
@@ -31,5 +35,19 @@ public class StudentMainDashoardController {
 
         // Apply "selected-item" style to the clicked item
         clickedNode.getStyleClass().add("selected-item");
+    }
+
+    @FXML
+    private void LogoutButton(MouseEvent event) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("StudentLoginPage.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.centerOnScreen(); // Center the stage on the screen
+            stage.show();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 }
