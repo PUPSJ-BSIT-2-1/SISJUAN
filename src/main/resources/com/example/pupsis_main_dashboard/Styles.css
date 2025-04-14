@@ -67,3 +67,8 @@
 .bg-color{
     -fx-background-color: #e26363;
 }
+.bg-picture{
+    -fx-background-image: url("school.png");
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
