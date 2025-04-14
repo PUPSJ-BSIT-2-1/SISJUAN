@@ -1,0 +1,58 @@
+.close-button:hover {
+    -fx-effect: dropshadow(three-pass-box, black, 10, 0, 0, 0);
+}
+.borderPane{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+.sidebar{
+    -fx-background-color: linear-gradient(to bottom, #a50034, #c72c41, #a50034);
+    -fx-background-radius: 30;
+    /*-fx-effect: dropshadow(three-pass-box, dimgray, 50, 0, 0, 0);*/
+}
+.student-icon{
+    -fx-background-color: linear-gradient(to bottom, #ff7900, #ffe642);
+    -fx-background-radius: 14;
+}
+.texts{
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+}
+.sidebar-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 14;
+}
+.sidebar-item:hover .texts{
+    -fx-text-fill: white;
+}
+.sidebar-item:hover .icons{
+    -fx-opacity: 1;
+}
+.icons{
+    -fx-opacity: 0.6;
+}
+.selected-item{
+    -fx-background-color: rgba(255, 251, 0, 0.5);
+    -fx-background-radius: 14;
+}
+.selected-item:hover {
+    -fx-background-color: rgba(255, 251, 0, 0.5);
+}
+
+.selected-item .image-view {
+    -fx-opacity: 1;
+}
+
+.selected-item .texts {
+    -fx-text-fill: white; /* Make text white */
+}
+.black-text{
+    -fx-text-fill: dimgray;
+}
+.overview-cards{
+    -fx-background-radius: 30;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, #cfcfcf, 50, 0, 0, 0);
+}
+
+
+
