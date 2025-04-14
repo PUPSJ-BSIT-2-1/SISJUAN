@@ -64,4 +64,6 @@
 .welcome-text{
     -fx-text-fill: white;
 }
-
+.bg-color{
+    -fx-background-color: #e26363;
+}

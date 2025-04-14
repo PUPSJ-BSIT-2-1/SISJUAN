@@ -73,7 +73,7 @@
                         </PasswordField>
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="34.0" prefWidth="200.0" text="Login" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="35.0" prefWidth="200.0" text="Login" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </VBox.margin>
