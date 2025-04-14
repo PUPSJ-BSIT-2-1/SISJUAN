@@ -11,11 +11,8 @@
     /*-fx-effect: dropshadow(three-pass-box, dimgray, 50, 0, 0, 0);*/
 }
 .student-icon{
-    -fx-background-color: linear-gradient(to bottom, #fec127, #a17b1a);
+    -fx-background-color: linear-gradient(to bottom, #ff7900, #ffe642);
     -fx-background-radius: 14;
-}
-.welcome-text{
-    -fx-text-fill: white;
 }
 .texts{
     -fx-text-fill: rgba(255, 255, 255, 0.6);
@@ -57,5 +54,14 @@
     -fx-effect: dropshadow(three-pass-box, #cfcfcf, 50, 0, 0, 0);
 }
 
+#getStartedButton {
+    -fx-background-color: #FFF59D;
+}
 
+#getStartedButton:hover {
+    -fx-background-color: #FBC02D;
+}
+.welcome-text{
+    -fx-text-fill: white;
+}
 
