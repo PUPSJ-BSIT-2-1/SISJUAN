@@ -151,7 +151,7 @@
 
             <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
 
-            <HBox fx:id="LogoutButton" alignment="CENTER_LEFT" layoutX="26.0" layoutY="196.0" prefHeight="0.0" prefWidth="118.0" styleClass="sidebar-item" stylesheets="@Styles.css">
+            <HBox fx:id="LogoutButton" alignment="CENTER_LEFT" layoutX="26.0" layoutY="196.0" onMouseClicked="#LogoutButton" prefHeight="0.0" prefWidth="118.0" styleClass="sidebar-item" stylesheets="@Styles.css">
                 <ImageView fitHeight="23.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true" styleClass="icons">
                     <image>
                         <Image url="@Logout%20Icon.png" />
