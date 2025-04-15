@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -16,6 +17,7 @@ public class PUPSIS extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource("FrontPage.fxml"));
         Parent root = fxmlLoader.load();
         stage.setTitle("PUPSIS");
+		stage.getIcons().add(new Image(getClass().getResource("/com/example/pupsis_main_dashboard/pupsj-logo.png").toExternalForm()));
         applySceneWithTransition(root, stage);
         stage.centerOnScreen();
         stage.setResizable(false);
