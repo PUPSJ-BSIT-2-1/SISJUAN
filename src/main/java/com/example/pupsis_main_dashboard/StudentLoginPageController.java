@@ -1,22 +1,29 @@
 package com.example.pupsis_main_dashboard;
-
-import javafx.animation.FadeTransition;
 import javafx.fxml.*;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.Parent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import java.time.*;
+import javafx.collections.FXCollections;
+import java.util.stream.IntStream;
+import javafx.collections.ObservableList;
+
 
 public class StudentLoginPageController {
     private String[] usernames = {"Harold"};
     private String[] passwords = {"Hello123"};
+
+    @FXML
+    private ComboBox<Integer> yearComboBox;
+
+    @FXML
+    private ComboBox<String> monthComboBox; // ComboBox for the month
+
+    @FXML
+    private ComboBox<Integer> dayComboBox; // ComboBox for the day (Integer format)
 
     @FXML
     private TextField usernameField;
@@ -26,6 +33,24 @@ public class StudentLoginPageController {
 
     @FXML
     private Label errorLabel; // Label to display error messages
+
+    public void initialize() {
+        // Set default month listener
+        monthComboBox.setOnAction(event -> updateDaysComboBox());
+        populateYearComboBox();
+        updateDaysComboBox();
+        // Add a listener to monthComboBox
+        monthComboBox.valueProperty().addListener((observable, oldValue, newValue) -> updateDaysComboBox());
+    }
+
+    private void populateYearComboBox() {
+        int currentYear = LocalDate.now().getYear();
+        ObservableList<Integer> years = FXCollections.observableArrayList(
+                IntStream.rangeClosed(currentYear - 100, currentYear).boxed().toList()
+        );
+        yearComboBox.setItems(years);
+        yearComboBox.getSelectionModel().select(currentYear); // Default to current year
+    }
 
     @FXML
     private void handleKeyPressOnUsername(KeyEvent event) {
@@ -73,6 +98,7 @@ public class StudentLoginPageController {
             errorLabel.setText(""); // Clear error message on successful login
         }
     }
+
     @FXML
     private void handleBackButton(MouseEvent event) throws java.io.IOException {
         Parent root = FXMLLoader.load(getClass().getResource("RolePick.fxml"));
@@ -84,4 +110,32 @@ public class StudentLoginPageController {
         Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         currentStage.close();
     }
+
+    private void updateDaysComboBox() {
+        ObservableList<Integer> daysList;
+
+        // Get the selected month
+        String selectedMonth = monthComboBox.getValue();
+
+        if (selectedMonth == null) {
+            // If no month is selected, allow days 1 to 31
+            daysList = FXCollections.observableArrayList(IntStream.rangeClosed(1, 31).boxed().toList());
+        } else {
+            // If a month is selected, determine the correct number of days for that month
+            int year = (yearComboBox.getValue() != null) ? yearComboBox.getValue() : LocalDate.now().getYear();
+
+            Month month = Month.valueOf(selectedMonth.toUpperCase()); // Convert month name to enum
+            int daysInMonth = month.length(Year.isLeap(year)); // Check days considering leap years
+            daysList = FXCollections.observableArrayList(IntStream.rangeClosed(1, daysInMonth).boxed().toList());
+        }
+
+        // Populate the dayComboBox with the days list
+        dayComboBox.setItems(daysList);
+
+        // Optionally reset the selected day to the first value
+        if (!daysList.isEmpty()) {
+            dayComboBox.setValue(daysList.get(0));
+        }
+    }
+
 }
