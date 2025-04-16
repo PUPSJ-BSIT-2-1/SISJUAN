@@ -2,12 +2,16 @@ package com.example.pupsis_main_dashboard;
 
 import javafx.animation.FadeTransition;
 import javafx.fxml.*;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import javafx.scene.Parent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class StudentLoginPageController {
@@ -68,5 +72,16 @@ public class StudentLoginPageController {
         } else {
             errorLabel.setText(""); // Clear error message on successful login
         }
+    }
+    @FXML
+    private void handleBackButton(MouseEvent event) throws java.io.IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("RolePick.fxml"));
+        Stage newStage = new Stage();
+        newStage.setScene(new Scene(root));
+        newStage.centerOnScreen();
+        newStage.setResizable(false);
+        newStage.show();
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        currentStage.close();
     }
 }

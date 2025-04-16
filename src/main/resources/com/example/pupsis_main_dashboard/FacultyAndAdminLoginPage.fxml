@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="900.0" styleClass="main-container" stylesheets="@FacultyAndAdminLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.FacultyAndAdminLoginPageController">
    <center>
@@ -19,6 +20,22 @@
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="178.0" prefWidth="300.0" styleClass="container">
                      <children>
+                        <HBox prefHeight="26.0" prefWidth="102.0" styleClass="back-button">
+                           <children>
+                              <VBox styleClass="back-button">
+                                 <children>
+                                    <ImageView fitHeight="25.0" fitWidth="89.0" onMouseClicked="#handleBackButton" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+                                       <image>
+                                          <Image url="@Back%20Icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets left="12.0" />
+                           </padding>
+                        </HBox>
                         <HBox alignment="TOP_CENTER">
                            <children>
                               <VBox alignment="TOP_CENTER" prefHeight="66.0" prefWidth="24.0" styleClass="icon">
@@ -35,12 +52,12 @@
                               </VBox>
                            </children>
                         </HBox>
-                        <Label styleClass="message" text="Admin Login">
+                        <Label styleClass="message" text="Faculty Login">
                            <VBox.margin>
-                              <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
+                              <Insets left="32.0" right="32.0" top="32.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="errorLabel" text="Label" />
+                        <Label fx:id="errorLabel" styleClass="error-message" />
                         <TextField fx:id="usernameField" onKeyPressed="#handleKeyPressOnUsername" promptText="Username" styleClass="text-fields">
                            <VBox.margin>
                               <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
@@ -50,12 +67,12 @@
                            <VBox.margin>
                               <Insets bottom="16.0" left="16.0" right="16.0" />
                            </VBox.margin>
+                           <font>
+                              <Font name="Poppins Light Italic" size="12.0" />
+                           </font>
                         </PasswordField>
                         <Button mnemonicParsing="false" onAction="#handleLoginButton" onKeyPressed="#handleLoginButton" text="Login" />
                      </children>
-                     <padding>
-                        <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
-                     </padding>
                   </VBox>
                </children>
             </HBox>

@@ -1,17 +1,57 @@
 .icon{
-    -fx-background-color: linear-gradient(to top, #8e170a, #cc1c17);
+    -fx-background-color: linear-gradient(to top, #8e170a, #cc1c17)  ;
     -fx-background-radius: 16;
 }
-.text-field{
+.text-fields{
     -fx-background-radius: 8;
-}
-.password-field{
-    -fx-background-radius: 8;
+    -fx-min-height: 40;
+    -fx-max-width: 200;
+    -fx-padding: 0 0 0 16;
+    -fx-font-family: "Poppins";
+
 }
 .button{
+    -fx-background-color: linear-gradient(to bottom, #fec127, #a17b1a);
     -fx-background-radius: 8;
-    -fx-background-color:  linear-gradient(to bottom, #fec127, #a17b1a);
+    -fx-text-fill: white;
+    -fx-font-size: 16;
+    -fx-font-family: "Poppins ExtraLight";
+    -fx-min-width: 200;
+    -fx-min-height: 35;
+
 }
 .error-message{
     -fx-text-fill: red;
 }
+.container{
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 10, 0, 0, 2);
+    -fx-background-radius: 30;
+    -fx-padding: 30;
+}
+.message{
+    -fx-text-fill: black;
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-font-family: "Poppins";
+}
+.main-container {
+    -fx-min-height: 650;
+    -fx-min-width: 900;
+    -fx-background-image: url("school.png");
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+}
+.back-button{
+    -fx-min-height: 10;
+    -fx-min-width: 10;
+}
+.back-button:hover{
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.5, 0, 0);
+}
+.password{
+    -fx-display-caret: "*";
+}
+
+
