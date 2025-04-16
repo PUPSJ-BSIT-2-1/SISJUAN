@@ -45,11 +45,7 @@ public class StudentMainDashoardController {
             javafx.scene.Parent root = loader.load();
             javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new javafx.scene.Scene(root));
-            stage.centerOnScreen(); // Center the stage on the screen
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), root);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
+            stage.centerOnScreen();
             stage.show();
         } catch (java.io.IOException e) {
             e.printStackTrace();

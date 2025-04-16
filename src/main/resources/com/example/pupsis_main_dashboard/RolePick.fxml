@@ -6,50 +6,50 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="300.0" styleClass="borderPane" stylesheets="@RolePick.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.RolePickController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="475.0" minWidth="-Infinity" prefHeight="475.0" prefWidth="900.0" styleClass="main-container" stylesheets="@RolePick.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.RolePickController">
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="650.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="205.0">
+            <HBox alignment="CENTER" prefHeight="430.0" prefWidth="900.0">
                <children>
-                  <ImageView fitHeight="85.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@PUP%20Logo.png" />
-                     </image>
-                     <VBox.margin>
-                        <Insets bottom="16.0" />
-                     </VBox.margin>
-                  </ImageView>
-                  <Label text="Hi PUPian!" textFill="#666666">
-                     <font>
-                        <Font name="Poppins Bold" size="24.0" />
-                     </font>
-                  </Label>
+                  <VBox alignment="TOP_CENTER" prefHeight="178.0" prefWidth="300.0" styleClass="login-container">
+                     <children>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="66.0" prefWidth="24.0">
+                                 <children>
+                                    <ImageView fitHeight="86.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@PUP%20Logo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                                 </padding>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Label styleClass="message" text="Hi PUPian!">
+                           <VBox.margin>
+                              <Insets bottom="16.0" left="16.0" right="16.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Button mnemonicParsing="false" onAction="#handleStudentButton" styleClass="student" text="Student">
+                           <VBox.margin>
+                              <Insets bottom="8.0" left="16.0" right="16.0" top="16.0" />
+                           </VBox.margin></Button>
+                        <Button layoutX="60.0" layoutY="208.0" mnemonicParsing="false" onAction="#handleFacultyButton" styleClass="faculty" text="Faculty" />
+                     </children>
+                     <padding>
+                        <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
+                     </padding>
+                  </VBox>
                </children>
-            </VBox>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="230.0">
-               <children>
-                  <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" styleClass="faculty" text="Faculty">
-                     <VBox.margin>
-                        <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font name="Poppins Medium" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="student" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="35.0" prefWidth="200.0" styleClass="student" text="Student">
-                     <VBox.margin>
-                        <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font name="Poppins Medium" size="16.0" />
-                     </font>
-                  </Button>
-               </children>
-            </VBox>
+            </HBox>
          </children>
       </VBox>
    </center>

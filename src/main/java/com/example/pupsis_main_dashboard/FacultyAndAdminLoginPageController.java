@@ -1,17 +1,21 @@
 package com.example.pupsis_main_dashboard;
 
 import javafx.animation.FadeTransition;
-import javafx.fxml.*;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.Label;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class StudentLoginPageController {
-    private String[] usernames = {"Harold"};
+public class FacultyAndAdminLoginPageController {
+    private String[] usernames = {"Admin"};
     private String[] passwords = {"Hello123"};
 
     @FXML
@@ -49,10 +53,13 @@ public class StudentLoginPageController {
                     try {
                         Parent root = FXMLLoader.load(getClass().getResource("MainDashboard.fxml"));
                         javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new javafx.scene.Scene(root));
-                        stage.centerOnScreen();
-                        stage.setResizable(false);
-                        stage.show();
+                        Stage newStage = new Stage();
+                        newStage.setScene(new Scene(root));
+                        newStage.centerOnScreen();
+                        newStage.setResizable(false);
+                        newStage.show();
+                        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        currentStage.close();
                     } catch (java.io.IOException e) {
                         e.printStackTrace();
                     }

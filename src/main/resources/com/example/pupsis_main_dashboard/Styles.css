@@ -52,22 +52,9 @@
     -fx-background-color: #ffffff;
     -fx-effect: dropshadow(three-pass-box, #cfcfcf, 50, 0, 0, 0);
 }
-
-#getStartedButton {
-    -fx-background-color: #FFF59D;
-}
-
-#getStartedButton:hover {
-    -fx-background-color: #FBC02D;
-}
 .welcome-text{
     -fx-text-fill: white;
 }
 .bg-color{
     -fx-background-color: #e26363;
-}
-.bg-picture{
-    -fx-background-image: url("school.png");
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
 }
