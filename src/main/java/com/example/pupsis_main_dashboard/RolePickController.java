@@ -7,6 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import java.io.IOException;
 
 public class RolePickController {
@@ -14,10 +16,14 @@ public class RolePickController {
     @FXML
     private void handleStudentButton(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("StudentLoginPage.fxml"));
+        
         Stage newStage = new Stage();
-        newStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        newStage.setScene(scene);
         newStage.centerOnScreen();
         newStage.setResizable(false);
+        newStage.initStyle(StageStyle.UNDECORATED);
         newStage.show();
         Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         currentStage.close();

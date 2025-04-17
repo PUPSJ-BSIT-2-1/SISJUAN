@@ -1,7 +1,7 @@
 .root{
     -fx-min-height: 720;
     -fx-min-width: 1280;
-    -fx-background-radius: 15;
+    -fx-background-radius: 20;
 }
 .login-button{
     -fx-background-color: #CC1C17;
@@ -39,4 +39,15 @@
     -fx-background-size: cover;
     -fx-background-radius: 40 0 0 40;
     -fx-background-repeat: no-repeat;
+}
+.combo-box{
+    -fx-background-radius: 8;
+    -fx-min-height: 30;
+}
+.birthday{
+    -fx-font-family: "Poppins";
+    -fx-font-size: 16;
+}
+.back-button:hover{
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
 }
