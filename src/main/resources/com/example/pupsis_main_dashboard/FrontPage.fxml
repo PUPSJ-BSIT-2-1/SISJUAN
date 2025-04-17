@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="649.0" prefWidth="900.0" styleClass="main-container" stylesheets="@FrontPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.FrontPageController">
+<BorderPane prefHeight="650.0" prefWidth="900.0" styleClass="bg-picture" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.FrontPageController">
    <center>
       <VBox prefHeight="576.0" prefWidth="900.0" BorderPane.alignment="CENTER">
          <children>
@@ -20,25 +20,25 @@
                         <Image url="@pupsj-logo.png" />
                      </image>
                   </ImageView>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="big-fonts" text="Redefining Possibilities, Achieving Excellence" textAlignment="CENTER" wrappingWidth="584.3866424560547">
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Redefining Possibilities, Achieving Excellence" textAlignment="CENTER" wrappingWidth="584.3866424560547">
                      <font>
-                        <Font name="Poppins Black" size="39.0" />
+                        <Font name="Broadway" size="39.0" />
                      </font>
                      <VBox.margin>
                         <Insets top="16.0" />
                      </VBox.margin>
                   </Text>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Fonts" text="Where creativity meets capability, transforming challenges into opportunities for growth." textAlignment="CENTER" wrappingWidth="458.64373779296875">
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Where creativity meets capability, transforming challenges into opportunities for growth." textAlignment="CENTER" wrappingWidth="458.64373779296875">
                      <font>
-                        <Font name="Poppins Bold" size="15.0" />
+                        <Font name="Bookman Old Style Bold" size="15.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </VBox.margin>
                   </Text>
-                  <Button mnemonicParsing="false" onAction="#handleRolePickButton" prefHeight="45.0" prefWidth="200.0" stylesheets="@FrontPage.css" text="Get Started">
+                  <Button fx:id="getStartedButton" mnemonicParsing="false" onAction="#handleGetStarted" prefHeight="35.0" prefWidth="200.0" text="Get Started">
                      <font>
-                        <Font name="Poppins ExtraBold" size="12.0" />
+                        <Font name="Arial Black" size="12.0" />
                      </font>
                      <VBox.margin>
                         <Insets top="20.0" />

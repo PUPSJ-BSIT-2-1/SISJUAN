@@ -49,3 +49,7 @@
     -fx-font-weight: bold;
     -fx-font-family: "Poppins";
 }
+.root{
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+}
