@@ -1,0 +1,22 @@
+.background{
+    -fx-background-color: #e4e4e4;
+    -fx-background-radius: 20;
+}
+.slider{
+    -fx-background-color: white;
+    -fx-background-radius: 20 0 0 20;
+}
+.main-container{
+    -fx-background-radius: 20;
+    -fx-background-color: white;
+}
+.main-window{
+    fx-background-color: white;
+}
+.sidebar-icon-placeholder{
+    -fx-background-color: #CC1C17;
+    -fx-background-radius: 10;
+}
+.root{
+    -fx-background-color: transparent;
+}

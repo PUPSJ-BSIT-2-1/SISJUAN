@@ -5,7 +5,7 @@ import com.example.databaseOperations.DBConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class TestConnection {
+public class Test {
     public static void main(String[] args) {
         try (Connection connection = DBConnection.getConnection()) {
             System.out.println("Connection Successful!");

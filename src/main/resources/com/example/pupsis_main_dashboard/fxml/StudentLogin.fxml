@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginPageController">
+<StackPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
     <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="font" stylesheets="@../css/StudentLoginPage.css">
         <left>
             <VBox prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER">
@@ -45,6 +45,14 @@
                              </font>
                          </Label>
                      </VBox>
+               <ImageView fx:id="closeButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+                  <image>
+                     <Image url="@../Images/Back Icon.png" />
+                  </image>
+                  <HBox.margin>
+                     <Insets right="-15.0" />
+                  </HBox.margin>
+               </ImageView>
                  </HBox>
                  <VBox prefHeight="54.0" prefWidth="328.0">
                      <Label styleClass="big-text" text="Welcome Back">
@@ -110,7 +118,7 @@
                      <ImageView fx:id="backButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#animateVBoxToRight" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
                          <Image url="@../Images/Back Icon.png" />
                   <HBox.margin>
-                     <Insets left="-15.0" />
+                     <Insets />
                   </HBox.margin>
                      </ImageView>
                <Region prefHeight="43.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
