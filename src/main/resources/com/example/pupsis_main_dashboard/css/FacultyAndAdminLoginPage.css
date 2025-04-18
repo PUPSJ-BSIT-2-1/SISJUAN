@@ -38,7 +38,7 @@
 .main-container {
     -fx-min-height: 650;
     -fx-min-width: 900;
-    -fx-background-image: url("school.png");
+    -fx-background-image: url("../Images/school.png");
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;

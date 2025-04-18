@@ -1,5 +1,7 @@
 package com.example.pupsis_main_dashboard;
 
+
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -16,7 +19,7 @@ public class PUPSIS extends Application {
     private double yOffset = 0;
 
     @Override
-    public void start(Stage stage) throws IOException {FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource("StudentLoginPage.fxml"));
+    public void start(Stage stage) throws IOException {FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource("fxml/StudentLoginPage.fxml"));
         Parent root = fxmlLoader.load();
 
         // Make window draggable
@@ -32,11 +35,18 @@ public class PUPSIS extends Application {
 
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("PUPSIS");
-        stage.getIcons().add(new Image(getClass().getResource("/com/example/pupsis_main_dashboard/pupsj-logo.png").toExternalForm()));
+        stage.getIcons().add(new Image(getClass().getResource("/com/example/pupsis_main_dashboard/Images/pupsj-logo.png").toExternalForm()));
         stage.setScene(new Scene(root, javafx.scene.paint.Color.TRANSPARENT));
         stage.centerOnScreen();
         stage.setResizable(false);
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(700)); // Animation duration: 1000ms (1 second)
+        fadeTransition.setNode(root); // Apply to the root node
+        fadeTransition.setFromValue(0.0); // Start fully transparent
+        fadeTransition.setToValue(1.0); // End fully visible
+        fadeTransition.play(); // Start the animation
         stage.show();
+
 
     }
 
