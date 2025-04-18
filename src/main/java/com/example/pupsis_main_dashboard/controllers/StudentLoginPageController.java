@@ -203,8 +203,6 @@ public class StudentLoginPageController {
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
                 month == null || day == null || year == null) {
             showAlert("Input Error", "Please fill out all fields!");
-            System.out.println(lastName + " " + passwordInput + " " + retypePassword + " " + month + " " +
-                    day + " " + year + " ");
             return;
         }
 
@@ -229,31 +227,38 @@ public class StudentLoginPageController {
         // Hash the password securely using PasswordHandler
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
 
-        // Format the date as YYYY-MM-DD
-        String dateOfBirth = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
+        // Convert the date into java.sql.Date
+        java.sql.Date dateOfBirth;
+        try {
+            String formattedDate = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
+            dateOfBirth = java.sql.Date.valueOf(formattedDate); // Parse date into SQL-compatible format
+        } catch (IllegalArgumentException e) {
+            showAlert("Input Error", "Invalid date of birth provided!");
+            e.printStackTrace();
+            return;
+        }
 
-        // SQL query to insert data into the database
-        String query = "INSERT INTO students (student_id, password, firstname, middlename, lastname, email, birthday) VALUES (NULL, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO students (password, firstname, middlename, lastname, email, birthday) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            // Set query parameters (in correct order now)
+            // Set query parameters in the same order as the query
             preparedStatement.setString(1, hashedPassword); // Set hashed password
             preparedStatement.setString(2, firstName);
             preparedStatement.setString(3, middleName);
             preparedStatement.setString(4, lastName);
             preparedStatement.setString(5, email);
-            preparedStatement.setString(6, dateOfBirth);
+            preparedStatement.setDate(6, dateOfBirth); // Assuming the fix for birthday is already implemented
 
-            // Execute update and check if data was inserted
+            // Execute update
             int rowsAffected = preparedStatement.executeUpdate();
+
             if (rowsAffected > 0) {
                 showAlert("Registration Successful", "Your account has been created!");
             } else {
                 showAlert("Registration Failed", "An error occurred during registration.");
             }
-
         } catch (SQLException e) {
             showAlert("Database Error", e.getMessage());
             e.printStackTrace();

@@ -5,11 +5,22 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/student_dashboard?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "app_user";
+
+    private static final String URL = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres";
+    private static final String USER = "postgres.odyfrnuddvhbedvjfnhw";
     private static final String PASSWORD = "HelloWorld123!";
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("PostgreSQL driver not found! Ensure the driver is included in the classpath.", e);
+        }
+
+        try {
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            throw new SQLException("Failed to connect to the database. Please check the URL, user credentials, or network settings.", e);
+        }
     }
 }
