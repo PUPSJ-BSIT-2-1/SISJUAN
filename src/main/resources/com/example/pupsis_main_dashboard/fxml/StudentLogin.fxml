@@ -4,11 +4,11 @@
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -19,91 +19,108 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
+<!--suppress ALL -->
+
 <StackPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
     <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="font" stylesheets="@../css/StudentLoginPage.css">
         <left>
             <VBox prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER">
-                 <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="358.0">
-                     <VBox.margin>
-                         <Insets bottom="100.0" />
-                     </VBox.margin>
-                     <ImageView fitHeight="51.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
-                         <Image url="@../Images/PUP Logo.png" />
-                     </ImageView>
-                     <VBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="355.0">
-                         <HBox.margin>
-                             <Insets left="10.0" />
-                         </HBox.margin>
-                         <Label styleClass="pup-sanjuan-label" text="PUP">
-                             <font>
-                                 <Font size="14.0" />
-                             </font>
-                         </Label>
-                         <Label layoutX="10.0" layoutY="10.0" styleClass="pup-sanjuan-label" text="San Juan Campus">
-                             <font>
-                                 <Font size="14.0" />
-                             </font>
-                         </Label>
-                     </VBox>
-               <ImageView fx:id="closeButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
-                  <image>
-                     <Image url="@../Images/Back Icon.png" />
-                  </image>
-                  <HBox.margin>
-                     <Insets right="-15.0" />
-                  </HBox.margin>
-               </ImageView>
-                 </HBox>
-                 <VBox prefHeight="54.0" prefWidth="328.0">
-                     <Label styleClass="big-text" text="Welcome Back">
-                         <font>
-                             <Font name="Poppins Bold" size="24.0" />
-                         </font>
+                <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="358.0">
+                    <VBox.margin>
+                        <Insets bottom="100.0" />
+                    </VBox.margin>
+                    <ImageView fitHeight="51.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                        <!--suppress JavaFxDefaultTag -->
+                        <image>
+                            <Image url="@../Images/PUP Logo.png" />
+                        </image>
+                    </ImageView>
+                    <VBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="355.0">
+                        <HBox.margin>
+                            <Insets left="10.0" />
+                        </HBox.margin>
+                        <Label styleClass="pup-sanjuan-label" text="PUP">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="pup-sanjuan-label" text="San Juan Campus">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </VBox>
+                    <ImageView fx:id="closeButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+                        <image>
+                            <Image url="@../Images/Back Icon.png" />
+                        </image>
+                        <HBox.margin>
+                            <Insets right="-15.0" />
+                        </HBox.margin>
+                    </ImageView>
+                </HBox>
+                <VBox prefHeight="582.0" prefWidth="359.0">
+                    <Label styleClass="big-text" text="Welcome Back">
+                        <font>
+                            <Font name="Poppins Bold" size="24.0" />
+                        </font>
+                    </Label>
+                    <Label prefWidth="125.0" text="Enter your Student ID">
+                        <padding>
+                            <Insets bottom="30.0" top="-5.0" />
+                        </padding>
+                    </Label>
+                    <Label fx:id="errorLabel" styleClass="error-message">
+                        <VBox.margin>
+                            <Insets bottom="10.0" />
+                        </VBox.margin>
+                    </Label>
+                    <TextField fx:id="studentIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="254.0" promptText="Student ID/Email" styleClass="fields">
+                        <padding>
+                            <Insets left="15.0" />
+                        </padding>
+                        <VBox.margin>
+                            <Insets bottom="10.0" />
+                        </VBox.margin>
+                    </TextField>
+                    <PasswordField fx:id="passwordField" promptText="Password" styleClass="fields">
+                        <padding>
+                            <Insets left="15.0" />
+                        </padding>
+                        <VBox.margin>
+                            <Insets bottom="20.0" />
+                        </VBox.margin>
+                    </PasswordField>
+               <HBox alignment="CENTER_LEFT">
+                  <VBox.margin>
+                     <Insets bottom="50.0" />
+                  </VBox.margin>
+                  <children>
+                     <ToggleButton fx:id="rememberMeCheckBox" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" styleClass="switch-toggle-button" stylesheets="@../css/ToggleSwitch.css" text="ToggleButton">
+                         <graphic>
+                             <Region styleClass="thumb" />
+                         </graphic>
+                     </ToggleButton>
+                     <Label prefHeight="23.0" prefWidth="139.0" styleClass="font" text="Remember me">
+                        <HBox.margin>
+                           <Insets left="10.0" />
+                        </HBox.margin>
                      </Label>
-                     <Label prefWidth="125.0" text="Enter your Student ID">
-                  <padding>
-                     <Insets bottom="30.0" top="-5.0" />
-                  </padding>
-               </Label>
-               <Label fx:id="errorLabel" styleClass="error-message">
-                  <VBox.margin>
-                     <Insets bottom="10.0" />
-                  </VBox.margin>
-               </Label>
-                     <TextField fx:id="studentIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="218.0" promptText="Student ID/Email">
-                         <padding>
-                             <Insets left="15.0" />
-                         </padding>
-                  <VBox.margin>
-                     <Insets bottom="10.0" />
-                  </VBox.margin>
-                     </TextField>
-               <PasswordField fx:id="passwordField" promptText="Password">
-                  <padding>
-                     <Insets left="15.0" />
-                  </padding>
-                  <VBox.margin>
-                     <Insets bottom="10.0" />
-                  </VBox.margin>
-               </PasswordField>
-                     <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="345.0" text="Remember Me?">
-                  <VBox.margin>
-                     <Insets bottom="30.0" />
-                  </VBox.margin>
-                     </CheckBox>
+                  </children>
+               </HBox>
                     <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="26.0" prefWidth="408.0" styleClass="login-button" text="Login">
                         <VBox.margin>
                             <Insets bottom="10.0" />
                         </VBox.margin>
                     </Button>
                     <Button fx:id="registerButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="422.0" styleClass="login-button" text="Register" />
-                     <VBox.margin>
-                         <Insets />
-                     </VBox.margin>
-               <padding>
-                  <Insets bottom="30.0" left="30.0" right="30.0" />
-               </padding>
-                 </VBox>
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                    <padding>
+                        <Insets bottom="30.0" left="30.0" right="30.0" />
+                    </padding>
+                </VBox>
                 <padding>
                     <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
                 </padding>
@@ -111,40 +128,42 @@
         </left>
         <right>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="420.0" BorderPane.alignment="CENTER">
-                 <HBox alignment="TOP_RIGHT" prefHeight="43.0" prefWidth="380.0">
-                     <VBox.margin>
-                         <Insets bottom="100.0" />
-                     </VBox.margin>
-                     <ImageView fx:id="backButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#animateVBoxToRight" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
-                         <Image url="@../Images/Back Icon.png" />
-                  <HBox.margin>
-                     <Insets />
-                  </HBox.margin>
-                     </ImageView>
-               <Region prefHeight="43.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                     <VBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="133.0">
-                         <HBox.margin>
-                             <Insets left="10.0" />
-                         </HBox.margin>
-                         <Label styleClass="pup-sanjuan-label" text="PUP">
-                             <font>
-                                 <Font size="14.0" />
-                             </font>
-                         </Label>
-                         <Label layoutX="10.0" layoutY="10.0" styleClass="pup-sanjuan-label" text="San Juan Campus">
-                             <font>
-                                 <Font size="14.0" />
-                             </font>
-                         </Label>
-                     </VBox>
-               <ImageView fitHeight="51.0" fitWidth="41.0" layoutX="328.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../Images/PUP Logo.png" />
-                  </image>
-               </ImageView>
-                 </HBox>
-            <VBox prefHeight="298.0" prefWidth="343.0">
-               <children>
+                <HBox alignment="TOP_RIGHT" prefHeight="43.0" prefWidth="380.0">
+                    <VBox.margin>
+                        <Insets bottom="100.0" />
+                    </VBox.margin>
+                    <ImageView fx:id="backButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#animateVBoxToRight" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+                        <image>
+                            <Image url="@../Images/Back Icon.png" />
+                        </image>
+                        <HBox.margin>
+                            <Insets />
+                        </HBox.margin>
+                    </ImageView>
+                    <Region prefHeight="43.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                    <VBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="133.0">
+                        <HBox.margin>
+                            <Insets left="10.0" />
+                        </HBox.margin>
+                        <Label styleClass="pup-sanjuan-label" text="PUP">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="pup-sanjuan-label" text="San Juan Campus">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </VBox>
+                    <ImageView fitHeight="51.0" fitWidth="41.0" layoutX="328.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../Images/PUP Logo.png" />
+                        </image>
+                    </ImageView>
+                </HBox>
+                <VBox prefHeight="562.0" prefWidth="359.0">
+                    <children>
                         <Label styleClass="big-text" text="Register">
                             <font>
                                 <Font name="Poppins Bold" size="24.0" />
@@ -154,108 +173,109 @@
                             </VBox.margin>
                         </Label>
                         <Label text="Enter your Student ID" />
-                        <TextField fx:id="firstname" prefHeight="30.0" prefWidth="218.0" promptText="First Name">
+                        <TextField fx:id="firstname" prefHeight="30.0" prefWidth="218.0" promptText="First Name" styleClass="fields">
                             <padding>
                                 <Insets left="15.0" />
                             </padding>
-                     <VBox.margin>
-                        <Insets bottom="10.0" top="40.0" />
-                     </VBox.margin>
+                            <VBox.margin>
+                                <Insets bottom="10.0" top="40.0" />
+                            </VBox.margin>
                         </TextField>
-                  <TextField fx:id="middlename" prefHeight="30.0" prefWidth="218.0" promptText="Middle Name">
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <TextField fx:id="lastname" prefHeight="30.0" prefWidth="218.0" promptText="Last Name">
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <TextField fx:id="email" layoutX="40.0" layoutY="180.0" prefHeight="30.0" prefWidth="218.0" promptText="Email Address">
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <PasswordField fx:id="password" layoutX="40.0" layoutY="220.0" prefHeight="30.0" prefWidth="218.0" promptText="Password">
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </PasswordField>
-                  <PasswordField fx:id="retype" layoutX="40.0" layoutY="261.0" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password">
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                  </PasswordField>
-                  <Label styleClass="birthday" text="Birthday">
-                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" top="10.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <HBox>
-                     <VBox.margin>
-                        <Insets bottom="20.0" />
-                     </VBox.margin>
-                     <children>
-                         <ComboBox fx:id="monthComboBox" prefHeight="26.0" prefWidth="119.0" promptText="Months">
-                             <items>
-                                 <FXCollections fx:factory="observableArrayList">
-                                     <String fx:value="January" />
-                                     <String fx:value="February" />
-                                     <String fx:value="March" />
-                                     <String fx:value="April" />
-                                     <String fx:value="May" />
-                                     <String fx:value="June" />
-                                     <String fx:value="July" />
-                                     <String fx:value="August" />
-                                     <String fx:value="September" />
-                                     <String fx:value="October" />
-                                     <String fx:value="November" />
-                                     <String fx:value="December" />
-                                 </FXCollections>
-                             </items>
-                         </ComboBox>
-                         <ComboBox fx:id="dayComboBox" prefHeight="30.0" prefWidth="86.0" promptText="Date" />
-                         <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="111.0" promptText="Year" />
-                     </children>
-                  </HBox>
-                       <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="404.0" styleClass="login-button" text="Confirm" />
-               </children>
-               <padding>
-                  <Insets left="30.0" right="30.0" />
-               </padding>
-            </VBox>
+                        <TextField fx:id="middlename" prefHeight="30.0" prefWidth="218.0" promptText="Middle Name" styleClass="fields">
+                            <padding>
+                                <Insets left="15.0" />
+                            </padding>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <TextField fx:id="lastname" prefHeight="30.0" prefWidth="218.0" promptText="Last Name" styleClass="fields">
+                            <padding>
+                                <Insets left="15.0" />
+                            </padding>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <TextField fx:id="email" prefHeight="30.0" prefWidth="218.0" promptText="Email Address" styleClass="fields">
+                            <padding>
+                                <Insets left="15.0" />
+                            </padding>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <PasswordField fx:id="password" prefHeight="30.0" prefWidth="218.0" promptText="Password" styleClass="fields">
+                            <padding>
+                                <Insets left="15.0" />
+                            </padding>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </PasswordField>
+                        <PasswordField fx:id="retype" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password" styleClass="fields">
+                            <padding>
+                                <Insets left="15.0" />
+                            </padding>
+                        </PasswordField>
+                        <Label styleClass="font" text="Birthday">
+                            <VBox.margin>
+                                <Insets bottom="10.0" left="10.0" top="10.0" />
+                            </VBox.margin>
+                        </Label>
+                        <HBox prefHeight="30.0">
+                            <VBox.margin>
+                                <Insets bottom="20.0" />
+                            </VBox.margin>
+                            <children>
+                                <ComboBox fx:id="monthComboBox" prefHeight="26.0" prefWidth="105.0" promptText="Months" styleClass="birthday-field">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="January" />
+                                            <String fx:value="February" />
+                                            <String fx:value="March" />
+                                            <String fx:value="April" />
+                                            <String fx:value="May" />
+                                            <String fx:value="June" />
+                                            <String fx:value="July" />
+                                            <String fx:value="August" />
+                                            <String fx:value="September" />
+                                            <String fx:value="October" />
+                                            <String fx:value="November" />
+                                            <String fx:value="December" />
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                        <Region prefHeight="110.0" prefWidth="30.0" />
+                                <ComboBox fx:id="dayComboBox" prefHeight="30.0" prefWidth="86.0" promptText="Date" styleClass="birthday-field" />
+                        <Region prefHeight="110.0" prefWidth="30.0" />
+                                <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="111.0" promptText="Year" styleClass="birthday-field" />
+                            </children>
+                        </HBox>
+                        <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="404.0" styleClass="login-button" text="Confirm" />
+                    </children>
+                    <padding>
+                        <Insets left="30.0" right="30.0" />
+                    </padding>
+                </VBox>
                 <padding>
                     <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
                 </padding>
             </VBox>
         </right>
     </BorderPane>
-   <BorderPane mouseTransparent="true">
-      <right>
-           <VBox fx:id="centerVBox" alignment="TOP_RIGHT" prefHeight="720.0" prefWidth="860.0" BorderPane.alignment="CENTER">
-               <clip>
-                   <Rectangle arcHeight="20.0" arcWidth="20.0" height="720.0" width="860.0" />
-               </clip>
-               <ImageView fitHeight="720" fitWidth="860.0">
-                   <Image url="@../Images/school.png" />
-               </ImageView>
-           </VBox>
-      </right>
-   </BorderPane>
+    <BorderPane disable="true" mouseTransparent="true">
+        <right>
+            <VBox fx:id="centerVBox" alignment="TOP_RIGHT" prefHeight="720.0" prefWidth="860.0" BorderPane.alignment="CENTER">
+                <clip>
+                    <Rectangle arcHeight="20.0" arcWidth="20.0" height="720.0" width="860.0" />
+                </clip>
+                <ImageView fitHeight="720" fitWidth="860.0">
+                    <image>
+                        <Image url="@../Images/school.png" />
+                    </image>
+                </ImageView>
+            </VBox>
+        </right>
+    </BorderPane>
 </StackPane>

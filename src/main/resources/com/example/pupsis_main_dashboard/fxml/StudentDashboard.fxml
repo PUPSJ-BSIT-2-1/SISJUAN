@@ -10,11 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.shape.MoveTo?>
-<?import javafx.scene.shape.Path?>
-<?import javafx.scene.shape.ClosePath?>
-<?import javafx.scene.shape.ArcTo?>
-<?import javafx.scene.shape.LineTo?>
+<!--suppress JavaFxDefaultTag -->
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="main-container" stylesheets="@../css/StudentDashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentDashboardController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="background">
@@ -27,7 +23,7 @@
                         <Region prefHeight="70.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                         <ImageView fitHeight="30.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../Images/collapse%20sidebar.png" />
+                              <Image url="@../Images/collapse sidebar.png" />
                            </image>
                         </ImageView>
                      </children>
