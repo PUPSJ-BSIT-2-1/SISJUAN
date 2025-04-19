@@ -4,6 +4,7 @@ import com.example.auth.AuthenticationService;
 import com.example.databaseOperations.DBConnection;
 import com.example.auth.PasswordHandler;
 import com.example.utility.RememberMeHandler;
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,9 +19,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Month;
 import java.time.Year;
+import java.time.YearMonth;
 
-import static com.example.utility.Utils.showAlert;
+import static com.example.utility.Utils.*;
+import static com.example.utility.ValidationUtils.*;
 
 @SuppressWarnings("ALL")
 public class StudentLoginController {
@@ -45,6 +49,11 @@ public class StudentLoginController {
     public ToggleButton rememberMeCheckBox;
 
     private final StringBuilder typedYear = new StringBuilder();
+    private final StringBuilder typedDay = new StringBuilder();
+    private final StringBuilder typedMonth = new StringBuilder();
+    private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
+
+
 
     @FXML
     private void initialize() {
@@ -73,6 +82,9 @@ public class StudentLoginController {
         });
         populateYears();
         yearComboBox.addEventFilter(KeyEvent.KEY_TYPED, this::handleYearTyping);
+        monthComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleMonthTyping);
+        dayComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleDayTyping);
+
         confirmReg.setOnAction(event -> handleConfirmRegistration());
     }
 
@@ -81,7 +93,6 @@ public class StudentLoginController {
         TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), centerVBox);
         transition.setToX(0);
         transition.play();
-        System.out.println("Clicked!!");
     }
 
     @FXML
@@ -117,18 +128,165 @@ public class StudentLoginController {
         errorLabel.setText("");
     }
 
-    private void populateDays(int numberOfDays) {
-        ObservableList<Integer> days = FXCollections.observableArrayList();
-        for (int i = 1; i <= numberOfDays; i++) {
-            days.add(i);
-        }
-        dayComboBox.setItems(days);
-        dayComboBox.getSelectionModel().clearSelection();
-    }
-
     @FXML
     private void closeApplication() {
         Platform.exit();
+    }
+
+    @FXML
+    private void handleMonthTyping(KeyEvent event) {
+        String key = event.getCharacter(); // Get the key typed
+        if (!key.matches("[a-zA-Z]")) {
+            return; // Ignore non-alphabetic input
+        }
+
+        // Add the character to the typedMonth buffer
+        typedMonth.append(key.toLowerCase()); // Use lowercase for case-insensitive matching
+        String currentInput = typedMonth.toString();
+
+        // Get the list of months from the ComboBox
+        ObservableList<String> months = monthComboBox.getItems();
+
+        // Find the first month that starts with the user's input
+        boolean matchFound = false;
+        for (int i = 0; i < months.size(); i++) {
+            String month = months.get(i).toLowerCase();
+            if (month.startsWith(currentInput)) {
+                // Highlight the best match
+                monthComboBox.getSelectionModel().select(i);
+                matchFound = true;
+                break;
+            }
+        }
+
+        // If no match is found, clear the input buffer immediately
+        if (!matchFound) {
+            typedMonth.setLength(0); // Clear the buffer
+            inputClearDelay.stop(); // Stop the delay since the input was invalid
+            return;
+        }
+
+        // Reset the buffer if the user has fully typed a valid month name
+        if (months.stream().anyMatch(m -> m.equalsIgnoreCase(currentInput))) {
+            typedMonth.setLength(0); // Reset the buffer as the selection is complete
+            inputClearDelay.stop(); // Stop the delay since valid input is complete
+        }
+
+        // Reset the buffer after 700ms of inactivity
+        inputClearDelay.setOnFinished(e -> typedMonth.setLength(0)); // Clear the buffer
+        inputClearDelay.playFromStart(); // Restart the delay timer on each key press
+    }
+
+    @FXML
+    private void handleYearTyping(KeyEvent event) {
+        String key = event.getCharacter(); // Get the key typed
+        if (!key.matches("[0-9]")) {
+            return; // Ignore non-numeric input
+        }
+
+        // Add the character to the typedYear buffer
+        typedYear.append(key);
+        String currentInput = typedYear.toString();
+
+        // Get the list of years from the ComboBox
+        ObservableList<Integer> years = yearComboBox.getItems();
+
+        // Find the first year that starts with the user's input
+        boolean matchFound = false;
+        for (int i = 0; i < years.size(); i++) {
+            String year = String.valueOf(years.get(i));
+            if (year.startsWith(currentInput)) {
+                // Highlight the best match
+                yearComboBox.getSelectionModel().select(i);
+                matchFound = true;
+                break;
+            }
+        }
+
+        // If no match is found, clear the input buffer immediately
+        if (!matchFound) {
+            typedYear.setLength(0); // Clear the buffer
+            inputClearDelay.stop(); // Stop the delay since the input was invalid
+            return;
+        }
+
+        // Reset the buffer if the user fully types a valid year
+        if (years.stream().anyMatch(y -> String.valueOf(y).equals(currentInput))) {
+            typedYear.setLength(0); // Reset the buffer as the selection is complete
+            inputClearDelay.stop(); // Stop the delay since valid input is complete
+        }
+
+        // Reset the buffer after 700ms of inactivity
+        inputClearDelay.setOnFinished(e -> typedYear.setLength(0)); // Clear the buffer
+        inputClearDelay.playFromStart(); // Restart the delay timer on each key press
+    }
+
+    @FXML
+    private void handleDayTyping(KeyEvent event) {
+        String key = event.getCharacter(); // Capture the key typed
+        if (!key.matches("\\d")) {
+            return; // Ignore non-numeric input
+        }
+
+        // Add the numeric character to the typedDay buffer
+        typedDay.append(key);
+        String currentInput = typedDay.toString();
+
+        int day;
+        try {
+            day = Integer.parseInt(currentInput); // Parse as an integer
+        } catch (NumberFormatException e) {
+            typedDay.setLength(0); // Clear the buffer if parsing fails
+            return;
+        }
+
+        // Find the maximum possible days in the currently selected month and year
+        String selectedMonth = monthComboBox.getSelectionModel().getSelectedItem();
+        Integer selectedYear = yearComboBox.getSelectionModel().getSelectedItem();
+        int maxDays = selectedMonth != null && selectedYear != null
+                ? getDaysInMonth(selectedMonth, selectedYear)
+                : 31; // Default to 31 if month/year are not selected
+
+        // Validate the day range (1–maxDays)
+        if (day < 1 || day > maxDays) {
+            typedDay.setLength(0); // Simply clear the buffer for invalid input
+            inputClearDelay.stop(); // Stop the delay since the input was invalid
+            return;
+        }
+
+        // Highlight (select) the appropriate day
+        dayComboBox.getSelectionModel().select(day - 1); // 0-based index for ComboBox
+
+        // Reset the buffer and stop delay if typing is complete (e.g., valid full day is typed)
+        if (day == maxDays || currentInput.length() >= 2) {
+            typedDay.setLength(0); // Clear the buffer
+            inputClearDelay.stop(); // Stop the delay
+        }
+
+        // Reset the buffer after 700ms of inactivity
+        inputClearDelay.setOnFinished(e -> typedDay.setLength(0)); // Clear the buffer
+        inputClearDelay.playFromStart(); // Restart the delay timer on each key press
+    }
+
+
+
+    private String getUserFirstName(String input, boolean isEmail) {
+        String query = isEmail ? "SELECT firstname FROM students WHERE email = ?" : "SELECT firstname FROM students WHERE student_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, input);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("firstname");
+            }
+        } catch (SQLException e) {
+            showAlert("Database Error", e.getMessage());
+            e.printStackTrace();
+        }
+        return "User";
     }
 
     private void populateYears() {
@@ -144,28 +302,13 @@ public class StudentLoginController {
         yearComboBox.setItems(years);
     }
 
-    private void handleYearTyping(KeyEvent event) {
-        typedYear.append(event.getCharacter());
-
-        try {
-            int typedValue = Integer.parseInt(typedYear.toString());
-            yearComboBox.getItems().stream()
-                    .filter(year -> year == typedValue)
-                    .findFirst()
-                    .ifPresentOrElse(
-                            year -> yearComboBox.getSelectionModel().select(year),
-                            () -> yearComboBox.getSelectionModel().clearSelection());
-        } catch (NumberFormatException e) {
-            typedYear.setLength(0);
+    private void populateDays(int numberOfDays) {
+        ObservableList<Integer> days = FXCollections.observableArrayList();
+        for (int i = 1; i <= numberOfDays; i++) {
+            days.add(i);
         }
-
-        event.consume();
-
-        yearComboBox.getEditor().focusedProperty().addListener((obs, lostFocus, gainedFocus) -> {
-            if (!gainedFocus) {
-                typedYear.setLength(0);
-            }
-        });
+        dayComboBox.setItems(days);
+        dayComboBox.getSelectionModel().clearSelection();
     }
 
     private void animateVBoxToLeft() {
@@ -243,6 +386,11 @@ public class StudentLoginController {
         }
     }
 
+    private int getDaysInMonth(String month, int year) {
+        Month m = Month.valueOf(month.toUpperCase()); // Convert to Month enum
+        YearMonth yearMonth = YearMonth.of(year, m);
+        return yearMonth.lengthOfMonth(); // Returns the number of days in the month
+    }
     private int getDaysInMonth(String month) {
         return switch (month) {
             case "April", "June", "September", "November" -> 30;
@@ -267,41 +415,5 @@ public class StudentLoginController {
             case "December" -> 12;
             default -> 0;
         };
-    }
-
-    private boolean containsNumbers(String input) {
-        return input != null && input.matches(".*\\d.*");
-    }
-
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-        return !email.matches(emailRegex);
-    }
-
-    private boolean isValidStudentId(String studentId) {
-        return studentId.matches("\\d{8}");
-    }
-
-    private boolean isLeapYear(int year) {
-        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-    }
-
-    private String getUserFirstName(String input, boolean isEmail) {
-        String query = isEmail ? "SELECT firstname FROM students WHERE email = ?" : "SELECT firstname FROM students WHERE student_id = ?";
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setString(1, input);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return resultSet.getString("firstname");
-            }
-        } catch (SQLException e) {
-            showAlert("Database Error", e.getMessage());
-            e.printStackTrace();
-        }
-        return "User";
     }
 }

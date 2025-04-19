@@ -21,8 +21,8 @@
 
 <!--suppress ALL -->
 
-<StackPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
-    <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="font" stylesheets="@../css/StudentLoginPage.css">
+<StackPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
+    <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css">
         <left>
             <VBox prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER">
                 <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="358.0">
@@ -108,12 +108,12 @@
                      </Label>
                   </children>
                </HBox>
-                    <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="26.0" prefWidth="408.0" styleClass="login-button" text="Login">
+                    <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="26.0" prefWidth="408.0" styleClass="buttons" text="Login">
                         <VBox.margin>
                             <Insets bottom="10.0" />
                         </VBox.margin>
                     </Button>
-                    <Button fx:id="registerButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="422.0" styleClass="login-button" text="Register" />
+                    <Button fx:id="registerButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="422.0" styleClass="buttons" text="Register" />
                     <VBox.margin>
                         <Insets />
                     </VBox.margin>
@@ -252,7 +252,7 @@
                                 <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="111.0" promptText="Year" styleClass="birthday-field" />
                             </children>
                         </HBox>
-                        <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="404.0" styleClass="login-button" text="Confirm" />
+                        <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="404.0" styleClass="buttons" text="Confirm" />
                     </children>
                     <padding>
                         <Insets left="30.0" right="30.0" />
@@ -263,6 +263,10 @@
                 </padding>
             </VBox>
         </right>
+      <styleClass>
+         <String fx:value="font" />
+         <String fx:value="border-pane" />
+      </styleClass>
     </BorderPane>
     <BorderPane disable="true" mouseTransparent="true">
         <right>

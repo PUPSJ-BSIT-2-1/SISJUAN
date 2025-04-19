@@ -9,11 +9,14 @@
     -fx-pref-height: 30;
     -fx-background-color: white;
 }
-.login-button{
+.buttons{
     -fx-background-color: #CC1C17;
     -fx-text-fill: white;
     -fx-background-radius: 8;
     -fx-pref-height: 30;
+}
+.buttons:hover{
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
 }
 .font{
     -fx-font-family: "Poppins";
@@ -33,5 +36,12 @@
 }
 .error-message{
     -fx-text-fill: red;
+}
+.root{
+    -fx-background-radius: 20;
+}
+.border-pane{
+    -fx-background-color: #e6e6e6;
+    -fx-background-radius: 20;
 }
 
