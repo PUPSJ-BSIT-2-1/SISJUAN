@@ -3,65 +3,65 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.auth.AuthenticationService;
 import com.example.databaseOperations.DBConnection;
 import com.example.auth.PasswordHandler;
-import com.example.utility.Utils;
+import com.example.utility.RememberMeHandler;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Year;
-import java.io.IOException;
+
 import static com.example.utility.Utils.showAlert;
 
+@SuppressWarnings("ALL")
 public class StudentLoginController {
-    @FXML
-    private Button registerButton;
-    @FXML
-    private Button confirmReg;
-    @FXML
-    private TextField firstname;
-    @FXML
-    private TextField middlename;
-    @FXML
-    private TextField lastname;
-    @FXML
-    private TextField email;
-    @FXML
-    private PasswordField retype;
-    @FXML
-    private VBox centerVBox;
-    @FXML
-    private ComboBox<String> monthComboBox;
-    @FXML
-    private ComboBox<Integer> dayComboBox;
-    @FXML
-    private ComboBox<Integer> yearComboBox;
-    @FXML
-    private TextField studentIdField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private PasswordField password;
-    @FXML
-    private Label errorLabel;
+    public ImageView closeButton;
+    public Button loginButton;
+    public ImageView backButton;
+    public Button registerButton;
+    public Button confirmReg;
+    public TextField firstname;
+    public TextField middlename;
+    public TextField lastname;
+    public TextField email;
+    public PasswordField retype;
+    public VBox centerVBox;
+    public ComboBox<String> monthComboBox;
+    public ComboBox<Integer> dayComboBox;
+    public ComboBox<Integer> yearComboBox;
+    public TextField studentIdField;
+    public PasswordField passwordField;
+    public PasswordField password;
+    public Label errorLabel;
+    public ToggleButton rememberMeCheckBox;
 
-    private StringBuilder typedYear = new StringBuilder();
+    private final StringBuilder typedYear = new StringBuilder();
 
     @FXML
     private void initialize() {
-        Platform.runLater(() -> {
-            errorLabel.requestFocus();
-        });
+
+        RememberMeHandler rememberMeHandler = new RememberMeHandler();
+        String[] credentials = rememberMeHandler.loadCredentials();
+
+        if (credentials != null) {
+            studentIdField.setText(credentials[0]); // Pre-fill Student ID
+            passwordField.setText(credentials[1]); // Pre-fill Password
+            rememberMeCheckBox.setSelected(true);  // Check the "Remember Me" box
+        }
+
+        rememberMeCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {});
+
+
+        Platform.runLater(() -> errorLabel.requestFocus());
 
         registerButton.setOnAction(event -> animateVBoxToLeft());
         populateDays(31);
@@ -72,7 +72,7 @@ public class StudentLoginController {
             }
         });
         populateYears();
-        yearComboBox.addEventFilter(KeyEvent.KEY_TYPED, event -> handleYearTyping(event));
+        yearComboBox.addEventFilter(KeyEvent.KEY_TYPED, this::handleYearTyping);
         confirmReg.setOnAction(event -> handleConfirmRegistration());
     }
 
@@ -86,47 +86,34 @@ public class StudentLoginController {
 
     @FXML
     private void handleLogin() {
-        String input = studentIdField.getText().trim();
-        String password = passwordField.getText().trim();
+        String studentId = studentIdField.getText();
+        String password = passwordField.getText();
+        boolean rememberMe = rememberMeCheckBox.isSelected();
 
-        if (input.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Please fill in both fields!");
-            return;
-        }
-
-        boolean isEmail = input.contains("@");
-
-        if (isEmail && !isValidEmail(input)) {
-            errorLabel.setText("Invalid Email format!");
-            return;
-        }
-
-        if (!isEmail && !isValidStudentId(input)) {
-            errorLabel.setText("Invalid Student ID!");
-            return;
-        }
-
-        if (!AuthenticationService.authenticate(input, password)) {
-            errorLabel.setText("Incorrect Password!");
-        } else {
-            String userType = isEmail ? "Email" : "Student ID";
-            String firstName = getUserFirstName(input, isEmail);
-            showAlert("Login Successful", "Welcome, " + firstName + "! (Logged in using " + userType + ")");
-
-            Utils utility = new Utils();
-
-            Stage currentStage = (Stage) studentIdField.getScene().getWindow();
+        if (!studentId.isEmpty() && !password.isEmpty()) {
             try {
-                utility.loadScene(currentStage, "fxml/StudentDashboard.fxml");
-            } catch (IOException e) {
+                boolean isAuthenticated = AuthenticationService.authenticate(studentId, password);
+
+                if (isAuthenticated) {
+                    // Save credentials if "Remember Me" is checked
+                    RememberMeHandler rememberMeHandler = new RememberMeHandler();
+                    rememberMeHandler.saveCredentials(studentId, password, rememberMe);
+
+                    showAlert("Login Successful", "Welcome!", Alert.AlertType.INFORMATION);
+                } else {
+                    showAlert("Login Failed", "Invalid credentials", Alert.AlertType.ERROR);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
-                errorLabel.setText("Failed to load the next scene!");
+                showAlert("Error", "An error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
             }
+        } else {
+            showAlert("Input Required", "Please enter your Student ID and Password.", Alert.AlertType.WARNING);
         }
     }
 
     @FXML
-    private void handleKeyPress(KeyEvent event) {
+    private void handleKeyPress(KeyEvent ignoredEvent) {
         errorLabel.setText("");
     }
 
@@ -166,12 +153,8 @@ public class StudentLoginController {
                     .filter(year -> year == typedValue)
                     .findFirst()
                     .ifPresentOrElse(
-                            year -> {
-                                yearComboBox.getSelectionModel().select(year);
-                            },
-                            () -> {
-                                yearComboBox.getSelectionModel().clearSelection();
-                            });
+                            year -> yearComboBox.getSelectionModel().select(year),
+                            () -> yearComboBox.getSelectionModel().clearSelection());
         } catch (NumberFormatException e) {
             typedYear.setLength(0);
         }
@@ -213,7 +196,7 @@ public class StudentLoginController {
             return;
         }
 
-        if (!isValidEmail(email)) {
+        if (isValidEmail(email)) {
             showAlert("Input Error", "Please enter a valid email address!");
             return;
         }
@@ -262,7 +245,6 @@ public class StudentLoginController {
 
     private int getDaysInMonth(String month) {
         return switch (month) {
-            case "January", "March", "May", "July", "August", "October", "December" -> 31;
             case "April", "June", "September", "November" -> 30;
             case "February" -> isLeapYear(java.time.Year.now().getValue()) ? 29 : 28;
             default -> 31;
@@ -292,8 +274,8 @@ public class StudentLoginController {
     }
 
     private boolean isValidEmail(String email) {
-        String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-        return email.matches(emailRegex);
+        String emailRegex = "^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        return !email.matches(emailRegex);
     }
 
     private boolean isValidStudentId(String studentId) {

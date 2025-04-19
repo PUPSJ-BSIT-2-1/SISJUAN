@@ -12,6 +12,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+@SuppressWarnings("ALL")
 public class Utils {
 
     private double xOffset = 0;
@@ -74,6 +75,13 @@ public class Utils {
 
     public static void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    public static void showAlert(String title, String content, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setContentText(content);
         alert.showAndWait();
