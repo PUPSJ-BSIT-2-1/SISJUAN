@@ -245,11 +245,20 @@
                                             <String fx:value="December" />
                                         </FXCollections>
                                     </items>
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
                                 </ComboBox>
                         <Region prefHeight="110.0" prefWidth="30.0" />
-                                <ComboBox fx:id="dayComboBox" prefHeight="30.0" prefWidth="86.0" promptText="Date" styleClass="birthday-field" />
+                                <ComboBox fx:id="dayComboBox" prefHeight="30.0" prefWidth="86.0" promptText="Date" styleClass="birthday-field">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding></ComboBox>
                         <Region prefHeight="110.0" prefWidth="30.0" />
-                                <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="111.0" promptText="Year" styleClass="birthday-field" />
+                                <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="111.0" promptText="Year" styleClass="birthday-field">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding></ComboBox>
                             </children>
                         </HBox>
                         <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="404.0" styleClass="buttons" text="Confirm" />
