@@ -13,7 +13,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 @SuppressWarnings("ALL")
-public class Utils {
+public class StageAndSceneUtils {
 
     private double xOffset = 0;
     private double yOffset = 0;

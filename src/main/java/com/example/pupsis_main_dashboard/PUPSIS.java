@@ -1,6 +1,6 @@
 package com.example.pupsis_main_dashboard;
 
-import com.example.utility.Utils;
+import com.example.utility.StageAndSceneUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -11,7 +11,7 @@ public class PUPSIS extends Application {
 
     @Override
     public void start(Stage stage) {
-        Utils utility = new Utils();
+        StageAndSceneUtils utility = new StageAndSceneUtils();
 
         try {
             Stage initializedStage = utility.loadScene(
