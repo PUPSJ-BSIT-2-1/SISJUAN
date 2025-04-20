@@ -132,7 +132,7 @@
                     <VBox.margin>
                         <Insets bottom="100.0" />
                     </VBox.margin>
-                    <ImageView fx:id="backButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#animateVBoxToRight" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+                    <ImageView fx:id="backButton" fitHeight="51.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
                         <image>
                             <Image url="@../Images/Back Icon.png" />
                         </image>

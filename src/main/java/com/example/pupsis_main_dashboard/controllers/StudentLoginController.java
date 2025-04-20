@@ -19,12 +19,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Month;
 import java.time.Year;
-import java.time.YearMonth;
 
-import static com.example.utility.Utils.*;
+import static com.example.utility.StageAndSceneUtils.*;
 import static com.example.utility.ValidationUtils.*;
+import static com.example.utility.DateUtils.*;
 
 @SuppressWarnings("ALL")
 public class StudentLoginController {
@@ -53,11 +52,7 @@ public class StudentLoginController {
     private final StringBuilder typedMonth = new StringBuilder();
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
 
-
-
-    @FXML
-    private void initialize() {
-
+    private void setupRememberMeHandler() {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
         String[] credentials = rememberMeHandler.loadCredentials();
 
@@ -67,32 +62,71 @@ public class StudentLoginController {
             rememberMeCheckBox.setSelected(true);  // Check the "Remember Me" box
         }
 
-        rememberMeCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {});
+        rememberMeCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            // Add functionality if needed
+        });
+    }
 
+    private void setupYearsAndDays() {
+        populateDays(31); // Default to 31 days initially
+        populateYears();  // Populate the year ComboBox
+    }
 
-        Platform.runLater(() -> errorLabel.requestFocus());
+    private void setupConfirmRegistration() {
+        confirmReg.setOnAction(event -> handleConfirmRegistration());
+    }
 
-        registerButton.setOnAction(event -> animateVBoxToLeft());
-        populateDays(31);
+    private void setupComboBoxHandlers() {
         monthComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                int daysInMonth = getDaysInMonth(newValue);
+                // Get the currently selected year from the ComboBox
+                Integer selectedYear = yearComboBox.getSelectionModel().getSelectedItem();
+
+                // Determine the number of days in the selected month
+                int daysInMonth = selectedYear != null
+                        ? getDaysInMonth(newValue, selectedYear)
+                        : getDaysInMonth(newValue, 2024); // Default to leap year
+
+                // Update the dayComboBox
                 populateDays(daysInMonth);
             }
         });
-        populateYears();
+
         yearComboBox.addEventFilter(KeyEvent.KEY_TYPED, this::handleYearTyping);
         monthComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleMonthTyping);
         dayComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleDayTyping);
 
-        confirmReg.setOnAction(event -> handleConfirmRegistration());
+        monthComboBox.setOnAction(event -> handleMonthOrYearChange());
+        yearComboBox.setOnAction(event -> handleMonthOrYearChange());
+    }
+
+    private void setupRegistrationNavigation() {
+        registerButton.setOnAction(event -> animateVBox(-420));
+        backButton.setOnMouseClicked(event -> animateVBox(420));
+    }
+
+    private void requestInitialFocus() {
+        Platform.runLater(() -> errorLabel.requestFocus());
     }
 
     @FXML
-    private void animateVBoxToRight() {
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), centerVBox);
-        transition.setToX(0);
-        transition.play();
+    private void initialize() {
+        setupRememberMeHandler();
+        setupRegistrationNavigation();
+        setupComboBoxHandlers();
+        setupYearsAndDays();
+        setupConfirmRegistration();
+        requestInitialFocus();
+    }
+
+    @FXML
+    private void handleMonthOrYearChange() {
+        String selectedMonth = monthComboBox.getValue();
+        Integer selectedYear = yearComboBox.getValue();
+        if (selectedMonth != null && selectedYear != null) {
+            int daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
+            populateDays(daysInMonth);
+        }
     }
 
     @FXML
@@ -126,11 +160,6 @@ public class StudentLoginController {
     @FXML
     private void handleKeyPress(KeyEvent ignoredEvent) {
         errorLabel.setText("");
-    }
-
-    @FXML
-    private void closeApplication() {
-        Platform.exit();
     }
 
     @FXML
@@ -240,16 +269,25 @@ public class StudentLoginController {
             return;
         }
 
-        // Find the maximum possible days in the currently selected month and year
+        // Get the currently selected month and year
         String selectedMonth = monthComboBox.getSelectionModel().getSelectedItem();
         Integer selectedYear = yearComboBox.getSelectionModel().getSelectedItem();
-        int maxDays = selectedMonth != null && selectedYear != null
-                ? getDaysInMonth(selectedMonth, selectedYear)
-                : 31; // Default to 31 if month/year are not selected
+
+        // Determine the maximum possible days for the selected month and year
+        int maxDays;
+        if (selectedMonth != null && selectedMonth.equalsIgnoreCase("February")) {
+            // February's days depend on the selected year; default to 29 if no year is selected
+            maxDays = selectedYear != null ? getDaysInMonth("February", selectedYear) : 29;
+        } else {
+            // Other months (or no month selected)—default to 31 if month is null
+            maxDays = selectedMonth != null && selectedYear != null
+                    ? getDaysInMonth(selectedMonth, selectedYear)
+                    : 31;
+        }
 
         // Validate the day range (1–maxDays)
         if (day < 1 || day > maxDays) {
-            typedDay.setLength(0); // Simply clear the buffer for invalid input
+            typedDay.setLength(0); // Clear the buffer for invalid input
             inputClearDelay.stop(); // Stop the delay since the input was invalid
             return;
         }
@@ -266,55 +304,6 @@ public class StudentLoginController {
         // Reset the buffer after 700ms of inactivity
         inputClearDelay.setOnFinished(e -> typedDay.setLength(0)); // Clear the buffer
         inputClearDelay.playFromStart(); // Restart the delay timer on each key press
-    }
-
-
-
-    private String getUserFirstName(String input, boolean isEmail) {
-        String query = isEmail ? "SELECT firstname FROM students WHERE email = ?" : "SELECT firstname FROM students WHERE student_id = ?";
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setString(1, input);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return resultSet.getString("firstname");
-            }
-        } catch (SQLException e) {
-            showAlert("Database Error", e.getMessage());
-            e.printStackTrace();
-        }
-        return "User";
-    }
-
-    private void populateYears() {
-        ObservableList<Integer> years = FXCollections.observableArrayList();
-        int currentYear = Year.now().getValue();
-        int oldestAllowedYear = 1900;
-        int youngestAllowedYear = currentYear - 12;
-
-        for (int year = youngestAllowedYear; year >= oldestAllowedYear; year--) {
-            years.add(year);
-        }
-
-        yearComboBox.setItems(years);
-    }
-
-    private void populateDays(int numberOfDays) {
-        ObservableList<Integer> days = FXCollections.observableArrayList();
-        for (int i = 1; i <= numberOfDays; i++) {
-            days.add(i);
-        }
-        dayComboBox.setItems(days);
-        dayComboBox.getSelectionModel().clearSelection();
-    }
-
-    private void animateVBoxToLeft() {
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), centerVBox);
-        transition.setToX(-420);
-        transition.play();
     }
 
     private void handleConfirmRegistration() {
@@ -386,34 +375,54 @@ public class StudentLoginController {
         }
     }
 
-    private int getDaysInMonth(String month, int year) {
-        Month m = Month.valueOf(month.toUpperCase()); // Convert to Month enum
-        YearMonth yearMonth = YearMonth.of(year, m);
-        return yearMonth.lengthOfMonth(); // Returns the number of days in the month
-    }
-    private int getDaysInMonth(String month) {
-        return switch (month) {
-            case "April", "June", "September", "November" -> 30;
-            case "February" -> isLeapYear(java.time.Year.now().getValue()) ? 29 : 28;
-            default -> 31;
-        };
+    @FXML
+    private void closeApplication() {
+        Platform.exit();
     }
 
-    private int getMonthNumber(String month) {
-        return switch (month) {
-            case "January" -> 1;
-            case "February" -> 2;
-            case "March" -> 3;
-            case "April" -> 4;
-            case "May" -> 5;
-            case "June" -> 6;
-            case "July" -> 7;
-            case "August" -> 8;
-            case "September" -> 9;
-            case "October" -> 10;
-            case "November" -> 11;
-            case "December" -> 12;
-            default -> 0;
-        };
+    private String getUserFirstName(String input, boolean isEmail) {
+        String query = isEmail ? "SELECT firstname FROM students WHERE email = ?" : "SELECT firstname FROM students WHERE student_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, input);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("firstname");
+            }
+        } catch (SQLException e) {
+            showAlert("Database Error", e.getMessage());
+            e.printStackTrace();
+        }
+        return "User";
+    }
+
+    private void populateYears() {
+        ObservableList<Integer> years = FXCollections.observableArrayList();
+        int currentYear = Year.now().getValue();
+        int oldestAllowedYear = 1900;
+        int youngestAllowedYear = currentYear - 12;
+
+        for (int year = youngestAllowedYear; year >= oldestAllowedYear; year--) {
+            years.add(year);
+        }
+
+        yearComboBox.setItems(years);
+    }
+
+    private void populateDays(int daysInMonth) {
+        ObservableList<Integer> days = FXCollections.observableArrayList();
+        for (int i = 1; i <= daysInMonth; i++) {
+            days.add(i);
+        }
+        dayComboBox.setItems(days);
+    }
+
+    private void animateVBox(double translationX) {
+        TranslateTransition animation = new TranslateTransition(Duration.millis(700), centerVBox);
+        animation.setByX(translationX);
+        animation.play();
     }
 }
