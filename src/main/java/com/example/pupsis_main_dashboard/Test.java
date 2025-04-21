@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class PUPSIS extends Application {
+public class Test extends Application {
 
     @Override
     public void start(Stage stage) {

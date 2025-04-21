@@ -1,13 +1,22 @@
-.root{
-    -fx-min-height: 720;
-    -fx-min-width: 1280;
-    -fx-background-radius: 20;
+.fields{
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+    -fx-pref-width: 200;
+    -fx-text-fill: black;
 }
-.login-button{
+.birthday-field{
+    -fx-pref-height: 30;
+    -fx-background-color: white;
+}
+.buttons{
     -fx-background-color: #CC1C17;
     -fx-text-fill: white;
     -fx-background-radius: 8;
     -fx-pref-height: 30;
+}
+.buttons:hover{
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
 }
 .font{
     -fx-font-family: "Poppins";
@@ -16,39 +25,11 @@
     -fx-font-size: 24;
     -fx-font-weight: bold;
 }
-.text-field{
-    -fx-background-radius: 8;
-    -fx-min-height: 30;
-    -fx-border-width: 1;
-    -fx-border-color: #CC1C17;
-    -fx-border-radius: 8;
-    -fx-pref-width: 250;
-}
-.text-field:focused{
-    -fx-effect: none;
-    -fx-background-insets: 0;
-}
+
 .pup-sanjuan-label{
     -fx-font-family: "system-ui";
     -fx-font-size: 15;
     -fx-font-weight: bold;
-}
-.side-image{
-    -fx-background-image: url("../Images/school.png");
-    -fx-background-size: cover;
-    -fx-background-radius: 40 0 0 40;
-    -fx-background-repeat: no-repeat;
-}
-.combo-box{
-    -fx-background-radius: 8;
-    -fx-min-height: 30;
-    -fx-background-color: lightgray;
-    -fx-border-color: gray;
-    -fx-border-radius: 6;
-}
-.birthday{
-    -fx-font-family: "Poppins";
-    -fx-font-size: 16;
 }
 .back-button:hover{
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
@@ -56,3 +37,11 @@
 .error-message{
     -fx-text-fill: red;
 }
+.root{
+    -fx-background-radius: 20;
+}
+.border-pane{
+    -fx-background-color: #e6e6e6;
+    -fx-background-radius: 20;
+}
+

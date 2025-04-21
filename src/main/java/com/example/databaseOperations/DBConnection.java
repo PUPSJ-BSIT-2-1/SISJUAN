@@ -10,6 +10,7 @@ public class DBConnection {
     private static final String USER = "postgres.odyfrnuddvhbedvjfnhw";
     private static final String PASSWORD = "HelloWorld123!";
 
+    @SuppressWarnings("Java9ReflectionClassVisibility")
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
