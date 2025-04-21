@@ -27,12 +27,11 @@
 }
 .big-text{
     -fx-font-size: 24;
-    -fx-font-weight: bold;
 }
 
 .pup-sanjuan-label{
     -fx-font-family: "system-ui";
-    -fx-font-size: 15;
+    -fx-font-size: 24;
     -fx-font-weight: bold;
 }
 .back-button:hover{

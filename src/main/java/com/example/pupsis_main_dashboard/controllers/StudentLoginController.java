@@ -3,14 +3,18 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.auth.AuthenticationService;
 import com.example.databaseOperations.DBConnection;
 import com.example.auth.PasswordHandler;
+import com.example.utility.LoadingAnimation;
 import com.example.utility.RememberMeHandler;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,6 +31,7 @@ import static com.example.utility.DateUtils.*;
 
 @SuppressWarnings("ALL")
 public class StudentLoginController {
+    public VBox leftside;
     public ImageView closeButton;
     public Button loginButton;
     public ImageView backButton;
@@ -135,19 +140,61 @@ public class StudentLoginController {
         String password = passwordField.getText();
         boolean rememberMe = rememberMeCheckBox.isSelected();
 
+        // Check if input is empty
         if (!studentId.isEmpty() && !password.isEmpty()) {
             try {
-                boolean isAuthenticated = AuthenticationService.authenticate(studentId, password);
+                // Create pulsing dots loader
+                var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
+                leftside.setAlignment(Pos.CENTER);
+                leftside.getChildren().add(loader); // Add loader to the pane
+                applyBlurToLeftSide();
 
-                if (isAuthenticated) {
-                    // Save credentials if "Remember Me" is checked
-                    RememberMeHandler rememberMeHandler = new RememberMeHandler();
-                    rememberMeHandler.saveCredentials(studentId, password, rememberMe);
+                // Execute authentication logic in a background thread
+                new Thread(() -> {
+                    try {
+                        // Simulate a delay for database operations
+                        Thread.sleep(2000); // Simulated delay (e.g., for network request)
 
-                    showAlert("Login Successful", "Welcome!", Alert.AlertType.INFORMATION);
-                } else {
-                    showAlert("Login Failed", "Invalid credentials", Alert.AlertType.ERROR);
-                }
+                        // Check if the student ID exists in the database
+                        boolean userExists = AuthenticationService.checkUserExists(studentId);
+
+                        if (!userExists) {
+                            // Inform the user that the credentials are not found
+                            Platform.runLater(() -> {
+                                leftside.getChildren().remove(loader); // Remove loader
+                                showAlert("Login Failed", "User not found", Alert.AlertType.ERROR);
+                            });
+                            return; // Exit the thread, no further processing needed
+                        }
+
+                        // Authenticate the user if the student ID exists
+                        boolean isAuthenticated = AuthenticationService.authenticate(studentId, password);
+
+                        // Use Platform.runLater() to update the UI from the background thread
+                        Platform.runLater(() -> {
+                            leftside.getChildren().remove(loader); // Remove loader
+
+                            if (isAuthenticated) {
+                                // Save credentials if "Remember Me" is checked
+                                RememberMeHandler rememberMeHandler = new RememberMeHandler();
+                                rememberMeHandler.saveCredentials(studentId, password, rememberMe);
+
+                                // Show successful login alert
+                                showAlert("Login Successful", "Welcome!", Alert.AlertType.INFORMATION);
+                            } else {
+                                // Inform the user about invalid credentials
+                                showAlert("Login Failed", "Invalid credentials", Alert.AlertType.ERROR);
+                            }
+                        });
+                    } catch (Exception e) {
+                        // Handle exceptions and update UI from the background thread
+                        Platform.runLater(() -> {
+                            leftside.getChildren().remove(loader); // Remove loader
+                            e.printStackTrace();
+                            showAlert("Error", "An error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
+                        });
+                    }
+                }).start(); // Start the background thread
             } catch (Exception e) {
                 e.printStackTrace();
                 showAlert("Error", "An error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -424,5 +471,28 @@ public class StudentLoginController {
         TranslateTransition animation = new TranslateTransition(Duration.millis(700), centerVBox);
         animation.setByX(translationX);
         animation.play();
+    }
+
+    public void applyBlurToLeftSide() {
+        // Check if a blur effect is already applied
+        if (leftside.getEffect() instanceof GaussianBlur) {
+            // Remove the blur effect
+            leftside.setEffect(null);
+
+            // Optionally, reset the background to its default state
+            leftside.setBackground(Background.EMPTY);
+        } else {
+            // Apply a semi-transparent background
+            leftside.setBackground(new Background(new BackgroundFill(
+                    Color.rgb(255, 255, 255, 0.7), // White color with 70% opacity
+                    new CornerRadii(10),          // Corner radii for rounded edges
+                    null                          // No insets
+            )));
+
+            // Apply a new GaussianBlur effect
+            GaussianBlur blurEffect = new GaussianBlur();
+            blurEffect.setRadius(15); // Adjust radius for intensity
+            leftside.setEffect(blurEffect);
+        }
     }
 }

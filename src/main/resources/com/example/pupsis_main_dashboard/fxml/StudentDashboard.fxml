@@ -1,48 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
 <!--suppress JavaFxDefaultTag -->
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="main-container" stylesheets="@../css/StudentDashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentDashboardController">
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@../css/StudentDashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentDashboardController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="background">
          <left>
-            <VBox prefHeight="720.0" prefWidth="290.0" styleClass="slider" BorderPane.alignment="CENTER">
+            <VBox prefHeight="700.0" prefWidth="342.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER" prefHeight="70.0" prefWidth="230.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="13.0" prefWidth="342.0">
                      <children>
-                        <Pane prefHeight="70.0" prefWidth="70.0" styleClass="sidebar-icon-placeholder" />
-                        <Region prefHeight="70.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                        <ImageView fitHeight="30.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="40.0" fitWidth="40.0" styleClass="profile-picture">
+                           <clip>
+                              <Circle centerX="20" centerY="20" radius="20" />
+                           </clip>
                            <image>
-                              <Image url="@../Images/collapse sidebar.png" />
+                              <Image url="@../Images/download.jpg" />
                            </image>
                         </ImageView>
+                        <VBox>
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                           <children>
+                              <Label graphicTextGap="8.0" styleClass="small-text" text="John Doe">
+                                 <font>
+                                    <Font name="Poppins Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="profile-label" text="Information Technology">
+                                 <VBox.margin>
+                                    <Insets top="-2.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label layoutX="25.0" layoutY="266.0" styleClass="sidebar-labels" text="General" textFill="#8c8e8f">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="5.0" top="50.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="322.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/dashboard-svgrepo-com.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="sidebar-labels" text="Label">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="347.0" prefHeight="0.0" prefWidth="322.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/dashboard-svgrepo-com.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="sidebar-labels" text="Label">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label styleClass="sidebar-labels" text="Management" textFill="#8c8e8f">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="5.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="175.0" prefHeight="0.0" prefWidth="322.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/dashboard-svgrepo-com.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="sidebar-labels" text="Label">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="256.0" prefHeight="0.0" prefWidth="322.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/dashboard-svgrepo-com.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="sidebar-labels" text="Label">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="286.0" prefHeight="0.0" prefWidth="322.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/dashboard-svgrepo-com.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="sidebar-labels" text="Label">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="316.0" prefHeight="0.0" prefWidth="322.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/dashboard-svgrepo-com.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="sidebar-labels" text="Label">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
                      </children>
                   </HBox>
                </children>
                <padding>
-                  <Insets bottom="30.0" left="30.0" right="30.0" top="20.0" />
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </VBox>
          </left>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
          <center>
-            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-               <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-container" VBox.vgrow="ALWAYS" />
-               </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
-            </VBox>
+            <TilePane prefHeight="700.0" prefWidth="877.0" styleClass="main-container" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </children>

@@ -48,6 +48,9 @@
                             <font>
                                 <Font size="14.0" />
                             </font>
+                     <VBox.margin>
+                        <Insets top="-10.0" />
+                     </VBox.margin>
                         </Label>
                     </VBox>
                     <ImageView fx:id="closeButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
@@ -291,4 +294,9 @@
             </VBox>
         </right>
     </BorderPane>
+   <BorderPane mouseTransparent="true" prefHeight="200.0" prefWidth="200.0">
+      <left>
+         <VBox fx:id="leftside" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
+      </left>
+   </BorderPane>
 </StackPane>
