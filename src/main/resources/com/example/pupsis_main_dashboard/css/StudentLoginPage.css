@@ -10,9 +10,13 @@
     -fx-background-radius: 8;
     -fx-pref-height: 30;
 }
-.birthday-field .text{
-    -fx-fill: #b3b3b3;
-}
+
+/*noinspection CssUnusedSymbol*/
+.label {
+     -fx-text-fill: white;
+     -fx-font-size: 40px;
+     -fx-font-weight: bold;
+ }
 .buttons{
     -fx-background-color: #800000;
     -fx-text-fill: white;

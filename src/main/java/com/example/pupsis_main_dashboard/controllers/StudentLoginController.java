@@ -28,7 +28,6 @@ import static com.example.utility.StageAndSceneUtils.*;
 import static com.example.utility.ValidationUtils.*;
 import static com.example.utility.DateUtils.*;
 
-@SuppressWarnings("ALL")
 public class StudentLoginController {
     public VBox leftside;
     public ImageView closeButton;
@@ -155,7 +154,6 @@ public class StudentLoginController {
                                 RememberMeHandler rememberMeHandler = new RememberMeHandler();
                                 rememberMeHandler.saveCredentials(input, password, rememberMe);
 
-                                // Use the existing getUserFirstName method to extract the first name
                                 String firstName = getUserFirstName(input, input.contains("@"));
                                 String welcomeMessage = "Welcome, " + firstName + "!";
 
@@ -308,7 +306,6 @@ public class StudentLoginController {
     }
 
     private void handleConfirmRegistration() {
-        // Retrieve field values
         String passwordInput = this.password.getText().trim();
         String retypePassword = this.retype.getText().trim();
         String firstName = this.firstname.getText().trim();
@@ -319,7 +316,6 @@ public class StudentLoginController {
         Integer day = this.dayComboBox.getValue();
         Integer year = this.yearComboBox.getValue();
 
-        // Display the values of all fields in the console
         System.out.println("First Name: " + firstName);
         System.out.println("Middle Name: " + middleName);
         System.out.println("Last Name: " + lastName);
@@ -330,35 +326,28 @@ public class StudentLoginController {
         System.out.println("Day: " + day);
         System.out.println("Year: " + year);
 
-        // Check if any field is missing
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
                 month == null || day == null || year == null) {
             showAlert("Input Error", "Please fill out all fields!");
             return;
         }
 
-        // Validate that names do not contain numbers
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
             showAlert("Input Error", "Names must not contain numbers!");
             return;
         }
 
-        // Check for a valid email format
         if (!isValidEmail(email)) {
             showAlert("Input Error", "Please enter a valid email address!");
             return;
         }
 
-        // Ensure passwords match
         if (!passwordInput.equals(retypePassword)) {
             showAlert("Password Error", "Passwords do not match!");
             return;
         }
 
-        // Hash the password
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
-
-        // Parse birth date from components
         java.sql.Date dateOfBirth;
         try {
             String formattedDate = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
@@ -369,7 +358,6 @@ public class StudentLoginController {
             return;
         }
 
-        // Insert data into the database
         String query = "INSERT INTO students (password, firstname, middlename, lastname, email, birthday) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBConnection.getConnection();

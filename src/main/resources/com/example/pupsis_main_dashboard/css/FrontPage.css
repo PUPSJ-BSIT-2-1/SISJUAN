@@ -35,3 +35,10 @@
     -fx-font-size: 20px;
 }
 
+/*noinspection CssUnusedSymbol*/
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+}
+

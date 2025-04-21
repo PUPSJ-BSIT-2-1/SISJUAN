@@ -2,10 +2,6 @@
     -fx-background-color: #f4f4f4;
     -fx-background-radius: 30;
 }
-.slider{
-    -fx-background-color: white;
-    -fx-background-radius: 20 0 0 20;
-}
 .main-container{
     -fx-background-radius: 20;
     -fx-background-color: white;
@@ -13,11 +9,6 @@
     -fx-border-color: lightgray;
     -fx-border-radius: 20;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
-}
-
-.sidebar-icon-placeholder{
-    -fx-background-color: #CC1C17;
-    -fx-background-radius: 10;
 }
 .profile-label{
     -fx-text-fill: gray;

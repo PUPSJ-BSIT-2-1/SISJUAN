@@ -9,6 +9,7 @@
 <?import javafx.scene.media.MediaView?>
 
 <!--suppress ALL -->
+
 <AnchorPane styleClass="root" stylesheets="@../css/FrontPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FrontPageController">
 
          <!-- Background Video -->
@@ -32,7 +33,7 @@
                <Image url="@../Images/pupsj-logo.png" />
             </image>
          </ImageView>
-         <Label layoutX="88.0" layoutY="22.0" styleClass="pupsis" text="PUPSIS" />
+         <Label layoutX="84.0" layoutY="11.0" styleClass="pupsis" text="PUPSIS" />
       </children>
    </Pane>
 
