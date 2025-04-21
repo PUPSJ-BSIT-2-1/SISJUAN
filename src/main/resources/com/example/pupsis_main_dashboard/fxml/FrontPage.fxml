@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.shape.Rectangle?>
 
@@ -21,26 +23,34 @@
       <AnchorPane.rightAnchor>0.0</AnchorPane.rightAnchor>
    </MediaView>
 
+
    <!-- Title -->
    <Label fx:id="labelHeader" layoutX="286.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="labelHeader" text="Welcome to PUPSIS Portal" />
-   <!--suppress JavaFxDefaultTag -->
-   <Pane layoutX="220.0" layoutY="46.0" prefHeight="67.0" prefWidth="840.0" styleClass="navigationBar">
+   <HBox alignment="CENTER" layoutX="220.0" layoutY="58.0" prefHeight="68.0" prefWidth="840.0" styleClass="navigationBar">
       <children>
-         <Button fx:id="programsButton" layoutX="360.0" layoutY="18.0" prefHeight="31.0" prefWidth="90.0" styleClass="buttons" text="Programs" />
-
-         <!-- Navigation Buttons -->
-         <Button fx:id="coaButton" alignment="CENTER" layoutX="285.0" layoutY="18.0" prefHeight="31.0" prefWidth="69.0" styleClass="buttons" text="COA" />
-         <Button fx:id="aboutButton" layoutX="460.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="About" />
-         <Button fx:id="othersButton" alignment="CENTER" layoutX="544.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="Others" />
-         <Button fx:id="getStartedButton" layoutX="645.0" layoutY="18.0" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0" styleClass="getStarted" text="Get Started" textAlignment="CENTER" />
-         <!--suppress JavaFxDefaultTag -->
-         <ImageView fitHeight="47.0" fitWidth="175.0" layoutX="29.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+         <ImageView fitHeight="47.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../Images/pupsj-logo.png" />
             </image>
          </ImageView>
-         <Label layoutX="90.0" layoutY="22.0" styleClass="pupLabel" text="PUPSIS" />
+         <Label styleClass="pupsis" text="PUPSIS">
+            <HBox.margin>
+               <Insets left="10.0" />
+            </HBox.margin>
+         </Label>
+         <Region prefHeight="47.0" prefWidth="60.0" HBox.hgrow="ALWAYS" />
+         <Button fx:id="coaButton" alignment="CENTER" prefHeight="31.0" prefWidth="69.0" styleClass="buttons" text="COA" />
+         <Button fx:id="programsButton" prefHeight="31.0" prefWidth="90.0" styleClass="buttons" text="Programs" />
+         <Button fx:id="aboutButton" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="About" />
+         <Button fx:id="othersButton" alignment="CENTER" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="Others" />
+         <Button fx:id="getStartedButton" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0" styleClass="getStarted" text="Get Started" textAlignment="CENTER">
+            <HBox.margin>
+               <Insets left="30.0" />
+            </HBox.margin></Button>
       </children>
-   </Pane>
+      <padding>
+         <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+      </padding>
+   </HBox>
 
 </AnchorPane>

@@ -22,17 +22,20 @@
 
 .buttons:hover {
     -fx-font-size: 14px;
+    -fx-text-fill: #800000;
 }
 .getStarted {
     -fx-background-color: #800000;
     -fx-text-fill: white;
 }
 .getStarted:hover {
-    -fx-background-color: #DAA520;
+    -fx-background-color: #450000;
 }
 .pupsis {
     -fx-font-family: "Times New Roman";
-    -fx-font-size: 20px;
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+
 }
 .labelHeader {
     -fx-text-fill: white;
