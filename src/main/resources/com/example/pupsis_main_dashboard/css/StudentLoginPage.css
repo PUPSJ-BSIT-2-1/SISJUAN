@@ -10,13 +10,6 @@
     -fx-background-radius: 8;
     -fx-pref-height: 30;
 }
-
-/*noinspection CssUnusedSymbol*/
-.label {
-     -fx-text-fill: white;
-     -fx-font-size: 40px;
-     -fx-font-weight: bold;
- }
 .buttons{
     -fx-background-color: #800000;
     -fx-text-fill: white;
@@ -52,4 +45,17 @@
     -fx-background-color: #e6e6e6;
     -fx-background-radius: 20;
 }
+/*.birthday-field .text {*/
+/*    -fx-fill: gray; !* Sets the text color inside the combo box *!*/
+/*}*/
+/*.combo-contents{*/
+/*    -fx-text-fill: black;*/
+/*}*/
+.combo-box .text {
+    -fx-fill: black; /* Change to the desired color for the prompt text */
+}
+
+
+
+
 

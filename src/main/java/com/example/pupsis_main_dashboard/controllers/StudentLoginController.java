@@ -114,6 +114,7 @@ public class StudentLoginController {
         setupYearsAndDays();
         setupConfirmRegistration();
         requestInitialFocus();
+
     }
 
     @FXML
