@@ -15,7 +15,7 @@
 }
 
 .switch-toggle-button:selected {
-    -fx-background-color: #CC1C17;
+    -fx-background-color: #800000;
 }
 
 .switch-toggle-button .thumb {

@@ -31,4 +31,19 @@ public class AuthenticationService {
 
         return isAuthenticated;
     }
+
+    public static boolean checkUserExists(String studentId) {
+        try (Connection connection = DBConnection.getConnection()) {
+            String query = "SELECT 1 FROM students WHERE student_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, studentId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next(); // If a row is found, the user exists
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Assume user does not exist in case of an error
+        }
+    }
+
 }
