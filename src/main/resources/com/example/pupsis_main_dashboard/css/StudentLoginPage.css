@@ -54,6 +54,9 @@
 .combo-box .text {
     -fx-fill: black; /* Change to the desired color for the prompt text */
 }
+.sliding-image {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
+}
 
 
 

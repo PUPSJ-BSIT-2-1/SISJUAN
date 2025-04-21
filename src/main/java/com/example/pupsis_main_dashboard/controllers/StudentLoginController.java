@@ -6,12 +6,15 @@ import com.example.auth.PasswordHandler;
 import com.example.utility.LoadingAnimation;
 import com.example.utility.RememberMeHandler;
 import com.example.utility.StageAndSceneUtils;
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -53,12 +56,16 @@ public class StudentLoginController {
     public PasswordField password;
     public Label errorLabel;
     public ToggleButton rememberMeCheckBox;
+    public BorderPane mainLoginPane;
+    public VBox rightside;
 
     private final StringBuilder typedYear = new StringBuilder();
     private final StringBuilder typedDay = new StringBuilder();
     private final StringBuilder typedMonth = new StringBuilder();
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
     final StageAndSceneUtils utility = new StageAndSceneUtils();
+    private boolean isBlurred = false; // Track the blur state
+    private final GaussianBlur gaussianBlur = new GaussianBlur(0); // Initialize with 0 blur
 
     private void setupRememberMeHandler() {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
@@ -103,8 +110,8 @@ public class StudentLoginController {
     }
 
     private void setupRegistrationNavigation() {
-        registerButton.setOnAction(event -> animateVBox(-420));
-        backButton.setOnMouseClicked(event -> animateVBox(420));
+        registerButton.setOnAction(event -> animateVBox(-417));
+        backButton.setOnMouseClicked(event -> animateVBox(417));
     }
 
     private void requestInitialFocus() {
@@ -143,6 +150,8 @@ public class StudentLoginController {
                 var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
                 leftside.setAlignment(Pos.CENTER);
                 leftside.getChildren().add(loader);
+                
+                animateBlur(mainLoginPane, true);
 
                 new Thread(() -> {
                     try {
@@ -155,6 +164,9 @@ public class StudentLoginController {
 
                         Platform.runLater(() -> {
                             leftside.getChildren().remove(loader);
+
+                            // Remove blur after login process
+                            animateBlur(mainLoginPane, false);
 
                             if (isAuthenticated) {
                                 RememberMeHandler rememberMeHandler = new RememberMeHandler();
@@ -171,6 +183,10 @@ public class StudentLoginController {
                     } catch (Exception e) {
                         Platform.runLater(() -> {
                             leftside.getChildren().remove(loader);
+
+                            // Ensure blur is removed in case of failure
+                            animateBlur(mainLoginPane, false);
+
                             e.printStackTrace();
                             showAlert("Error", "An error occurred during login: " + e.getMessage(), Alert.AlertType.ERROR);
                         });
@@ -312,6 +328,11 @@ public class StudentLoginController {
     }
 
     private void handleConfirmRegistration() {
+        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
+        rightside.setAlignment(Pos.CENTER);
+        rightside.getChildren().add(loader);
+        animateBlur(mainLoginPane, true);
+
         String passwordInput = this.password.getText().trim();
         String retypePassword = this.retype.getText().trim();
         String firstName = this.firstname.getText().trim();
@@ -335,21 +356,29 @@ public class StudentLoginController {
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
                 month == null || day == null || year == null) {
             showAlert("Input Error", "Please fill out all fields!");
+            rightside.getChildren().remove(loader);
+            animateBlur(mainLoginPane, false);
             return;
         }
 
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
             showAlert("Input Error", "Names must not contain numbers!");
+            rightside.getChildren().remove(loader);
+            animateBlur(mainLoginPane, false);
             return;
         }
 
         if (!isValidEmail(email)) {
             showAlert("Input Error", "Please enter a valid email address!");
+            rightside.getChildren().remove(loader);
+            animateBlur(mainLoginPane, false);
             return;
         }
 
         if (!passwordInput.equals(retypePassword)) {
             showAlert("Password Error", "Passwords do not match!");
+            rightside.getChildren().remove(loader);
+            animateBlur(mainLoginPane, false);
             return;
         }
 
@@ -380,6 +409,35 @@ public class StudentLoginController {
 
             if (rowsAffected > 0) {
                 showAlert("Registration Successful", "Your account has been created!");
+                String input = email.trim().toLowerCase();
+                String pass = password.getText().trim();
+
+
+                try {
+
+                    boolean isAuthenticated = AuthenticationService.authenticate(input, pass);
+                    if (isAuthenticated) {
+                        String regFirstName = getUserFirstName(input, input.contains("@"));
+                        String welcomeMessage = "Welcome, " + regFirstName + "!";
+                        showAlert("Login Successful", welcomeMessage, Alert.AlertType.INFORMATION);
+                        rightside.getChildren().remove(loader);
+                        animateBlur(mainLoginPane, false);
+                    } else {
+                        showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
+                        rightside.getChildren().remove(loader);
+                        animateBlur(mainLoginPane, false);
+                    }
+                } catch (Exception e) {
+                Platform.runLater(() -> {
+                    leftside.getChildren().remove(loader);
+
+                    // Ensure blur is removed in case of failure
+                    animateBlur(mainLoginPane, false);
+
+                    e.printStackTrace();
+                    showAlert("Error", "An error occurred during login: " + e.getMessage(), Alert.AlertType.ERROR);
+                });
+            }
             } else {
                 showAlert("Registration Failed", "An error occurred during registration.");
             }
@@ -440,4 +498,40 @@ public class StudentLoginController {
         animation.setByX(translationX);
         animation.play();
     }
+
+    private void animateBlur(Pane pane, boolean enableBlur) {
+        // Configure GaussianBlur effect
+        final GaussianBlur gaussianBlur = new GaussianBlur(enableBlur ? 0 : 20); // Start opposite
+        final double targetRadius = enableBlur ? 20.0 : 0.0; // Target blur radius
+        final Duration animationDuration = Duration.millis(300); // Animation duration
+
+        // Attach GaussianBlur effect to the Pane
+        pane.setEffect(gaussianBlur);
+
+        // Define starting and ending colors
+        final Color startColor = enableBlur ? Color.TRANSPARENT : Color.WHITE; // From
+        final Color endColor = enableBlur ? Color.WHITE : Color.TRANSPARENT;   // To
+
+        // Create an animation for GaussianBlur
+        KeyValue blurValue = new KeyValue(gaussianBlur.radiusProperty(), targetRadius);
+        KeyFrame blurFrame = new KeyFrame(animationDuration, blurValue);
+
+        // Animate the background color
+        ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(startColor);
+        colorProperty.addListener((obs, oldColor, newColor) -> {
+            // Update the background fill dynamically
+            pane.setBackground(new Background(new BackgroundFill(newColor, CornerRadii.EMPTY, Insets.EMPTY)));
+        });
+
+        Timeline colorTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(colorProperty, startColor)),
+                new KeyFrame(animationDuration, new KeyValue(colorProperty, endColor))
+        );
+
+        // Combine blur and color animations
+        Timeline combinedTimeline = new Timeline(blurFrame);
+        combinedTimeline.setOnFinished(e -> colorTimeline.play()); // Play the color animation afterward
+        combinedTimeline.play();
+    }
+
 }
