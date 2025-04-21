@@ -22,16 +22,16 @@ public class FrontPageController {
     private Label labelHeader;
 
     @FXML
-    private Button coa;
+    private Button coaButton;
 
     @FXML
-    private Button programs;
+    private Button programsButton;
 
     @FXML
-    private Button about;
+    private Button aboutButton;
 
     @FXML
-    private Button others;
+    private Button othersButton;
 
     @FXML
     private Button getStartedButton;
@@ -48,16 +48,22 @@ public class FrontPageController {
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.setMute(true);
             mediaPlayer.play();
-            startLabelFade();
-            coa.setOnAction(event -> handleCOAButton());
-            programs.setOnAction(event -> handleProgramsButton());
-            about.setOnAction(event -> handleAboutButton());
-            others.setOnAction(event -> handleOthersButton());
 
         } catch (Exception e) {
             System.err.println("Failed to load video: " + e.getMessage());
         }
-
+        startLabelFade();
+        coaButton.setOnAction(event -> handleCOAButton());
+        programsButton.setOnAction(event -> handleProgramsButton());
+        aboutButton.setOnAction(event -> handleAboutButton());
+        othersButton.setOnAction(event -> handleOthersButton());
+        getStartedButton.setOnAction(event -> {
+            try {
+                handleGetStartedButton();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void startLabelFade() {
@@ -71,7 +77,7 @@ public class FrontPageController {
     @FXML
     private void handleCOAButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/certificate"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/certificate"));
         } catch (Exception e) {
             System.err.println("Failed to load COA: " + e.getMessage());
         }
@@ -79,7 +85,7 @@ public class FrontPageController {
     @FXML
     private void handleProgramsButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/programs"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/programs"));
         } catch (Exception e) {
             System.err.println("Failed to load programs: " + e.getMessage());
         }
@@ -87,7 +93,7 @@ public class FrontPageController {
     @FXML
     private void handleAboutButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/about"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/about"));
         } catch (Exception e) {
             System.err.println("Failed to load programs: " + e.getMessage());
         }
@@ -95,7 +101,7 @@ public class FrontPageController {
     @FXML
     private void handleOthersButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/others"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/others"));
         } catch (Exception e) {
             System.err.println("Failed to load programs: " + e.getMessage());
         }
