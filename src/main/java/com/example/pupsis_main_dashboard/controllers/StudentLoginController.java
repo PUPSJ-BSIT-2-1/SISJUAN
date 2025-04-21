@@ -147,7 +147,6 @@ public class StudentLoginController {
                 var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
                 leftside.setAlignment(Pos.CENTER);
                 leftside.getChildren().add(loader); // Add loader to the pane
-                applyBlurToLeftSide();
 
                 // Execute authentication logic in a background thread
                 new Thread(() -> {
@@ -354,6 +353,7 @@ public class StudentLoginController {
     }
 
     private void handleConfirmRegistration() {
+        // Retrieve field values
         String passwordInput = this.password.getText().trim();
         String retypePassword = this.retype.getText().trim();
         String firstName = this.firstname.getText().trim();
@@ -364,29 +364,46 @@ public class StudentLoginController {
         Integer day = this.dayComboBox.getValue();
         Integer year = this.yearComboBox.getValue();
 
+        // Display the values of all fields in the console
+        System.out.println("First Name: " + firstName);
+        System.out.println("Middle Name: " + middleName);
+        System.out.println("Last Name: " + lastName);
+        System.out.println("Email: " + email);
+        System.out.println("Password: " + passwordInput);
+        System.out.println("Retyped Password: " + retypePassword);
+        System.out.println("Month: " + month);
+        System.out.println("Day: " + day);
+        System.out.println("Year: " + year);
+
+        // Check if any field is missing
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
                 month == null || day == null || year == null) {
             showAlert("Input Error", "Please fill out all fields!");
             return;
         }
 
+        // Validate that names do not contain numbers
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
             showAlert("Input Error", "Names must not contain numbers!");
             return;
         }
 
-        if (isValidEmail(email)) {
+        // Check for a valid email format
+        if (!isValidEmail(email)) {
             showAlert("Input Error", "Please enter a valid email address!");
             return;
         }
 
+        // Ensure passwords match
         if (!passwordInput.equals(retypePassword)) {
             showAlert("Password Error", "Passwords do not match!");
             return;
         }
 
+        // Hash the password
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
 
+        // Parse birth date from components
         java.sql.Date dateOfBirth;
         try {
             String formattedDate = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
@@ -397,6 +414,7 @@ public class StudentLoginController {
             return;
         }
 
+        // Insert data into the database
         String query = "INSERT INTO students (password, firstname, middlename, lastname, email, birthday) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBConnection.getConnection();
@@ -471,28 +489,5 @@ public class StudentLoginController {
         TranslateTransition animation = new TranslateTransition(Duration.millis(700), centerVBox);
         animation.setByX(translationX);
         animation.play();
-    }
-
-    public void applyBlurToLeftSide() {
-        // Check if a blur effect is already applied
-        if (leftside.getEffect() instanceof GaussianBlur) {
-            // Remove the blur effect
-            leftside.setEffect(null);
-
-            // Optionally, reset the background to its default state
-            leftside.setBackground(Background.EMPTY);
-        } else {
-            // Apply a semi-transparent background
-            leftside.setBackground(new Background(new BackgroundFill(
-                    Color.rgb(255, 255, 255, 0.7), // White color with 70% opacity
-                    new CornerRadii(10),          // Corner radii for rounded edges
-                    null                          // No insets
-            )));
-
-            // Apply a new GaussianBlur effect
-            GaussianBlur blurEffect = new GaussianBlur();
-            blurEffect.setRadius(15); // Adjust radius for intensity
-            leftside.setEffect(blurEffect);
-        }
     }
 }
