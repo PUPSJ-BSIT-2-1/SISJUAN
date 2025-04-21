@@ -5,6 +5,7 @@ import com.example.databaseOperations.DBConnection;
 import com.example.auth.PasswordHandler;
 import com.example.utility.LoadingAnimation;
 import com.example.utility.RememberMeHandler;
+import com.example.utility.StageAndSceneUtils;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -14,10 +15,13 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.input.KeyEvent;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,6 +58,7 @@ public class StudentLoginController {
     private final StringBuilder typedDay = new StringBuilder();
     private final StringBuilder typedMonth = new StringBuilder();
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
+    final StageAndSceneUtils utility = new StageAndSceneUtils();
 
     private void setupRememberMeHandler() {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
@@ -385,8 +390,9 @@ public class StudentLoginController {
     }
 
     @FXML
-    private void closeApplication() {
-        Platform.exit();
+    private void closeApplication() throws IOException {
+        Stage currentStage = (Stage) closeButton.getScene().getWindow();
+        utility.loadScene(currentStage, "fxml/FrontPage.fxml");
     }
 
     private String getUserFirstName(String input, boolean isEmail) {

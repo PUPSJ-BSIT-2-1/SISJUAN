@@ -34,9 +34,8 @@
     -fx-font-family: "Times New Roman";
     -fx-font-size: 20px;
 }
-.label {
+.labelHeader {
     -fx-text-fill: white;
-    -fx-font-size: 40px;
-    -fx-font-weight: bold;
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 48;
 }
-
