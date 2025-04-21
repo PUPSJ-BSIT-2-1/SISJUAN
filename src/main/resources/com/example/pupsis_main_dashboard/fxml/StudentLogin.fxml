@@ -131,7 +131,7 @@
         </left>
         <right>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="420.0" BorderPane.alignment="CENTER">
-                <HBox alignment="TOP_RIGHT" prefHeight="43.0" prefWidth="380.0">
+                <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="380.0">
                     <VBox.margin>
                         <Insets bottom="100.0" />
                     </VBox.margin>
@@ -144,9 +144,9 @@
                         </HBox.margin>
                     </ImageView>
                     <Region prefHeight="43.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                    <VBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="133.0">
+                    <VBox alignment="CENTER_RIGHT" prefHeight="70.0" prefWidth="332.0">
                         <HBox.margin>
-                            <Insets left="10.0" />
+                            <Insets left="10.0" right="10.0" />
                         </HBox.margin>
                         <Label styleClass="pup-sanjuan-label" text="PUP">
                             <font>
@@ -157,6 +157,9 @@
                             <font>
                                 <Font size="14.0" />
                             </font>
+                     <VBox.margin>
+                        <Insets top="-10.0" />
+                     </VBox.margin>
                         </Label>
                     </VBox>
                     <ImageView fitHeight="51.0" fitWidth="41.0" layoutX="328.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
@@ -252,12 +255,12 @@
                               <Insets left="5.0" />
                            </padding>
                                 </ComboBox>
-                        <Region prefHeight="110.0" prefWidth="30.0" />
+                        <Region prefHeight="110.0" prefWidth="20.0" />
                                 <ComboBox fx:id="dayComboBox" prefHeight="30.0" prefWidth="86.0" promptText="Date" styleClass="birthday-field">
                            <padding>
                               <Insets left="5.0" />
                            </padding></ComboBox>
-                        <Region prefHeight="110.0" prefWidth="30.0" />
+                        <Region prefHeight="110.0" prefWidth="20.0" />
                                 <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="111.0" promptText="Year" styleClass="birthday-field">
                            <padding>
                               <Insets left="5.0" />

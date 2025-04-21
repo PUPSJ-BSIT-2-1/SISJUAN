@@ -22,18 +22,16 @@
 
 .buttons:hover {
     -fx-font-size: 14px;
-    -fx-text-fill: #800000;
 }
 .getStarted {
     -fx-background-color: #800000;
     -fx-text-fill: white;
 }
 .getStarted:hover {
-    -fx-background-color: #4d0000;
+    -fx-background-color: #DAA520;
 }
-.pupLabel {
+.pupsis {
     -fx-font-family: "Times New Roman";
-    -fx-text-fill: white;
     -fx-font-size: 20px;
 }
 .labelHeader {
