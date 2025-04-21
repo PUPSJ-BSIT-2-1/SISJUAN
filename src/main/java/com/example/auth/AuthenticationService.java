@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.example.databaseOperations.DBConnection;
-import com.example.auth.PasswordHandler;
 
 public class AuthenticationService {
 

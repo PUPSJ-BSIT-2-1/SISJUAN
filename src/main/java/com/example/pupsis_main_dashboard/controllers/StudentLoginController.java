@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -136,70 +135,55 @@ public class StudentLoginController {
 
     @FXML
     private void handleLogin() {
-        String studentId = studentIdField.getText();
-        String password = passwordField.getText();
+        String input = studentIdField.getText().trim().toLowerCase();
+        String password = passwordField.getText().trim();
         boolean rememberMe = rememberMeCheckBox.isSelected();
 
-        // Check if input is empty
-        if (!studentId.isEmpty() && !password.isEmpty()) {
+        if (!input.isEmpty() && !password.isEmpty()) {
             try {
-                // Create pulsing dots loader
                 var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
                 leftside.setAlignment(Pos.CENTER);
-                leftside.getChildren().add(loader); // Add loader to the pane
+                leftside.getChildren().add(loader);
 
-                // Execute authentication logic in a background thread
                 new Thread(() -> {
                     try {
-                        // Simulate a delay for database operations
-                        Thread.sleep(2000); // Simulated delay (e.g., for network request)
+                        System.out.println("Starting login process for Identifier: " + input);
+                        Thread.sleep(2000);
 
-                        // Check if the student ID exists in the database
-                        boolean userExists = AuthenticationService.checkUserExists(studentId);
+                        System.out.println("Authenticating user...");
+                        boolean isAuthenticated = AuthenticationService.authenticate(input, password);
+                        System.out.println("Authentication result for '" + input + "': " + isAuthenticated);
 
-                        if (!userExists) {
-                            // Inform the user that the credentials are not found
-                            Platform.runLater(() -> {
-                                leftside.getChildren().remove(loader); // Remove loader
-                                showAlert("Login Failed", "User not found", Alert.AlertType.ERROR);
-                            });
-                            return; // Exit the thread, no further processing needed
-                        }
-
-                        // Authenticate the user if the student ID exists
-                        boolean isAuthenticated = AuthenticationService.authenticate(studentId, password);
-
-                        // Use Platform.runLater() to update the UI from the background thread
                         Platform.runLater(() -> {
-                            leftside.getChildren().remove(loader); // Remove loader
+                            leftside.getChildren().remove(loader);
 
                             if (isAuthenticated) {
-                                // Save credentials if "Remember Me" is checked
                                 RememberMeHandler rememberMeHandler = new RememberMeHandler();
-                                rememberMeHandler.saveCredentials(studentId, password, rememberMe);
+                                rememberMeHandler.saveCredentials(input, password, rememberMe);
 
-                                // Show successful login alert
-                                showAlert("Login Successful", "Welcome!", Alert.AlertType.INFORMATION);
+                                // Use the existing getUserFirstName method to extract the first name
+                                String firstName = getUserFirstName(input, input.contains("@"));
+                                String welcomeMessage = "Welcome, " + firstName + "!";
+
+                                showAlert("Login Successful", welcomeMessage, Alert.AlertType.INFORMATION);
                             } else {
-                                // Inform the user about invalid credentials
-                                showAlert("Login Failed", "Invalid credentials", Alert.AlertType.ERROR);
+                                showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
                             }
                         });
                     } catch (Exception e) {
-                        // Handle exceptions and update UI from the background thread
                         Platform.runLater(() -> {
-                            leftside.getChildren().remove(loader); // Remove loader
+                            leftside.getChildren().remove(loader);
                             e.printStackTrace();
-                            showAlert("Error", "An error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
+                            showAlert("Error", "An error occurred during login: " + e.getMessage(), Alert.AlertType.ERROR);
                         });
                     }
-                }).start(); // Start the background thread
+                }).start();
             } catch (Exception e) {
                 e.printStackTrace();
-                showAlert("Error", "An error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
+                showAlert("Error", "An unexpected error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            showAlert("Input Required", "Please enter your Student ID and Password.", Alert.AlertType.WARNING);
+            showAlert("Input Required", "Please enter your Student ID or Email and Password.", Alert.AlertType.WARNING);
         }
     }
 

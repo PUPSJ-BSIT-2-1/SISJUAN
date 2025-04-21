@@ -4,6 +4,7 @@ module com.example.pupsis_main_dashboard {
     requires java.sql;
     requires javafx.media;
     requires java.desktop;
+    requires java.prefs;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml;
     exports com.example.pupsis_main_dashboard;
