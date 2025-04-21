@@ -19,9 +19,6 @@ public class FrontPageController {
     private MediaView mediaView;
 
     @FXML
-    private Stage getStarted;
-
-    @FXML
     private Label labelHeader;
 
     @FXML
