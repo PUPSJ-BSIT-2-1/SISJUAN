@@ -36,7 +36,7 @@ public class FrontPageController {
     @FXML
     private Button getStartedButton;
 
-    StageAndSceneUtils utility = new StageAndSceneUtils();
+    final StageAndSceneUtils utility = new StageAndSceneUtils();
 
     @FXML
     public void initialize() {
