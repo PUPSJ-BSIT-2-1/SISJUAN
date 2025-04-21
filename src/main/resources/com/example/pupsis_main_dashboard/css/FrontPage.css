@@ -1,0 +1,44 @@
+.root {
+    -fx-background-color: black;
+    -fx-min-height: 720;
+    -fx-min-weight: 1280;
+}
+
+.backgroundVideo {
+    -fx-opacity: 0.5;
+}
+
+.navigationBar {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+}
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+}
+
+.buttons {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.buttons: hover {
+    -fx-font-size: 14px;
+}
+.getStarted {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+}
+.getStarted: hover {
+    -fx-background-color: #DAA520;
+}
+.pupsis {
+    -fx-font-family: "Times New Roman";
+    -fx-font-size: 20px;
+}
+
