@@ -9,30 +9,31 @@
 <?import javafx.scene.media.MediaView?>
 
 <!--suppress ALL -->
+
 <AnchorPane styleClass="root" stylesheets="@../css/FrontPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FrontPageController">
 
          <!-- Background Video -->
    <MediaView fx:id="mediaView" fitHeight="720.0" fitWidth="1280.0" layoutX="-21.0" layoutY="-14.0" nodeOrientation="INHERIT" preserveRatio="false" styleClass="backgroundVideo" />
 
    <!-- Title -->
-   <Label fx:id="labelHeader" layoutX="391.0" layoutY="275.0" prefHeight="70.0" prefWidth="498.0" text="Welcome to PUPSIS Portal" textAlignment="CENTER" />
+   <Label fx:id="labelHeader" layoutX="286.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="labelHeader" text="Welcome to PUPSIS Portal" />
    <!--suppress JavaFxDefaultTag -->
    <Pane layoutX="220.0" layoutY="46.0" prefHeight="67.0" prefWidth="840.0" styleClass="navigationBar">
       <children>
-         <Button fx:id="programs" layoutX="365.0" layoutY="18.0" prefHeight="31.0" prefWidth="90.0" styleClass="buttons" text="Programs" />
+         <Button fx:id="programsButton" layoutX="360.0" layoutY="18.0" prefHeight="31.0" prefWidth="90.0" styleClass="buttons" text="Programs" />
 
          <!-- Navigation Buttons -->
-         <Button fx:id="coa" alignment="CENTER" layoutX="278.0" layoutY="18.0" prefHeight="31.0" prefWidth="69.0" styleClass="buttons" text="COA" />
-         <Button fx:id="about" layoutX="462.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="About" />
-         <Button fx:id="others" alignment="CENTER" layoutX="544.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="Others" />
-         <Button fx:id="getStartedButton" layoutX="644.0" layoutY="18.0" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0" styleClass="getStarted" text="Get Started" textAlignment="CENTER" />
+         <Button fx:id="coaButton" alignment="CENTER" layoutX="285.0" layoutY="18.0" prefHeight="31.0" prefWidth="69.0" styleClass="buttons" text="COA" />
+         <Button fx:id="aboutButton" layoutX="460.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="About" />
+         <Button fx:id="othersButton" alignment="CENTER" layoutX="544.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="Others" />
+         <Button fx:id="getStartedButton" layoutX="645.0" layoutY="18.0" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0" styleClass="getStarted" text="Get Started" textAlignment="CENTER" />
          <!--suppress JavaFxDefaultTag -->
          <ImageView fitHeight="47.0" fitWidth="175.0" layoutX="29.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../Images/pupsj-logo.png" />
             </image>
          </ImageView>
-         <Label layoutX="88.0" layoutY="22.0" styleClass="pupsis" text="PUPSIS" />
+         <Label layoutX="90.0" layoutY="22.0" styleClass="pupLabel" text="PUPSIS" />
       </children>
    </Pane>
 
