@@ -6,8 +6,12 @@
     -fx-text-fill: black;
 }
 .birthday-field{
-    -fx-pref-height: 30;
     -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+}
+.birthday-field .text{
+    -fx-fill: #b3b3b3;
 }
 .buttons{
     -fx-background-color: #800000;
@@ -20,15 +24,15 @@
 }
 .font{
     -fx-font-family: "Inter";
+
 }
 .big-text{
     -fx-font-size: 24;
-    -fx-font-weight: bold;
 }
 
 .pup-sanjuan-label{
     -fx-font-family: "system-ui";
-    -fx-font-size: 15;
+    -fx-font-size: 24;
     -fx-font-weight: bold;
 }
 .back-button:hover{
