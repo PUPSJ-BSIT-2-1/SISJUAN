@@ -23,7 +23,7 @@
          <Button fx:id="coa" alignment="CENTER" layoutX="278.0" layoutY="18.0" prefHeight="31.0" prefWidth="69.0" styleClass="buttons" text="COA" />
          <Button fx:id="about" layoutX="462.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="About" />
          <Button fx:id="others" alignment="CENTER" layoutX="544.0" layoutY="18.0" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="Others" />
-         <Button layoutX="644.0" layoutY="18.0" prefHeight="31.0" prefWidth="166.0" styleClass="getStarted" text="Get Started" textAlignment="CENTER" />
+         <Button fx:id="getStartedButton" layoutX="644.0" layoutY="18.0" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0" styleClass="getStarted" text="Get Started" textAlignment="CENTER" />
          <ImageView fitHeight="47.0" fitWidth="175.0" layoutX="29.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../Images/pupsj-logo.png" />
