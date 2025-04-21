@@ -291,7 +291,7 @@
                 </clip>
                 <ImageView fitHeight="720" fitWidth="860.0">
                     <image>
-                        <Image url="@../Images/school.png" />
+                        <Image url="@../Images/PUPSJ.png" />
                     </image>
                 </ImageView>
             </VBox>
