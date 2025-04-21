@@ -7,9 +7,12 @@ import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import com.example.utility.StageAndSceneUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FrontPageController {
     @FXML
@@ -20,6 +23,7 @@ public class FrontPageController {
 
     @FXML
     private Button coa;
+
     @FXML
     private Button programs;
 
@@ -30,9 +34,14 @@ public class FrontPageController {
     private Button others;
 
     @FXML
+    private Button getStartedButton;
+
+    final StageAndSceneUtils utility = new StageAndSceneUtils();
+
+    @FXML
     public void initialize() {
         try {
-            File file = new File("C:\\Users\\cedrick joseph\\Videos\\PUPSJ DRONE 2024.mp4");
+            File file = new File("src/main/resources/com/example/pupsis_main_dashboard/Images/PUPSJ DRONE 2024.mp4");
             Media media = new Media(file.toURI().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
@@ -62,38 +71,40 @@ public class FrontPageController {
     @FXML
     private void handleCOAButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/certificate"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/certificate"));
         } catch (Exception e) {
             System.err.println("Failed to load COA: " + e.getMessage());
         }
     }
-
     @FXML
     private void handleProgramsButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/programs"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/programs"));
         } catch (Exception e) {
             System.err.println("Failed to load programs: " + e.getMessage());
         }
     }
-
     @FXML
     private void handleAboutButton() {
         try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/about"));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/about"));
+        } catch (Exception e) {
+            System.err.println("Failed to load programs: " + e.getMessage());
+        }
+    }
+    @FXML
+    private void handleOthersButton() {
+        try{
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://pup-con.me/others"));
         } catch (Exception e) {
             System.err.println("Failed to load programs: " + e.getMessage());
         }
     }
 
     @FXML
-    private void handleOthersButton() {
-        try{
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/others"));
-        } catch (Exception e) {
-            System.err.println("Failed to load programs: " + e.getMessage());
-        }
+    private void handleGetStartedButton() throws IOException {
+        Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
+        utility.loadScene(currentStage, "fxml/StudentLogin.fxml");
     }
-
 
 }

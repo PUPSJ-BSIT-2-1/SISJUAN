@@ -23,7 +23,8 @@
     -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
 }
 .font{
-    -fx-font-family: "Inte";
+    -fx-font-family: "Inter";
+
 }
 .big-text{
     -fx-font-size: 24;
