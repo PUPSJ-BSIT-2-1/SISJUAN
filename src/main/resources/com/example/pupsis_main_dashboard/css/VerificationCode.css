@@ -43,6 +43,9 @@
     -fx-padding: 10 20;
     -fx-font-family: 'Poppins';
 }
+.verify-button:hover {
+	-fx-cursor: hand; 
+}
 
 .resend-button {
     -fx-background-color: transparent;
@@ -50,6 +53,13 @@
     -fx-font-weight: bold;
     -fx-border-color: transparent;
     -fx-border-radius: 5;
+}
+
+.resend-button:hover{
+	-fx-cursor: hand; 
+}
+.error-label {
+    -fx-text-fill: #e74c3c;
 }
 .font {
     -fx-font-family: "Inter";
