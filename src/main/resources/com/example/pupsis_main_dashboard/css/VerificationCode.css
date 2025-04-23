@@ -22,6 +22,9 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+.verify-button:hover {
+	-fx-cursor: hand; 
+}
 
 .resend-button {
     -fx-background-color: transparent;
@@ -29,6 +32,9 @@
     -fx-underline: true;
 }
 
+.resend-button:hover{
+	-fx-cursor: hand; 
+}
 .error-label {
     -fx-text-fill: #e74c3c;
 }
