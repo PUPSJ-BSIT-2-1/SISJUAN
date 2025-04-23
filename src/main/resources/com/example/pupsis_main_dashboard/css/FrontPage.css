@@ -23,6 +23,7 @@
 .buttons:hover {
     -fx-font-size: 14px;
     -fx-text-fill: #800000;
+    -fx-cursor: hand; 
 }
 .getStarted {
     -fx-background-color: #800000;
@@ -30,6 +31,7 @@
 }
 .getStarted:hover {
     -fx-background-color: #450000;
+    -fx-cursor: hand; 
 }
 .pupsis {
     -fx-font-family: "Times New Roman";

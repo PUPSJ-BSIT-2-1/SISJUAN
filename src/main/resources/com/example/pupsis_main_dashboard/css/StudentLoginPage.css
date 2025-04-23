@@ -10,6 +10,9 @@
     -fx-background-radius: 8;
     -fx-pref-height: 30;
 }
+.birthday-field:hover{
+	-fx-cursor: hand; 
+}
 .buttons{
     -fx-background-color: #800000;
     -fx-text-fill: white;
@@ -18,6 +21,7 @@
 }
 .buttons:hover{
     -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
+    -fx-cursor: hand; 
 }
 .font{
     -fx-font-family: "Inter";
@@ -34,6 +38,7 @@
 }
 .back-button:hover{
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand; 
 }
 .error-message{
     -fx-text-fill: red;
