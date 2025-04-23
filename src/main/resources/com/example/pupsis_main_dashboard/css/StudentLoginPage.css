@@ -21,12 +21,10 @@
 }
 .font{
     -fx-font-family: "Inter";
-
 }
 .big-text{
     -fx-font-size: 24;
 }
-
 .pup-sanjuan-label{
     -fx-font-family: "system-ui";
     -fx-font-size: 24;
@@ -41,24 +39,12 @@
 .root{
     -fx-background-radius: 20;
 }
-.border-pane{
+.border-pane {
     -fx-background-color: #e6e6e6;
     -fx-background-radius: 20;
 }
-/*.birthday-field .text {*/
-/*    -fx-fill: gray; !* Sets the text color inside the combo box *!*/
-/*}*/
-/*.combo-contents{*/
-/*    -fx-text-fill: black;*/
-/*}*/
-.combo-box .text {
-    -fx-fill: black; /* Change to the desired color for the prompt text */
-}
+
 .sliding-image {
     -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
 }
-
-
-
-
 

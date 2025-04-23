@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.time.Year;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.example.auth.PasswordHandler;
 import com.example.databaseOperations.DBConnection;
@@ -65,6 +67,8 @@ public class StudentLoginController {
     final StageAndSceneUtils utility = new StageAndSceneUtils();
     private EmailService emailService;
 
+    private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
+
     private void setupRememberMeHandler() {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
         String[] credentials = rememberMeHandler.loadCredentials();
@@ -85,7 +89,9 @@ public class StudentLoginController {
     }
 
     private void setupConfirmRegistration() {
-        confirmReg.setOnAction(event -> handleConfirmRegistration());
+        confirmReg.setOnAction(event -> {
+            handleConfirmRegistration();
+        });
     }
 
     private void setupComboBoxHandlers() {
@@ -103,26 +109,38 @@ public class StudentLoginController {
         monthComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleMonthTyping);
         dayComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleDayTyping);
 
-        monthComboBox.setOnAction(event -> handleMonthOrYearChange());
-        yearComboBox.setOnAction(event -> handleMonthOrYearChange());
+        monthComboBox.setOnAction(event -> {
+            handleMonthOrYearChange();
+        });
+        yearComboBox.setOnAction(event -> {
+            handleMonthOrYearChange();
+        });
     }
 
     private void setupRegistrationNavigation() {
-        registerButton.setOnAction(event -> animateVBox(-417));
-        backButton.setOnMouseClicked(event -> animateVBox(417));
+        registerButton.setOnAction(event -> {
+            animateVBox(-417);
+        });
+        backButton.setOnMouseClicked(event -> {
+            animateVBox(417);
+        });
     }
 
     private void requestInitialFocus() {
-        Platform.runLater(() -> errorLabel.requestFocus());
+        Platform.runLater(() -> {
+            errorLabel.requestFocus();
+        });
     }
 
     @FXML
     private void initialize() {
         // Replace with your Gmail address and App Password
         emailService = new EmailService(
-            "harolddelapena.11@gmail.com",
-            "sfhq xeks hgeo yfja");
-        
+                "harolddelapena.11@gmail.com",
+                "sfhq xeks hgeo yfja");
+        loginButton.setOnAction(event -> {
+            handleLogin(leftside);
+        });
         setupRememberMeHandler();
         setupRegistrationNavigation();
         setupComboBoxHandlers();
@@ -140,58 +158,47 @@ public class StudentLoginController {
             populateDays(daysInMonth);
         }
     }
-
     @FXML
-    private void handleLogin() {
+    private void handleLogin(VBox pane) {
         String input = studentIdField.getText().trim().toLowerCase();
         String password = passwordField.getText().trim();
         boolean rememberMe = rememberMeCheckBox.isSelected();
 
-        if (!input.isEmpty() && !password.isEmpty()) {
-            try {
-                var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-                leftside.setAlignment(Pos.CENTER);
-                leftside.getChildren().add(loader);
-
-                animateBlur(mainLoginPane, true);
-
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(2000);
-                        boolean isAuthenticated = authenticate(input, password);
-
-                        Platform.runLater(() -> {
-                            leftside.getChildren().remove(loader);
-                            animateBlur(mainLoginPane, false);
-
-                            if (isAuthenticated) {
-                                RememberMeHandler rememberMeHandler = new RememberMeHandler();
-                                rememberMeHandler.saveCredentials(input, password, rememberMe);
-
-                                String firstName = getUserFirstName(input, input.contains("@"));
-                                String welcomeMessage = "Welcome, " + firstName + "!";
-
-                                showAlert("Login Successful", welcomeMessage, Alert.AlertType.INFORMATION);
-                            } else {
-                                showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
-                            }
-                        });
-                    } catch (Exception e) {
-                        Platform.runLater(() -> {
-                            leftside.getChildren().remove(loader);
-                            animateBlur(mainLoginPane, false);
-                            e.printStackTrace();
-                            showAlert("Error", "An error occurred during login: " + e.getMessage(), Alert.AlertType.ERROR);
-                        });
-                    }
-                }).start();
-            } catch (Exception e) {
-                e.printStackTrace();
-                showAlert("Error", "An unexpected error occurred: " + e.getMessage(), Alert.AlertType.ERROR);
-            }
-        } else {
+        if (input.isEmpty() || password.isEmpty()) {
             showAlert("Input Required", "Please enter your Student ID or Email and Password.", Alert.AlertType.WARNING);
+            return;
         }
+
+        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
+        pane.setAlignment(Pos.CENTER);
+        pane.getChildren().add(loader);
+        animateBlur(mainLoginPane, true);
+
+        loginExecutor.submit(() -> {
+            try {
+                boolean isAuthenticated = authenticate(input, password);
+                Platform.runLater(() -> {
+                    rightside.getChildren().remove(loader);
+                    animateBlur(mainLoginPane, false);
+
+                    if (isAuthenticated) {
+                        RememberMeHandler.saveCredentials(input, password, rememberMe);
+                        String firstName = getUserFirstName(input, input.contains("@"));
+                        pane.getChildren().remove(loader);
+                        showAlert("Login Successful", "Welcome, " + firstName + "!", Alert.AlertType.INFORMATION);
+                    } else {
+                        pane.getChildren().remove(loader);
+                        showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    pane.getChildren().remove(loader);
+                    animateBlur(mainLoginPane, false);
+                    showAlert("Error", "Login failed: " + e.getMessage(), Alert.AlertType.ERROR);
+                });
+            }
+        });
     }
 
     @FXML
@@ -227,12 +234,16 @@ public class StudentLoginController {
             return;
         }
 
-        if (months.stream().anyMatch(m -> m.equalsIgnoreCase(currentInput))) {
+        if (months.stream().anyMatch(m -> {
+            return m.equalsIgnoreCase(currentInput);
+        })) {
             typedMonth.setLength(0);
             inputClearDelay.stop();
         }
 
-        inputClearDelay.setOnFinished(e -> typedMonth.setLength(0));
+        inputClearDelay.setOnFinished(e -> {
+            typedMonth.setLength(0);
+        });
         inputClearDelay.playFromStart();
     }
 
@@ -264,12 +275,16 @@ public class StudentLoginController {
             return;
         }
 
-        if (years.stream().anyMatch(y -> String.valueOf(y).equals(currentInput))) {
+        if (years.stream().anyMatch(y -> {
+            return String.valueOf(y).equals(currentInput);
+        })) {
             typedYear.setLength(0);
             inputClearDelay.stop();
         }
 
-        inputClearDelay.setOnFinished(e -> typedYear.setLength(0));
+        inputClearDelay.setOnFinished(e -> {
+            typedYear.setLength(0);
+        });
         inputClearDelay.playFromStart();
     }
 
@@ -316,7 +331,9 @@ public class StudentLoginController {
             inputClearDelay.stop();
         }
 
-        inputClearDelay.setOnFinished(e -> typedDay.setLength(0));
+        inputClearDelay.setOnFinished(e -> {
+            typedDay.setLength(0);
+        });
         inputClearDelay.playFromStart();
     }
 
@@ -343,13 +360,33 @@ public class StudentLoginController {
             return;
         }
 
-        if (!isValidEmail(email)) {
+        if (isValidEmail(email)) {
             showAlert("Input Error", "Please enter a valid email address!");
             return;
         }
 
         if (!passwordInput.equals(retypePassword)) {
             showAlert("Password Error", "Passwords do not match!");
+            return;
+        }
+
+        // Check if email already exists
+        try (Connection connection = DBConnection.getConnection()) {
+            String checkQuery = "SELECT email FROM students WHERE email = ?";
+            PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
+            checkStatement.setString(1, email);
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Platform.runLater(() -> {
+                    showAlert("Account Exists", "This email is already registered!");
+                    studentIdField.setText(email);
+                    animateVBox(417);
+                });
+                return;
+            }
+        } catch (SQLException e) {
+            showAlert("Database Error", "Failed to check email availability");
             return;
         }
 
@@ -361,9 +398,12 @@ public class StudentLoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
             Parent root = loader.load();
             VerificationController controller = loader.getController();
-            controller.initialize(email, verificationCode, verificationStage, () -> {
-                completeRegistration(firstName, middleName, lastName, email, passwordInput, month, day, year);
-            });
+            controller.initializeVerification(
+                    verificationCode,
+                    email,
+                    verificationStage,
+                    () -> completeRegistration(firstName, middleName, lastName, email, passwordInput, month, day, year)
+            );
 
             verificationStage.setScene(new Scene(root));
             verificationStage.initModality(Modality.APPLICATION_MODAL);
@@ -403,6 +443,9 @@ public class StudentLoginController {
             if (rowsAffected > 0) {
                 Platform.runLater(() -> {
                     showAlert("Registration Successful", "Your account has been created!");
+                    studentIdField.setText(email);
+                    passwordField.setText(passwordInput);
+                    handleLogin(rightside);
                 });
             } else {
                 Platform.runLater(() -> {
@@ -416,7 +459,6 @@ public class StudentLoginController {
             e.printStackTrace();
         } finally {
             Platform.runLater(() -> {
-//                rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
         }
@@ -440,7 +482,7 @@ public class StudentLoginController {
     @FXML
     private void closeApplication() throws IOException {
         Stage currentStage = (Stage) closeButton.getScene().getWindow();
-        utility.loadStage(currentStage, "fxml/FrontPage.fxml");
+        utility.loadStage(currentStage, "fxml/FrontPage.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
     }
 
     private String getUserFirstName(String input, boolean isEmail) {
@@ -484,34 +526,54 @@ public class StudentLoginController {
     }
 
     private void animateVBox(double translationX) {
-        TranslateTransition animation = new TranslateTransition(Duration.millis(700), centerVBox);
+        TranslateTransition animation = new TranslateTransition(Duration.millis(300), centerVBox);
         animation.setByX(translationX);
         animation.play();
     }
 
     private void animateBlur(Pane pane, boolean enableBlur) {
-        final GaussianBlur gaussianBlur = new GaussianBlur(enableBlur ? 0 : 20);
+        final GaussianBlur gaussianBlur = new GaussianBlur(0);
         final double targetRadius = enableBlur ? 20.0 : 0.0;
-        final Duration animationDuration = Duration.millis(300);
+        final Duration animationDuration = Duration.millis(400);
+        
+        Pane overlay = new Pane();
+        overlay.setBackground(new Background(new BackgroundFill(
+            Color.rgb(255, 255, 255, 0.7), CornerRadii.EMPTY, Insets.EMPTY
+        )));
+        overlay.setVisible(false);
+        pane.getChildren().add(overlay);
+        
+        overlay.prefWidthProperty().bind(pane.widthProperty());
+        overlay.prefHeightProperty().bind(pane.heightProperty());
 
         pane.setEffect(gaussianBlur);
 
-        final Color startColor = enableBlur ? Color.TRANSPARENT : Color.WHITE;
-        final Color endColor = enableBlur ? Color.WHITE : Color.TRANSPARENT;
-
-        KeyValue blurValue = new KeyValue(gaussianBlur.radiusProperty(), targetRadius);
-        KeyFrame blurFrame = new KeyFrame(animationDuration, blurValue);
-
-        ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(startColor);
-        colorProperty.addListener((obs, oldColor, newColor) -> pane.setBackground(new Background(new BackgroundFill(newColor, CornerRadii.EMPTY, Insets.EMPTY))));
-
-        Timeline colorTimeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(colorProperty, startColor)),
-                new KeyFrame(animationDuration, new KeyValue(colorProperty, endColor))
+        Timeline blurTimeline = new Timeline(
+            new KeyFrame(Duration.ZERO,
+                new KeyValue(gaussianBlur.radiusProperty(), enableBlur ? 0 : 20)
+            ),
+            new KeyFrame(animationDuration,
+                new KeyValue(gaussianBlur.radiusProperty(), targetRadius)
+            )
         );
 
-        Timeline combinedTimeline = new Timeline(blurFrame);
-        combinedTimeline.setOnFinished(e -> colorTimeline.play());
-        combinedTimeline.play();
+        FadeTransition fadeTransition = new FadeTransition(animationDuration, overlay);
+        fadeTransition.setFromValue(enableBlur ? 0 : 0.7);
+        fadeTransition.setToValue(enableBlur ? 0.7 : 0);
+        
+        ParallelTransition parallelTransition = new ParallelTransition(
+            blurTimeline, 
+            fadeTransition
+        );
+        
+        parallelTransition.setOnFinished(e -> {
+            overlay.setVisible(enableBlur);
+            if (!enableBlur) {
+                pane.getChildren().remove(overlay);
+            }
+        });
+        
+        overlay.setVisible(true);
+        parallelTransition.play();
     }
 }

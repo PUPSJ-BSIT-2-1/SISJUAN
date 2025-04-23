@@ -7,13 +7,13 @@ public class RememberMeHandler {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
 
-    private final Preferences preferences = Preferences.userNodeForPackage(RememberMeHandler.class);
+    private static final Preferences preferences = Preferences.userNodeForPackage(RememberMeHandler.class);
 
-    public void saveCredentials(String username, String password, boolean rememberMe) {
+    public static void saveCredentials(String username, String password, boolean rememberMe) {
         if (rememberMe) {
             preferences.putBoolean(KEY_REMEMBER_ME, true);
             preferences.put(KEY_USERNAME, username);
-            preferences.put(KEY_PASSWORD, encrypt(password)); // Optionally encrypt
+            preferences.put(KEY_PASSWORD, encrypt(password));
         } else {
             clearCredentials();
         }
@@ -22,25 +22,23 @@ public class RememberMeHandler {
     public String[] loadCredentials() {
         if (preferences.getBoolean(KEY_REMEMBER_ME, false)) {
             String username = preferences.get(KEY_USERNAME, "");
-            String password = decrypt(preferences.get(KEY_PASSWORD, "")); // Decrypt when retrieved
+            String password = decrypt(preferences.get(KEY_PASSWORD, ""));
             return new String[]{username, password};
         }
         return null;
     }
 
-    public void clearCredentials() {
+    public static void clearCredentials() {
         preferences.remove(KEY_REMEMBER_ME);
         preferences.remove(KEY_USERNAME);
         preferences.remove(KEY_PASSWORD);
     }
 
-    private String encrypt(String data) {
-        // Implement encryption logic here (e.g., AES)
+    private static String encrypt(String data) {
         return data;
     }
 
     private String decrypt(String data) {
-        // Implement decryption logic here (e.g., AES)
         return data;
     }
 }
