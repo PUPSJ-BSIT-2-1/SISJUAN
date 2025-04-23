@@ -1,36 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="20.0" styleClass="root" stylesheets="@../css/VerificationCode.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.VerificationController">
-    <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-    </padding>
+<VBox alignment="TOP_CENTER" prefHeight="378.0" prefWidth="400.0" styleClass="verification-container" stylesheets="@../css/VerificationCode.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.VerificationController">
+    <clip>
+        <Rectangle arcHeight="15" arcWidth="15" height="400" width="400" />
+    </clip>
     
-    <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
-        <image>
-            <Image url="@../../images/email-icon.png" />
-        </image>
-    </ImageView>
+          <Label styleClass="verification-title" text="Verification Code" VBox.vgrow="NEVER" />
+   <Label fx:id="infoMessage" prefHeight="40.0" prefWidth="259.0" textOverrun="CLIP" wrapText="true" VBox.vgrow="NEVER">
+      <VBox.margin>
+         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </VBox.margin>
+   </Label>
     
-    <Label text="Email Verification" styleClass="title">
-        <padding>
-            <Insets bottom="10.0" />
-        </padding>
-    </Label>
-    
-    <Label text="We've sent a verification code to your email" styleClass="subtitle"/>
-    
-    <TextField fx:id="codeField" promptText="Enter 6-digit code" styleClass="code-field" />
-    
-    <HBox alignment="CENTER" spacing="10.0">
-        <Button fx:id="submitButton" defaultButton="true" mnemonicParsing="false" onAction="#handleVerification" prefHeight="40.0" prefWidth="120.0" styleClass="verify-button" text="Verify" />
-        <Button fx:id="resendButton" mnemonicParsing="false" onAction="#handleResendCode" styleClass="resend-button" text="Resend Code" />
+          <HBox alignment="CENTER" prefHeight="0.0" prefWidth="280.0" spacing="10" VBox.vgrow="NEVER">
+        <TextField fx:id="digit1" styleClass="verification-digit" />
+        <TextField fx:id="digit2" styleClass="verification-digit" />
+        <TextField fx:id="digit3" styleClass="verification-digit" />
+        <TextField fx:id="digit4" styleClass="verification-digit" />
+        <TextField fx:id="digit5" styleClass="verification-digit" />
+        <TextField fx:id="digit6" styleClass="verification-digit" />
+      <VBox.margin>
+         <Insets bottom="10.0" top="10.0" />
+      </VBox.margin>
     </HBox>
     
-    <Label fx:id="errorLabel" styleClass="error-label" />
+          <Button alignment="TOP_LEFT" onAction="#handleResendCode" prefHeight="0.0" prefWidth="280.0" styleClass="resend-button" text="RESEND CODE">
+      <VBox.margin>
+         <Insets />
+      </VBox.margin>
+   </Button>
+    
+          <Label fx:id="errorLabel" styleClass="error-label" />
+    
+          <Button onAction="#handleVerification" prefHeight="0.0" prefWidth="280.0" styleClass="verify-button" text="Verify" />
 </VBox>

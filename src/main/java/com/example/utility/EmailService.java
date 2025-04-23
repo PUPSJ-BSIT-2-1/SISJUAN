@@ -41,31 +41,83 @@ public class EmailService {
             message.setHeader("Precedence", "bulk");
             
             // Create multipart message
-            MimeMultipart multipart = new MimeMultipart();
+            MimeMultipart multipart = getMimeMultipart(code);
+            message.setContent(multipart);
             
-            // Text part
-            MimeBodyPart textPart = new MimeBodyPart();
-            String textContent = "Your PUPSIS verification code is: " + code + "\n\n"
-                    + "This code will expire in 15 minutes.\n"
-                    + "If you didn't request this, please ignore this email.";
-            textPart.setText(textContent);
+            // Send with timeout
+            Transport.send(message);
+        } catch (UnsupportedEncodingException e) {
+            throw new MessagingException("Encoding error", e);
+        }
+    }
+
+    private static MimeMultipart getMimeMultipart(String code) throws MessagingException {
+        MimeMultipart multipart = new MimeMultipart();
+
+        // Text part
+        MimeBodyPart textPart = new MimeBodyPart();
+        String textContent = "Your PUPSIS verification code is: " + code + "\n\n"
+                + "This code will expire in 15 minutes.\n"
+                + "If you didn't request this, please ignore this email.";
+        textPart.setText(textContent);
+
+        // HTML part
+        MimeBodyPart htmlPart = new MimeBodyPart();
+        String htmlContent = "<html><body>"
+                + "<h3>PUPSIS Registration</h3>"
+                + "<p>Your verification code is: <strong>" + code + "</strong></p>"
+                + "<p>This code will expire in 15 minutes.</p>"
+                + "<p>If you didn't request this, please ignore this email.</p>"
+                + "</body></html>";
+        htmlPart.setContent(htmlContent, "text/html");
+
+        // Add parts to message
+        multipart.addBodyPart(textPart);
+        multipart.addBodyPart(htmlPart);
+        return multipart;
+    }
+
+    public void sendPasswordResetEmail(String recipient, String verificationCode) throws MessagingException {
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username, "PUPSIS System"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setSubject("Password Reset Verification Code");
             
-            // HTML part
-            MimeBodyPart htmlPart = new MimeBodyPart();
+            // Plain text content
+            String textContent = "Your password reset verification code is: " + verificationCode + "\n\n"
+                + "This code will expire in 15 minutes.\n"
+                + "If you didn't request this, please ignore this email.";
+                
+            // HTML content
             String htmlContent = "<html><body>"
-                    + "<h3>PUPSIS Registration</h3>"
-                    + "<p>Your verification code is: <strong>" + code + "</strong></p>"
-                    + "<p>This code will expire in 15 minutes.</p>"
-                    + "<p>If you didn't request this, please ignore this email.</p>"
-                    + "</body></html>";
-            htmlPart.setContent(htmlContent, "text/html");
+                + "<h2>Password Reset Verification Code</h2>"
+                + "<p>Your verification code is: <strong>" + verificationCode + "</strong></p>"
+                + "<p>This code will expire in 15 minutes.</p>"
+                + "<p>If you didn't request this, please ignore this email.</p>"
+                + "</body></html>";
+                
+            // Create multipart message
+            MimeMultipart multipart = new MimeMultipart("alternative");
             
-            // Add parts to message
+            // Add text part
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(textContent, "utf-8");
+            
+            // Add HTML part
+            MimeBodyPart htmlPart = new MimeBodyPart();
+            htmlPart.setContent(htmlContent, "text/html; charset=utf-8");
+            
             multipart.addBodyPart(textPart);
             multipart.addBodyPart(htmlPart);
             message.setContent(multipart);
             
-            // Send with timeout
             Transport.send(message);
         } catch (UnsupportedEncodingException e) {
             throw new MessagingException("Encoding error", e);

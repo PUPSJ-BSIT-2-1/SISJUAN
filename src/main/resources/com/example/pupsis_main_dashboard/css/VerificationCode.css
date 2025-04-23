@@ -1,26 +1,47 @@
-.root {
-    -fx-background-color: #f5f5f5;
+.verification-container {
+    -fx-background-color: #f3f3f3;
+    -fx-background-radius: 15;
+    -fx-padding: 60;
 }
 
-.title {
+.verification-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
+    -fx-text-fill: black;
 }
 
-.subtitle {
-    -fx-text-fill: #666;
+.verification-digit {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: transparent;
+    -fx-padding: 10;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-border-style: none;
+}
+.verification-digit:focused {
+    -fx-border-color: transparent;
+    -fx-effect: none;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
-.code-field {
-    -fx-font-size: 16px;
-    -fx-pref-height: 45;
-    -fx-pref-width: 250;
+.error-label {
+    -fx-text-fill: #e53e3e;
+    -fx-font-family: 'Poppins';
 }
 
 .verify-button {
     -fx-background-color: #800000;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-font-family: 'Poppins';
 }
 .verify-button:hover {
 	-fx-cursor: hand; 
@@ -28,8 +49,10 @@
 
 .resend-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #800000;
-    -fx-underline: true;
+    -fx-text-fill: rgba(128, 0, 0, 0.71);
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
 }
 
 .resend-button:hover{
@@ -37,4 +60,7 @@
 }
 .error-label {
     -fx-text-fill: #e74c3c;
+}
+.font {
+    -fx-font-family: "Inter";
 }

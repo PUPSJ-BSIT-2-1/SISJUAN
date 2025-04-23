@@ -17,7 +17,8 @@ public class PUPSIS extends Application {
             Stage initializedStage = utility.loadStage(
                     "fxml/FrontPage.fxml",
                     "PUPSIS",
-                    Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/pupsj-logo.png")).toExternalForm()
+                    Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/pupsj-logo.png")).toExternalForm(),
+                    StageAndSceneUtils.WindowSize.MEDIUM
             );
 
             initializedStage.show();
