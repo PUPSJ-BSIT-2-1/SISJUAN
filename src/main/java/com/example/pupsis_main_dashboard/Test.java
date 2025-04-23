@@ -14,7 +14,7 @@ public class Test extends Application {
         StageAndSceneUtils utility = new StageAndSceneUtils();
 
         try {
-            Stage initializedStage = utility.loadScene(
+            Stage initializedStage = utility.loadStage(
                     "fxml/StudentLogin.fxml",
                     "PUPSIS",
                     Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/pupsj-logo.png")).toExternalForm()

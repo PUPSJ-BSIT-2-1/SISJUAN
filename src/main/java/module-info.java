@@ -5,6 +5,7 @@ module com.example.pupsis_main_dashboard {
     requires javafx.media;
     requires java.desktop;
     requires java.prefs;
+    requires java.mail;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml;
     exports com.example.pupsis_main_dashboard;
