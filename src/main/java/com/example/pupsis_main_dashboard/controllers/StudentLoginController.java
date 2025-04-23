@@ -1,39 +1,38 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.auth.AuthenticationService;
-import com.example.databaseOperations.DBConnection;
+import java.io.IOException;
+import java.sql.*;
+import java.time.Year;
+import java.util.Random;
+
 import com.example.auth.PasswordHandler;
-import com.example.utility.LoadingAnimation;
-import com.example.utility.RememberMeHandler;
-import com.example.utility.StageAndSceneUtils;
+import com.example.databaseOperations.DBConnection;
+import com.example.utility.*;
+
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.image.ImageView;
+import javafx.scene.effect.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
+import javafx.scene.paint.*;
+import javafx.stage.*;
 import javafx.util.Duration;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.input.KeyEvent;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Year;
+import javax.mail.MessagingException;
 
-import static com.example.utility.StageAndSceneUtils.*;
-import static com.example.utility.ValidationUtils.*;
+import static com.example.auth.AuthenticationService.authenticate;
 import static com.example.utility.DateUtils.*;
+import static com.example.utility.StageAndSceneUtils.showAlert;
+import static com.example.utility.ValidationUtils.*;
 
 public class StudentLoginController {
     public VBox leftside;
@@ -64,8 +63,7 @@ public class StudentLoginController {
     private final StringBuilder typedMonth = new StringBuilder();
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
     final StageAndSceneUtils utility = new StageAndSceneUtils();
-    private boolean isBlurred = false; // Track the blur state
-    private final GaussianBlur gaussianBlur = new GaussianBlur(0); // Initialize with 0 blur
+    private EmailService emailService;
 
     private void setupRememberMeHandler() {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
@@ -120,13 +118,17 @@ public class StudentLoginController {
 
     @FXML
     private void initialize() {
+        // Replace with your Gmail address and App Password
+        emailService = new EmailService(
+            "harolddelapena.11@gmail.com",
+            "sfhq xeks hgeo yfja");
+        
         setupRememberMeHandler();
         setupRegistrationNavigation();
         setupComboBoxHandlers();
         setupYearsAndDays();
         setupConfirmRegistration();
         requestInitialFocus();
-
     }
 
     @FXML
@@ -150,22 +152,16 @@ public class StudentLoginController {
                 var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
                 leftside.setAlignment(Pos.CENTER);
                 leftside.getChildren().add(loader);
-                
+
                 animateBlur(mainLoginPane, true);
 
                 new Thread(() -> {
                     try {
-                        System.out.println("Starting login process for Identifier: " + input);
                         Thread.sleep(2000);
-
-                        System.out.println("Authenticating user...");
-                        boolean isAuthenticated = AuthenticationService.authenticate(input, password);
-                        System.out.println("Authentication result for '" + input + "': " + isAuthenticated);
+                        boolean isAuthenticated = authenticate(input, password);
 
                         Platform.runLater(() -> {
                             leftside.getChildren().remove(loader);
-
-                            // Remove blur after login process
                             animateBlur(mainLoginPane, false);
 
                             if (isAuthenticated) {
@@ -183,10 +179,7 @@ public class StudentLoginController {
                     } catch (Exception e) {
                         Platform.runLater(() -> {
                             leftside.getChildren().remove(loader);
-
-                            // Ensure blur is removed in case of failure
                             animateBlur(mainLoginPane, false);
-
                             e.printStackTrace();
                             showAlert("Error", "An error occurred during login: " + e.getMessage(), Alert.AlertType.ERROR);
                         });
@@ -327,12 +320,8 @@ public class StudentLoginController {
         inputClearDelay.playFromStart();
     }
 
+    @FXML
     private void handleConfirmRegistration() {
-        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        rightside.setAlignment(Pos.CENTER);
-        rightside.getChildren().add(loader);
-        animateBlur(mainLoginPane, true);
-
         String passwordInput = this.password.getText().trim();
         String retypePassword = this.retype.getText().trim();
         String firstName = this.firstname.getText().trim();
@@ -343,44 +332,49 @@ public class StudentLoginController {
         Integer day = this.dayComboBox.getValue();
         Integer year = this.yearComboBox.getValue();
 
-        System.out.println("First Name: " + firstName);
-        System.out.println("Middle Name: " + middleName);
-        System.out.println("Last Name: " + lastName);
-        System.out.println("Email: " + email);
-        System.out.println("Password: " + passwordInput);
-        System.out.println("Retyped Password: " + retypePassword);
-        System.out.println("Month: " + month);
-        System.out.println("Day: " + day);
-        System.out.println("Year: " + year);
-
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
-                month == null || day == null || year == null) {
-            showAlert("Input Error", "Please fill out all fields!");
-            rightside.getChildren().remove(loader);
-            animateBlur(mainLoginPane, false);
+                email.isEmpty() || month == null || day == null || year == null) {
+            showAlert("Input Error", "Please fill out all required fields!");
             return;
         }
 
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
             showAlert("Input Error", "Names must not contain numbers!");
-            rightside.getChildren().remove(loader);
-            animateBlur(mainLoginPane, false);
             return;
         }
 
         if (!isValidEmail(email)) {
             showAlert("Input Error", "Please enter a valid email address!");
-            rightside.getChildren().remove(loader);
-            animateBlur(mainLoginPane, false);
             return;
         }
 
         if (!passwordInput.equals(retypePassword)) {
             showAlert("Password Error", "Passwords do not match!");
-            rightside.getChildren().remove(loader);
-            animateBlur(mainLoginPane, false);
             return;
         }
+
+        String verificationCode = generateVerificationCode();
+        sendVerificationEmail(email, verificationCode);
+
+        Stage verificationStage = new Stage();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
+            Parent root = loader.load();
+            VerificationController controller = loader.getController();
+            controller.initialize(email, verificationCode, verificationStage, () -> {
+                completeRegistration(firstName, middleName, lastName, email, passwordInput, month, day, year);
+            });
+
+            verificationStage.setScene(new Scene(root));
+            verificationStage.initModality(Modality.APPLICATION_MODAL);
+            verificationStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load verification window");
+        }
+    }
+
+    private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
 
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
         java.sql.Date dateOfBirth;
@@ -389,11 +383,10 @@ public class StudentLoginController {
             dateOfBirth = java.sql.Date.valueOf(formattedDate);
         } catch (IllegalArgumentException e) {
             showAlert("Input Error", "Invalid date of birth provided!");
-            e.printStackTrace();
             return;
         }
 
-        String query = "INSERT INTO students (password, firstname, middlename, lastname, email, birthday) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO students(password,firstname,middlename,lastname,email,birthday) VALUES(?,?,?,?,?,?)";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -408,41 +401,38 @@ public class StudentLoginController {
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected > 0) {
-                showAlert("Registration Successful", "Your account has been created!");
-                String input = email.trim().toLowerCase();
-                String pass = password.getText().trim();
-
-
-                try {
-
-                    boolean isAuthenticated = AuthenticationService.authenticate(input, pass);
-                    if (isAuthenticated) {
-                        String regFirstName = getUserFirstName(input, input.contains("@"));
-                        String welcomeMessage = "Welcome, " + regFirstName + "!";
-                        showAlert("Login Successful", welcomeMessage, Alert.AlertType.INFORMATION);
-                        rightside.getChildren().remove(loader);
-                        animateBlur(mainLoginPane, false);
-                    } else {
-                        showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
-                        rightside.getChildren().remove(loader);
-                        animateBlur(mainLoginPane, false);
-                    }
-                } catch (Exception e) {
                 Platform.runLater(() -> {
-                    leftside.getChildren().remove(loader);
-
-                    // Ensure blur is removed in case of failure
-                    animateBlur(mainLoginPane, false);
-
-                    e.printStackTrace();
-                    showAlert("Error", "An error occurred during login: " + e.getMessage(), Alert.AlertType.ERROR);
+                    showAlert("Registration Successful", "Your account has been created!");
+                });
+            } else {
+                Platform.runLater(() -> {
+                    showAlert("Registration Failed", "An error occurred during registration.");
                 });
             }
-            } else {
-                showAlert("Registration Failed", "An error occurred during registration.");
-            }
         } catch (SQLException e) {
-            showAlert("Database Error", e.getMessage());
+            Platform.runLater(() -> {
+                showAlert("Database Error", e.getMessage());
+            });
+            e.printStackTrace();
+        } finally {
+            Platform.runLater(() -> {
+//                rightside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+            });
+        }
+    }
+
+    private String generateVerificationCode() {
+        return String.format("%06d", new Random().nextInt(999999));
+    }
+
+    private void sendVerificationEmail(String email, String code) {
+        try {
+            emailService.sendVerificationEmail(email, code);
+        } catch (MessagingException e) {
+            Platform.runLater(() -> {
+                showAlert("Email Error", "Failed to send verification email: " + e.getMessage());
+            });
             e.printStackTrace();
         }
     }
@@ -450,7 +440,7 @@ public class StudentLoginController {
     @FXML
     private void closeApplication() throws IOException {
         Stage currentStage = (Stage) closeButton.getScene().getWindow();
-        utility.loadScene(currentStage, "fxml/FrontPage.fxml");
+        utility.loadStage(currentStage, "fxml/FrontPage.fxml");
     }
 
     private String getUserFirstName(String input, boolean isEmail) {
@@ -500,38 +490,28 @@ public class StudentLoginController {
     }
 
     private void animateBlur(Pane pane, boolean enableBlur) {
-        // Configure GaussianBlur effect
-        final GaussianBlur gaussianBlur = new GaussianBlur(enableBlur ? 0 : 20); // Start opposite
-        final double targetRadius = enableBlur ? 20.0 : 0.0; // Target blur radius
-        final Duration animationDuration = Duration.millis(300); // Animation duration
+        final GaussianBlur gaussianBlur = new GaussianBlur(enableBlur ? 0 : 20);
+        final double targetRadius = enableBlur ? 20.0 : 0.0;
+        final Duration animationDuration = Duration.millis(300);
 
-        // Attach GaussianBlur effect to the Pane
         pane.setEffect(gaussianBlur);
 
-        // Define starting and ending colors
-        final Color startColor = enableBlur ? Color.TRANSPARENT : Color.WHITE; // From
-        final Color endColor = enableBlur ? Color.WHITE : Color.TRANSPARENT;   // To
+        final Color startColor = enableBlur ? Color.TRANSPARENT : Color.WHITE;
+        final Color endColor = enableBlur ? Color.WHITE : Color.TRANSPARENT;
 
-        // Create an animation for GaussianBlur
         KeyValue blurValue = new KeyValue(gaussianBlur.radiusProperty(), targetRadius);
         KeyFrame blurFrame = new KeyFrame(animationDuration, blurValue);
 
-        // Animate the background color
         ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(startColor);
-        colorProperty.addListener((obs, oldColor, newColor) -> {
-            // Update the background fill dynamically
-            pane.setBackground(new Background(new BackgroundFill(newColor, CornerRadii.EMPTY, Insets.EMPTY)));
-        });
+        colorProperty.addListener((obs, oldColor, newColor) -> pane.setBackground(new Background(new BackgroundFill(newColor, CornerRadii.EMPTY, Insets.EMPTY))));
 
         Timeline colorTimeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(colorProperty, startColor)),
                 new KeyFrame(animationDuration, new KeyValue(colorProperty, endColor))
         );
 
-        // Combine blur and color animations
         Timeline combinedTimeline = new Timeline(blurFrame);
-        combinedTimeline.setOnFinished(e -> colorTimeline.play()); // Play the color animation afterward
+        combinedTimeline.setOnFinished(e -> colorTimeline.play());
         combinedTimeline.play();
     }
-
 }

@@ -110,7 +110,7 @@ public class FrontPageController {
     @FXML
     private void handleGetStartedButton() throws IOException {
         Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
-        utility.loadScene(currentStage, "fxml/StudentLogin.fxml");
+        utility.loadStage(currentStage, "fxml/StudentLogin.fxml");
     }
 
 }

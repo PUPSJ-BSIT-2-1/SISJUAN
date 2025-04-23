@@ -18,7 +18,7 @@ public class StageAndSceneUtils {
     private double xOffset = 0;
     private double yOffset = 0;
 
-    public void loadScene(Stage stage, String fxmlFile) throws IOException {
+    public void loadStage(Stage stage, String fxmlFile) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
         Parent root = fxmlLoader.load();
 
@@ -41,7 +41,7 @@ public class StageAndSceneUtils {
         fadeTransition.play();
     }
 
-    public Stage loadScene(String fxmlFile, String title, String iconPath) throws IOException {
+    public Stage loadStage(String fxmlFile, String title, String iconPath) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
         Parent root = fxmlLoader.load();
         Stage stage = new Stage();
