@@ -20,74 +20,84 @@ public class StageAndSceneUtils {
 
     // Standard window sizes
     public enum WindowSize { SMALL, MEDIUM, LARGE }
-    private static final double SMALL_WIDTH = 600;
-    private static final double SMALL_HEIGHT = 400;
+    private static final double SMALL_WIDTH = 800;
+    private static final double SMALL_HEIGHT = 600;
     private static final double MEDIUM_WIDTH = 1280;
     private static final double MEDIUM_HEIGHT = 720;
-    private static final double LARGE_WIDTH = 1280;
-    private static final double LARGE_HEIGHT = 720;
+    private static final double LARGE_WIDTH = 1600;
+    private static final double LARGE_HEIGHT = 900;
 
     public void loadStage(Stage stage, String fxmlFile, WindowSize size) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
-        Parent root = fxmlLoader.load();
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
+            Parent root = fxmlLoader.load();
 
-        root.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
-        });
+            root.setOnMousePressed(event -> {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            });
 
-        root.setOnMouseDragged(event -> {
-            stage.setX(event.getScreenX() - xOffset);
-            stage.setY(event.getScreenY() - yOffset);
-        });
+            root.setOnMouseDragged(event -> {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            });
 
-        double width = size == WindowSize.MEDIUM ? MEDIUM_WIDTH : size == WindowSize.LARGE ? LARGE_WIDTH : SMALL_WIDTH;
-        double height = size == WindowSize.MEDIUM ? MEDIUM_HEIGHT : size == WindowSize.LARGE ? LARGE_HEIGHT : SMALL_HEIGHT;
+            double width = size == WindowSize.MEDIUM ? MEDIUM_WIDTH : size == WindowSize.LARGE ? LARGE_WIDTH : SMALL_WIDTH;
+            double height = size == WindowSize.MEDIUM ? MEDIUM_HEIGHT : size == WindowSize.LARGE ? LARGE_HEIGHT : SMALL_HEIGHT;
 
-        Scene scene = new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT);
-        stage.setScene(scene);
-        stage.centerOnScreen();
+            Scene scene = new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT);
+            stage.setScene(scene);
+            stage.centerOnScreen();
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), root);
-        fadeTransition.setFromValue(0.0);
-        fadeTransition.setToValue(1.0);
-        fadeTransition.play();
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), root);
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.play();
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR);
+            throw e;
+        }
     }
 
     public Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
-        Parent root = fxmlLoader.load();
-        Stage stage = new Stage();
-        stage.centerOnScreen();
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.centerOnScreen();
 
-        root.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
-        });
+            root.setOnMousePressed(event -> {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            });
 
-        root.setOnMouseDragged(event -> {
-            stage.setX(event.getScreenX() - xOffset);
-            stage.setY(event.getScreenY() - yOffset);
-        });
+            root.setOnMouseDragged(event -> {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            });
 
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setTitle(title);
-        if (iconPath != null) {
-            stage.getIcons().add(new javafx.scene.image.Image(iconPath));
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.setTitle(title);
+            if (iconPath != null) {
+                stage.getIcons().add(new javafx.scene.image.Image(iconPath));
+            }
+
+            double width = size == WindowSize.MEDIUM ? MEDIUM_WIDTH : size == WindowSize.LARGE ? LARGE_WIDTH : SMALL_WIDTH;
+            double height = size == WindowSize.MEDIUM ? MEDIUM_HEIGHT : size == WindowSize.LARGE ? LARGE_HEIGHT : SMALL_HEIGHT;
+
+            stage.setScene(new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT));
+            stage.setResizable(false);
+
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), root);
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.play();
+
+            return stage;
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR);
+            throw e;
         }
-
-        double width = size == WindowSize.MEDIUM ? MEDIUM_WIDTH : SMALL_WIDTH;
-        double height = size == WindowSize.MEDIUM ? MEDIUM_HEIGHT : SMALL_HEIGHT;
-
-        stage.setScene(new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT));
-        stage.setResizable(false);
-
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), root);
-        fadeTransition.setFromValue(0.0);
-        fadeTransition.setToValue(1.0);
-        fadeTransition.play();
-
-        return stage;
     }
 
     public static void showAlert(String title, String content) {

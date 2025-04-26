@@ -36,7 +36,7 @@ public class FrontPageController {
     @FXML
     private Button getStartedButton;
 
-    final StageAndSceneUtils utility = new StageAndSceneUtils();
+    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
 
     @FXML
     public void initialize() {
@@ -109,8 +109,10 @@ public class FrontPageController {
 
     @FXML
     private void handleGetStartedButton() throws IOException {
-        Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
-        utility.loadStage(currentStage, "fxml/StudentLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+        if (getStartedButton.getScene() != null && getStartedButton.getScene().getWindow() != null) {
+            Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
+            stageUtils.loadStage(currentStage, "fxml/StudentLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+        }
     }
 
 }

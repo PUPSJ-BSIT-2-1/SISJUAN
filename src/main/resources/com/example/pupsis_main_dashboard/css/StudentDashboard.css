@@ -1,0 +1,57 @@
+.main-container{
+    -fx-background-color: #f8fcfc;
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+}
+.content-container{
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+.profile-picture{
+    -fx-background-radius: 50;
+    -fx-background-color: maroon;
+}
+.sidebar-items:hover{
+    -fx-background-color: #ededed;
+    -fx-background-radius: 5;
+}
+.sidebar-items.selected {
+    -fx-background-color: #ebdddd;
+    -fx-background-radius: 5;
+    -fx-text-fill: maroon;
+}
+.small-text{
+    -fx-font-size: 12;
+    -fx-font-family: "Inter 18pt Medium";
+}
+.big-text{
+    -fx-font-size: 24;
+    -fx-font-family: "Inter 18pt Medium";
+}
+.medium-text{
+    -fx-font-size : 18;
+    -fx-font-family: "Inter 18pt Medium";
+}
+.bold-text{
+    -fx-font-weight: bold;
+}
+.groups{
+    -fx-text-fill: #acacac;
+    -fx-font-size: 16;
+}
+.sidebar-label-font{
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-font-size: 16;
+}
+.selected .icons{
+    -fx-fill: maroon;
+}
+.icons{
+    -fx-fill: #acacac;
+}
+.selected .sidebar-label-font{
+    -fx-text-fill: maroon;
+}

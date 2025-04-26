@@ -2,14 +2,26 @@
 
 <!--suppress ALL -->
 
+<?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
+<?import javafx.scene.text.Font?>
+
 <StackPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
     <BorderPane fx:id="mainLoginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css">
         <left>
@@ -302,7 +314,7 @@
          <VBox fx:id="leftside" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
       </left>
       <right>
-         <VBox fx:id="rightside" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
+         <VBox fx:id="rightside" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
       </right>
    </BorderPane>
 </StackPane>
