@@ -370,14 +370,14 @@ public class StudentLoginController {
 
         // Add loading animation and blur
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        this.leftside.getChildren().add(loader);
+        this.rightside.getChildren().add(loader);
         animateBlur(mainLoginPane, true);
 
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
                 email.isEmpty() || month == null || day == null || year == null) {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Please fill out all required fields!");
-                this.leftside.getChildren().remove(loader);
+                this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -386,7 +386,7 @@ public class StudentLoginController {
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Names must not contain numbers!");
-                this.leftside.getChildren().remove(loader);
+                this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -395,7 +395,7 @@ public class StudentLoginController {
         if (isValidEmail(email)) {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Please enter a valid email address!");
-                this.leftside.getChildren().remove(loader);
+                this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -404,7 +404,7 @@ public class StudentLoginController {
         if (!passwordInput.equals(retypePassword)) {
             Platform.runLater(() -> {
                 showAlert("Password Error", "Passwords do not match!");
-                this.leftside.getChildren().remove(loader);
+                this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -422,7 +422,7 @@ public class StudentLoginController {
                     showAlert("Account Exists", "This email is already registered!");
                     studentIdField.setText(email);
                     ControllerUtils.animateVBox(centerVBox, 0);
-                    this.leftside.getChildren().remove(loader);
+                    this.rightside.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
                 });
                 return;
@@ -430,7 +430,7 @@ public class StudentLoginController {
         } catch (SQLException e) {
             Platform.runLater(() -> {
                 showAlert("Database Error", "Failed to check email availability");
-                this.leftside.getChildren().remove(loader);
+                this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -444,14 +444,14 @@ public class StudentLoginController {
             
             Platform.runLater(() -> {
                 // Remove loading animation when verification window appears
-                this.leftside.getChildren().remove(loader);
+                this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
                 
                 Stage verificationStage = new Stage();
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
-                    Parent root = loader.load();
-                    VerificationController controller = loader.getController();
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
+                    Parent root = fxmlLoader.load();
+                    VerificationController controller = fxmlLoader.getController();
                     controller.initializeVerification(
                             verificationCode,
                             email,
