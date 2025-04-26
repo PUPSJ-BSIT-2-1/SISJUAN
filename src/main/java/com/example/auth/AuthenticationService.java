@@ -20,11 +20,9 @@ public class AuthenticationService {
 
             preparedStatement.setString(1, input);
             ResultSet resultSet = preparedStatement.executeQuery();
-            System.out.println(resultSet.next());
             if (resultSet.next()) {
                 String storedPassword = resultSet.getString("password");
                 isAuthenticated = PasswordHandler.verifyPassword(password, storedPassword);
-
             }
 
         } catch (SQLException e) {

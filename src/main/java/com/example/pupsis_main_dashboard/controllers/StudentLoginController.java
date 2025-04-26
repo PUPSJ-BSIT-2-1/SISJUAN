@@ -314,7 +314,6 @@ public class StudentLoginController {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
-    // Login/Registration methods
     @FXML
     private void handleLogin(VBox pane) {
         String input = studentIdField.getText().trim().toLowerCase();
@@ -369,82 +368,133 @@ public class StudentLoginController {
         Integer day = this.dayComboBox.getValue();
         Integer year = this.yearComboBox.getValue();
 
+        // Add loading animation and blur
+        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
+        this.leftside.getChildren().add(loader);
+        animateBlur(mainLoginPane, true);
+
         if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
                 email.isEmpty() || month == null || day == null || year == null) {
-            showAlert("Input Error", "Please fill out all required fields!");
+            Platform.runLater(() -> {
+                showAlert("Input Error", "Please fill out all required fields!");
+                this.leftside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+            });
             return;
         }
 
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
-            showAlert("Input Error", "Names must not contain numbers!");
+            Platform.runLater(() -> {
+                showAlert("Input Error", "Names must not contain numbers!");
+                this.leftside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+            });
             return;
         }
 
         if (isValidEmail(email)) {
-            showAlert("Input Error", "Please enter a valid email address!");
+            Platform.runLater(() -> {
+                showAlert("Input Error", "Please enter a valid email address!");
+                this.leftside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+            });
             return;
         }
 
         if (!passwordInput.equals(retypePassword)) {
-            showAlert("Password Error", "Passwords do not match!");
+            Platform.runLater(() -> {
+                showAlert("Password Error", "Passwords do not match!");
+                this.leftside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+            });
             return;
         }
-        var laoder = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        this.leftside.getChildren().add(laoder);
-        animateBlur(this.mainLoginPane, true);
-        // Check if email already exists
-        try (Connection connection = DBConnection.getConnection()) {
-            String checkQuery = "SELECT email FROM students WHERE email = ?";
-            PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
-            checkStatement.setString(1, email);
-            ResultSet resultSet = checkStatement.executeQuery();
+        // Check if email exists
+        String checkEmailQuery = "SELECT email FROM students WHERE email = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(checkEmailQuery)) {
+
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 Platform.runLater(() -> {
                     showAlert("Account Exists", "This email is already registered!");
                     studentIdField.setText(email);
-                    ControllerUtils.animateVBox(centerVBox, 417);
+                    ControllerUtils.animateVBox(centerVBox, 0);
+                    this.leftside.getChildren().remove(loader);
+                    animateBlur(mainLoginPane, false);
                 });
                 return;
             }
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to check email availability");
+            Platform.runLater(() -> {
+                showAlert("Database Error", "Failed to check email availability");
+                this.leftside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+            });
             return;
         }
+
         String verificationCode = generateVerificationCode();
-        sendVerificationEmail(email, verificationCode);
+        
+        // Send email in background thread
+        new Thread(() -> {
+            sendVerificationEmail(email, verificationCode);
+            
+            Platform.runLater(() -> {
+                // Remove loading animation when verification window appears
+                this.leftside.getChildren().remove(loader);
+                animateBlur(mainLoginPane, false);
+                
+                Stage verificationStage = new Stage();
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
+                    Parent root = loader.load();
+                    VerificationController controller = loader.getController();
+                    controller.initializeVerification(
+                            verificationCode,
+                            email,
+                            verificationStage,
+                            () -> completeRegistration(firstName, middleName, lastName, email, passwordInput, month, day, year)
+                    );
 
-        Stage verificationStage = new Stage();
+                    verificationStage.setScene(new Scene(root));
+                    verificationStage.initModality(Modality.APPLICATION_MODAL);
+                    verificationStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    showAlert("Error", "Failed to load verification window");
+                }
+            });
+        }).start();
+    }
+    
+    private void sendVerificationEmail(String email, String code) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
-            Parent root = loader.load();
-            VerificationController controller = loader.getController();
-            controller.initializeVerification(
-                    verificationCode,
-                    email,
-                    verificationStage,
-                    () -> completeRegistration(firstName, middleName, lastName, email, passwordInput, month, day, year)
-            );
-
-            verificationStage.setScene(new Scene(root));
-            verificationStage.initModality(Modality.APPLICATION_MODAL);
-            verificationStage.showAndWait();
-        } catch (IOException e) {
+            emailService.sendVerificationEmail(email, code);
+        } catch (MessagingException e) {
+            Platform.runLater(() -> {
+                showAlert("Email Error", "Failed to send verification email: " + e.getMessage());
+            });
             e.printStackTrace();
-            showAlert("Error", "Failed to load verification window");
         }
     }
     private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         animateBlur(mainLoginPane, true);
-        this.leftside.getChildren().add(loader);
+        this.rightside.getChildren().add(loader);
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
         java.sql.Date dateOfBirth;
         try {
             String formattedDate = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
             dateOfBirth = java.sql.Date.valueOf(formattedDate);
         } catch (IllegalArgumentException e) {
-            showAlert("Input Error", "Invalid date of birth provided!");
+            Platform.runLater(() -> {
+                showAlert("Input Error", "Invalid date of birth provided!");
+                animateBlur(mainLoginPane, false);
+                this.rightside.getChildren().remove(loader);
+            });
             return;
         }
 
@@ -465,7 +515,7 @@ public class StudentLoginController {
             if (rowsAffected > 0) {
                 Platform.runLater(() -> {
                     animateBlur(mainLoginPane, false);
-                    this.leftside.getChildren().remove(loader);
+                    this.rightside.getChildren().remove(loader);
                     showAlert("Registration Successful", "Your account has been created!");
                     studentIdField.setText(email);
                     passwordField.setText(passwordInput);
@@ -475,7 +525,7 @@ public class StudentLoginController {
             } else {
                 Platform.runLater(() -> {
                     animateBlur(mainLoginPane, false);
-                    this.leftside.getChildren().remove(loader);
+                    this.rightside.getChildren().remove(loader);
                     showAlert("Registration Failed", "An error occurred during registration.");
                 });
             }
@@ -487,20 +537,11 @@ public class StudentLoginController {
         } finally {
             Platform.runLater(() -> {
                 animateBlur(mainLoginPane, false);
+                this.rightside.getChildren().remove(loader);
             });
         }
     }
     private String generateVerificationCode() {
         return String.format("%06d", new Random().nextInt(999999));
-    }
-    private void sendVerificationEmail(String email, String code) {
-        try {
-            emailService.sendVerificationEmail(email, code);
-        } catch (MessagingException e) {
-            Platform.runLater(() -> {
-                showAlert("Email Error", "Failed to send verification email: " + e.getMessage());
-            });
-            e.printStackTrace();
-        }
     }
 }
