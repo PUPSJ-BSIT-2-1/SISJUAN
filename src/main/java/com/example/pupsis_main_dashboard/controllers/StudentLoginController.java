@@ -341,7 +341,14 @@ public class StudentLoginController {
                         RememberMeHandler.saveCredentials(input, password, rememberMe);
                         String firstName = ControllerUtils.getUserFirstName(input, input.contains("@"));
                         pane.getChildren().remove(loader);
-                        showAlert("Login Successful", "Welcome, " + firstName + "!", Alert.AlertType.INFORMATION);
+//                        showAlert("Login Successful", "Welcome, " + firstName + "!", Alert.AlertType.INFORMATION);
+                        StageAndSceneUtils u = new StageAndSceneUtils();
+                        Stage stage = (Stage) pane.getScene().getWindow();
+                        try {
+                            u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     } else {
                         pane.getChildren().remove(loader);
                         showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
