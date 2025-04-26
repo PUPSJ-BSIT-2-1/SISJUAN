@@ -95,7 +95,7 @@ public class FrontPageController {
         try{
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/about"));
         } catch (Exception e) {
-            System.err.println("Failed to load programs: " + e.getMessage());
+            System.err.println("Failed to load about: " + e.getMessage());
         }
     }
     @FXML
@@ -103,7 +103,7 @@ public class FrontPageController {
         try{
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/others"));
         } catch (Exception e) {
-            System.err.println("Failed to load programs: " + e.getMessage());
+            System.err.println("Failed to load others: " + e.getMessage());
         }
     }
 
