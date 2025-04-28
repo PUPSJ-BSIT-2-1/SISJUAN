@@ -1,4 +1,4 @@
-package com.example.auth;
+package com.example.pupsis_main_dashboard.auth;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
