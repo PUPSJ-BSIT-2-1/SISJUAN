@@ -1,4 +1,4 @@
-package com.example.utility;
+package com.example.pupsis_main_dashboard.utility;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;

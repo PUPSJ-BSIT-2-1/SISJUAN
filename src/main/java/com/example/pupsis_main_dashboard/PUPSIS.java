@@ -1,6 +1,6 @@
 package com.example.pupsis_main_dashboard;
 
-import com.example.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
