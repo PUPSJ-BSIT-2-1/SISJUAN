@@ -7,14 +7,13 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.example.auth.PasswordHandler;
-import com.example.databaseOperations.DBConnection;
+import com.example.pupsis_main_dashboard.auth.PasswordHandler;
+import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.ControllerUtils;
 import com.example.utility.*;
 
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +21,6 @@ import javafx.geometry.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -32,7 +30,7 @@ import javafx.util.Duration;
 
 import javax.mail.MessagingException;
 
-import static com.example.auth.AuthenticationService.authenticate;
+import static com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate;
 import static com.example.pupsis_main_dashboard.utilities.ControllerUtils.animateBlur;
 import static com.example.utility.DateUtils.*;
 import static com.example.utility.StageAndSceneUtils.showAlert;
@@ -458,7 +456,7 @@ public class StudentLoginController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
                     Parent root = fxmlLoader.load();
-                    VerificationController controller = fxmlLoader.getController();
+                    VerificationCodeController controller = fxmlLoader.getController();
                     controller.initializeVerification(
                             verificationCode,
                             email,

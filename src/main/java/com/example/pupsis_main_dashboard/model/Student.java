@@ -1,4 +1,4 @@
-package com.example.model;
+package com.example.pupsis_main_dashboard.model;
 
 public class Student {
     private String studentId;

@@ -1,11 +1,11 @@
-package com.example.auth;
+package com.example.pupsis_main_dashboard.auth;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.example.databaseOperations.DBConnection;
+import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 
 public class AuthenticationService {
 

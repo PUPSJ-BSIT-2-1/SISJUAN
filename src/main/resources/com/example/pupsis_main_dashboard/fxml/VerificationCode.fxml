@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox alignment="TOP_CENTER" prefHeight="378.0" prefWidth="400.0" styleClass="verification-container" stylesheets="@../css/VerificationCode.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.VerificationController">
+<VBox alignment="TOP_CENTER" prefHeight="378.0" prefWidth="400.0" styleClass="verification-container" stylesheets="@../css/VerificationCode.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.VerificationCodeController">
     <clip>
         <Rectangle arcHeight="15" arcWidth="15" height="400" width="400" />
     </clip>
