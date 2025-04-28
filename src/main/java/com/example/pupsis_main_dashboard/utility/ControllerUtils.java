@@ -1,13 +1,10 @@
-package com.example.pupsis_main_dashboard.utilities;
+package com.example.pupsis_main_dashboard.utility;
 
 import javafx.animation.TranslateTransition;
-import javafx.fxml.FXML;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.scene.control.Label;
 
 public class ControllerUtils {
     public static void animateVBox(VBox vbox, double translationX) {

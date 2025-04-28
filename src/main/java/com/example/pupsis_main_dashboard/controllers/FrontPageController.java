@@ -9,7 +9,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import com.example.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 
 import java.io.File;
 import java.io.IOException;

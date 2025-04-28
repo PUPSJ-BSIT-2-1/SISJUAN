@@ -9,8 +9,8 @@ import java.util.concurrent.Executors;
 
 import com.example.pupsis_main_dashboard.auth.PasswordHandler;
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
-import com.example.pupsis_main_dashboard.utilities.ControllerUtils;
-import com.example.utility.*;
+import com.example.pupsis_main_dashboard.utility.ControllerUtils;
+import com.example.pupsis_main_dashboard.utility.*;
 
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -31,10 +31,10 @@ import javafx.util.Duration;
 import javax.mail.MessagingException;
 
 import static com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate;
-import static com.example.pupsis_main_dashboard.utilities.ControllerUtils.animateBlur;
-import static com.example.utility.DateUtils.*;
-import static com.example.utility.StageAndSceneUtils.showAlert;
-import static com.example.utility.ValidationUtils.*;
+import static com.example.pupsis_main_dashboard.utility.ControllerUtils.animateBlur;
+import static com.example.pupsis_main_dashboard.utility.DateUtils.*;
+import static com.example.pupsis_main_dashboard.utility.StageAndSceneUtils.showAlert;
+import static com.example.pupsis_main_dashboard.utility.ValidationUtils.*;
 
 public class StudentLoginController {
     public VBox leftside;

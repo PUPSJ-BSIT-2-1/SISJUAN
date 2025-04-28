@@ -1,6 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.utility.EmailService;
+import com.example.pupsis_main_dashboard.utility.EmailService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
