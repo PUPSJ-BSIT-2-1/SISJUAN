@@ -40,11 +40,9 @@ public class EmailService {
             message.setHeader("X-Mailer", "JavaMail");
             message.setHeader("Precedence", "bulk");
             
-            // Create multipart message
             MimeMultipart multipart = getMimeMultipart(code);
             message.setContent(multipart);
             
-            // Send with timeout
             Transport.send(message);
         } catch (UnsupportedEncodingException e) {
             throw new MessagingException("Encoding error", e);

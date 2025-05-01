@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.example.pupsis_main_dashboard.controllers.SettingsController"
+      styleClass="settings-container" stylesheets="@../css/SettingsContent.css">
+
+    <Label text="Settings" styleClass="settings-title" />
+    
+    <VBox styleClass="settings-section" spacing="10">
+        <Label text="Appearance" styleClass="settings-label" />
+        <Label fx:id="themeLabel" />
+        <Button text="Change Theme" styleClass="settings-control" />
+    </VBox>
+    
+    <VBox styleClass="settings-section" spacing="10">
+        <Label text="Account" styleClass="settings-label" />
+        <Button text="Change Password" styleClass="settings-control" />
+        <Button text="Logout" styleClass="settings-control" />
+    </VBox>
+    
+    <VBox styleClass="settings-section" spacing="10">
+        <Label text="Notifications" styleClass="settings-label" />
+        <CheckBox text="Enable Email Notifications" />
+        <CheckBox text="Enable Push Notifications" />
+    </VBox>
+</VBox>

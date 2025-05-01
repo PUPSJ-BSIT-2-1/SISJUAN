@@ -13,6 +13,11 @@
 .birthday-field:hover{
 	-fx-cursor: hand; 
 }
+.birthday-field:focused{
+    -fx-border-color: maroon;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+}
 .buttons{
     -fx-background-color: #800000;
     -fx-text-fill: white;
@@ -22,6 +27,11 @@
 .buttons:hover{
     -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
     -fx-cursor: hand; 
+}
+.buttons:focused{
+    -fx-border-color: white;
+    -fx-border-radius: 7;
+    -fx-border-width: 2;
 }
 .font{
     -fx-font-family: "Inter";

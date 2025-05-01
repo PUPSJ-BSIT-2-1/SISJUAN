@@ -7,6 +7,7 @@ module com.example.pupsis_main_dashboard {
     requires java.desktop;
     requires java.prefs;
     requires java.mail;
+    requires org.slf4j;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml;
     exports com.example.pupsis_main_dashboard;

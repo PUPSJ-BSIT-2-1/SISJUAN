@@ -55,3 +55,23 @@
 .selected .sidebar-label-font{
     -fx-text-fill: maroon;
 }
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane .scroll-bar {
+    -fx-opacity: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+}
+.settings-tab {
+    -fx-background-color: #800000; /* Maroon */
+    -fx-text-fill: white;
+}
+
+.settings-tab:hover {
+    -fx-background-color: #600000; /* Darker maroon */
+}
+
+.settings-tab.selected {
+    -fx-background-color: #400000; /* Even darker maroon */
+}

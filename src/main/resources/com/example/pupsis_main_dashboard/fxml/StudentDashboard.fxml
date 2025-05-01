@@ -3,6 +3,7 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -13,7 +14,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="main-container" stylesheets="@../css/StudentDashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentDashboardController">
    <left>
-      <VBox prefHeight="700.0" prefWidth="350.0" styleClass="sidebar" BorderPane.alignment="CENTER">
+      <VBox prefHeight="700.0" prefWidth="350.0" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER_LEFT">
                <children>
@@ -23,7 +24,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                      <children>
-                        <Label styleClass="medium-text" text="John Doe">
+                        <Label fx:id="studentNameLabel" styleClass="medium-text" text="John Doe">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -73,7 +74,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </SVGPath>
-                  <Label styleClass="sidebar-label-font" text="Registration" />
+                  <Label styleClass="sidebar-label-font" text="Enrollment" />
                </children>
                <padding>
                   <Insets left="10.0" />
@@ -199,9 +200,14 @@
       </VBox>
    </left>
    <center>
-      <Pane prefHeight="700.0" prefWidth="923.0" styleClass="content-container" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets left="10.0" />
-         </BorderPane.margin></Pane>
+      <ScrollPane fx:id="contentPane" prefHeight="700.0" BorderPane.alignment="CENTER">
+         <styleClass>
+            <String fx:value="content-container" />
+            <String fx:value="scroll-bar" />
+         </styleClass>
+         <padding>
+            <Insets bottom="30.0" left="30.0" top="30.0" />
+         </padding>
+      </ScrollPane>
    </center>
 </BorderPane>

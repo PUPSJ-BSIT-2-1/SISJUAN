@@ -11,12 +11,11 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 public class StageAndSceneUtils {
-
-    private double xOffset = 0;
-    private double yOffset = 0;
 
     // Standard window sizes
     public enum WindowSize { SMALL, MEDIUM, LARGE }
@@ -27,20 +26,16 @@ public class StageAndSceneUtils {
     private static final double LARGE_WIDTH = 1600;
     private static final double LARGE_HEIGHT = 900;
 
+    private static final Map<String, Parent> fxmlCache = new HashMap<>();
+
     public void loadStage(Stage stage, String fxmlFile, WindowSize size) throws IOException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
-            Parent root = fxmlLoader.load();
-
-            root.setOnMousePressed(event -> {
-                xOffset = event.getSceneX();
-                yOffset = event.getSceneY();
-            });
-
-            root.setOnMouseDragged(event -> {
-                stage.setX(event.getScreenX() - xOffset);
-                stage.setY(event.getScreenY() - yOffset);
-            });
+            Parent root = fxmlCache.get(fxmlFile);
+            if (root == null) {
+                FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
+                root = fxmlLoader.load();
+                fxmlCache.put(fxmlFile, root);
+            }
 
             double width = size == WindowSize.MEDIUM ? MEDIUM_WIDTH : size == WindowSize.LARGE ? LARGE_WIDTH : SMALL_WIDTH;
             double height = size == WindowSize.MEDIUM ? MEDIUM_HEIGHT : size == WindowSize.LARGE ? LARGE_HEIGHT : SMALL_HEIGHT;
@@ -61,20 +56,15 @@ public class StageAndSceneUtils {
 
     public Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size) throws IOException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
-            Parent root = fxmlLoader.load();
+            Parent root = fxmlCache.get(fxmlFile);
+            if (root == null) {
+                FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
+                root = fxmlLoader.load();
+                fxmlCache.put(fxmlFile, root);
+            }
+            
             Stage stage = new Stage();
             stage.centerOnScreen();
-
-            root.setOnMousePressed(event -> {
-                xOffset = event.getSceneX();
-                yOffset = event.getSceneY();
-            });
-
-            root.setOnMouseDragged(event -> {
-                stage.setX(event.getScreenX() - xOffset);
-                stage.setY(event.getScreenY() - yOffset);
-            });
 
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setTitle(title);
@@ -112,6 +102,10 @@ public class StageAndSceneUtils {
         alert.setTitle(title);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public static void clearCache() {
+        fxmlCache.clear();
     }
 
 }
