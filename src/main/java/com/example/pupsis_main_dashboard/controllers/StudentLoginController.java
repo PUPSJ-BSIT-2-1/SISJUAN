@@ -1,83 +1,97 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.auth.PasswordHandler;
+import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
+import com.example.pupsis_main_dashboard.utility.*;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import javax.mail.MessagingException;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Year;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.example.pupsis_main_dashboard.auth.PasswordHandler;
-import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
-import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-import com.example.pupsis_main_dashboard.utility.*;
-
-import javafx.animation.*;
-import javafx.application.Platform;
-import javafx.collections.*;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.*;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.stage.*;
-import javafx.util.Duration;
-
-import javax.mail.MessagingException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate;
 import static com.example.pupsis_main_dashboard.utility.ControllerUtils.animateBlur;
-import static com.example.pupsis_main_dashboard.utility.DateUtils.*;
+import static com.example.pupsis_main_dashboard.utility.DateUtils.getDaysInMonth;
+import static com.example.pupsis_main_dashboard.utility.DateUtils.getMonthNumber;
 import static com.example.pupsis_main_dashboard.utility.StageAndSceneUtils.showAlert;
 import static com.example.pupsis_main_dashboard.utility.ValidationUtils.*;
 
 public class StudentLoginController {
-    public VBox leftside;
-    public ImageView closeButton;
-    public Button loginButton;
-    public ImageView backButton;
-    public Button registerButton;
-    public Button confirmReg;
-    public TextField firstname;
-    public TextField middlename;
-    public TextField lastname;
-    public TextField email;
-    public PasswordField retype;
-    public VBox centerVBox;
-    public ComboBox<String> monthComboBox;
-    public ComboBox<Integer> dayComboBox;
-    public ComboBox<Integer> yearComboBox;
-    public TextField studentIdField;
-    public PasswordField passwordField;
-    public PasswordField password;
-    public Label errorLabel;
-    public ToggleButton rememberMeCheckBox;
-    public BorderPane mainLoginPane;
-    public VBox rightside;
+    @FXML private VBox leftside;
+    @FXML private ImageView closeButton;
+    @FXML private Button loginButton;
+    @FXML private ImageView backButton;
+    @FXML private Button registerButton;
+    @FXML private Button confirmReg;
+    @FXML private TextField firstname;
+    @FXML private TextField middlename;
+    @FXML private TextField lastname;
+    @FXML private TextField email;
+    @FXML private PasswordField retype;
+    @FXML private VBox centerVBox;
+    @FXML private ComboBox<String> monthComboBox;
+    @FXML private ComboBox<Integer> dayComboBox;
+    @FXML private ComboBox<Integer> yearComboBox;
+    @FXML private TextField studentIdField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField password;
+    @FXML private Label errorLabel;
+    @FXML private ToggleButton rememberMeCheckBox;
+    @FXML private BorderPane mainLoginPane;
+    @FXML private VBox rightside;
 
     private final StringBuilder typedYear = new StringBuilder();
     private final StringBuilder typedDay = new StringBuilder();
     private final StringBuilder typedMonth = new StringBuilder();
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
     private EmailService emailService;
+    private static final Logger logger = Logger.getLogger(StudentLoginController.class.getName());
 
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
+    
+    static {Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            loginExecutor.shutdown();
+            try {
+                if (!loginExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    loginExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                loginExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }));}
 
-    // Initialization methods
-    @FXML
-    private void initialize() {
-        // Replace with your Gmail address and App Password
+    @FXML private void initialize() {
         emailService = new EmailService(
                 "harolddelapena.11@gmail.com",
                 "sfhq xeks hgeo yfja");
-        loginButton.setOnAction(event -> {
-            handleLogin(leftside);
-        });
+        loginButton.setOnAction(event -> handleLogin(leftside));
         setupRememberMeHandler();
         setupRegistrationNavigation();
         setupComboBoxHandlers();
@@ -103,9 +117,7 @@ public class StudentLoginController {
         populateYears();
     }
     private void setupConfirmRegistration() {
-        confirmReg.setOnAction(event -> {
-            handleConfirmRegistration();
-        });
+        confirmReg.setOnAction(event -> handleConfirmRegistration());
     }
     private void setupComboBoxHandlers() {
         monthComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -122,31 +134,19 @@ public class StudentLoginController {
         monthComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleMonthTyping);
         dayComboBox.addEventHandler(KeyEvent.KEY_TYPED, this::handleDayTyping);
 
-        monthComboBox.setOnAction(event -> {
-            handleMonthOrYearChange();
-        });
-        yearComboBox.setOnAction(event -> {
-            handleMonthOrYearChange();
-        });
+        monthComboBox.setOnAction(event -> handleMonthOrYearChange());
+        yearComboBox.setOnAction(event -> handleMonthOrYearChange());
     }
     private void setupRegistrationNavigation() {
 
-        registerButton.setOnAction(event -> {
-            ControllerUtils.animateVBox(centerVBox, -417);
-        });
-        backButton.setOnMouseClicked(event -> {
-            ControllerUtils.animateVBox(centerVBox, 0);
-        });
+        registerButton.setOnAction(event -> ControllerUtils.animateVBox(centerVBox, -417));
+        backButton.setOnMouseClicked(event -> ControllerUtils.animateVBox(centerVBox, 0));
     }
     private void requestInitialFocus() {
-        Platform.runLater(() -> {
-            errorLabel.requestFocus();
-        });
+        Platform.runLater(() -> errorLabel.requestFocus());
     }
 
-    // Date handling methods
-    @FXML
-    private void handleMonthOrYearChange() {
+    @FXML private void handleMonthOrYearChange() {
         String selectedMonth = monthComboBox.getValue();
         Integer selectedYear = yearComboBox.getValue();
         if (selectedMonth != null && selectedYear != null) {
@@ -154,8 +154,7 @@ public class StudentLoginController {
             populateDays(daysInMonth);
         }
     }
-    @FXML
-    private void handleMonthTyping(KeyEvent event) {
+    @FXML private void handleMonthTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("[a-zA-Z]")) {
             return;
@@ -182,20 +181,15 @@ public class StudentLoginController {
             return;
         }
 
-        if (months.stream().anyMatch(m -> {
-            return m.equalsIgnoreCase(currentInput);
-        })) {
+        if (months.stream().anyMatch(m -> m.equalsIgnoreCase(currentInput))) {
             typedMonth.setLength(0);
             inputClearDelay.stop();
         }
 
-        inputClearDelay.setOnFinished(e -> {
-            typedMonth.setLength(0);
-        });
+        inputClearDelay.setOnFinished(e -> typedMonth.setLength(0));
         inputClearDelay.playFromStart();
     }
-    @FXML
-    private void handleYearTyping(KeyEvent event) {
+    @FXML private void handleYearTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("[0-9]")) {
             return;
@@ -222,16 +216,12 @@ public class StudentLoginController {
             return;
         }
 
-        if (years.stream().anyMatch(y -> {
-            return String.valueOf(y).equals(currentInput);
-        })) {
+        if (years.stream().anyMatch(y -> String.valueOf(y).equals(currentInput))) {
             typedYear.setLength(0);
             inputClearDelay.stop();
         }
 
-        inputClearDelay.setOnFinished(e -> {
-            typedYear.setLength(0);
-        });
+        inputClearDelay.setOnFinished(e -> typedYear.setLength(0));
         inputClearDelay.playFromStart();
     }
     @FXML
@@ -277,9 +267,7 @@ public class StudentLoginController {
             inputClearDelay.stop();
         }
 
-        inputClearDelay.setOnFinished(e -> {
-            typedDay.setLength(0);
-        });
+        inputClearDelay.setOnFinished(e -> typedDay.setLength(0));
         inputClearDelay.playFromStart();
     }
     private void populateYears() {
@@ -302,18 +290,14 @@ public class StudentLoginController {
         dayComboBox.setItems(days);
     }
 
-    @FXML
-    private void handleKeyPress(KeyEvent ignoredEvent) {
+    @FXML private void handleKeyPress(KeyEvent ignoredEvent) {
         errorLabel.setText("");
     }
-
-    @FXML
-    private void closeApplication() throws IOException {
+    @FXML  private void closeApplication() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
-    @FXML
-    private void handleLogin(VBox pane) {
+    @FXML private void handleLogin(VBox leftside) {
         String input = studentIdField.getText().trim().toLowerCase();
         String password = passwordField.getText().trim();
         boolean rememberMe = rememberMeCheckBox.isSelected();
@@ -324,45 +308,43 @@ public class StudentLoginController {
         }
 
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        pane.setAlignment(Pos.CENTER);
-        pane.getChildren().add(loader);
+        leftside.setAlignment(Pos.CENTER);
+        leftside.getChildren().add(loader);
         animateBlur(mainLoginPane, true);
 
         loginExecutor.submit(() -> {
             try {
                 boolean isAuthenticated = authenticate(input, password);
                 Platform.runLater(() -> {
-                    rightside.getChildren().remove(loader);
+                    leftside.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
                         RememberMeHandler.saveCredentials(input, password, rememberMe);
-                        String firstName = ControllerUtils.getUserFirstName(input, input.contains("@"));
-                        pane.getChildren().remove(loader);
-//                        showAlert("Login Successful", "Welcome, " + firstName + "!", Alert.AlertType.INFORMATION);
+                        ControllerUtils.getStudentFullName(input, input.contains("@"));
+                        leftside.getChildren().remove(loader);
                         StageAndSceneUtils u = new StageAndSceneUtils();
-                        Stage stage = (Stage) pane.getScene().getWindow();
+                        Stage stage = (Stage) leftside.getScene().getWindow();
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        pane.getChildren().remove(loader);
+                        leftside.getChildren().remove(loader);
                         showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
                     }
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    pane.getChildren().remove(loader);
+                    leftside.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
                     showAlert("Error", "Login failed: " + e.getMessage(), Alert.AlertType.ERROR);
                 });
             }
         });
     }
-    @FXML
-    private void handleConfirmRegistration() {
+    @FXML private void handleConfirmRegistration() {
         String passwordInput = this.password.getText().trim();
         String retypePassword = this.retype.getText().trim();
         String firstName = this.firstname.getText().trim();
@@ -414,6 +396,13 @@ public class StudentLoginController {
             });
             return;
         }
+
+        if (!validatePasswordStrength(passwordInput)) {
+            this.rightside.getChildren().remove(loader);
+            animateBlur(mainLoginPane, false);
+            return;
+        }
+
         // Check if email exists
         String checkEmailQuery = "SELECT email FROM students WHERE email = ?";
         try (Connection connection = DBConnection.getConnection();
@@ -448,7 +437,6 @@ public class StudentLoginController {
             sendVerificationEmail(email, verificationCode);
             
             Platform.runLater(() -> {
-                // Remove loading animation when verification window appears
                 this.rightside.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
                 
@@ -468,7 +456,7 @@ public class StudentLoginController {
                     verificationStage.initModality(Modality.APPLICATION_MODAL);
                     verificationStage.showAndWait();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.severe("Error loading verification window");
                     showAlert("Error", "Failed to load verification window");
                 }
             });
@@ -479,10 +467,8 @@ public class StudentLoginController {
         try {
             emailService.sendVerificationEmail(email, code);
         } catch (MessagingException e) {
-            Platform.runLater(() -> {
-                showAlert("Email Error", "Failed to send verification email: " + e.getMessage());
-            });
-            e.printStackTrace();
+            Platform.runLater(() -> showAlert("Email Error", "Failed to send verification email: " + e.getMessage()));
+            logger.severe("Error sending verification email");
         }
     }
     private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
@@ -524,7 +510,7 @@ public class StudentLoginController {
                     showAlert("Registration Successful", "Your account has been created!");
                     studentIdField.setText(email);
                     passwordField.setText(passwordInput);
-                    handleLogin(rightside);
+                    handleLogin(leftside);
 
                 });
             } else {
@@ -535,10 +521,8 @@ public class StudentLoginController {
                 });
             }
         } catch (SQLException e) {
-            Platform.runLater(() -> {
-                showAlert("Database Error", e.getMessage());
-            });
-            e.printStackTrace();
+            Platform.runLater(() -> showAlert("Database Error", e.getMessage()));
+            logger.severe("Error during registration");
         } finally {
             Platform.runLater(() -> {
                 animateBlur(mainLoginPane, false);
@@ -548,5 +532,13 @@ public class StudentLoginController {
     }
     private String generateVerificationCode() {
         return String.format("%06d", new Random().nextInt(999999));
+    }
+
+    private boolean validatePasswordStrength(String password) {
+        if (!isStrongPassword(password)) {
+            showAlert("Invalid Password", "Password must be at least 8 characters long and contain both letters and numbers", Alert.AlertType.WARNING);
+            return false;
+        }
+        return true;
     }
 }

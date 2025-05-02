@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
+import java.util.Objects;
 
 public class VerificationCodeController {
     @FXML private TextField digit1, digit2, digit3, digit4, digit5, digit6;
@@ -41,8 +42,9 @@ public class VerificationCodeController {
     private void handleBackspace(KeyEvent e) {
         TextField current = (TextField) e.getSource();
         if (current.getText().isEmpty() && getPreviousField(current) != null) {
-            getPreviousField(current).clear();
-            getPreviousField(current).requestFocus();
+            assert getPreviousField(current) != null;
+            Objects.requireNonNull(getPreviousField(current)).clear();
+            Objects.requireNonNull(getPreviousField(current)).requestFocus();
         }
     }
 
@@ -83,7 +85,9 @@ public class VerificationCodeController {
                 for (int i = 0; i < 6; i++) ((TextField) getClass().getDeclaredField("digit"+(i+1)).get(this)).setText(String.valueOf(digits[i]));
                 digit6.requestFocus();
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML private void handleVerification() {

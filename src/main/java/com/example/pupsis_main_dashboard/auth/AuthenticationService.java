@@ -5,9 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 
 public class AuthenticationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     public static boolean authenticate(String input, String password) {
         boolean isAuthenticated = false;
@@ -26,7 +31,7 @@ public class AuthenticationService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL error during authentication", e);
         }
 
         return isAuthenticated;

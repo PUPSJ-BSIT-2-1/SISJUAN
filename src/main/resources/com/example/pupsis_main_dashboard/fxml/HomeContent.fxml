@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
+   <Region layoutX="10.0" layoutY="712.0" prefHeight="20.0" prefWidth="810.0" />
+   <FlowPane>
+      <children>
+      
+                                     <HBox alignment="CENTER_LEFT" spacing="15">
+              <ImageView fitHeight="50" fitWidth="50">
+                  <image>
+                      <Image url="@../Images/PUP Logo.png" />
+                  </image>
+              </ImageView>
+              <VBox>
+                  <Label styleClass="welcome-text" text="Welcome back," />
+                  <Label fx:id="studentNameLabel" styleClass="student-name" text="Student Name" />
+              </VBox>
+          </HBox>
+      </children>
+      <styleClass>
+         <String fx:value="cards" />
+         <String fx:value="red-card" />
+      </styleClass>
+   </FlowPane>
+
+                         <HBox prefHeight="132.0" prefWidth="810.0" spacing="10.0">
+        <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label text="1.25">
+            <styleClass>
+               <String fx:value="stat-value" />
+               <String fx:value="font" />
+            </styleClass></Label>
+            <Label styleClass="stat-label" text="Current GWA" />
+        </VBox>
+
+                                         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="stat-value" text="2nd Year" />
+            <Label styleClass="stat-label" text="Second Semester" />
+        </VBox>
+   
+                                         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="stat-value" text="3" />
+            <Label styleClass="stat-label" text="Upcoming Events" />
+        </VBox>
+    </HBox>
+   <HBox alignment="CENTER" spacing="10.0">
+      <children>
+         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <children>
+               <Label text="Enrolled">
+                  <styleClass>
+                     <String fx:value="stat-value" />
+                     <String fx:value="font" />
+                  </styleClass>
+               </Label>
+               <Label styleClass="stat-label" text="Status" />
+            </children>
+         </VBox>
+         <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <children>
+               <Label text="8">
+                  <styleClass>
+                     <String fx:value="stat-value" />
+                     <String fx:value="font" />
+                  </styleClass>
+               </Label>
+               <Label styleClass="stat-label" text="Graded Subjects " />
+            </children>
+         </VBox>
+      </children>
+   </HBox>
+
+                   <HBox spacing="10.0">
+        <VBox prefWidth="400.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="section-header" text="Announcements">
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin></Label>
+            <ListView styleClass="announcement-list">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="• Registration opens May 15" />
+                        <String fx:value="• Final exams June 1-5" />
+                        <String fx:value="• Scholarship deadline May 30" />
+                    </FXCollections>
+                </items>
+            </ListView>
+        </VBox>
+
+                                <VBox alignment="TOP_CENTER" prefHeight="468.0" prefWidth="0.0" spacing="10" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="section-header" text="Quick Actions" />
+            <Button prefWidth="190.0" styleClass="action-button" text="View Grades" />
+            <Button prefWidth="190.0" styleClass="action-button" text="Check Schedule" />
+            <Button prefWidth="190.0" styleClass="action-button" text="Make Payment" />
+            <Button prefWidth="190.0" styleClass="action-button" text="Request Documents" />
+        </VBox>
+    </HBox>
+   <Region prefHeight="20.0" prefWidth="810.0" />
+</VBox>

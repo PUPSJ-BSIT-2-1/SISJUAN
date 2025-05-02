@@ -4,6 +4,8 @@ import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -12,6 +14,7 @@ import javafx.util.Duration;
 import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class FrontPageController {
@@ -42,15 +45,26 @@ public class FrontPageController {
     public void initialize() {
         try {
             File file = new File("src/main/resources/com/example/pupsis_main_dashboard/Images/PUPSJ DRONE 2024.mp4");
+            if (!file.exists()) {
+                throw new FileNotFoundException("Video file not found");
+            }
             Media media = new Media(file.toURI().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
+            
+            // Add error listener
+            mediaPlayer.setOnError(() -> {
+                System.err.println("MediaPlayer Error: " + mediaPlayer.getError().getMessage());
+                showFallbackImage();
+            });
+            
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.setMute(true);
             mediaPlayer.play();
 
         } catch (Exception e) {
-            System.err.println("Failed to load video: " + e.getMessage());
+            System.err.println("Error loading video: " + e.getMessage());
+            showFallbackImage();
         }
         startLabelFade();
         coaButton.setOnAction(event -> handleCOAButton());
@@ -115,4 +129,11 @@ public class FrontPageController {
         }
     }
 
+    private void showFallbackImage() {
+        Image fallback = new Image("com/example/pupsis_main_dashboard/Images/fallback.jpg");
+        ImageView imageView = new ImageView(fallback);
+        imageView.setFitWidth(mediaView.getFitWidth());
+        imageView.setFitHeight(mediaView.getFitHeight());
+        mediaView.getParent().getChildrenUnmodifiable().add(imageView);
+    }
 }

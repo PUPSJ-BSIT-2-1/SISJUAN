@@ -37,13 +37,10 @@ public class LoadingAnimation {
             container.getChildren().add(dot); // Add each dot to the HBox
         }
 
-        // Wrap the HBox in a StackPane to ensure auto-centering
         StackPane wrapper = new StackPane(container);
         StackPane.setAlignment(container, Pos.CENTER);
 
-        // ADD FADE-IN ENTRANCE ANIMATION
-        wrapper.setOpacity(0); // Set initial opacity to 0 for fade-in
-
+        wrapper.setOpacity(0);
         // Create fade-in effect
         FadeTransition fadeIn = new FadeTransition(Duration.millis(500), wrapper);
         fadeIn.setFromValue(0); // Start completely invisible

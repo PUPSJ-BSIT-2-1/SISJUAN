@@ -1,10 +1,12 @@
 package com.example.pupsis_main_dashboard.utility;
 
+import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 import javafx.animation.TranslateTransition;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import java.sql.*;
 
 public class ControllerUtils {
     public static void animateVBox(VBox vbox, double translationX) {
@@ -22,14 +24,30 @@ public class ControllerUtils {
         }
     }
 
-    public static String getUserFirstName(String input, boolean isEmail) {
-        if (input == null || input.isEmpty()) return "User";
+    public static String getStudentFullName(String identifier, boolean isEmail) {
+        if (identifier == null || identifier.isEmpty()) return "";
         
-        if (isEmail) {
-            return input.split("@")[0];
-        } else {
-            return input;
+        String query = isEmail 
+            ? "SELECT firstname, middlename, lastname FROM students WHERE email = ?"
+            : "SELECT firstname, middlename, lastname FROM students WHERE student_id = ?";
+            
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, identifier);
+            ResultSet result = statement.executeQuery();
+            
+            if (result.next()) {
+                String firstName = result.getString("firstname");
+                String middleName = result.getString("middlename");
+                String lastName = result.getString("lastname");
+                String middleInitial = middleName != null && !middleName.isEmpty() 
+                    ? middleName.charAt(0) + "."
+                    : "";
+                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim().toUpperCase();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return "";
     }
-
 }
