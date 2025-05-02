@@ -1,37 +1,35 @@
 .settings-container {
     -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: #e3e5e6;
-    -fx-padding: 20;
-    -fx-border-width: 2;
-    -fx-border-radius: 10;
 }
 
 .settings-title {
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #800000; /* Maroon color */
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #000000;
     -fx-padding: 0 0 20 0;
 }
 
 .settings-section {
     -fx-background-radius: 5;
-    -fx-padding: 15;
-    -fx-margin: 0 0 15 0;
 }
 
 .settings-label {
     -fx-font-size: 16px;
-    -fx-text-fill: #800000; /* Maroon color */
+    -fx-text-fill: #000000;
+    -fx-font-family: "Inter 18pt";
 }
 
 .settings-control {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Inter 18pt";
     -fx-background-color: #800000; /* Maroon color */
-    -fx-text-fill: white;
     -fx-background-radius: 3;
-    -fx-padding: 5 10;
 }
 
 .settings-control:hover {
     -fx-background-color: #600000; /* Darker maroon */
+}
+.font{
+    -fx-font-family: "Inter 18pt";
 }

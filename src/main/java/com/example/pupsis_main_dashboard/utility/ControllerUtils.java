@@ -6,11 +6,7 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class ControllerUtils {
     public static void animateVBox(VBox vbox, double translationX) {
@@ -44,11 +40,10 @@ public class ControllerUtils {
                 String firstName = result.getString("firstname");
                 String middleName = result.getString("middlename");
                 String lastName = result.getString("lastname");
-                // Convert middle name to initial if not empty
                 String middleInitial = middleName != null && !middleName.isEmpty() 
                     ? middleName.charAt(0) + "."
                     : "";
-                return String.format("%s %s %s", firstName, middleInitial, lastName).trim();
+                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim().toUpperCase();
             }
         } catch (SQLException e) {
             e.printStackTrace();

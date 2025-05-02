@@ -278,7 +278,7 @@
                 <clip>
                     <Rectangle arcHeight="20.0" arcWidth="20.0" height="720.0" width="860.0" />
                 </clip>
-            <Pane styleClass="sliding-image">
+            <Pane>
                <children>
                       <ImageView fitHeight="700" fitWidth="840.0">
                           <clip>

@@ -23,6 +23,10 @@
     -fx-background-radius: 5;
     -fx-text-fill: maroon;
 }
+.sidebar-items:hover .sidebar-label-font,.sidebar-items:hover .icons{
+    -fx-text-fill: black;
+    -fx-fill: black;
+}
 .small-text{
     -fx-font-size: 12;
     -fx-font-family: "Inter 18pt Medium";
@@ -39,18 +43,19 @@
     -fx-font-weight: bold;
 }
 .groups{
-    -fx-text-fill: #acacac;
+    -fx-text-fill: gray;
     -fx-font-size: 16;
 }
 .sidebar-label-font{
     -fx-font-family: "Inter 18pt Medium";
     -fx-font-size: 16;
+    -fx-text-fill: gray;
 }
 .selected .icons{
     -fx-fill: maroon;
 }
 .icons{
-    -fx-fill: #acacac;
+    -fx-fill: gray;
 }
 .selected .sidebar-label-font{
     -fx-text-fill: maroon;
@@ -74,4 +79,12 @@
 
 .settings-tab.selected {
     -fx-background-color: #400000; /* Even darker maroon */
+}
+.fade-bottom {
+    -fx-background-color: linear-gradient(from 0% 100% to 0% 95% , #ffffff, transparent);
+    -fx-background-radius: 10;
+}
+.fade-top {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 5%, #ffffff, transparent);
+    -fx-background-radius: 10;
 }

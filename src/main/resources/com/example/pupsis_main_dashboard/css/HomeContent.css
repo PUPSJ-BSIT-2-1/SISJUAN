@@ -1,26 +1,26 @@
 .welcome-text {
     -fx-font-size: 14px;
-    -fx-text-fill: #6c757d;
+    -fx-text-fill: white;
 }
 
 .student-name {
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #212529;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
 }
 
-.stat-card {
-    -fx-background-color: white;
+.cards {
+    -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 15;
+    -fx-padding: 20;
 }
 
 .stat-value {
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
 }
 
@@ -31,7 +31,7 @@
 
 .section-header {
     -fx-font-size: 18px;
-    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
 }
 
@@ -46,22 +46,7 @@
 
 .announcement-list .list-cell {
     -fx-background-color: transparent;
-    -fx-text-fill: black;
     -fx-font-size: 14px;
-}
-
-.announcement-list .list-cell:filled:selected {
-    -fx-background-color: transparent;
-    -fx-text-fill: black;
-}
-
-.content-card {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: #e3e5e6;
-    -fx-border-width: 2;
-    -fx-border-radius: 10;
-    -fx-padding: 20;
 }
 
 .action-button {
@@ -80,5 +65,10 @@
     -fx-fill: #800000; /* Maroon */
 }
 .font{
-    -fx-font-family: "Inter 18pt";
+    -fx-font-family: "Inter 18pt Medium";
+}
+.red-card{
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
 }

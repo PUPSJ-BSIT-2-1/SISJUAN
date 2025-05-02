@@ -25,13 +25,11 @@
     -fx-pref-height: 30;
 }
 .buttons:hover{
-    -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
+    -fx-background-color: #5e0000;
     -fx-cursor: hand; 
 }
 .buttons:focused{
-    -fx-border-color: white;
-    -fx-border-radius: 7;
-    -fx-border-width: 2;
+    -fx-background-color: #5e0000;
 }
 .font{
     -fx-font-family: "Inter";
@@ -59,7 +57,4 @@
     -fx-background-radius: 20;
 }
 
-.sliding-image {
-    -fx-effect: dropshadow(gaussian, #a6a6a6, 10, 0.3, 0, 0);
-}
 

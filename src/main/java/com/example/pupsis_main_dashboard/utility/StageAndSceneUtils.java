@@ -2,6 +2,9 @@ package com.example.pupsis_main_dashboard.utility;
 
 import com.example.pupsis_main_dashboard.PUPSIS;
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,9 +29,22 @@ public class StageAndSceneUtils {
     private static final double LARGE_WIDTH = 1600;
     private static final double LARGE_HEIGHT = 900;
 
+    public enum TransitionType {
+        FADE,
+        SLIDE_RIGHT,
+        SLIDE_LEFT,
+        SLIDE_UP,
+        SLIDE_DOWN,
+        ZOOM_IN
+    }
+
     private static final Map<String, Parent> fxmlCache = new HashMap<>();
 
     public void loadStage(Stage stage, String fxmlFile, WindowSize size) throws IOException {
+        loadStage(stage, fxmlFile, size, TransitionType.FADE);
+    }
+
+    public void loadStage(Stage stage, String fxmlFile, WindowSize size, TransitionType transitionType) throws IOException {
         try {
             Parent root = fxmlCache.get(fxmlFile);
             if (root == null) {
@@ -44,10 +60,7 @@ public class StageAndSceneUtils {
             stage.setScene(scene);
             stage.centerOnScreen();
 
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), root);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
+            applyTransition(root, transitionType);
         } catch (IOException e) {
             showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR);
             throw e;
@@ -55,6 +68,10 @@ public class StageAndSceneUtils {
     }
 
     public Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size) throws IOException {
+        return loadStage(fxmlFile, title, iconPath, size, TransitionType.FADE);
+    }
+
+    public Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size, TransitionType transitionType) throws IOException {
         try {
             Parent root = fxmlCache.get(fxmlFile);
             if (root == null) {
@@ -78,15 +95,68 @@ public class StageAndSceneUtils {
             stage.setScene(new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT));
             stage.setResizable(false);
 
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(700), root);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
+            applyTransition(root, transitionType);
 
             return stage;
         } catch (IOException e) {
             showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR);
             throw e;
+        }
+    }
+
+    private void applyTransition(Parent root, TransitionType transitionType) {
+        final int TRANSITION_DURATION = 700;
+        
+        switch (transitionType) {
+            case FADE:
+                FadeTransition fadeTransition = new FadeTransition(Duration.millis(TRANSITION_DURATION), root);
+                fadeTransition.setFromValue(0.0);
+                fadeTransition.setToValue(1.0);
+                fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
+                fadeTransition.play();
+                break;
+                
+            case SLIDE_RIGHT:
+                TranslateTransition slideRight = new TranslateTransition(Duration.millis(TRANSITION_DURATION), root);
+                slideRight.setFromX(-root.getScene().getWidth());
+                slideRight.setToX(0);
+                slideRight.setInterpolator(Interpolator.EASE_BOTH);
+                slideRight.play();
+                break;
+                
+            case SLIDE_LEFT:
+                TranslateTransition slideLeft = new TranslateTransition(Duration.millis(TRANSITION_DURATION), root);
+                slideLeft.setFromX(root.getScene().getWidth());
+                slideLeft.setToX(0);
+                slideLeft.setInterpolator(Interpolator.EASE_BOTH);
+                slideLeft.play();
+                break;
+                
+            case SLIDE_UP:
+                TranslateTransition slideUp = new TranslateTransition(Duration.millis(TRANSITION_DURATION), root);
+                slideUp.setFromY(root.getScene().getHeight());
+                slideUp.setToY(0);
+                slideUp.setInterpolator(Interpolator.EASE_BOTH);
+                slideUp.play();
+                break;
+                
+            case SLIDE_DOWN:
+                TranslateTransition slideDown = new TranslateTransition(Duration.millis(TRANSITION_DURATION), root);
+                slideDown.setFromY(-root.getScene().getHeight());
+                slideDown.setToY(0);
+                slideDown.setInterpolator(Interpolator.EASE_BOTH);
+                slideDown.play();
+                break;
+                
+            case ZOOM_IN:
+                ScaleTransition zoomIn = new ScaleTransition(Duration.millis(TRANSITION_DURATION), root);
+                zoomIn.setFromX(0.5);
+                zoomIn.setFromY(0.5);
+                zoomIn.setToX(1.0);
+                zoomIn.setToY(1.0);
+                zoomIn.setInterpolator(Interpolator.EASE_BOTH);
+                zoomIn.play();
+                break;
         }
     }
 

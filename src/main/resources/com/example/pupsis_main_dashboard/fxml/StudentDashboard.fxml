@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.SVGPath?>
@@ -18,7 +20,7 @@
          <children>
             <HBox alignment="CENTER_LEFT">
                <children>
-                  <Pane prefHeight="50.0" prefWidth="50.0" styleClass="profile-picture" />
+                  <Pane maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" prefHeight="60.0" prefWidth="50.0" styleClass="profile-picture" />
                   <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="20.0" />
@@ -30,6 +32,11 @@
                            </font>
                         </Label>
                         <Label layoutX="10.0" layoutY="10.0" style="-fx-font-size: 14; -fx-text-fill: #acacac;" styleClass="small-text" text="Information Technology" textFill="#acacac">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="studentIdLabel" layoutX="10.0" layoutY="38.0" style="-fx-font-size: 14; -fx-text-fill: #acacac;" styleClass="small-text" text="2023-000385-SJ-01" textFill="#acacac">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -200,14 +207,29 @@
       </VBox>
    </left>
    <center>
-      <ScrollPane fx:id="contentPane" prefHeight="700.0" BorderPane.alignment="CENTER">
-         <styleClass>
-            <String fx:value="content-container" />
-            <String fx:value="scroll-bar" />
-         </styleClass>
-         <padding>
-            <Insets bottom="30.0" left="30.0" top="30.0" />
-         </padding>
-      </ScrollPane>
+      <StackPane>
+         <children>
+            <ScrollPane fx:id="contentPane" hbarPolicy="NEVER" prefHeight="700.0">
+               <styleClass>
+                  <String fx:value="content-container" />
+                  <String fx:value="scroll-bar" />
+                  <String fx:value="scroll-container" />
+               </styleClass>
+               <padding>
+                  <Insets bottom="30.0" left="30.0" top="30.0" />
+               </padding>
+            </ScrollPane>
+            <Region mouseTransparent="true" prefHeight="639.0" prefWidth="842.0" styleClass="fade-top">
+               <StackPane.margin>
+                  <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
+               </StackPane.margin>
+            </Region>
+            <Region mouseTransparent="true" prefHeight="822.0" prefWidth="870.0" styleClass="fade-bottom">
+               <StackPane.margin>
+                  <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
+               </StackPane.margin>
+            </Region>
+         </children>
+      </StackPane>
    </center>
 </BorderPane>
