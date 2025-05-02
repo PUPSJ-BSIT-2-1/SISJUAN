@@ -15,14 +15,13 @@
    <clip>
       <Rectangle arcHeight="30.0" arcWidth="30.0" height="720" width="1280" />
    </clip>
-         <!-- Background Video -->
+   <!-- Background Video -->
    <MediaView fx:id="mediaView" fitHeight="720.0" fitWidth="1280.0" styleClass="backgroundVideo">
       <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
       <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
       <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
       <AnchorPane.rightAnchor>0.0</AnchorPane.rightAnchor>
    </MediaView>
-
 
    <!-- Title -->
    <Label fx:id="labelHeader" layoutX="286.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="labelHeader" text="Welcome to PUPSIS Portal" />
