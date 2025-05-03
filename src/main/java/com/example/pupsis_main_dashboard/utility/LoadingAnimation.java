@@ -41,7 +41,7 @@ public class LoadingAnimation {
         StackPane.setAlignment(container, Pos.CENTER);
 
         wrapper.setOpacity(0);
-        // Create fade-in effect
+        // Create a fade-in effect
         FadeTransition fadeIn = new FadeTransition(Duration.millis(500), wrapper);
         fadeIn.setFromValue(0); // Start completely invisible
         fadeIn.setToValue(1);   // End fully visible

@@ -28,8 +28,8 @@ public class ControllerUtils {
         if (identifier == null || identifier.isEmpty()) return "";
         
         String query = isEmail 
-            ? "SELECT firstname, middlename, lastname FROM students WHERE email = ?"
-            : "SELECT firstname, middlename, lastname FROM students WHERE student_id = ?";
+            ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
+            : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
             
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -37,9 +37,9 @@ public class ControllerUtils {
             ResultSet result = statement.executeQuery();
             
             if (result.next()) {
-                String firstName = result.getString("firstname");
-                String middleName = result.getString("middlename");
-                String lastName = result.getString("lastname");
+                String firstName = result.getString("firstName");
+                String middleName = result.getString("middleName");
+                String lastName = result.getString("lastName");
                 String middleInitial = middleName != null && !middleName.isEmpty() 
                     ? middleName.charAt(0) + "."
                     : "";

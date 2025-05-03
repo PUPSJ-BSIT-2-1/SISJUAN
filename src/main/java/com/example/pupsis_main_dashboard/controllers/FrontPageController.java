@@ -18,26 +18,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class FrontPageController {
-    @FXML
-    private MediaView mediaView;
-
-    @FXML
-    private Label labelHeader;
-
-    @FXML
-    private Button coaButton;
-
-    @FXML
-    private Button programsButton;
-
-    @FXML
-    private Button aboutButton;
-
-    @FXML
-    private Button othersButton;
-
-    @FXML
-    private Button getStartedButton;
+    @FXML private MediaView mediaView;
+    @FXML private Label labelHeader;
+    @FXML private Button coaButton;
+    @FXML private Button programsButton;
+    @FXML private Button aboutButton;
+    @FXML private Button othersButton;
+    @FXML private Button getStartedButton;
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
 

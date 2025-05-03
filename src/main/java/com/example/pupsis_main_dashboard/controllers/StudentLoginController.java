@@ -43,17 +43,18 @@ import static com.example.pupsis_main_dashboard.utility.StageAndSceneUtils.showA
 import static com.example.pupsis_main_dashboard.utility.ValidationUtils.*;
 
 public class StudentLoginController {
-    @FXML private VBox leftside;
+    @FXML private VBox leftSide;
+    @FXML private VBox rightSide;
     @FXML private ImageView closeButton;
     @FXML private Button loginButton;
     @FXML private ImageView backButton;
     @FXML private Button registerButton;
     @FXML private Button confirmReg;
-    @FXML private TextField firstname;
-    @FXML private TextField middlename;
-    @FXML private TextField lastname;
+    @FXML private TextField firstName;
+    @FXML private TextField middleName;
+    @FXML private TextField lastName;
     @FXML private TextField email;
-    @FXML private PasswordField retype;
+    @FXML private PasswordField reType;
     @FXML private VBox centerVBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private ComboBox<Integer> dayComboBox;
@@ -64,7 +65,6 @@ public class StudentLoginController {
     @FXML private Label errorLabel;
     @FXML private ToggleButton rememberMeCheckBox;
     @FXML private BorderPane mainLoginPane;
-    @FXML private VBox rightside;
 
     private final StringBuilder typedYear = new StringBuilder();
     private final StringBuilder typedDay = new StringBuilder();
@@ -91,7 +91,7 @@ public class StudentLoginController {
         emailService = new EmailService(
                 "harolddelapena.11@gmail.com",
                 "sfhq xeks hgeo yfja");
-        loginButton.setOnAction(event -> handleLogin(leftside));
+        loginButton.setOnAction(event -> handleLogin(leftSide));
         setupRememberMeHandler();
         setupRegistrationNavigation();
         setupComboBoxHandlers();
@@ -297,7 +297,7 @@ public class StudentLoginController {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
-    @FXML private void handleLogin(VBox leftside) {
+    @FXML private void handleLogin(VBox leftSide) {
         String input = studentIdField.getText().trim().toLowerCase();
         String password = passwordField.getText().trim();
         boolean rememberMe = rememberMeCheckBox.isSelected();
@@ -308,36 +308,36 @@ public class StudentLoginController {
         }
 
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        leftside.setAlignment(Pos.CENTER);
-        leftside.getChildren().add(loader);
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.getChildren().add(loader);
         animateBlur(mainLoginPane, true);
 
         loginExecutor.submit(() -> {
             try {
                 boolean isAuthenticated = authenticate(input, password);
                 Platform.runLater(() -> {
-                    leftside.getChildren().remove(loader);
+                    leftSide.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
                         RememberMeHandler.saveCredentials(input, password, rememberMe);
                         ControllerUtils.getStudentFullName(input, input.contains("@"));
-                        leftside.getChildren().remove(loader);
+                        leftSide.getChildren().remove(loader);
                         StageAndSceneUtils u = new StageAndSceneUtils();
-                        Stage stage = (Stage) leftside.getScene().getWindow();
+                        Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        leftside.getChildren().remove(loader);
+                        leftSide.getChildren().remove(loader);
                         showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
                     }
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    leftside.getChildren().remove(loader);
+                    leftSide.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
                     showAlert("Error", "Login failed: " + e.getMessage(), Alert.AlertType.ERROR);
                 });
@@ -346,10 +346,10 @@ public class StudentLoginController {
     }
     @FXML private void handleConfirmRegistration() {
         String passwordInput = this.password.getText().trim();
-        String retypePassword = this.retype.getText().trim();
-        String firstName = this.firstname.getText().trim();
-        String middleName = this.middlename.getText().trim();
-        String lastName = this.lastname.getText().trim();
+        String reTypePassword = this.reType.getText().trim();
+        String firstName = this.firstName.getText().trim();
+        String middleName = this.middleName.getText().trim();
+        String lastName = this.lastName.getText().trim();
         String email = this.email.getText().trim();
         String month = this.monthComboBox.getValue();
         Integer day = this.dayComboBox.getValue();
@@ -357,14 +357,14 @@ public class StudentLoginController {
 
         // Add loading animation and blur
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        this.rightside.getChildren().add(loader);
+        this.rightSide.getChildren().add(loader);
         animateBlur(mainLoginPane, true);
 
-        if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || retypePassword.isEmpty() ||
+        if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || reTypePassword.isEmpty() ||
                 email.isEmpty() || month == null || day == null || year == null) {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Please fill out all required fields!");
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -373,7 +373,7 @@ public class StudentLoginController {
         if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Names must not contain numbers!");
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -382,23 +382,23 @@ public class StudentLoginController {
         if (isValidEmail(email)) {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Please enter a valid email address!");
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
         }
 
-        if (!passwordInput.equals(retypePassword)) {
+        if (!passwordInput.equals(reTypePassword)) {
             Platform.runLater(() -> {
                 showAlert("Password Error", "Passwords do not match!");
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
         }
 
         if (!validatePasswordStrength(passwordInput)) {
-            this.rightside.getChildren().remove(loader);
+            this.rightSide.getChildren().remove(loader);
             animateBlur(mainLoginPane, false);
             return;
         }
@@ -416,7 +416,7 @@ public class StudentLoginController {
                     showAlert("Account Exists", "This email is already registered!");
                     studentIdField.setText(email);
                     ControllerUtils.animateVBox(centerVBox, 0);
-                    this.rightside.getChildren().remove(loader);
+                    this.rightSide.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
                 });
                 return;
@@ -424,7 +424,7 @@ public class StudentLoginController {
         } catch (SQLException e) {
             Platform.runLater(() -> {
                 showAlert("Database Error", "Failed to check email availability");
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
             });
             return;
@@ -432,12 +432,12 @@ public class StudentLoginController {
 
         String verificationCode = generateVerificationCode();
         
-        // Send email in background thread
+        // Send email in the background thread
         new Thread(() -> {
             sendVerificationEmail(email, verificationCode);
             
             Platform.runLater(() -> {
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
                 animateBlur(mainLoginPane, false);
                 
                 Stage verificationStage = new Stage();
@@ -474,7 +474,7 @@ public class StudentLoginController {
     private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         animateBlur(mainLoginPane, true);
-        this.rightside.getChildren().add(loader);
+        this.rightSide.getChildren().add(loader);
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
         java.sql.Date dateOfBirth;
         try {
@@ -484,12 +484,12 @@ public class StudentLoginController {
             Platform.runLater(() -> {
                 showAlert("Input Error", "Invalid date of birth provided!");
                 animateBlur(mainLoginPane, false);
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
             });
             return;
         }
 
-        String query = "INSERT INTO students(password,firstname,middlename,lastname,email,birthday) VALUES(?,?,?,?,?,?)";
+        String query = "INSERT INTO students(password,firstName,middleName,lastName,email,birthday) VALUES(?,?,?,?,?,?)";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -506,17 +506,17 @@ public class StudentLoginController {
             if (rowsAffected > 0) {
                 Platform.runLater(() -> {
                     animateBlur(mainLoginPane, false);
-                    this.rightside.getChildren().remove(loader);
+                    this.rightSide.getChildren().remove(loader);
                     showAlert("Registration Successful", "Your account has been created!");
                     studentIdField.setText(email);
                     passwordField.setText(passwordInput);
-                    handleLogin(leftside);
+                    handleLogin(leftSide);
 
                 });
             } else {
                 Platform.runLater(() -> {
                     animateBlur(mainLoginPane, false);
-                    this.rightside.getChildren().remove(loader);
+                    this.rightSide.getChildren().remove(loader);
                     showAlert("Registration Failed", "An error occurred during registration.");
                 });
             }
@@ -526,7 +526,7 @@ public class StudentLoginController {
         } finally {
             Platform.runLater(() -> {
                 animateBlur(mainLoginPane, false);
-                this.rightside.getChildren().remove(loader);
+                this.rightSide.getChildren().remove(loader);
             });
         }
     }

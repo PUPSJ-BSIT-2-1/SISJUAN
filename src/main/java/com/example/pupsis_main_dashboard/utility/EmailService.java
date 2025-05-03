@@ -69,7 +69,7 @@ public class EmailService {
                 + "</body></html>";
         htmlPart.setContent(htmlContent, "text/html");
 
-        // Add parts to message
+        // Add parts to a message
         multipart.addBodyPart(textPart);
         multipart.addBodyPart(htmlPart);
         return multipart;

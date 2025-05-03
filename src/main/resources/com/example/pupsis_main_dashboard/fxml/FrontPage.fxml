@@ -31,7 +31,7 @@
          <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
       </padding>
       <ImageView fitHeight="47.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
-         <Image url="@../Images/pupsj-logo.png"/>
+         <Image url="@../Images/PUPSJ Logo.png"/>
       </ImageView>
       <Label styleClass="pupsis" text="PUPSIS">
          <HBox.margin>

@@ -177,7 +177,7 @@
                              <Insets bottom="10.0" top="40.0" />
                          </VBox.margin>
                      </TextField>
-                     <TextField fx:id="middlename" prefHeight="30.0" prefWidth="218.0" promptText="Middle Name" styleClass="fields">
+                     <TextField fx:id="middleName" prefHeight="30.0" prefWidth="218.0" promptText="Middle Name" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
@@ -298,10 +298,10 @@
     </BorderPane>
    <BorderPane mouseTransparent="true" prefHeight="200.0" prefWidth="200.0">
       <right>
-         <VBox fx:id="rightside" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
+         <VBox fx:id="rightSide" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
       </right>
       <left>
-         <VBox fx:id="leftside" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
+         <VBox fx:id="leftSide" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
       </left>
    </BorderPane>
 </StackPane>
