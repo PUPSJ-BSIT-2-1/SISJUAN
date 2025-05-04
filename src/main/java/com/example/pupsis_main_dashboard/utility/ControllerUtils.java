@@ -43,7 +43,7 @@ public class ControllerUtils {
                 String middleInitial = middleName != null && !middleName.isEmpty() 
                     ? middleName.charAt(0) + "."
                     : "";
-                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim().toUpperCase();
+                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim();
             }
         } catch (SQLException e) {
             e.printStackTrace();

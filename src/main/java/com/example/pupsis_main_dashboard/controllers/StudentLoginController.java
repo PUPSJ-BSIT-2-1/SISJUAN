@@ -76,50 +76,38 @@ public class StudentLoginController {
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
     
     static {Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            loginExecutor.shutdown();
-            try {
-                if (!loginExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
-                    loginExecutor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                loginExecutor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
+            loginExecutor.shutdownNow();
         }));}
 
     @FXML private void initialize() {
         emailService = new EmailService(
                 "harolddelapena.11@gmail.com",
                 "sfhq xeks hgeo yfja");
-        loginButton.setOnAction(event -> handleLogin(leftSide));
-        setupRememberMeHandler();
-        setupRegistrationNavigation();
-        setupComboBoxHandlers();
-        setupYearsAndDays();
-        setupConfirmRegistration();
+        loginButton.setOnAction(event -> handleLogin(leftSide, false));
+        setupInitialState();
         requestInitialFocus();
     }
-    private void setupRememberMeHandler() {
+    
+    private void setupInitialState() {
+        // Remember me handler
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
         String[] credentials = rememberMeHandler.loadCredentials();
-
         if (credentials != null) {
             studentIdField.setText(credentials[0]);
             passwordField.setText(credentials[1]);
             rememberMeCheckBox.setSelected(true);
         }
-
-        rememberMeCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
-        });
-    }
-    private void setupYearsAndDays() {
+        
+        // Years and days
         populateDays(31);
         populateYears();
-    }
-    private void setupConfirmRegistration() {
+        
+        // Registration
         confirmReg.setOnAction(event -> handleConfirmRegistration());
-    }
-    private void setupComboBoxHandlers() {
+        registerButton.setOnAction(event -> ControllerUtils.animateVBox(centerVBox, -417));
+        backButton.setOnMouseClicked(event -> ControllerUtils.animateVBox(centerVBox, 0));
+        
+        // Combo box handlers
         monthComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Integer selectedYear = yearComboBox.getSelectionModel().getSelectedItem();
@@ -136,11 +124,6 @@ public class StudentLoginController {
 
         monthComboBox.setOnAction(event -> handleMonthOrYearChange());
         yearComboBox.setOnAction(event -> handleMonthOrYearChange());
-    }
-    private void setupRegistrationNavigation() {
-
-        registerButton.setOnAction(event -> ControllerUtils.animateVBox(centerVBox, -417));
-        backButton.setOnMouseClicked(event -> ControllerUtils.animateVBox(centerVBox, 0));
     }
     private void requestInitialFocus() {
         Platform.runLater(() -> errorLabel.requestFocus());
@@ -297,32 +280,49 @@ public class StudentLoginController {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
-    @FXML private void handleLogin(VBox leftSide) {
-        String input = studentIdField.getText().trim().toLowerCase();
+    @FXML private void handleLogin(VBox leftSide, boolean fromRegistration) {
+        String identifier = studentIdField.getText().trim();
         String password = passwordField.getText().trim();
-        boolean rememberMe = rememberMeCheckBox.isSelected();
-
-        if (input.isEmpty() || password.isEmpty()) {
-            showAlert("Input Required", "Please enter your Student ID or Email and Password.", Alert.AlertType.WARNING);
+        
+        // Check if identifier is email or student ID
+        boolean isEmail = identifier.contains("@");
+        boolean isValidId = !isEmail && (identifier.matches("\\d+") || identifier.matches("\\d{4}-\\d{6}-SJ-01"));
+        
+        if (identifier.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("Please fill in all fields");
             return;
         }
-
+        
+        if (!isEmail && !isValidId) {
+            errorLabel.setText("Invalid student ID format");
+            return;
+        }
+        
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        leftSide.setAlignment(Pos.CENTER);
-        leftSide.getChildren().add(loader);
+        
+        if (fromRegistration) {
+            rightSide.getChildren().add(loader);
+        } else {
+            leftSide.setAlignment(Pos.CENTER);
+            leftSide.getChildren().add(loader);
+        }
+        
         animateBlur(mainLoginPane, true);
 
         loginExecutor.submit(() -> {
             try {
-                boolean isAuthenticated = authenticate(input, password);
+                boolean isAuthenticated = authenticate(identifier, password);
                 Platform.runLater(() -> {
-                    leftSide.getChildren().remove(loader);
+                    if (fromRegistration) {
+                        rightSide.getChildren().remove(loader);
+                    } else {
+                        leftSide.getChildren().remove(loader);
+                    }
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        RememberMeHandler.saveCredentials(input, password, rememberMe);
-                        ControllerUtils.getStudentFullName(input, input.contains("@"));
-                        leftSide.getChildren().remove(loader);
+                        RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
+                        ControllerUtils.getStudentFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
@@ -331,13 +331,16 @@ public class StudentLoginController {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        leftSide.getChildren().remove(loader);
                         showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
                     }
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    leftSide.getChildren().remove(loader);
+                    if (fromRegistration) {
+                        rightSide.getChildren().remove(loader);
+                    } else {
+                        leftSide.getChildren().remove(loader);
+                    }
                     animateBlur(mainLoginPane, false);
                     showAlert("Error", "Login failed: " + e.getMessage(), Alert.AlertType.ERROR);
                 });
@@ -345,6 +348,11 @@ public class StudentLoginController {
         });
     }
     @FXML private void handleConfirmRegistration() {
+        if (reType == null) {
+            logger.severe("reType PasswordField is not initialized - check FXML file");
+            showAlert("System Error", "Registration currently unavailable", Alert.AlertType.ERROR);
+            return;
+        }
         String passwordInput = this.password.getText().trim();
         String reTypePassword = this.reType.getText().trim();
         String firstName = this.firstName.getText().trim();
@@ -475,6 +483,49 @@ public class StudentLoginController {
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         animateBlur(mainLoginPane, true);
         this.rightSide.getChildren().add(loader);
+        
+        // Get last student ID from database
+        String formattedStudentId = "";
+        String getLastIdQuery = "SELECT student_id FROM students ORDER BY student_id DESC LIMIT 1";
+        String currentYear = String.valueOf(Year.now().getValue());
+        
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement idStatement = connection.prepareStatement(getLastIdQuery);
+             ResultSet rs = idStatement.executeQuery()) {
+            
+            long nextId = 1; // Default for first record of year
+            if (rs.next()) {
+                String lastId = rs.getString("student_id");
+                String[] parts = lastId.split("-");
+                
+                if (parts.length >= 2) {
+                    String lastYear = parts[0];
+                    if (lastYear.equals(currentYear)) {
+                        nextId = Long.parseLong(parts[1]) + 1;
+                    }
+                    // Else keep nextId = 1 for new year
+                }
+            }
+            
+            String studentIdNumber = String.format("%06d", nextId); // Ensure 6 digits
+            formattedStudentId = currentYear + "-" + studentIdNumber + "-SJ-01";
+            
+        } catch (SQLException e) {
+            Platform.runLater(() -> {
+                showAlert("Database Error", "Failed to generate student ID: " + e.getMessage());
+                animateBlur(mainLoginPane, false);
+                this.rightSide.getChildren().remove(loader);
+            });
+            return;
+        } catch (NumberFormatException e) {
+            Platform.runLater(() -> {
+                showAlert("ID Error", "Invalid student ID format in database");
+                animateBlur(mainLoginPane, false);
+                this.rightSide.getChildren().remove(loader);
+            });
+            return;
+        }
+        
         String hashedPassword = PasswordHandler.hashPassword(passwordInput);
         java.sql.Date dateOfBirth;
         try {
@@ -489,29 +540,30 @@ public class StudentLoginController {
             return;
         }
 
-        String query = "INSERT INTO students(password,firstName,middleName,lastName,email,birthday) VALUES(?,?,?,?,?,?)";
+        String query = "INSERT INTO students(student_id, password, firstName, middleName, lastName, email, birthday) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, hashedPassword);
-            preparedStatement.setString(2, firstName);
-            preparedStatement.setString(3, middleName);
-            preparedStatement.setString(4, lastName);
-            preparedStatement.setString(5, email);
-            preparedStatement.setDate(6, dateOfBirth);
+            preparedStatement.setString(1, formattedStudentId);
+            preparedStatement.setString(2, hashedPassword);
+            preparedStatement.setString(3, firstName);
+            preparedStatement.setString(4, middleName);
+            preparedStatement.setString(5, lastName);
+            preparedStatement.setString(6, email);
+            preparedStatement.setDate(7, dateOfBirth);
 
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected > 0) {
+                String finalFormattedStudentId = formattedStudentId;
                 Platform.runLater(() -> {
                     animateBlur(mainLoginPane, false);
                     this.rightSide.getChildren().remove(loader);
-                    showAlert("Registration Successful", "Your account has been created!");
+                    showAlert("Registration Successful", "Your account has been created! Student ID: " + finalFormattedStudentId);
                     studentIdField.setText(email);
                     passwordField.setText(passwordInput);
-                    handleLogin(leftSide);
-
+                    handleLogin(leftSide, true);
                 });
             } else {
                 Platform.runLater(() -> {

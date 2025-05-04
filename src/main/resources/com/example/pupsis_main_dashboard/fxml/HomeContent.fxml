@@ -37,6 +37,11 @@
    </FlowPane>
 
                          <HBox prefHeight="132.0" prefWidth="810.0" spacing="10.0">
+
+                                         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="stat-value" text="2nd Year" />
+            <Label styleClass="stat-label" text="Second Semester" />
+        </VBox>
         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <Label text="1.25">
             <styleClass>
@@ -44,11 +49,6 @@
                <String fx:value="font" />
             </styleClass></Label>
             <Label styleClass="stat-label" text="Current GWA" />
-        </VBox>
-
-                                         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
-            <Label styleClass="stat-value" text="2nd Year" />
-            <Label styleClass="stat-label" text="Second Semester" />
         </VBox>
    
                                          <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">

@@ -169,7 +169,7 @@
                          </VBox.margin>
                      </Label>
                      <Label text="Enter your Student ID" />
-                     <TextField fx:id="firstname" prefHeight="30.0" prefWidth="218.0" promptText="First Name" styleClass="fields">
+                     <TextField fx:id="firstName" prefHeight="30.0" prefWidth="218.0" promptText="First Name" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
@@ -185,7 +185,7 @@
                              <Insets bottom="10.0" />
                          </VBox.margin>
                      </TextField>
-                     <TextField fx:id="lastname" prefHeight="30.0" prefWidth="218.0" promptText="Last Name" styleClass="fields">
+                     <TextField fx:id="lastName" prefHeight="30.0" prefWidth="218.0" promptText="Last Name" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
@@ -209,10 +209,13 @@
                              <Insets bottom="10.0" />
                          </VBox.margin>
                      </PasswordField>
-                     <PasswordField fx:id="retype" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password" styleClass="fields">
+                     <PasswordField fx:id="reType" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
+                         <VBox.margin>
+                             <Insets bottom="20.0" />
+                         </VBox.margin>
                      </PasswordField>
                      <Label styleClass="font" text="Birthday">
                          <VBox.margin>
@@ -259,7 +262,11 @@
                      </ComboBox>
                          </children>
                      </HBox>
-                     <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="404.0" styleClass="buttons" text="Confirm" />
+                     <Button fx:id="confirmReg" mnemonicParsing="false" prefHeight="26.0" prefWidth="422.0" styleClass="buttons" text="Confirm Registration">
+                         <VBox.margin>
+                             <Insets bottom="10.0" />
+                         </VBox.margin>
+                     </Button>
                  </children>
                  <padding>
                      <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
