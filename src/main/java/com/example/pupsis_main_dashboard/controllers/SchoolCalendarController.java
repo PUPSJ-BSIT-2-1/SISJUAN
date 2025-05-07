@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -15,8 +14,6 @@ import java.time.*;
 
 public class SchoolCalendarController {
 
-//    @FXML private ImageView nextButton;
-//    @FXML private ImageView backButton;
     @FXML private ComboBox<Integer> yearComboBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private GridPane calendarGrid;
@@ -31,22 +28,20 @@ public class SchoolCalendarController {
         populateMonths();
         populateCalendar(YearMonth.now());
 
-//        nextButton.setOnMouseClicked(_ -> handleNextButton());
-//        backButton.setOnMouseClicked(_ -> handleBackButton());
         yearComboBox.setOnAction(_ -> handleYearandMonthChange());
         monthComboBox.setOnAction(_ -> handleYearandMonthChange());
     }
 
     private void populateYears() {
-        ObservableList<Integer> yearsCount = FXCollections.observableArrayList();
+        ObservableList<Integer> yearList = FXCollections.observableArrayList();
         int currentYear = Year.now().getValue();
         int nextYear = currentYear + 1;
 
-        yearsCount.add(currentYear - 1);
-        yearsCount.add(currentYear);
-        yearsCount.add(nextYear);
+        yearList.add(currentYear - 1);
+        yearList.add(currentYear);
+        yearList.add(nextYear);
 
-        yearComboBox.setItems(yearsCount);
+        yearComboBox.setItems(yearList);
     }
 
     private void populateMonths() {

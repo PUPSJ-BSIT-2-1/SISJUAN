@@ -4,25 +4,15 @@
     -fx-border-color: transparent;
 }
 
-.header {
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Inter 18pt Medium";
-    -fx-text-fill: white;
-}
-
 .sub-header {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-font-family: "Inter 18pt Medium";
     -fx-text-fill: white;
 }
+
 .grid{
     -fx-alignment: center;
-}
-
-.button-container {
-
 }
 
 .days-container {
@@ -64,10 +54,10 @@
 .combobox{
     -fx-background-color: transparent;
     -fx-fill: white;
-    -fx-shape: null;                       /* null out the SVG shape */
+    -fx-shape: null;
 }
 .combobox .arrow-button .arrow {
-    -fx-shape: null;                       /* null out the SVG shape */
+    -fx-shape: null;
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
@@ -78,6 +68,7 @@
     -fx-padding: 0;
     -fx-alignment: center;
 }
+
 .icons{
     -fx-fill: white;
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -11,7 +12,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
-
 
 <StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
    <children>
@@ -25,8 +25,16 @@
                      </children>
                   </VBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <ComboBox fx:id="monthComboBox" prefHeight="30.0" prefWidth="147.0" promptText="September" styleClass="combobox" />
-                  <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="80.0" promptText="2024" styleClass="combobox" />
+                  <ComboBox fx:id="monthComboBox" prefHeight="30.0" prefWidth="147.0" promptText="September">
+                     <styleClass>
+                        <String fx:value="combobox" />
+                        <String fx:value="sub-header" />
+                     </styleClass></ComboBox>
+                  <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="80.0" promptText="2024">
+                     <styleClass>
+                        <String fx:value="combobox" />
+                        <String fx:value="sub-header" />
+                     </styleClass></ComboBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                   <VBox alignment="CENTER" onMouseClicked="#handleNextButton">
                      <children>
@@ -39,7 +47,7 @@
                </padding>
             </HBox>
             <Region prefHeight="13.0" prefWidth="810.0" />
-            <GridPane alignment="CENTER" style="-fx-alignment: center;">
+            <GridPane alignment="CENTER" style="-fx-alignment: center;" styleClass="days-container">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
