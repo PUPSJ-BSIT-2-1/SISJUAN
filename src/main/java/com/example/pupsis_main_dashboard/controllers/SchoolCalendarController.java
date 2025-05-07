@@ -106,7 +106,12 @@ public class SchoolCalendarController {
 
     private void styleButton(Label lbl) {
         lbl.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        lbl.setStyle("-fx-border-color: gray; -fx-alignment: top-right; -fx-padding: 10, 10, 0, 0; -fx-border-radius: 10;");
+        lbl.setStyle(
+                "-fx-border-color: gray; " +
+                "-fx-alignment: top-right; " +
+                "-fx-padding: 5; " +
+                "-fx-border-radius: 10; "
+        );
     }
 
     private void handleNextButton() {
