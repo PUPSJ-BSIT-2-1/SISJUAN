@@ -1,0 +1,65 @@
+.header-container {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.header {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-text-fill: white;
+}
+
+.sub-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-text-fill: white;
+}
+
+.button-container {
+
+}
+
+.days-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.days {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-text-fill: #343a40;
+    fx-alignment: center;
+}
+
+.calendar {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.button-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 15;
+    -fx-border-color: #e3e5e6;
+    -fx-border-radius: 15;
+    -fx-padding: 3;
+}
+
+.back-button:hover .next-button:hover {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+}
+
+
+
+
+
