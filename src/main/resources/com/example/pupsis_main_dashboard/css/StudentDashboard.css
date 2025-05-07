@@ -92,10 +92,10 @@
     -fx-background-color: #400000; /* Even darker maroon */
 }
 .fade-bottom {
-    -fx-background-color: linear-gradient(from 0% 100% to 0% 95% , #ffffff, transparent);
+    -fx-background-color: linear-gradient(from 0% 100% to 0% 95%, rgb(255, 255, 255) 0%, rgba(255,255,255,0) 100%);
     -fx-background-radius: 10;
 }
 .fade-top {
-    -fx-background-color: linear-gradient(from 0% 0% to 0% 5%, #ffffff, transparent);
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 5%, rgb(255, 255, 255) 0%, rgba(255,255,255,0) 100%);
     -fx-background-radius: 10;
 }

@@ -6,7 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="810.0" styleClass="settings-container" stylesheets="@../css/SettingsContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SettingsController">
+<VBox prefWidth="810.0" styleClass="cards" stylesheets="@../css/SettingsContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SettingsController">
 
     <Label styleClass="settings-title" text="Settings" />
     
