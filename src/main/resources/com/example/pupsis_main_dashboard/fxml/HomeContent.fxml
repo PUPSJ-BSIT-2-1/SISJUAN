@@ -82,7 +82,7 @@
       </children>
    </HBox>
 
-                   <HBox spacing="10.0">
+                   <HBox prefHeight="94.0" prefWidth="810.0" spacing="10.0">
         <VBox prefWidth="400.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <Label styleClass="section-header" text="Announcements">
             <VBox.margin>
