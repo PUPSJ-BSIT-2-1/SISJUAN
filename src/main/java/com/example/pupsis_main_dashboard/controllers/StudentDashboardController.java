@@ -38,6 +38,8 @@ public class StudentDashboardController {
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private ScrollPane contentPane;
+    @FXML private Node fade1;
+    @FXML private Node fade2;
 
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
 
@@ -61,6 +63,17 @@ public class StudentDashboardController {
             }
         }
         loadHomeContent();
+
+        // Add scroll listener for fade effects
+        contentPane.vvalueProperty().addListener((_, _, newVal) -> {
+            double vvalue = newVal.doubleValue();
+            
+            // Show/hide top fade based on scroll position
+            fade1.setVisible(vvalue > 0.05);
+            
+            // Keep bottom fade always visible
+            fade2.setVisible(true);
+        });
     }
 
     private String getStudentId(String identifier) {
@@ -157,7 +170,7 @@ public class StudentDashboardController {
             }
             contentPane.setContent(content);
 
-            // Immediate reset + delayed double check
+            // Immediate reset and delayed double check
             Platform.runLater(() -> {
                 contentPane.setVvalue(0);
                 new Timer().schedule(new TimerTask() {

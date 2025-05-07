@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
-   <Region layoutX="10.0" layoutY="712.0" prefHeight="20.0" prefWidth="810.0" />
    <FlowPane>
       <children>
       
@@ -89,7 +88,7 @@
             <VBox.margin>
                <Insets bottom="10.0" />
             </VBox.margin></Label>
-            <ListView styleClass="announcement-list">
+            <ListView fx:id="announcement" styleClass="announcement-list">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="• Registration opens May 15" />
