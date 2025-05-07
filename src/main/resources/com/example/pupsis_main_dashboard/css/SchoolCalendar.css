@@ -1,5 +1,5 @@
 .header-container {
-    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-color: maroon;
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
@@ -16,6 +16,9 @@
     -fx-font-weight: bold;
     -fx-font-family: "Inter 18pt Medium";
     -fx-text-fill: white;
+}
+.grid{
+    -fx-alignment: center;
 }
 
 .button-container {
@@ -58,8 +61,25 @@
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
     -fx-cursor: hand;
 }
-
-
-
+.combobox{
+    -fx-background-color: transparent;
+    -fx-fill: white;
+    -fx-shape: null;                       /* null out the SVG shape */
+}
+.combobox .arrow-button .arrow {
+    -fx-shape: null;                       /* null out the SVG shape */
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.combobox .list-cell {
+    -fx-text-fill: white;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 24px;
+    -fx-padding: 0;
+    -fx-alignment: center;
+}
+.icons{
+    -fx-fill: white;
+}
 
 

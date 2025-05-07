@@ -15,10 +15,8 @@ import java.time.*;
 
 public class SchoolCalendarController {
 
-    @FXML private ImageView nextButton;
-    @FXML private ImageView backButton;
-    @FXML private Label headerField;
-    @FXML private Label subHeaderField;
+//    @FXML private ImageView nextButton;
+//    @FXML private ImageView backButton;
     @FXML private ComboBox<Integer> yearComboBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private GridPane calendarGrid;
@@ -32,12 +30,9 @@ public class SchoolCalendarController {
         populateYears();
         populateMonths();
         populateCalendar(YearMonth.now());
-        
-        headerField.setText(currentMonth + " " + currentYear);
-        subHeaderField.setText("Official Schedule for Academic Year 2024-2025");
 
-        nextButton.setOnMouseClicked(_ -> handleNextButton());
-        backButton.setOnMouseClicked(_ -> handleBackButton());
+//        nextButton.setOnMouseClicked(_ -> handleNextButton());
+//        backButton.setOnMouseClicked(_ -> handleBackButton());
         yearComboBox.setOnAction(_ -> handleYearandMonthChange());
         monthComboBox.setOnAction(_ -> handleYearandMonthChange());
     }
@@ -114,24 +109,19 @@ public class SchoolCalendarController {
         );
     }
 
-    private void handleNextButton() {
-        nextButton.setOnMouseClicked(_ -> {
+    @FXML private void handleNextButton() {
             activeMonthDate = activeMonthDate.plusMonths(1);
             currentYear = activeMonthDate.getYear();
             currentMonth = activeMonthDate.getMonth().toString();
-            headerField.setText(currentMonth + " " + currentYear);
             populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
-        });
     }
 
-    private void handleBackButton() {
-        backButton.setOnMouseClicked(_ -> {
+    @FXML private void handleBackButton() {
+
             activeMonthDate = activeMonthDate.minusMonths(1);
             currentYear = activeMonthDate.getYear();
             currentMonth = activeMonthDate.getMonth().toString();
-            headerField.setText(currentMonth + " " + currentYear);
             populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
-        });
     }
 
     private void handleYearandMonthChange() {
@@ -141,7 +131,6 @@ public class SchoolCalendarController {
             Month month = activeMonthDate.getMonth();
             currentMonth = month.name();
             activeMonthDate = LocalDate.of(currentYear, month, 1);
-            headerField.setText(month.name().toUpperCase() + " " + currentYear);
             populateCalendar(YearMonth.of(currentYear, month));
         } else {
             int selectedYear = yearComboBox.getValue() != null ? yearComboBox.getValue() : currentYear;
@@ -151,7 +140,6 @@ public class SchoolCalendarController {
             activeMonthDate = LocalDate.of(selectedYear, month, 1);
             currentYear = selectedYear;
             currentMonth = month.name();
-            headerField.setText(month.name().toUpperCase() + " " + selectedYear);
             populateCalendar(YearMonth.of(currentYear, month));
         }
     }

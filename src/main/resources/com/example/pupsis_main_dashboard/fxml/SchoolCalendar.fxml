@@ -3,70 +3,92 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" style="-fx-background-color: white;" styleClass="root" stylesheets="@../css/SchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
    <children>
-      <Region layoutX="10.0" layoutY="122.0" prefHeight="38.0" prefWidth="810.0" />
-      <AnchorPane prefHeight="81.0" prefWidth="810.0" styleClass="header-container">
+      <VBox maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" style="-fx-background-color: white;" styleClass="root" stylesheets="@../css/SchoolCalendar.css">
          <children>
-            <Label fx:id="headerField" layoutX="24.0" layoutY="12.0" prefHeight="62.0" prefWidth="247.0" styleClass="header" text="September 2025" />
-            <Label fx:id="subHeaderField" layoutX="24.0" layoutY="59.0" prefHeight="42.0" prefWidth="394.0" styleClass="sub-header" text="Official Schedule for Academic Year " />
-            <HBox layoutX="475.0" layoutY="40.0" prefHeight="26.0" prefWidth="104.0" styleClass="button-container">
+            <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
                <children>
-                  <SVGPath content="" />
-                  <Region prefHeight="34.0" prefWidth="19.0" />
-                  <Region layoutX="44.0" layoutY="10.0" prefHeight="34.0" prefWidth="19.0" />
+                  <VBox alignment="CENTER" onMouseClicked="#handleBackButton">
+                     <children>
+                        <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
+                     </children>
+                  </VBox>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="monthComboBox" prefHeight="30.0" prefWidth="147.0" promptText="September" styleClass="combobox" />
+                  <ComboBox fx:id="yearComboBox" prefHeight="30.0" prefWidth="80.0" promptText="2024" styleClass="combobox" />
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <VBox alignment="CENTER" onMouseClicked="#handleNextButton">
+                     <children>
+                        <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" onMouseClicked="#handleNextButton" styleClass="icons" />
+                     </children>
+                  </VBox>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </HBox>
-            <ComboBox fx:id="yearComboBox" layoutX="695.0" layoutY="40.0" prefHeight="26.0" prefWidth="86.0" promptText="YEAR" styleClass="combo-box" />
-            <ComboBox fx:id="monthComboBox" layoutX="593.0" layoutY="40.0" prefHeight="26.0" prefWidth="86.0" promptText="MONTH" styleClass="combo-box" />
+            <Region prefHeight="13.0" prefWidth="810.0" />
+            <GridPane alignment="CENTER" style="-fx-alignment: center;">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label prefHeight="26.0" prefWidth="50.0" styleClass="days" text="Sunday" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="54.0" styleClass="days" text="Monday" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                  <Label prefHeight="23.0" prefWidth="58.0" styleClass="days" text="Tuesday" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="82.0" styleClass="days" text="Wednesday" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
+                  <Label prefHeight="18.0" prefWidth="66.0" styleClass="days" text="Thursday" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="44.0" styleClass="days" text="Friday" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="62.0" styleClass="days" text="Saturday" GridPane.columnIndex="6" GridPane.halignment="CENTER" />
+               </children>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </GridPane>
+            <Region layoutX="10.0" layoutY="137.0" prefHeight="13.0" prefWidth="810.0" />
+            <GridPane fx:id="calendarGrid" alignment="CENTER" gridLinesVisible="true" hgap="3.0" prefHeight="420.0" prefWidth="810.0" styleClass="calendar" vgap="3.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </GridPane>
          </children>
-      </AnchorPane>
-      <Region prefHeight="13.0" prefWidth="810.0" />
-      <AnchorPane prefHeight="27.0" prefWidth="810.0" styleClass="days-container">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-         <children>
-            <Label layoutX="41.0" layoutY="9.0" prefHeight="26.0" prefWidth="56.0" styleClass="days" text="Sunday" />
-            <Label layoutX="155.0" layoutY="12.0" prefHeight="20.0" prefWidth="62.0" styleClass="days" text="Monday" />
-            <Label layoutX="268.0" layoutY="10.0" prefHeight="23.0" prefWidth="80.0" styleClass="days" text="Tuesday" />
-            <Label layoutX="369.0" layoutY="12.0" prefHeight="20.0" prefWidth="98.0" styleClass="days" text="Wednesday" />
-            <Label layoutX="487.0" layoutY="12.0" prefHeight="14.0" prefWidth="86.0" styleClass="days" text="Thursday" />
-            <Label layoutX="609.0" layoutY="12.0" prefHeight="20.0" prefWidth="44.0" styleClass="days" text="Friday" />
-            <Label layoutX="716.0" layoutY="12.0" prefHeight="20.0" prefWidth="62.0" styleClass="days" text="Saturday" />
-         </children>
-      </AnchorPane>
-      <Region layoutX="10.0" layoutY="137.0" prefHeight="13.0" prefWidth="810.0" />
-      <GridPane fx:id="calendarGrid" alignment="CENTER" gridLinesVisible="true" hgap="3.0" prefHeight="420.0" prefWidth="810.0" styleClass="calendar" vgap="3.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="16.666666666666668" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </GridPane>
+      </VBox>
    </children>
-</VBox>
+</StackPane>
