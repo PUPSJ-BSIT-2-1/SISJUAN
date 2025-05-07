@@ -117,7 +117,7 @@ public class FrontPageController {
     }
 
     private void showFallbackImage() {
-        Image fallback = new Image("com/example/pupsis_main_dashboard/Images/fallback.jpg");
+        Image fallback = new Image("com/example/pupsis_main_dashboard/Images/PUPSJ.png");
         ImageView imageView = new ImageView(fallback);
         imageView.setFitWidth(mediaView.getFitWidth());
         imageView.setFitHeight(mediaView.getFitHeight());
