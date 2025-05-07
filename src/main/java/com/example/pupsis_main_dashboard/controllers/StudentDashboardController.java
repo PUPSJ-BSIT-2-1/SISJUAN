@@ -119,7 +119,7 @@ public class StudentDashboardController {
                         // Add schedule content loading here
                         break;
                     case "schoolCalendarHBox":
-                        // Add school calendar content loading here
+                        content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml")));
                         break;
                     case "aboutHBox":
                         // Add about content loading here
