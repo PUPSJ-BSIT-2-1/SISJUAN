@@ -38,3 +38,13 @@
 .error-label {
     -fx-text-fill: #e74c3c;
 }
+.verification-digit{
+    -fx-background-color: #e3e3e3;
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
+    -fx-background-radius: 5;
+    -fx-border-radius: 10;
+}
+.verification-container{
+    -fx-background-color: #ffffff;
+}

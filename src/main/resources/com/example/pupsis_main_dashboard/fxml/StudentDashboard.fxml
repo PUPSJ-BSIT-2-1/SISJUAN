@@ -218,12 +218,12 @@
                   <Insets bottom="30.0" left="30.0" top="30.0" />
                </padding>
             </ScrollPane>
-            <Region mouseTransparent="true" prefHeight="639.0" prefWidth="842.0" styleClass="fade-top">
+            <Region fx:id="fade1" mouseTransparent="true" prefHeight="639.0" prefWidth="861.0" styleClass="fade-top">
                <StackPane.margin>
                   <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
                </StackPane.margin>
             </Region>
-            <Region mouseTransparent="true" prefHeight="822.0" prefWidth="870.0" styleClass="fade-bottom">
+            <Region fx:id="fade2" mouseTransparent="true" prefHeight="822.0" prefWidth="861.0" styleClass="fade-bottom">
                <StackPane.margin>
                   <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
                </StackPane.margin>

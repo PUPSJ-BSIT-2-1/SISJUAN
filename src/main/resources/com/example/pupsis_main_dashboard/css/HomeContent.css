@@ -38,16 +38,31 @@
 .announcement-list {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-selection-bar: transparent;
-    -fx-selection-bar-non-focused: transparent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-selection-bar: transparent;
+    -fx-selection-bar-non-focused: transparent;
 }
 
+.announcement-list .list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
 
-.announcement-list .list-cell:selected{
-    -fx-background-color: transparent;
+.announcement-list .list-cell {
     -fx-font-size: 14px;
+    -fx-border-width: 0;
+}
+
+.announcement-list .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.announcement-list .list-cell:selected {
+    -fx-background-color: transparent;
+    -fx-text-fill: #343a40;
 }
 
 .action-button {

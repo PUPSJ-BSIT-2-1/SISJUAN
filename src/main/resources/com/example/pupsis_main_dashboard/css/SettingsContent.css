@@ -1,5 +1,10 @@
-.settings-container {
-    -fx-background-color: white;
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
 }
 
 .settings-title {
