@@ -40,7 +40,7 @@
 }
 
 .button-container {
-    -fx-background-color: #f8fcfc;
+    -fx-background-color: black;
     -fx-background-radius: 15;
     -fx-border-color: #e3e5e6;
     -fx-border-radius: 15;
@@ -53,17 +53,9 @@
 }
 .combobox{
     -fx-background-color: transparent;
-    -fx-fill: white;
-    -fx-shape: null;
-}
-.combobox .arrow-button .arrow {
-    -fx-shape: null;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-.combobox .list-cell {
-    -fx-text-fill: white;
     -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
     -fx-font-size: 24px;
     -fx-padding: 0;
     -fx-alignment: center;
@@ -73,4 +65,12 @@
     -fx-fill: white;
 }
 
+.month-picker {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+}
 

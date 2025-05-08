@@ -3,20 +3,27 @@ package com.example.pupsis_main_dashboard.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 
 import java.time.*;
-
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SchoolCalendarController {
-
-    @FXML private ComboBox<Integer> yearComboBox;
-    @FXML private ComboBox<String> monthComboBox;
-    @FXML private GridPane calendarGrid;
+    @FXML
+    private GridPane calendarGrid;
+    @FXML
+    private VBox vBox;
+    @FXML
+    private GridPane monthPicker;
+    @FXML
+    private GridPane yearPicker;
+    @FXML
+    private AnchorPane anchor;
 
     private LocalDate activeMonthDate = LocalDate.now();
     private int currentYear = activeMonthDate.getYear();
@@ -24,32 +31,8 @@ public class SchoolCalendarController {
 
     @FXML
     private void initialize() {
-        populateYears();
-        populateMonths();
         populateCalendar(YearMonth.now());
-
-        yearComboBox.setOnAction(_ -> handleYearandMonthChange());
-        monthComboBox.setOnAction(_ -> handleYearandMonthChange());
-    }
-
-    private void populateYears() {
-        ObservableList<Integer> yearList = FXCollections.observableArrayList();
-        int currentYear = Year.now().getValue();
-        int nextYear = currentYear + 1;
-
-        yearList.add(currentYear - 1);
-        yearList.add(currentYear);
-        yearList.add(nextYear);
-
-        yearComboBox.setItems(yearList);
-    }
-
-    private void populateMonths() {
-        String[] months = {"January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"};
-
-        ObservableList<String> monthsList = FXCollections.observableArrayList(months);
-        monthComboBox.setItems(monthsList);
+        vBox.toFront();
     }
 
     public void populateCalendar(YearMonth yearMonth) {
@@ -104,38 +87,38 @@ public class SchoolCalendarController {
         );
     }
 
-    @FXML private void handleNextButton() {
-            activeMonthDate = activeMonthDate.plusMonths(1);
-            currentYear = activeMonthDate.getYear();
-            currentMonth = activeMonthDate.getMonth().toString();
-            populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
+    @FXML
+    private void handleNextButton() {
+        activeMonthDate = activeMonthDate.plusMonths(1);
+        currentYear = activeMonthDate.getYear();
+        currentMonth = activeMonthDate.getMonth().toString();
+        populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
     }
 
-    @FXML private void handleBackButton() {
-
-            activeMonthDate = activeMonthDate.minusMonths(1);
-            currentYear = activeMonthDate.getYear();
-            currentMonth = activeMonthDate.getMonth().toString();
-            populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
+    @FXML
+    private void handleBackButton() {
+        activeMonthDate = activeMonthDate.minusMonths(1);
+        currentYear = activeMonthDate.getYear();
+        currentMonth = activeMonthDate.getMonth().toString();
+        populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
     }
 
     private void handleYearandMonthChange() {
-        if (yearComboBox.getValue() == null && monthComboBox.getValue() == null) {
-            activeMonthDate = activeMonthDate.plusMonths(1);
-            currentYear = activeMonthDate.getYear();
-            Month month = activeMonthDate.getMonth();
-            currentMonth = month.name();
-            activeMonthDate = LocalDate.of(currentYear, month, 1);
-            populateCalendar(YearMonth.of(currentYear, month));
-        } else {
-            int selectedYear = yearComboBox.getValue() != null ? yearComboBox.getValue() : currentYear;
-            String selectedMonth = monthComboBox.getValue() != null ? monthComboBox.getValue() : currentMonth;
-
-            Month month = Month.valueOf(selectedMonth.toUpperCase());
-            activeMonthDate = LocalDate.of(selectedYear, month, 1);
-            currentYear = selectedYear;
-            currentMonth = month.name();
-            populateCalendar(YearMonth.of(currentYear, month));
+        try {
+            if (yearPicker == null) {
+                activeMonthDate = activeMonthDate.plusMonths(1);
+                currentYear = activeMonthDate.getYear();
+                Month month = activeMonthDate.getMonth();
+                currentMonth = month.name();
+                activeMonthDate = LocalDate.of(currentYear, month, 1);
+                populateCalendar(YearMonth.of(currentYear, month));
+            } else {
+                Month month = Month.valueOf(currentMonth.toUpperCase());
+                activeMonthDate = LocalDate.of(currentYear, month, 1);
+                populateCalendar(YearMonth.of(currentYear, month));
+            }
+        } catch (Exception e) {
+            System.err.println("Error in handleYearandMonthChange: " + e.getMessage());
         }
     }
 
@@ -163,8 +146,125 @@ public class SchoolCalendarController {
 
         dialog.showAndWait();
     }
+
     private void handleCalendarClick() {
         showEventDialog("Event", "Description: Processing of First Year Admission and Enrollment and Printing of Registration Card (Face to Face) PUP Main Campus, Sta. Mesa, Manila");
     }
-    
+
+    @FXML
+    private void populateMonthPicker() {
+        anchor.toFront();
+        monthPicker.setVisible(true);
+        yearPicker.setVisible(false);
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        ObservableList<String> monthsList = FXCollections.observableArrayList(months);
+
+        int columnIndex = 0;
+        int rowIndex = 0;
+
+        monthPicker.getChildren().clear();
+
+        for (int i = 0; i < monthsList.size(); i++) {
+            Label monthButton = getMonth(monthsList, i);
+
+            monthPicker.add(monthButton, columnIndex, rowIndex);
+
+            if (++columnIndex == 4) {
+                columnIndex = 0;
+                rowIndex++;
+            }
+        }
+        handleAnyClick();
+    }
+
+    private Label getMonth(ObservableList<String> monthsList, int i) {
+        Label monthButton = new Label(monthsList.get(i));
+        monthButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        monthButton.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;");
+        monthButton.setAlignment(Pos.CENTER);
+
+        Map<String, Month> monthMap = Map.ofEntries(
+                Map.entry("Jan", Month.JANUARY),
+                Map.entry("Feb", Month.FEBRUARY),
+                Map.entry("Mar", Month.MARCH),
+                Map.entry("Apr", Month.APRIL),
+                Map.entry("May", Month.MAY),
+                Map.entry("Jun", Month.JUNE),
+                Map.entry("Jul", Month.JULY),
+                Map.entry("Aug", Month.AUGUST),
+                Map.entry("Sep", Month.SEPTEMBER),
+                Map.entry("Oct", Month.OCTOBER),
+                Map.entry("Nov", Month.NOVEMBER),
+                Map.entry("Dec", Month.DECEMBER)
+        );
+
+        String month = monthsList.get(i);
+        monthButton.setOnMouseClicked(event -> {
+            currentMonth = String.valueOf(monthMap.get(month));
+            handleYearandMonthChange();
+            monthPicker.setVisible(false);
+            vBox.toFront();
+        });
+        return monthButton;
+    }
+
+    @FXML
+    private void populateYearPicker() {
+        anchor.toFront();
+        yearPicker.setVisible(true);
+        monthPicker.setVisible(false);
+        yearPicker.getChildren().clear();
+
+        int currentYearValue = Year.now().getValue();
+        int columnIndex = 0;
+        int rowIndex = 0;
+
+        for (int i = currentYearValue - 5; i <= currentYearValue + 5; i++) {
+            Label yearButton = getYear(i);
+
+            yearPicker.add(yearButton, columnIndex, rowIndex);
+
+            if (++columnIndex == 4) {
+                columnIndex = 0;
+                rowIndex++;
+            }
+        }
+        handleAnyClick();
+    }
+
+    private Label getYear(int i) {
+        Label yearButton = new Label(String.valueOf(i));
+        yearButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        yearButton.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;");
+        yearButton.setAlignment(Pos.CENTER);
+
+        final int year = i;
+        yearButton.setOnMouseClicked(event -> {
+            currentYear = year;
+            handleYearandMonthChange();
+            yearPicker.setVisible(false);
+            vBox.toFront();
+        });
+        return yearButton;
+    }
+
+    private void handleAnyClick() {
+        anchor.setOnMouseClicked(event -> {
+            if (!monthPicker.getBoundsInParent().contains(event.getX(), event.getY()) &&
+                    !yearPicker.getBoundsInParent().contains(event.getX(), event.getY())) {
+                monthPicker.setVisible(false);
+                yearPicker.setVisible(false);
+                vBox.toFront();
+            } else if (yearPicker.isVisible() && monthPicker.getBoundsInParent().contains(event.getX(), event.getY())) {
+                yearPicker.setVisible(false);
+                monthPicker.setVisible(true);
+                anchor.toFront();
+            }
+            else if (monthPicker.isVisible() && yearPicker.getBoundsInParent().contains(event.getX(), event.getY())) {
+                monthPicker.setVisible(false);
+                yearPicker.setVisible(true);
+            }
+        });
+    }
 }
