@@ -38,7 +38,6 @@ public class FrontPageController {
             Media media = new Media(file.toURI().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
             
-            // Add error listener
             mediaPlayer.setOnError(() -> {
                 System.err.println("MediaPlayer Error: " + mediaPlayer.getError().getMessage());
                 showFallbackImage();

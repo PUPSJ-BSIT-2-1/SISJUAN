@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -12,11 +11,8 @@ import javafx.stage.StageStyle;
 
 import java.time.*;
 
-
 public class SchoolCalendarController {
 
-//    @FXML private ImageView nextButton;
-//    @FXML private ImageView backButton;
     @FXML private ComboBox<Integer> yearComboBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private GridPane calendarGrid;
@@ -31,8 +27,6 @@ public class SchoolCalendarController {
         populateMonths();
         populateCalendar(YearMonth.now());
 
-//        nextButton.setOnMouseClicked(_ -> handleNextButton());
-//        backButton.setOnMouseClicked(_ -> handleBackButton());
         yearComboBox.setOnAction(_ -> handleYearandMonthChange());
         monthComboBox.setOnAction(_ -> handleYearandMonthChange());
     }
@@ -110,18 +104,17 @@ public class SchoolCalendarController {
     }
 
     @FXML private void handleNextButton() {
-            activeMonthDate = activeMonthDate.plusMonths(1);
-            currentYear = activeMonthDate.getYear();
-            currentMonth = activeMonthDate.getMonth().toString();
-            populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
+        activeMonthDate = activeMonthDate.plusMonths(1);
+        currentYear = activeMonthDate.getYear();
+        currentMonth = activeMonthDate.getMonth().toString();
+        populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
     }
 
     @FXML private void handleBackButton() {
-
-            activeMonthDate = activeMonthDate.minusMonths(1);
-            currentYear = activeMonthDate.getYear();
-            currentMonth = activeMonthDate.getMonth().toString();
-            populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
+        activeMonthDate = activeMonthDate.minusMonths(1);
+        currentYear = activeMonthDate.getYear();
+        currentMonth = activeMonthDate.getMonth().toString();
+        populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
     }
 
     private void handleYearandMonthChange() {
@@ -171,5 +164,4 @@ public class SchoolCalendarController {
     private void handleCalendarClick() {
         showEventDialog("Event", "Description: Processing of First Year Admission and Enrollment and Printing of Registration Card (Face to Face) PUP Main Campus, Sta. Mesa, Manila");
     }
-    
 }

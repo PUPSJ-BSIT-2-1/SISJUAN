@@ -26,10 +26,14 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                      <children>
-                        <Label fx:id="studentNameLabel" styleClass="medium-text" text="John Doe">
+                        <Label fx:id="studentNameLabel" text="John Doe">
                            <font>
                               <Font size="16.0" />
                            </font>
+                           <styleClass>
+                              <String fx:value="medium-text" />
+                              <String fx:value="profile-name" />
+                           </styleClass>
                         </Label>
                         <Label layoutX="10.0" layoutY="10.0" style="-fx-font-size: 14; -fx-text-fill: #acacac;" styleClass="small-text" text="Information Technology" textFill="#acacac">
                            <font>

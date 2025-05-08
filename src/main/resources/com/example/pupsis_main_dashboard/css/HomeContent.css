@@ -80,11 +80,66 @@
 .stat-icon {
     -fx-fill: #800000; /* Maroon */
 }
+
 .font{
     -fx-font-family: "Inter 18pt Medium";
 }
+
 .red-card{
     -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
     -fx-background-radius: 10;
     -fx-border-color: transparent;
+}
+
+/* --- DARK THEME STYLES for Home Content --- */
+
+.dark-theme .cards {
+    -fx-background-color: #3a3a3a; /* Consistent dark card background */
+    -fx-border-color: #555555;     /* Consistent dark card border */
+    /* -fx-effect can be kept or adjusted for dark theme if needed */
+}
+
+.dark-theme .red-card {
+    /* The maroon gradient might still look good, or could be adjusted if too dark/light */
+    /* For example, a slightly darker or more vibrant maroon for dark theme */
+    /* -fx-background-color: linear-gradient(to right, #700000 0%, #700000 60%, rgba(112, 0, 0, 0.5) 100%); */
+    /* Text on red-card (.welcome-text, .student-name) is already white, so it should be fine. */
+}
+
+.dark-theme .stat-value {
+    -fx-text-fill: #e0e0e0; /* Light text for dark theme */
+}
+
+.dark-theme .stat-label {
+    -fx-text-fill: #b0b0b0; /* Lighter grey for labels */
+}
+
+.dark-theme .section-header {
+    -fx-text-fill: #e0e0e0; /* Light text for section headers */
+}
+
+/* Announcement list already uses transparent background, text color might need adjustment if not inherited */
+.dark-theme .announcement-list .list-cell {
+    -fx-background-color: transparent; /* Make cell background transparent to show card background */
+    -fx-text-fill: #c5c5c5; /* Example: light grey text for announcements */
+}
+
+.dark-theme .announcement-list .list-cell:selected {
+    -fx-background-color: #555555; /* Subtle dark highlight for selected item */
+    -fx-text-fill: #e0e0e0;      /* Light text for selected item in dark mode */
+}
+
+/* Action button already has a dark theme version in SettingsContent.css if it was intended to be global */
+/* If .action-button is specific to HomeContent, a dark theme version would be: */
+.dark-theme .action-button {
+    -fx-background-color: #b22222; /* Consistent with settings dark button */
+    -fx-text-fill: #ffffff;
+}
+
+.dark-theme .action-button:hover {
+    -fx-background-color: #e57373;
+}
+
+.dark-theme .stat-icon {
+    -fx-fill: #e57373; /* Lighter maroon for icons in dark mode */
 }
