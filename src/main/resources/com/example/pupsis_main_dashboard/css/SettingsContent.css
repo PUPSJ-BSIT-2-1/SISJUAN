@@ -121,8 +121,7 @@
     -fx-text-fill: #343a40;
     -fx-border-color: #ced4da;
     -fx-border-width: 1;
-    -fx-background-radius: 4;
-    -fx-padding: 5 15;
+    -fx-background-radius: 4
 }
 .toggle-button:selected {
     -fx-background-color: #800000; /* Maroon when active */
@@ -258,11 +257,18 @@
     -fx-shape: " "; /* Hide default arrows if using custom or overlay scrollbars */
     -fx-padding: 0;
 }
-
-.dark-theme .scroll-bar .thumb {
-    -fx-background-color: rgba(204, 204, 204, 0.4); /* Semi-transparent light thumb */
-    -fx-background-insets: 2, 0, 0;
-    -fx-background-radius: 2em;
+.thumb{
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-translate-y: .2;
+    -fx-translate-x: -11.2px; /* Added for light mode */
+    
+}
+.dark-theme .thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-translate-y: .2;
+    -fx-translate-x: 10.2px; /* Added for dark mode */
 }
 
 .dark-theme .scroll-bar .thumb:hover {
@@ -375,33 +381,15 @@
     -fx-background-color: #cccccc; /* Track color when off */
     -fx-pref-width: 50px;
     -fx-pref-height: 28px;
-    -fx-padding: 2px; /* Padding around the dot */
     -fx-border-width: 0; /* Remove default border */
     -fx-border-color: transparent; /* Remove default border */
     -fx-focus-color: transparent; /* Remove focus ring */
     -fx-faint-focus-color: transparent; /* Remove faint focus ring */
-}
-
-.modern-toggle-switch .dot {
-    -fx-background-radius: 50%; /* Make the dot circular */
-    -fx-background-color: white; /* Dot color - reverted from debug */
-    -fx-pref-width: 24px;  /* Dot size (28px height - 2*2px padding) */
-    -fx-pref-height: 24px; /* Dot size */
-    -fx-min-width: 24px; 
-    -fx-min-height: 24px;
-    -fx-opacity: 1; 
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);
+    -fx-transition: -fx-background-color 0.2s ease-in-out; /* Animate track color change */
 }
 
 .modern-toggle-switch:selected {
     -fx-background-color: #800000; /* Track color when on (maroon) */
-}
-
-/* This handles the dot's position change. It assumes the .dot is a StackPane normally positioned to the left, and moves to the right when selected. */
-.modern-toggle-switch:selected .dot {
-    /* This transform moves the dot to the right by its width plus padding differences if any */
-    /* Adjust the X value if the dot doesn't align correctly */
-    -fx-translateX: 22; /* Pre-calculated (50 - 24 - 4). Value in px. */
 }
 
 /* Specific styling for dark theme if needed */
@@ -412,20 +400,12 @@
     -fx-border-color: transparent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    /* Transition is inherited from the base .modern-toggle-switch rule */
 }
 
 .dark-theme .modern-toggle-switch:selected {
     -fx-background-color: #b22222; /* Brighter maroon for on state in dark mode */
 }
-
-.dark-theme .modern-toggle-switch .dot {
-    -fx-background-color: #e0e0e0; /* Slightly off-white dot for dark mode - reverted from debug */
-}
-
-.dark-theme .modern-toggle-switch:selected .dot {
-     -fx-translateX: 22; /* Pre-calculated (50 - 24 - 4). Value in px. */
-}
-
 
 /* Save button styles */
 .save-button {

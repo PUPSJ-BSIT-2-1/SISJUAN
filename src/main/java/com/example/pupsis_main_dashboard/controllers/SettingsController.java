@@ -43,7 +43,7 @@ public class SettingsController {
         applyCurrentTheme(); // Apply theme on initialization
 
         themeToggle.setText(""); // Clear any text from FXML
-        themeToggle.getStyleClass().add("modern-toggle-switch");
+        // themeToggle.getStyleClass().add("modern-toggle-switch"); // Style class is set in FXML
 
         // Request focus on the root VBox to prevent text fields from auto-focusing
         // Use Platform.runLater to ensure it happens after the scene is fully initialized

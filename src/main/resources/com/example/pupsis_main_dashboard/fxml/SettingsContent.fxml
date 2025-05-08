@@ -8,6 +8,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="rootSettingsVBox" prefWidth="810.0" spacing="20.0" stylesheets="@../css/SettingsContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SettingsController">
@@ -39,7 +41,16 @@
         <Label prefHeight="39.0" prefWidth="1090.0" styleClass="settings-section-header" text="Appearance" />
         <HBox alignment="CENTER_LEFT" spacing="10">
             <Label styleClass="settings-label" text="Theme:" />
-            <ToggleButton fx:id="themeToggle" /> 
+         <StackPane>
+            <children>
+                  <ToggleButton fx:id="themeToggle" styleClass="modern-toggle-switch" />
+               <Region maxHeight="18.0" maxWidth="18.0" mouseTransparent="true" prefHeight="0.0" prefWidth="13.0" styleClass="thumb">
+                  <StackPane.margin>
+                     <Insets />
+                  </StackPane.margin>
+               </Region>
+            </children>
+         </StackPane> 
         </HBox>
         <!-- HBox for language selection removed -->
         <Button maxWidth="Infinity" onAction="#handleSaveAppearance" styleClass="settings-button" text="Save Appearance Settings" />
