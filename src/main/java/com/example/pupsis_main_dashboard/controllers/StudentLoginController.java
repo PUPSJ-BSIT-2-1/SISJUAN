@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -32,7 +33,10 @@ import java.time.Year;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate;
 import static com.example.pupsis_main_dashboard.utility.ControllerUtils.animateBlur;
@@ -70,7 +74,7 @@ public class StudentLoginController {
     private final StringBuilder typedMonth = new StringBuilder();
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
     private EmailService emailService;
-    private static final Logger logger = Logger.getLogger(StudentLoginController.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(StudentLoginController.class.getName());
 
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
     
@@ -81,10 +85,10 @@ public class StudentLoginController {
         loginButton.setOnAction(_ -> handleLogin(leftSide, false));
         setupInitialState();
         requestInitialFocus();
+        Platform.runLater(this::applyInitialTheme);
     }
     
     private void setupInitialState() {
-        // Remember me handler
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
         String[] credentials = rememberMeHandler.loadCredentials();
         if (credentials != null) {
@@ -93,16 +97,13 @@ public class StudentLoginController {
             rememberMeCheckBox.setSelected(true);
         }
         
-        // Years and days
         populateDays(31);
         populateYears();
         
-        // Registration
         confirmReg.setOnAction(_ -> handleConfirmRegistration());
         registerButton.setOnAction(_ -> ControllerUtils.animateVBox(centerVBox, -417));
         backButton.setOnMouseClicked(_ -> ControllerUtils.animateVBox(centerVBox, 0));
         
-        // Combo box handlers
         monthComboBox.valueProperty().addListener((_, _, newValue) -> {
             if (newValue != null) {
                 Integer selectedYear = yearComboBox.getSelectionModel().getSelectedItem();
@@ -120,6 +121,7 @@ public class StudentLoginController {
         monthComboBox.setOnAction(_ -> handleMonthOrYearChange());
         yearComboBox.setOnAction(_ -> handleMonthOrYearChange());
     }
+
     private void requestInitialFocus() {
         Platform.runLater(() -> errorLabel.requestFocus());
     }
@@ -132,6 +134,7 @@ public class StudentLoginController {
             populateDays(daysInMonth);
         }
     }
+
     @FXML private void handleMonthTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("[a-zA-Z]")) {
@@ -167,6 +170,7 @@ public class StudentLoginController {
         inputClearDelay.setOnFinished(_ -> typedMonth.setLength(0));
         inputClearDelay.playFromStart();
     }
+
     @FXML private void handleYearTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("[0-9]")) {
@@ -202,8 +206,8 @@ public class StudentLoginController {
         inputClearDelay.setOnFinished(_ -> typedYear.setLength(0));
         inputClearDelay.playFromStart();
     }
-    @FXML
-    private void handleDayTyping(KeyEvent event) {
+
+    @FXML  private void handleDayTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("\\d")) {
             return;
@@ -248,6 +252,7 @@ public class StudentLoginController {
         inputClearDelay.setOnFinished(_ -> typedDay.setLength(0));
         inputClearDelay.playFromStart();
     }
+
     private void populateYears() {
         ObservableList<Integer> years = FXCollections.observableArrayList();
         int currentYear = Year.now().getValue();
@@ -260,6 +265,7 @@ public class StudentLoginController {
 
         yearComboBox.setItems(years);
     }
+
     private void populateDays(int daysInMonth) {
         ObservableList<Integer> days = FXCollections.observableArrayList();
         for (int i = 1; i <= daysInMonth; i++) {
@@ -271,6 +277,7 @@ public class StudentLoginController {
     @FXML private void handleKeyPress(KeyEvent ignoredEvent) {
         errorLabel.setText("");
     }
+
     @FXML  private void backToFrontPage() {
         StageAndSceneUtils u = new StageAndSceneUtils();
         Stage stage = (Stage) closeButton.getScene().getWindow();
@@ -280,11 +287,11 @@ public class StudentLoginController {
             throw new RuntimeException(e);
         }
     }
+
     @FXML private void handleLogin(VBox leftSide, boolean fromRegistration) {
         String identifier = studentIdField.getText().trim();
         String password = passwordField.getText().trim();
         
-        // Check if identifier is email or student ID
         boolean isEmail = identifier.contains("@");
         boolean isValidId = !isEmail && (identifier.matches("\\d+") || identifier.matches("\\d{4}-\\d{6}-SJ-01"));
         
@@ -347,9 +354,10 @@ public class StudentLoginController {
             }
         });
     }
+
     @FXML private void handleConfirmRegistration() {
         if (reType == null) {
-            logger.severe("reType PasswordField is not initialized - check FXML file");
+            logger.error("reType PasswordField is not initialized - check FXML file");
             showAlert("System Error", "Registration currently unavailable", Alert.AlertType.ERROR);
             return;
         }
@@ -363,7 +371,6 @@ public class StudentLoginController {
         Integer day = this.dayComboBox.getValue();
         Integer year = this.yearComboBox.getValue();
 
-        // Add loading animation and blur
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         this.rightSide.getChildren().add(loader);
         animateBlur(mainLoginPane, true);
@@ -411,7 +418,6 @@ public class StudentLoginController {
             return;
         }
 
-        // Check if email exists
         String checkEmailQuery = "SELECT email FROM students WHERE email = ?";
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(checkEmailQuery)) {
@@ -440,7 +446,6 @@ public class StudentLoginController {
 
         String verificationCode = generateVerificationCode();
         
-        // Send email in the background thread
         new Thread(() -> {
             sendVerificationEmail(email, verificationCode);
             
@@ -464,7 +469,7 @@ public class StudentLoginController {
                     verificationStage.initModality(Modality.APPLICATION_MODAL);
                     verificationStage.showAndWait();
                 } catch (IOException e) {
-                    logger.severe("Error loading verification window");
+                    logger.error("Error loading verification window");
                     showAlert("Error", "Failed to load verification window");
                 }
             });
@@ -476,15 +481,15 @@ public class StudentLoginController {
             emailService.sendVerificationEmail(email, code);
         } catch (MessagingException e) {
             Platform.runLater(() -> showAlert("Email Error", "Failed to send verification email: " + e.getMessage()));
-            logger.severe("Error sending verification email");
+            logger.error("Error sending verification email");
         }
     }
+
     private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         animateBlur(mainLoginPane, true);
         this.rightSide.getChildren().add(loader);
         
-        // Get last student ID from database
         String formattedStudentId;
         String getLastIdQuery = "SELECT student_id FROM students ORDER BY student_id DESC LIMIT 1";
         String currentYear = String.valueOf(Year.now().getValue());
@@ -493,7 +498,7 @@ public class StudentLoginController {
              PreparedStatement idStatement = connection.prepareStatement(getLastIdQuery);
              ResultSet rs = idStatement.executeQuery()) {
             
-            long nextId = 1; // Default for first record of year
+            long nextId = 1; 
             if (rs.next()) {
                 String lastId = rs.getString("student_id");
                 String[] parts = lastId.split("-");
@@ -502,12 +507,11 @@ public class StudentLoginController {
                     String lastYear = parts[0];
                     if (lastYear.equals(currentYear)) {
                         nextId = Long.parseLong(parts[1]) + 1;
-                    }
-                    // Else keep nextId = 1 for new year
+                    } 
                 }
             }
             
-            String studentIdNumber = String.format("%06d", nextId); // Ensure 6 digits
+            String studentIdNumber = String.format("%06d", nextId); 
             formattedStudentId = currentYear + "-" + studentIdNumber + "-SJ-01";
             
         } catch (SQLException e) {
@@ -573,7 +577,7 @@ public class StudentLoginController {
             }
         } catch (SQLException e) {
             Platform.runLater(() -> showAlert("Database Error", e.getMessage()));
-            logger.severe("Error during registration");
+            logger.error("Error during registration");
         } finally {
             Platform.runLater(() -> {
                 animateBlur(mainLoginPane, false);
@@ -581,6 +585,7 @@ public class StudentLoginController {
             });
         }
     }
+
     private String generateVerificationCode() {
         return String.format("%06d", new Random().nextInt(999999));
     }
@@ -591,5 +596,43 @@ public class StudentLoginController {
             return false;
         }
         return true;
+    }
+
+    private void applyInitialTheme() {
+        if (mainLoginPane == null) {
+            PauseTransition delay = new PauseTransition(Duration.millis(100));
+            delay.setOnFinished(event -> {
+                if (mainLoginPane == null) {
+                    return;
+                }
+                proceedWithThemeApplication();
+            });
+            delay.play();
+            return;
+        }
+        proceedWithThemeApplication();
+    }
+
+    private void proceedWithThemeApplication() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+
+        Scene scene = mainLoginPane.getScene();
+        if (scene != null) {
+            Node sceneRoot = scene.getRoot();
+            if (sceneRoot != null) {
+                if (isDarkMode) {
+                    if (!sceneRoot.getStyleClass().contains("dark-theme")) {
+                        sceneRoot.getStyleClass().add("dark-theme");
+                    }
+                    sceneRoot.getStyleClass().remove("light-theme");
+                } else {
+                    if (!sceneRoot.getStyleClass().contains("light-theme")) {
+                        sceneRoot.getStyleClass().add("light-theme");
+                    }
+                    sceneRoot.getStyleClass().remove("dark-theme");
+                }
+            }
+        }
     }
 }

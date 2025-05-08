@@ -4,11 +4,13 @@
     -fx-pref-height: 30;
     -fx-pref-width: 200;
     -fx-text-fill: black;
+    -fx-prompt-text-fill: #a0a0a0; 
 }
 .birthday-field{
     -fx-background-color: white;
     -fx-background-radius: 8;
     -fx-pref-height: 30;
+    -fx-text-fill: black; 
 }
 .birthday-field:hover{
 	-fx-cursor: hand; 
@@ -33,14 +35,17 @@
 }
 .font{
     -fx-font-family: "Inter";
+    -fx-text-fill: #333333; 
 }
 .big-text{
     -fx-font-size: 24;
+    /* -fx-text-fill will be inherited from .font or overridden by dark theme */
 }
 .pup-sanjuan-label{
     -fx-font-family: "system-ui";
     -fx-font-size: 24;
     -fx-font-weight: bold;
+    -fx-text-fill: #505050; 
 }
 .back-button:hover{
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
@@ -50,11 +55,97 @@
     -fx-text-fill: red;
 }
 .root{
-    -fx-background-radius: 20;
+    -fx-background-radius: 23;
 }
 .border-pane {
-    -fx-background-color: #e6e6e6;
+    -fx-background-color: #e6e6e6; 
     -fx-background-radius: 20;
 }
 
+/* ============== DARK THEME STYLES for StudentLogin.css ============== */
 
+/* Apply to the root element (StackPane or BorderPane via controller) */
+.dark-theme {
+    /* This will be the outermost background if the root of the scene gets .dark-theme */
+    /* If mainLoginPane is the one getting the class, its background is defined below */
+}
+
+.dark-theme .border-pane {
+    -fx-background-color: #1e1e1e; 
+}
+
+.dark-theme .font {
+    -fx-text-fill: #c5c5c5; 
+}
+
+.dark-theme .big-text {
+    -fx-text-fill: #e0e0e0; 
+}
+
+.dark-theme .pup-sanjuan-label {
+    -fx-text-fill: #b0b0b0; 
+}
+
+.dark-theme .fields {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #888888;
+    -fx-border-color: #555555; 
+    -fx-border-width: 1px;
+    -fx-border-radius: 8;
+}
+
+.dark-theme .fields:focused {
+    -fx-border-color: #e57373; 
+    -fx-background-color: #333333;
+}
+
+.dark-theme .birthday-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+}
+
+.dark-theme .birthday-field .arrow {
+    -fx-background-color: #b0b0b0; 
+}
+
+.dark-theme .birthday-field .list-cell {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .birthday-field .list-view .list-cell:filled:hover,
+.dark-theme .birthday-field .list-view .list-cell:filled:selected {
+    -fx-background-color: #800000; 
+    -fx-text-fill: white;
+}
+
+.dark-theme .birthday-field:focused {
+    -fx-border-color: #e57373;
+}
+
+.dark-theme .buttons {
+    -fx-background-color: #b22222; 
+    -fx-text-fill: #ffffff;
+}
+
+.dark-theme .buttons:hover {
+    -fx-background-color: #e57373; 
+}
+
+.dark-theme .buttons:focused {
+    -fx-background-color: #e57373;
+}
+
+.dark-theme .error-message {
+    -fx-text-fill: #ff6b6b; 
+}
+
+/* Assuming ToggleSwitch.css handles its own dark theme variants based on a parent .dark-theme */
+/* If not, specific styles for .switch-toggle-button and its .thumb under .dark-theme might be needed here */
+
+.dark-theme .back-button:hover {
+    -fx-effect: dropshadow(gaussian, #606060, 20, 0.5, 0, 0); 
+}
