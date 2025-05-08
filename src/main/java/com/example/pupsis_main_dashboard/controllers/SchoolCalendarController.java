@@ -24,6 +24,14 @@ public class SchoolCalendarController {
     private GridPane yearPicker;
     @FXML
     private AnchorPane anchor;
+    @FXML
+    private VBox leftButton;
+    @FXML
+    private VBox rightButton;
+    @FXML
+    private Label monthButton;
+    @FXML
+    private Label yearButton;
 
     private LocalDate activeMonthDate = LocalDate.now();
     private int currentYear = activeMonthDate.getYear();
@@ -34,6 +42,14 @@ public class SchoolCalendarController {
         populateCalendar(YearMonth.now());
         getCurrentDay();
         vBox.toFront();
+        monthButton.setText(currentMonth);
+        yearButton.setText(String.valueOf(currentYear));
+
+        monthButton.setOnMouseClicked(event -> handleYearandMonthChange());
+        yearButton.setOnMouseClicked(event -> handleYearandMonthChange());
+
+        leftButton.setOnMouseClicked(event -> handleBackButton());
+        rightButton.setOnMouseClicked(event -> handleNextButton());
     }
 
     private void getCurrentDay() {
@@ -103,6 +119,9 @@ public class SchoolCalendarController {
         currentYear = activeMonthDate.getYear();
         currentMonth = activeMonthDate.getMonth().toString();
         populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
+        monthButton.setText(activeMonthDate.getMonth().toString());
+        yearButton.setText(String.valueOf(currentYear));
+        getCurrentDay();
     }
 
     @FXML
@@ -111,8 +130,11 @@ public class SchoolCalendarController {
         currentYear = activeMonthDate.getYear();
         currentMonth = activeMonthDate.getMonth().toString();
         populateCalendar(YearMonth.of(currentYear, Month.valueOf(currentMonth)));
+        monthButton.setText(activeMonthDate.getMonth().toString());
+        yearButton.setText(String.valueOf(currentYear));
+        getCurrentDay();
     }
-
+    @FXML
     private void handleYearandMonthChange() {
         try {
             if (yearPicker == null) {
@@ -122,10 +144,16 @@ public class SchoolCalendarController {
                 currentMonth = month.name();
                 activeMonthDate = LocalDate.of(currentYear, month, 1);
                 populateCalendar(YearMonth.of(currentYear, month));
+                monthButton.setText(currentMonth);
+                yearButton.setText(String.valueOf(currentYear));
+                getCurrentDay();
             } else {
                 Month month = Month.valueOf(currentMonth.toUpperCase());
                 activeMonthDate = LocalDate.of(currentYear, month, 1);
                 populateCalendar(YearMonth.of(currentYear, month));
+                monthButton.setText(currentMonth);
+                yearButton.setText(String.valueOf(currentYear));
+                getCurrentDay();
             }
         } catch (Exception e) {
             System.err.println("Error in handleYearandMonthChange: " + e.getMessage());

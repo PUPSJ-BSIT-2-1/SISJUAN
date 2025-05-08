@@ -54,7 +54,7 @@
          <children>
             <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
                <children>
-                  <VBox alignment="CENTER" onMouseClicked="#handleBackButton">
+                  <VBox fx:id="leftButton" alignment="CENTER" onMouseClicked="#handleBackButton">
                      <children>
                         <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
                      </children>
@@ -62,16 +62,16 @@
                   <Region prefHeight="42.0" prefWidth="199.0" HBox.hgrow="ALWAYS" />
                   <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="176.0">
                      <children>
-                        <Label onMouseClicked="#populateMonthPicker" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
+                        <Label fx:id="monthButton" onMouseClicked="#populateMonthPicker" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
                      </children>
                   </HBox>
                   <HBox onMouseClicked="#populateYearPicker" prefHeight="42.0" prefWidth="86.0">
                      <children>
-                        <Label onMouseClicked="#populateYearPicker" styleClass="combo-box" text="2025" />
+                        <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" styleClass="combo-box" text="2025" />
                      </children>
                   </HBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <VBox alignment="CENTER" onMouseClicked="#handleNextButton">
+                  <VBox fx:id="rightButton" alignment="CENTER" onMouseClicked="#handleNextButton">
                      <children>
                         <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" onMouseClicked="#handleNextButton" styleClass="icons" />
                      </children>
@@ -105,7 +105,7 @@
                   <Label prefHeight="20.0" prefWidth="62.0" styleClass="days" text="Saturday" GridPane.columnIndex="6" GridPane.halignment="CENTER" />
                </children>
                <VBox.margin>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets />
                </VBox.margin>
             </GridPane>
             <Region layoutX="10.0" layoutY="137.0" prefHeight="13.0" prefWidth="810.0" />

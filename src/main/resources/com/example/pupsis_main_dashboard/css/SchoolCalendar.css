@@ -62,7 +62,7 @@
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
     -fx-border-color: #e3e5e6;
-    -fx-border-width: 1;
+    -fx-border-width: 2;
     -fx-border-radius: 10;
     -fx-alignment: center;
 }
@@ -71,6 +71,8 @@
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
 }
 
 .calendar-day {
@@ -115,9 +117,8 @@
 }
 
 .current-day:hover {
-    -fx-background-color: rgba(255, 105, 105, 0.77);
+    -fx-background-color: #600000;
     -fx-cursor: hand;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
 }
-
