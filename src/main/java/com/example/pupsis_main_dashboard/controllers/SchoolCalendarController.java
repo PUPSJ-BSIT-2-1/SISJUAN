@@ -45,11 +45,11 @@ public class SchoolCalendarController {
         monthButton.setText(currentMonth);
         yearButton.setText(String.valueOf(currentYear));
 
-        monthButton.setOnMouseClicked(event -> handleYearandMonthChange());
-        yearButton.setOnMouseClicked(event -> handleYearandMonthChange());
+        monthButton.setOnMouseClicked(_ -> populateMonthPicker());
+        yearButton.setOnMouseClicked(_ -> populateYearPicker());
 
-        leftButton.setOnMouseClicked(event -> handleBackButton());
-        rightButton.setOnMouseClicked(event -> handleNextButton());
+        leftButton.setOnMouseClicked(_ -> handleBackButton());
+        rightButton.setOnMouseClicked(_ -> handleNextButton());
     }
 
     private void getCurrentDay() {
@@ -144,17 +144,14 @@ public class SchoolCalendarController {
                 currentMonth = month.name();
                 activeMonthDate = LocalDate.of(currentYear, month, 1);
                 populateCalendar(YearMonth.of(currentYear, month));
-                monthButton.setText(currentMonth);
-                yearButton.setText(String.valueOf(currentYear));
-                getCurrentDay();
             } else {
                 Month month = Month.valueOf(currentMonth.toUpperCase());
                 activeMonthDate = LocalDate.of(currentYear, month, 1);
                 populateCalendar(YearMonth.of(currentYear, month));
-                monthButton.setText(currentMonth);
-                yearButton.setText(String.valueOf(currentYear));
-                getCurrentDay();
             }
+            monthButton.setText(currentMonth);
+            yearButton.setText(String.valueOf(currentYear));
+            getCurrentDay();
         } catch (Exception e) {
             System.err.println("Error in handleYearandMonthChange: " + e.getMessage());
         }
@@ -210,7 +207,7 @@ public class SchoolCalendarController {
         );
 
         String month = monthsList.get(i);
-        monthButton.setOnMouseClicked(event -> {
+        monthButton.setOnMouseClicked(_ -> {
             currentMonth = String.valueOf(monthMap.get(month));
             handleYearandMonthChange();
             monthPicker.setVisible(false);
@@ -251,7 +248,7 @@ public class SchoolCalendarController {
         yearButton.setAlignment(Pos.CENTER);
 
         final int year = i;
-        yearButton.setOnMouseClicked(event -> {
+        yearButton.setOnMouseClicked(_ -> {
             currentYear = year;
             handleYearandMonthChange();
             yearPicker.setVisible(false);
@@ -286,7 +283,6 @@ public class SchoolCalendarController {
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.getDialogPane().getStyleClass().add("custom-dialog");
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
-
 
         VBox content = new VBox(10);
         Label header = new Label(title);

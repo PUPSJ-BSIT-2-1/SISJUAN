@@ -1,3 +1,11 @@
+.main-root {
+    -fx-background-color: white;
+}
+
+.sub-root {
+    -fx-background-color: white
+}
+
 .header-container {
     -fx-background-color: maroon;
     -fx-background-radius: 10;
@@ -121,4 +129,74 @@
     -fx-cursor: hand;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
+}
+
+/* --- DARK THEME STYLES for School Calendar --- */
+
+.dark-theme .main-root {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+    -fx-border-width: 0;
+}
+
+.dark-theme .sub-root {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+    -fx-border-width: 0;
+}
+
+.dark-theme .header-container {
+    -fx-background-color: #b22222;
+}
+
+.dark-theme .days-container,
+.dark-theme .calendar {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .days {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .button-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .back-button:hover,
+.dark-theme .next-button:hover {
+    -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
+}
+
+.dark-theme .combo-box {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .icons {
+    -fx-fill: #e0e0e0;
+}
+
+.dark-theme .month-picker,
+.dark-theme .custom-dialog {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .calendar-day {
+    -fx-border-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .calendar-day:hover,
+.dark-theme .picker-button:hover {
+    -fx-background-color: #555555;
+}
+
+.dark-theme .current-day {
+    -fx-background-color: #b22222;
+}
+
+.dark-theme .current-day:hover {
+    -fx-background-color: #e57373;
 }

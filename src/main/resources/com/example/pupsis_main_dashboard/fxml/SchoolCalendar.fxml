@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="stackPane" stylesheets="@../css/SchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
+<StackPane fx:id="stackPane" styleClass="main-root" stylesheets="@../css/SchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
    <children>
       <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
          <children>
@@ -50,11 +50,11 @@
             </GridPane>
          </children>
       </AnchorPane>
-      <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" style="-fx-background-color: white;" styleClass="root" stylesheets="@../css/SchoolCalendar.css">
+      <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" styleClass="sub-root" stylesheets="@../css/SchoolCalendar.css">
          <children>
             <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
                <children>
-                  <VBox fx:id="leftButton" alignment="CENTER" onMouseClicked="#handleBackButton">
+                  <VBox fx:id="leftButton" alignment="CENTER">
                      <children>
                         <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
                      </children>
@@ -62,16 +62,16 @@
                   <Region prefHeight="42.0" prefWidth="199.0" HBox.hgrow="ALWAYS" />
                   <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="176.0">
                      <children>
-                        <Label fx:id="monthButton" onMouseClicked="#populateMonthPicker" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
+                        <Label fx:id="monthButton" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
                      </children>
                   </HBox>
-                  <HBox onMouseClicked="#populateYearPicker" prefHeight="42.0" prefWidth="86.0">
+                  <HBox prefHeight="42.0" prefWidth="86.0">
                      <children>
                         <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" styleClass="combo-box" text="2025" />
                      </children>
                   </HBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <VBox fx:id="rightButton" alignment="CENTER" onMouseClicked="#handleNextButton">
+                  <VBox fx:id="rightButton" alignment="CENTER">
                      <children>
                         <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" onMouseClicked="#handleNextButton" styleClass="icons" />
                      </children>
