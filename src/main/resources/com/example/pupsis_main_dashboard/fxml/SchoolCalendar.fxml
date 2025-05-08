@@ -14,6 +14,42 @@
 
 <StackPane fx:id="stackPane" stylesheets="@../css/SchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
    <children>
+      <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
+         <children>
+            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="228.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.39996337890625" minWidth="10.0" prefWidth="30.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="75.5999969482422" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="100.40000762939454" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="125.40001525878907" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </GridPane>
+            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="367.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.39996337890625" minWidth="10.0" prefWidth="30.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="75.5999969482422" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="100.40000762939454" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="125.40001525878907" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </GridPane>
+         </children>
+      </AnchorPane>
       <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" style="-fx-background-color: white;" styleClass="root" stylesheets="@../css/SchoolCalendar.css">
          <children>
             <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
@@ -26,12 +62,12 @@
                   <Region prefHeight="42.0" prefWidth="199.0" HBox.hgrow="ALWAYS" />
                   <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="176.0">
                      <children>
-                        <Label onMouseClicked="#populateMonthPicker" prefHeight="35.0" prefWidth="163.0" styleClass="combobox" text="December" />
+                        <Label onMouseClicked="#populateMonthPicker" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
                      </children>
                   </HBox>
                   <HBox onMouseClicked="#populateYearPicker" prefHeight="42.0" prefWidth="86.0">
                      <children>
-                        <Label onMouseClicked="#populateYearPicker" styleClass="combobox" text="2025" />
+                        <Label onMouseClicked="#populateYearPicker" styleClass="combo-box" text="2025" />
                      </children>
                   </HBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
@@ -97,41 +133,5 @@
             </GridPane>
          </children>
       </VBox>
-      <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
-         <children>
-            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="228.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
-              <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.39996337890625" minWidth="10.0" prefWidth="30.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints maxHeight="75.5999969482422" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="100.40000762939454" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="125.40001525878907" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </GridPane>
-            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="367.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.39996337890625" minWidth="10.0" prefWidth="30.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints maxHeight="75.5999969482422" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="100.40000762939454" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="125.40001525878907" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </GridPane>
-         </children>
-      </AnchorPane>
    </children>
 </StackPane>

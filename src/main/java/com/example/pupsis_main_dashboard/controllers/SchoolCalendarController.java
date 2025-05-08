@@ -11,7 +11,7 @@ import javafx.stage.StageStyle;
 
 import java.time.*;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
 
 public class SchoolCalendarController {
     @FXML
@@ -32,7 +32,21 @@ public class SchoolCalendarController {
     @FXML
     private void initialize() {
         populateCalendar(YearMonth.now());
+        getCurrentDay();
         vBox.toFront();
+    }
+
+    private void getCurrentDay() {
+        LocalDate today = LocalDate.now();
+        if (today.getYear() == currentYear && today.getMonth().name().equals(currentMonth)) {
+            for (javafx.scene.Node node : calendarGrid.getChildren()) {
+                if (node instanceof Label label && label.getText().equals(String.valueOf(today.getDayOfMonth()))) {
+                    label.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
+                    label.getStyleClass().add("current-day");
+                    break;
+                }
+            }
+        }
     }
 
     public void populateCalendar(YearMonth yearMonth) {
@@ -77,14 +91,10 @@ public class SchoolCalendarController {
         calendarGrid.add(empty, col, row);
     }
 
-    private void styleButton(Label lbl) {
-        lbl.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        lbl.setStyle(
-                "-fx-border-color: gray; " +
-                "-fx-alignment: top-right; " +
-                "-fx-padding: 5; " +
-                "-fx-border-radius: 10; "
-        );
+    private void styleButton(Label node) {
+        node.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        node.getStyleClass().add("calendar-day");
+        node.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
     }
 
     @FXML
@@ -122,35 +132,6 @@ public class SchoolCalendarController {
         }
     }
 
-    private void showEventDialog(String title, String description) {
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.getDialogPane().setPrefSize(300, 300);
-        dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.getDialogPane().setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10;");
-
-        VBox content = new VBox(10);
-        Label header = new Label(title);
-        header.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-
-        Label desc = new Label(description);
-        desc.setStyle("-fx-font-size: 14px;");
-        desc.setWrapText(true);
-
-        content.getChildren().addAll(header, desc);
-        content.setStyle("-fx-padding: 20;");
-
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
-        dialog.getDialogPane().getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
-
-        dialog.showAndWait();
-    }
-
-    private void handleCalendarClick() {
-        showEventDialog("Event", "Description: Processing of First Year Admission and Enrollment and Printing of Registration Card (Face to Face) PUP Main Campus, Sta. Mesa, Manila");
-    }
-
     @FXML
     private void populateMonthPicker() {
         anchor.toFront();
@@ -181,7 +162,8 @@ public class SchoolCalendarController {
     private Label getMonth(ObservableList<String> monthsList, int i) {
         Label monthButton = new Label(monthsList.get(i));
         monthButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        monthButton.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;");
+        monthButton.getStyleClass().add("picker-button");
+        monthButton.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
         monthButton.setAlignment(Pos.CENTER);
 
         Map<String, Month> monthMap = Map.ofEntries(
@@ -236,7 +218,8 @@ public class SchoolCalendarController {
     private Label getYear(int i) {
         Label yearButton = new Label(String.valueOf(i));
         yearButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        yearButton.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;");
+        yearButton.getStyleClass().add("picker-button");
+        yearButton.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
         yearButton.setAlignment(Pos.CENTER);
 
         final int year = i;
@@ -266,5 +249,36 @@ public class SchoolCalendarController {
                 yearPicker.setVisible(true);
             }
         });
+    }
+
+    private void showEventDialog(String title, String description) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.getDialogPane().setPrefSize(300, 300);
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.getDialogPane().getStyleClass().add("custom-dialog");
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
+
+
+        VBox content = new VBox(10);
+        Label header = new Label(title);
+        header.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+        Label desc = new Label(description);
+        desc.setStyle("-fx-font-size: 14px;");
+        desc.setWrapText(true);
+
+        content.getChildren().addAll(header, desc);
+        content.setStyle("-fx-padding: 20;");
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
+        dialog.getDialogPane().getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        dialog.showAndWait();
+    }
+
+    private void handleCalendarClick() {
+        showEventDialog("Event", "Description: Processing of First Year Admission and Enrollment and Printing of Registration Card (Face to Face) PUP Main Campus, Sta. Mesa, Manila");
     }
 }

@@ -4,13 +4,6 @@
     -fx-border-color: transparent;
 }
 
-.sub-header {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Inter 18pt Medium";
-    -fx-text-fill: white;
-}
-
 .grid{
     -fx-alignment: center;
 }
@@ -51,7 +44,7 @@
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
     -fx-cursor: hand;
 }
-.combobox{
+.combo-box{
     -fx-background-color: transparent;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: white;
@@ -72,5 +65,59 @@
     -fx-border-width: 1;
     -fx-border-radius: 10;
     -fx-alignment: center;
+}
+
+.custom-dialog {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.calendar-day {
+    -fx-border-color: gray;
+    -fx-alignment: top-right;
+    -fx-padding: 5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.calendar-day:hover {
+    -fx-background-color: #e3e5e6;
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.picker-button {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 5;
+    -fx-alignment: center;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.picker-button:hover {
+    -fx-background-color: #e3e5e6;
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.current-day {
+    -fx-background-color: maroon;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-font-size: 14px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.current-day:hover {
+    -fx-background-color: rgba(255, 105, 105, 0.77);
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
