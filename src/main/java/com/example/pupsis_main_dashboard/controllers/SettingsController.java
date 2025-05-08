@@ -105,8 +105,6 @@ public class SettingsController {
                 }
                 sceneRoot.getStyleClass().remove("dark-theme");
             }
-        } else {
-            System.out.println("Scene not available yet for theme application. Will apply on scene load.");
         }
     }
 
