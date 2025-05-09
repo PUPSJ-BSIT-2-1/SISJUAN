@@ -1,19 +1,17 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.utility.SchoolEventLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
 
 import java.time.*;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-public class SchoolCalendarController {
+public class SchoolCalendarController extends SchoolEventLoader {
     @FXML
     private GridPane calendarGrid;
     @FXML
@@ -41,6 +39,7 @@ public class SchoolCalendarController {
     private void initialize() {
         populateCalendar(YearMonth.now());
         getCurrentDay();
+        loadSchoolEvents();
         vBox.toFront();
         monthButton.setText(currentMonth);
         yearButton.setText(String.valueOf(currentYear));
@@ -82,7 +81,8 @@ public class SchoolCalendarController {
 
         for (int day = 1; day <= daysInMonth; day++) {
             Label dayButton = new Label(String.valueOf(day));
-            dayButton.setOnMouseClicked(_ -> handleCalendarClick());
+            dayButton.setOnMouseClicked(_ -> showEventDay(
+                    String.valueOf(LocalDate.of(currentYear, Month.valueOf(currentMonth), Integer.parseInt(dayButton.getText())))));
             styleButton(dayButton);
             calendarGrid.add(dayButton, columnIndex, rowIndex);
 
@@ -274,35 +274,5 @@ public class SchoolCalendarController {
                 yearPicker.setVisible(true);
             }
         });
-    }
-
-    private void showEventDialog(String title, String description) {
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.getDialogPane().setPrefSize(300, 300);
-        dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.getDialogPane().getStyleClass().add("custom-dialog");
-        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
-
-        VBox content = new VBox(10);
-        Label header = new Label(title);
-        header.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-
-        Label desc = new Label(description);
-        desc.setStyle("-fx-font-size: 14px;");
-        desc.setWrapText(true);
-
-        content.getChildren().addAll(header, desc);
-        content.setStyle("-fx-padding: 20;");
-
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
-        dialog.getDialogPane().getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
-
-        dialog.showAndWait();
-    }
-
-    private void handleCalendarClick() {
-        showEventDialog("Event", "Description: Processing of First Year Admission and Enrollment and Printing of Registration Card (Face to Face) PUP Main Campus, Sta. Mesa, Manila");
     }
 }
