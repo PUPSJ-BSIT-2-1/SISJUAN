@@ -18,6 +18,8 @@ import java.util.*;
 public class SchoolEventLoaderDatabase {
 
     protected final Map<String, List<String>> eventsMap = new HashMap<>();
+    protected double xOffset = 0;
+    protected double yOffset = 0;
 
     public void loadSchoolEvents() {
         eventsMap.clear(); // Clear old data before loading new
@@ -102,6 +104,18 @@ public class SchoolEventLoaderDatabase {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
         dialog.getDialogPane().getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
 
+        dialog.getDialogPane().setOnMousePressed(event -> {
+            xOffset = dialog.getDialogPane().getScene().getWindow().getX() - event.getScreenX();
+            yOffset = dialog.getDialogPane().getScene().getWindow().getY() - event.getScreenY();
+        });
+
+        dialog.getDialogPane().setOnMouseDragged(event -> {
+            dialog.getDialogPane().getScene().getWindow().setX(event.getScreenX() + xOffset);
+            dialog.getDialogPane().getScene().getWindow().setY(event.getScreenY() + yOffset);
+        });
+
         dialog.showAndWait();
+
+
     }
 }

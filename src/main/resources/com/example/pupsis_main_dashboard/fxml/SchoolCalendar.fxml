@@ -54,13 +54,13 @@
          <children>
             <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
                <children>
-                  <VBox fx:id="leftButton" alignment="CENTER" styleClass="back-button">
+                  <VBox fx:id="leftButton" alignment="CENTER">
                      <children>
-                        <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="back-button" />
+                        <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
                      </children>
                   </VBox>
-                  <Region prefHeight="42.0" prefWidth="199.0" HBox.hgrow="ALWAYS" />
-                  <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="176.0">
+                  <Region prefHeight="42.0" prefWidth="194.0" HBox.hgrow="ALWAYS" />
+                  <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="134.0">
                      <children>
                         <Label fx:id="monthButton" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
                      </children>
@@ -71,9 +71,9 @@
                      </children>
                   </HBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <VBox fx:id="rightButton" alignment="CENTER" styleClass="next-button">
+                  <VBox fx:id="rightButton" alignment="CENTER">
                      <children>
-                        <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" onMouseClicked="#handleNextButton" styleClass="next-button" />
+                        <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" onMouseClicked="#handleNextButton" styleClass="icons" />
                      </children>
                   </VBox>
                </children>

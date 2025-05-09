@@ -43,12 +43,12 @@
 }
 
 /* Icons in the header (arrows etc) */
-.back-button, .next-button {
-    -fx-text-fill: white;
+.icons {
+    -fx-text-fill: #ffffff;
 }
 
 /* Navigation button hover effects */
-.back-button:hover, .next-button:hover {
+.icons:hover {
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
     -fx-cursor: hand;
 }
@@ -111,7 +111,7 @@
 .custom-dialog-description {
     -fx-font-family: "Inter 14pt Regular";
     -fx-font-size: 13px;
-    -fx-padding: 10, 0, 5, 0;
+    -fx-padding: 8, 0, 0, 0;
 }
 
 /* Content container for event dialog */
@@ -120,7 +120,7 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-padding: 10;
-
+    -fx-border-color: #e3e5e6;
 }
 
 /* Individual day cell in calendar */
@@ -187,6 +187,9 @@
 .current-day-description {
     -fx-text-fill: maroon;
     -fx-font-size: 12px;
+    -fx-padding: 3;
+    -fx-border-color: maroon;
+    -fx-border-radius: 10;
 }
 
 /* --- DARK THEME STYLES for School Calendar --- */
@@ -228,20 +231,19 @@
     -fx-border-color: #555555;
 }
 
+/* Dark theme icons in the header (arrows etc) */
+.dark-theme .icons {
+    -fx-text-fill: #2b2b2b;
+}
+
 /* Dark theme button hover effects */
-.dark-theme .back-button:hover,
-.dark-theme .next-button:hover {
+.dark-theme .icons:hover {
     -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
 }
 
 /* Dark theme combo box */
 .dark-theme .combo-box {
     -fx-text-fill: #e0e0e0;
-}
-
-/* Dark theme icons */
-.dark-theme .icons {
-    -fx-fill: #e0e0e0;
 }
 
 /* Dark theme pickers and dialogs */
@@ -285,6 +287,9 @@
 .dark-theme .current-day-description {
     -fx-text-fill: #ff9999;
     -fx-font-size: 12px;
+    -fx-padding: 3;
+    -fx-border-color: #ff9999;
+    -fx-border-radius: 10;
 }
 
 /* Dark theme dialog styles */
