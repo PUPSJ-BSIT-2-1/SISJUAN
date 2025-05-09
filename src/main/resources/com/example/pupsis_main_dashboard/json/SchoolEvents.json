@@ -1,0 +1,105 @@
+{
+  "events": [
+    {
+      "event": "Processing of First Year Admission and Enrollment and Printing of Registration Card (Face to Face)",
+      "dates": ["2025-07-15", "2025-07-16", "2025-07-17", "2025-07-18", "2025-07-19", "2025-07-20", "2025-07-21", "2025-07-22", "2025-07-23", "2025-07-24", "2025-07-25", "2025-07-26", "2025-07-27", "2025-07-28", "2025-07-29", "2025-07-30", "2025-07-31", "2025-08-01", "2025-08-02"]
+    },
+    {
+      "event": "Second Year Online Registration",
+      "dates": ["2025-08-19", "2025-08-28"]
+    },
+    {
+      "event": "Third Year Online Registration",
+      "dates": ["2025-08-20", "2025-08-29"]
+    },
+    {
+      "event": "Fourth Year and Fifth Year Online Registration",
+      "dates": ["2025-08-22", "2025-08-30"]
+    },
+    {
+      "event": "Second Year Online Registration (Campuses)",
+      "dates": ["2025-08-23", "2025-08-31"]
+    },
+    {
+      "event": "Third Year Online Registration (Campuses)",
+      "dates": ["2025-08-24", "2025-09-02"]
+    },
+    {
+      "event": "Fourth Year and Fifth Year Online Registration (Campuses)",
+      "dates": ["2025-08-27", "2025-09-03"]
+    },
+    {
+      "event": "Online Registration of Returning Students and Transfer Students with complete credentials / Ladderized Program from PUP Institute of Technology",
+      "dates": ["2025-09-04", "2025-09-05"]
+    },
+    {
+      "event": "All Year Level Online Registration",
+      "dates": ["2025-09-06", "2025-09-07"]
+    },
+    {
+      "event": "College Faculty Meeting",
+      "dates": ["2025-09-06"]
+    },
+    {
+      "event": "First Semester classes start",
+      "dates": ["2025-09-09"]
+    },
+    {
+      "event": "Adjustment period",
+      "dates": ["2025-09-09", "2025-10-11"]
+    },
+    {
+      "event": "PUP 120th Founding Anniversary",
+      "dates": ["2025-10-01", "2025-10-02"]
+    },
+    {
+      "event": "Deadline for submission of Application for Change of Enrollment (ACE) Forms",
+      "dates": ["2025-10-11"]
+    },
+    {
+      "event": "Last day of payment of tuition, miscellaneous, and other fees thru LANDBANK",
+      "dates": ["2025-10-18"]
+    },
+    {
+      "event": "Auto finalization of Grades in PUPSIS for Summer A.Y. 2023-2024",
+      "dates": ["2025-10-22"]
+    },
+    {
+      "event": "Online filing of Application for Mid-Year Graduation A.Y. 2024-2025",
+      "dates": ["2025-10-28", "2025-11-29"]
+    },
+    {
+      "event": "All Saints' Day",
+      "dates": ["2025-11-01"]
+    },
+    {
+      "event": "All Souls' Day",
+      "dates": ["2025-11-02"]
+    },
+    {
+      "event": "Mid-Term and Departmental Examinations",
+      "dates": ["2025-11-04", "2025-11-10"]
+    },
+    {
+      "event": "Online encoding of Mid-Term grades",
+      "dates": ["2025-11-11", "2025-11-16"]
+    },
+    {
+      "event": "Bonifacio Day",
+      "dates": ["2025-11-30"]
+    },
+    {
+      "event": "Immaculate Conception",
+      "dates": ["2025-12-08"]
+    },
+    {
+      "event": "Christmas Vacation",
+      "dates": ["2025-12-23", "2026-01-05"]
+    },
+    {
+      "event": "Rizal Day",
+      "dates": ["2025-12-30"]
+    }
+  ]
+}
+
