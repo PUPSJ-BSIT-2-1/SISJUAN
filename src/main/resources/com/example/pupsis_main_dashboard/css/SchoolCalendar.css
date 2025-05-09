@@ -1,21 +1,21 @@
+/* Root container style */
 .main-root {
     -fx-background-color: white;
 }
 
+/* Sub container style */
 .sub-root {
     -fx-background-color: white
 }
 
+/* Header section containing month/year selector */
 .header-container {
     -fx-background-color: maroon;
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
 
-.grid{
-    -fx-alignment: center;
-}
-
+/* Container for weekday labels (Mon, Tue, etc) */
 .days-container {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
@@ -24,6 +24,7 @@
     -fx-border-radius: 10;
 }
 
+/* Individual weekday label styling */
 .days {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -32,6 +33,7 @@
     fx-alignment: center;
 }
 
+/* Main calendar grid container */
 .calendar {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
@@ -40,19 +42,19 @@
     -fx-border-radius: 10;
 }
 
-.button-container {
-    -fx-background-color: black;
-    -fx-background-radius: 15;
-    -fx-border-color: #e3e5e6;
-    -fx-border-radius: 15;
-    -fx-padding: 3;
+/* Icons in the header (arrows etc) */
+.back-button, .next-button {
+    -fx-text-fill: white;
 }
 
-.back-button:hover .next-button:hover {
+/* Navigation button hover effects */
+.back-button:hover, .next-button:hover {
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
     -fx-cursor: hand;
 }
-.combo-box{
+
+/* Month/Year selector combo box */
+.combo-box {
     -fx-background-color: transparent;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: white;
@@ -62,11 +64,8 @@
     -fx-alignment: center;
 }
 
-.icons{
-    -fx-fill: white;
-}
-
-.month-picker {
+/* Month/Year picker popup styling */
+.month-picker, .year-picker {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
     -fx-border-color: #e3e5e6;
@@ -75,22 +74,64 @@
     -fx-alignment: center;
 }
 
+/* Event details dialog window */
 .custom-dialog {
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
+    -fx-padding: 3;
 }
 
+/* Dialog window buttons */
+.custom-dialog .button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 10;
+    -fx-background-radius: 20;
+}
+
+/* Date styling in event dialog */
+.custom-dialog-date {
+    -fx-font-size: 11px;
+    -fx-font-family: "Inter 18pt Regular";
+}
+
+/* Event type header in dialog */
+.custom-dialog-header {
+    -fx-font-family: "Inter 18pt Bold";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343a40;
+}
+
+/* Event description text styling */
+.custom-dialog-description {
+    -fx-font-family: "Inter 14pt Regular";
+    -fx-font-size: 13px;
+    -fx-padding: 10, 0, 5, 0;
+}
+
+/* Content container for event dialog */
+.custom-dialog-content {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+
+}
+
+/* Individual day cell in calendar */
 .calendar-day {
     -fx-border-color: gray;
-    -fx-alignment: top-right;
-    -fx-padding: 5;
+    -fx-padding: 10;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
 }
 
+/* Hover effect for calendar days */
 .calendar-day:hover {
     -fx-background-color: #e3e5e6;
     -fx-cursor: hand;
@@ -98,6 +139,7 @@
     -fx-background-radius: 10;
 }
 
+/* Month/Year picker button */
 .picker-button {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -107,6 +149,7 @@
     -fx-background-radius: 10;
 }
 
+/* Hover effect for picker button */
 .picker-button:hover {
     -fx-background-color: #e3e5e6;
     -fx-cursor: hand;
@@ -114,9 +157,9 @@
     -fx-background-radius: 10;
 }
 
+/* Styling for the current day */
 .current-day {
     -fx-background-color: maroon;
-    -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-family: "Inter 18pt Medium";
     -fx-font-size: 14px;
@@ -124,79 +167,158 @@
     -fx-background-radius: 10;
 }
 
+/* Hover effect for current day */
 .current-day:hover {
-    -fx-background-color: #600000;
+    -fx-background-color: #3e0000;
     -fx-cursor: hand;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
 }
 
+/* Day number for current day */
+.current-day-number {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+}
+
+/* Event description for current day */
+.current-day-description {
+    -fx-text-fill: maroon;
+    -fx-font-size: 12px;
+}
+
 /* --- DARK THEME STYLES for School Calendar --- */
 
+/* Dark theme main container */
 .dark-theme .main-root {
     -fx-background-color: #2b2b2b;
     -fx-border-color: #555555;
     -fx-border-width: 0;
 }
 
+/* Dark theme sub container */
 .dark-theme .sub-root {
     -fx-background-color: #2b2b2b;
     -fx-border-color: #555555;
     -fx-border-width: 0;
 }
 
+/* Dark theme header */
 .dark-theme .header-container {
     -fx-background-color: #b22222;
 }
 
+/* Dark theme calendar containers */
 .dark-theme .days-container,
 .dark-theme .calendar {
     -fx-background-color: #3a3a3a;
     -fx-border-color: #555555;
 }
 
+/* Dark theme weekday labels */
 .dark-theme .days {
     -fx-text-fill: #e0e0e0;
 }
 
+/* Dark theme button container */
 .dark-theme .button-container {
     -fx-background-color: #2b2b2b;
     -fx-border-color: #555555;
 }
 
+/* Dark theme button hover effects */
 .dark-theme .back-button:hover,
 .dark-theme .next-button:hover {
     -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
 }
 
+/* Dark theme combo box */
 .dark-theme .combo-box {
     -fx-text-fill: #e0e0e0;
 }
 
+/* Dark theme icons */
 .dark-theme .icons {
     -fx-fill: #e0e0e0;
 }
 
+/* Dark theme pickers and dialogs */
 .dark-theme .month-picker,
 .dark-theme .custom-dialog {
     -fx-background-color: #3a3a3a;
     -fx-border-color: #555555;
 }
 
+/* Dark theme calendar days */
 .dark-theme .calendar-day {
     -fx-border-color: #555555;
     -fx-text-fill: #e0e0e0;
 }
 
+/* Dark theme hover effects */
 .dark-theme .calendar-day:hover,
 .dark-theme .picker-button:hover {
     -fx-background-color: #555555;
 }
 
+/* Dark theme current day */
 .dark-theme .current-day {
     -fx-background-color: #b22222;
 }
 
+/* Dark theme current day hover */
 .dark-theme .current-day:hover {
     -fx-background-color: #e57373;
+}
+
+/* Dark theme current day number */
+.dark-theme .current-day-number {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+}
+
+/* Dark theme event description */
+.dark-theme .current-day-description {
+    -fx-text-fill: #ff9999;
+    -fx-font-size: 12px;
+}
+
+/* Dark theme dialog styles */
+.dark-custom-dialog {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 2;
+    -fx-text-fill: #f0f0f0;
+    }
+
+.dark-theme .custom-dialog .dialog .button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog .dialog .button:hover {
+    -fx-background-color: #e57373;
+}
+
+.dark-theme .custom-dialog-date {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-description {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-content {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
 }

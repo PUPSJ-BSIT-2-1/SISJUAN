@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class SchoolEventLoader {
+public class SchoolEventLoaderJSON {
 
     private final Map<String, List<String>> eventsMap = new HashMap<>();
 
@@ -49,6 +49,8 @@ public class SchoolEventLoader {
     }
 
     public void showEventDay(String selectedDate) {
+        loadSchoolEvents(); // Reload before showing events
+
         List<String> eventsForDate = eventsMap.getOrDefault(selectedDate, new ArrayList<>());
 
         StringBuilder description = new StringBuilder();

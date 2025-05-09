@@ -1,17 +1,18 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.SchoolEventLoader;
+import com.example.pupsis_main_dashboard.utility.SchoolEventLoaderDatabase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.time.*;
 import java.util.*;
 
-public class SchoolCalendarController extends SchoolEventLoader {
+public class SchoolCalendarController extends SchoolEventLoaderDatabase {
     @FXML
     private GridPane calendarGrid;
     @FXML
@@ -54,10 +55,10 @@ public class SchoolCalendarController extends SchoolEventLoader {
     private void getCurrentDay() {
         LocalDate today = LocalDate.now();
         if (today.getYear() == currentYear && today.getMonth().name().equals(currentMonth)) {
-            for (javafx.scene.Node node : calendarGrid.getChildren()) {
-                if (node instanceof Label label && label.getText().equals(String.valueOf(today.getDayOfMonth()))) {
-                    label.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
+            for (Node node : calendarGrid.getChildren()) {
+                if (node instanceof VBox label && ((Label) label.getChildren().getFirst()).getText().equals(String.valueOf(today.getDayOfMonth()))) {
                     label.getStyleClass().add("current-day");
+                    label.getChildren().getFirst().getStyleClass().add("current-day-number");
                     break;
                 }
             }
@@ -80,9 +81,7 @@ public class SchoolCalendarController extends SchoolEventLoader {
         }
 
         for (int day = 1; day <= daysInMonth; day++) {
-            Label dayButton = new Label(String.valueOf(day));
-            dayButton.setOnMouseClicked(_ -> showEventDay(
-                    String.valueOf(LocalDate.of(currentYear, Month.valueOf(currentMonth), Integer.parseInt(dayButton.getText())))));
+            VBox dayButton = getVBox(day);
             styleButton(dayButton);
             calendarGrid.add(dayButton, columnIndex, rowIndex);
 
@@ -101,16 +100,33 @@ public class SchoolCalendarController extends SchoolEventLoader {
         }
     }
 
+    private VBox getVBox(int day) {
+        Label dayNumber = new Label(String.valueOf(day));
+        VBox dayButton = new VBox(dayNumber);
+
+        String currentDate = LocalDate.of(currentYear, Month.valueOf(currentMonth), day).toString();
+
+        dayButton.setOnMouseClicked(_ -> showEventDay(currentDate, anchor.getScene().getRoot()));
+
+        if (eventsMap.containsKey(currentDate)) {
+            Label eventIndicator = new Label(eventsMap.get(currentDate).getFirst().split(",")[2]);
+            eventIndicator.getStyleClass().add("current-day-description");
+            dayButton.getChildren().add(eventIndicator);
+        }
+    
+        return dayButton;
+    }
+
     private void addEmptyButton(int col, int row) {
-        Label empty = new Label("");
+        VBox empty = new VBox(new Label(""));
         styleButton(empty);
         calendarGrid.add(empty, col, row);
     }
 
-    private void styleButton(Label node) {
+    private void styleButton(VBox node) {
         node.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        node.getStyleClass().add("calendar-day");
         node.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
+        node.getStyleClass().add("calendar-day");
     }
 
     @FXML
@@ -188,7 +204,6 @@ public class SchoolCalendarController extends SchoolEventLoader {
         Label monthButton = new Label(monthsList.get(i));
         monthButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         monthButton.getStyleClass().add("picker-button");
-        monthButton.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
         monthButton.setAlignment(Pos.CENTER);
 
         Map<String, Month> monthMap = Map.ofEntries(
@@ -227,7 +242,7 @@ public class SchoolCalendarController extends SchoolEventLoader {
         int columnIndex = 0;
         int rowIndex = 0;
 
-        for (int i = currentYearValue - 5; i <= currentYearValue + 5; i++) {
+        for (int i = currentYearValue - 5; i <= currentYearValue + 6; i++) {
             Label yearButton = getYear(i);
 
             yearPicker.add(yearButton, columnIndex, rowIndex);
@@ -264,14 +279,6 @@ public class SchoolCalendarController extends SchoolEventLoader {
                 monthPicker.setVisible(false);
                 yearPicker.setVisible(false);
                 vBox.toFront();
-            } else if (yearPicker.isVisible() && monthPicker.getBoundsInParent().contains(event.getX(), event.getY())) {
-                yearPicker.setVisible(false);
-                monthPicker.setVisible(true);
-                anchor.toFront();
-            }
-            else if (monthPicker.isVisible() && yearPicker.getBoundsInParent().contains(event.getX(), event.getY())) {
-                monthPicker.setVisible(false);
-                yearPicker.setVisible(true);
             }
         });
     }
