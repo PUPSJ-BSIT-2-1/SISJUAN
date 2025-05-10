@@ -1,6 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
@@ -44,7 +45,7 @@ public class SettingsController {
         themeToggle.setText(""); // Clear any text from FXML
         // themeToggle.getStyleClass().add("modern-toggle-switch"); // Style class is set in FXML
 
-        // Request focus on the root VBox to prevent text fields from auto-focusing
+        // Request focus on the root VBox to prevent text fields from autofocusing
         // Use Platform.runLater to ensure it happens after the scene is fully initialized
         if (rootSettingsVBox != null) {
             javafx.application.Platform.runLater(() -> rootSettingsVBox.requestFocus());
@@ -96,17 +97,21 @@ public class SettingsController {
             }
 
             // Apply the theme class to the scene root
-            if (darkMode) {
-                if (!sceneRoot.getStyleClass().contains("dark-theme")) {
-                    sceneRoot.getStyleClass().add("dark-theme");
-                }
-                sceneRoot.getStyleClass().remove("light-theme");
-            } else {
-                if (!sceneRoot.getStyleClass().contains("light-theme")) {
-                    sceneRoot.getStyleClass().add("light-theme");
-                }
-                sceneRoot.getStyleClass().remove("dark-theme");
+            applyPreferredTheme(darkMode, sceneRoot);
+        }
+    }
+
+    static void applyPreferredTheme(boolean darkMode, Node sceneRoot) {
+        if (darkMode) {
+            if (!sceneRoot.getStyleClass().contains("dark-theme")) {
+                sceneRoot.getStyleClass().add("dark-theme");
             }
+            sceneRoot.getStyleClass().remove("light-theme");
+        } else {
+            if (!sceneRoot.getStyleClass().contains("light-theme")) {
+                sceneRoot.getStyleClass().add("light-theme");
+            }
+            sceneRoot.getStyleClass().remove("dark-theme");
         }
     }
 
@@ -116,7 +121,7 @@ public class SettingsController {
         String currentPass = currentPasswordField.getText();
         String newPass = newPasswordField.getText();
         String confirmPass = confirmNewPasswordField.getText();
-        
+
         if (currentPass.isEmpty()) {
             showAlert("Password Error", "Current password cannot be empty.", Alert.AlertType.ERROR);
             return;
@@ -151,7 +156,7 @@ public class SettingsController {
     // Handle the action for saving appearance settings
     @FXML private void handleSaveAppearance() {
         prefs.putBoolean(THEME_PREF, themeToggle.isSelected()); 
-        applyCurrentTheme(); // Re-apply theme to ensure consistency if anything else changed it
+        applyCurrentTheme(); // Re-apply the theme to ensure consistency if anything else changed it
         System.out.println("Appearance settings saved: DarkMode - " + themeToggle.isSelected());
         showAlert("Appearance Saved", "Your appearance settings have been updated.", Alert.AlertType.INFORMATION);
     }

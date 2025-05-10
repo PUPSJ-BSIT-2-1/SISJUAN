@@ -640,17 +640,7 @@ public class StudentLoginController {
         if (scene != null) {
             Node sceneRoot = scene.getRoot();
             if (sceneRoot != null) {
-                if (isDarkMode) {
-                    if (!sceneRoot.getStyleClass().contains("dark-theme")) {
-                        sceneRoot.getStyleClass().add("dark-theme");
-                    }
-                    sceneRoot.getStyleClass().remove("light-theme");
-                } else {
-                    if (!sceneRoot.getStyleClass().contains("light-theme")) {
-                        sceneRoot.getStyleClass().add("light-theme");
-                    }
-                    sceneRoot.getStyleClass().remove("dark-theme");
-                }
+                SettingsController.applyPreferredTheme(isDarkMode, sceneRoot);
             }
         }
     }

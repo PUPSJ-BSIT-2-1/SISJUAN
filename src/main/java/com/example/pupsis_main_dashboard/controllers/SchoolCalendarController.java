@@ -171,7 +171,7 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         }
     }
 
-    // Handles the event when month is selected from the month picker.
+    // Handles the event when a month is selected from the month picker.
     @FXML private void populateMonthPicker() {
         anchor.toFront();
         monthPicker.setVisible(true);

@@ -104,7 +104,7 @@ public class FrontPageController {
         }
     }
 
-    // Handle the action for the Others button by opening a URL in the default browser
+    // Handle the action for the Other's button by opening a URL in the default browser
     @FXML private void handleOthersButton() {
         try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/others"));

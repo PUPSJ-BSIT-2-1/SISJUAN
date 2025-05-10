@@ -85,7 +85,7 @@ public class VerificationCodeController {
         return at <= 3 ? "********" + email.substring(at) : email.substring(0, 3) + "*****" + email.substring(at);
     }
 
-    // Handle paste from clipboard if the user presses Ctrl+V
+    // Handle paste from the clipboard if the user presses Ctrl+V
     private void handlePasteFromClipboard() {
         try {
             String text = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
@@ -99,7 +99,7 @@ public class VerificationCodeController {
         }
     }
 
-    // Handle the verification process when the user clicks the verify button
+    // Handle the verification process when the user clicks the verified button
     @FXML private void handleVerification() {
         String code = digit1.getText()+digit2.getText()+digit3.getText()+digit4.getText()+digit5.getText()+digit6.getText();
         if (code.length() != 6) errorLabel.setText("Please enter all 6 digits");

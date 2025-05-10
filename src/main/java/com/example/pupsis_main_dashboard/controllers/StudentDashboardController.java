@@ -134,7 +134,7 @@ public class StudentDashboardController {
                         // Add payment info content loading here
                         break;
                     case "subjectsHBox":
-                        // Add subjects content loading here
+                        // Add subject content loading here
                         break;
                     case "gradesHBox":
                         // Add grades content loading here
@@ -171,7 +171,7 @@ public class StudentDashboardController {
                 );
                 contentCache.put(fxmlPath, content);
 
-                // Add listener for layout changes
+                // Add a listener for layout changes
                 content.layoutBoundsProperty().addListener((_, _, newVal) -> {
                     if (newVal.getHeight() > 0) {
                         Platform.runLater(() -> {
@@ -182,7 +182,7 @@ public class StudentDashboardController {
                 });
             }
             contentPane.setContent(content);
-            Platform.runLater(this::applyInitialTheme); // Re-apply theme after new content is set
+            Platform.runLater(this::applyInitialTheme); // Re-apply the theme after new content is set
 
             // Immediate reset and delayed double check
             Platform.runLater(() -> {
@@ -221,30 +221,20 @@ public class StudentDashboardController {
             // Ensure the main CSS file (which includes theme definitions) is loaded
             String cssPath = "/com/example/pupsis_main_dashboard/css/SettingsContent.css";
             try {
-                String cssUrl = getClass().getResource(cssPath).toExternalForm();
+                String cssUrl = Objects.requireNonNull(getClass().getResource(cssPath)).toExternalForm();
                 if (cssUrl != null && !scene.getStylesheets().contains(cssUrl)) {
                     scene.getStylesheets().add(cssUrl);
                 } else if (cssUrl == null) {
-                    logger.error("Critical Error: Theme CSS file not found at: " + cssPath);
+                    logger.error("Critical Error: Theme CSS file not found at: {}", cssPath);
                     // Consider showing a user-facing error here
                 }
             } catch (Exception e) { // Catch broader exceptions during resource loading
-                logger.error("Error loading global theme CSS from StudentDashboardController: " + cssPath, e);
+                logger.error("Error loading global theme CSS from StudentDashboardController: {}", cssPath, e);
             }
 
             Node sceneRoot = scene.getRoot();
             if (sceneRoot != null) {
-                if (isDarkMode) {
-                    if (!sceneRoot.getStyleClass().contains("dark-theme")) {
-                        sceneRoot.getStyleClass().add("dark-theme");
-                    }
-                    sceneRoot.getStyleClass().remove("light-theme");
-                } else {
-                    if (!sceneRoot.getStyleClass().contains("light-theme")) {
-                        sceneRoot.getStyleClass().add("light-theme");
-                    }
-                    sceneRoot.getStyleClass().remove("dark-theme");
-                }
+                SettingsController.applyPreferredTheme(isDarkMode, sceneRoot);
             } else {
                 logger.warn("Scene root was null during initial theme application.");
             }
