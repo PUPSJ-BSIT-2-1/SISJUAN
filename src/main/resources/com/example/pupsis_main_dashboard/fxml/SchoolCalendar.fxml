@@ -16,7 +16,7 @@
    <children>
       <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
          <children>
-            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="228.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
+            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="246.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
@@ -32,7 +32,7 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </GridPane>
-            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="367.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="year-picker">
+            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="343.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="year-picker">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
@@ -54,7 +54,7 @@
          <children>
             <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
                <children>
-                  <VBox fx:id="leftButton" alignment="CENTER">
+                  <VBox fx:id="leftButton" alignment="CENTER" styleClass="icons-container">
                      <children>
                         <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
                      </children>
@@ -71,9 +71,9 @@
                      </children>
                   </HBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <VBox fx:id="rightButton" alignment="CENTER">
+                  <VBox fx:id="rightButton" alignment="CENTER" styleClass="icons-container">
                      <children>
-                        <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" onMouseClicked="#handleNextButton" styleClass="icons" />
+                        <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" styleClass="icons" />
                      </children>
                   </VBox>
                </children>

@@ -24,6 +24,7 @@
 .sidebar-items:hover{
     -fx-background-color: #ededed;
     -fx-background-radius: 5;
+    -fx-cursor: hand;
 }
 
 /* Sidebar item selected state with light maroon background and maroon text */

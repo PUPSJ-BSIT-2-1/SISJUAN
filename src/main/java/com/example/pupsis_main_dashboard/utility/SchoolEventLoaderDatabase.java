@@ -7,10 +7,7 @@ package com.example.pupsis_main_dashboard.utility;
 
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 import javafx.geometry.Orientation;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
@@ -108,6 +105,9 @@ public class SchoolEventLoaderDatabase {
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
         dialog.getDialogPane().getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.getStyleClass().add("custom-dialog-button");
 
         dialog.getDialogPane().setOnMousePressed(event -> {
             xOffset = dialog.getDialogPane().getScene().getWindow().getX() - event.getScreenX();

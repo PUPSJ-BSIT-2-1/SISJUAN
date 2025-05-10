@@ -122,6 +122,7 @@ public class SettingsController {
         String newPass = newPasswordField.getText();
         String confirmPass = confirmNewPasswordField.getText();
 
+        // Might delete this if not needed
         if (currentPass.isEmpty()) {
             showAlert("Password Error", "Current password cannot be empty.", Alert.AlertType.ERROR);
             return;

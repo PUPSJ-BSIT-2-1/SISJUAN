@@ -44,12 +44,17 @@
 
 /* Icons in the header (arrows etc) */
 .icons {
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: white;
 }
 
 /* Navigation button hover effects */
 .icons:hover {
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+}
+
+/* Navigation button hover effects */
+.icons-container:hover {
     -fx-cursor: hand;
 }
 
@@ -62,6 +67,12 @@
     -fx-font-size: 24px;
     -fx-padding: 0;
     -fx-alignment: center;
+}
+
+/* Month/Year selector combo box hover effect */
+.combo-box:hover {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
 }
 
 /* Month/Year picker popup styling */
@@ -95,6 +106,7 @@
 
 .custom-dialog .button:hover {
     -fx-background-color: #5e0000;
+    -fx-cursor: hand;
 }
 
 /* Date styling in event dialog */
@@ -305,15 +317,16 @@
     -fx-border-color: #3a3a3a;
     -fx-border-width: 2;
     -fx-text-fill: #f0f0f0;
-    }
+}
 
-.dark-theme .custom-dialog .button {
+.dark-theme .custom-dialog-button {
     -fx-background-color: #b22222;
     -fx-text-fill: #e0e0e0;
 }
 
-.dark-theme .custom-dialog .button:hover {
+.dark-theme .custom-dialog-button:hover {
     -fx-background-color: #e57373;
+
 }
 
 .dark-theme .custom-dialog-date {
@@ -331,4 +344,88 @@
 .dark-theme .custom-dialog-content {
     -fx-background-color: #3a3a3a;
     -fx-border-color: #555555;
+}
+
+/* --- EVENT COLOR THEME for School Calendar --- */
+
+.administrative {
+    -fx-background-color: #4A90E2; /* Soft Blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #4A90E2; /* Soft Blue border */
+}
+
+.holiday {
+    -fx-background-color: #E94E77; /* Bright Pink/Red */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #E94E77; /* Bright Pink/Red border */
+}
+
+.registration {
+    -fx-background-color: #50E3C2; /* Teal / Mint */
+    -fx-text-fill: black;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #50E3C2; /* Teal / Mint border */
+}
+
+.academic {
+    -fx-background-color: #F5A623; /* Amber / Orange */
+    -fx-text-fill: black;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #F5A623; /* Amber / Orange border */
+}
+
+.meeting {
+    -fx-background-color: #7B61FF; /* Soft Purple */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #7B61FF; /* Soft Purple border */
+}
+
+/* --- DARK EVENT COLOR THEME for School Calendar --- */
+
+.dark-theme .administrative {
+    -fx-background-color: #2F80ED; /* Bright blue on dark */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #2F80ED; /* Bright blue border */
+}
+
+.dark-theme .holiday {
+    -fx-background-color: #D64550; /* Soft red on dark */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #D64550; /* Soft red border */
+}
+
+.dark-theme .registration {
+    -fx-background-color: #43B29D; /* Deep teal */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #43B29D; /* Deep teal border */
+}
+
+.dark-theme .academic {
+    -fx-background-color: #E67E22; /* Burnt orange */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #E67E22; /* Burnt orange border */
+}
+
+.dark-theme .meeting {
+    -fx-background-color: #9B59B6; /* Muted purple */
+    -fx-text-fill: white;
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
+    -fx-border-color: #9B59B6; /* Muted purple border */
 }

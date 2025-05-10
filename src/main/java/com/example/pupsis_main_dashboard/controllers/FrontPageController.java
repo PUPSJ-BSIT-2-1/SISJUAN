@@ -123,7 +123,7 @@ public class FrontPageController {
 
     // Show a fallback image in case the video fails to load
     private void showFallbackImage() {
-        Image fallback = new Image("com/example/pupsis_main_dashboard/Images/PUPSJ.png");
+        Image fallback = new Image("src/main/resources/com/example/pupsis_main_dashboard/Images/PUPSJ.png");
         ImageView imageView = new ImageView(fallback);
         imageView.setFitWidth(mediaView.getFitWidth());
         imageView.setFitHeight(mediaView.getFitHeight());

@@ -88,6 +88,7 @@
 /* Action button hover effect */
 .action-button:hover {
     -fx-background-color: #5e0000;
+    -fx-cursor: hand;
 }
 
 /* Statistic icon style */
