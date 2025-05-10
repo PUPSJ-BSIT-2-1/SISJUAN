@@ -1,3 +1,9 @@
+/**
+ * Utility class for common validation operations.
+ * This class provides methods to validate email addresses, check for numbers in strings,
+ * and validate password strength.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 public class ValidationUtils {

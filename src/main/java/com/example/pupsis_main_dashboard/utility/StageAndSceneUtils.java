@@ -1,3 +1,8 @@
+/**
+ * Utility class for managing JavaFX stages and scenes.
+ * This class provides methods to load FXML files, set window sizes, and apply transitions.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import com.example.pupsis_main_dashboard.PUPSIS;

@@ -28,8 +28,9 @@ public class FrontPageController {
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
 
-    @FXML
-    public void initialize() {
+    
+    // Initialize the controller and set up the media player, buttons, and label fade animation
+    @FXML public void initialize() {
         try {
             File file = new File("src/main/resources/com/example/pupsis_main_dashboard/Images/PUPSJ DRONE 2024.mp4");
             if (!file.exists()) {
@@ -53,11 +54,11 @@ public class FrontPageController {
             showFallbackImage();
         }
         startLabelFade();
-        coaButton.setOnAction(event -> handleCOAButton());
-        programsButton.setOnAction(event -> handleProgramsButton());
-        aboutButton.setOnAction(event -> handleAboutButton());
-        othersButton.setOnAction(event -> handleOthersButton());
-        getStartedButton.setOnAction(event -> {
+        coaButton.setOnAction(_ -> handleCOAButton());
+        programsButton.setOnAction(_ -> handleProgramsButton());
+        aboutButton.setOnAction(_ -> handleAboutButton());
+        othersButton.setOnAction(_ -> handleOthersButton());
+        getStartedButton.setOnAction(_ -> {
             try {
                 handleGetStartedButton();
             } catch (IOException e) {
@@ -66,6 +67,7 @@ public class FrontPageController {
         });
     }
 
+    // Start a fade animation for the labelHeader
     private void startLabelFade() {
         FadeTransition fade = new FadeTransition(Duration.seconds(1.5), labelHeader);
         fade.setFromValue(1.0);
@@ -74,47 +76,52 @@ public class FrontPageController {
         fade.setAutoReverse(true);
         fade.play();
     }
-    @FXML
-    private void handleCOAButton() {
-        try{
+
+    // Handle the action for the COA button by opening a URL in the default browser
+    @FXML private void handleCOAButton() {
+        try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/certificate"));
         } catch (Exception e) {
             System.err.println("Failed to load COA: " + e.getMessage());
         }
     }
-    @FXML
-    private void handleProgramsButton() {
-        try{
+
+    // Handle the action for the Programs button by opening a URL in the default browser
+    @FXML private void handleProgramsButton() {
+        try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/programs"));
         } catch (Exception e) {
             System.err.println("Failed to load programs: " + e.getMessage());
         }
     }
-    @FXML
-    private void handleAboutButton() {
-        try{
+
+    // Handle the action for the About button by opening a URL in the default browser
+    @FXML private void handleAboutButton() {
+        try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/about"));
         } catch (Exception e) {
             System.err.println("Failed to load about: " + e.getMessage());
         }
     }
-    @FXML
-    private void handleOthersButton() {
-        try{
+
+    // Handle the action for the Others button by opening a URL in the default browser
+    @FXML private void handleOthersButton() {
+        try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/others"));
         } catch (Exception e) {
             System.err.println("Failed to load others: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void handleGetStartedButton() throws IOException {
+    // Handle the action for the Get Started button by loading a new stage
+    @FXML private void handleGetStartedButton() throws IOException {
         if (getStartedButton.getScene() != null && getStartedButton.getScene().getWindow() != null) {
             Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
             stageUtils.loadStage(currentStage, "fxml/StudentLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         }
     }
 
+    // Show a fallback image in case the video fails to load
     private void showFallbackImage() {
         Image fallback = new Image("com/example/pupsis_main_dashboard/Images/PUPSJ.png");
         ImageView imageView = new ImageView(fallback);

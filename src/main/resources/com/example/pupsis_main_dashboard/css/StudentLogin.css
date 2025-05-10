@@ -1,4 +1,5 @@
-.fields{
+/* Style for input fields with white background, rounded corners, and specific text colors */
+.fields {
     -fx-background-color: white;
     -fx-background-radius: 8;
     -fx-pref-height: 30;
@@ -6,57 +7,83 @@
     -fx-text-fill: black;
     -fx-prompt-text-fill: #a0a0a0; 
 }
-.birthday-field{
+
+/* Style for birthday input field with white background and rounded corners */
+.birthday-field {
     -fx-background-color: white;
     -fx-background-radius: 8;
     -fx-pref-height: 30;
     -fx-text-fill: black; 
 }
-.birthday-field:hover{
-	-fx-cursor: hand; 
+
+/* Adds a hand cursor when hovering over the birthday field */
+.birthday-field:hover {
+    -fx-cursor: hand; 
 }
-.birthday-field:focused{
+
+/* Adds a maroon border when the birthday field is focused */
+.birthday-field:focused {
     -fx-border-color: maroon;
     -fx-border-radius: 8;
     -fx-border-width: 2;
 }
-.buttons{
+
+/* Style for buttons with maroon background, white text, and rounded corners */
+.buttons {
     -fx-background-color: #800000;
     -fx-text-fill: white;
     -fx-background-radius: 8;
     -fx-pref-height: 30;
 }
-.buttons:hover{
+
+/* Changes button background color and cursor on hover */
+.buttons:hover {
     -fx-background-color: #5e0000;
     -fx-cursor: hand; 
 }
-.buttons:focused{
+
+/* Changes button background color when focused */
+.buttons:focused {
     -fx-background-color: #5e0000;
 }
-.font{
+
+/* General font style with "Inter" font family and dark gray text color */
+.font {
     -fx-font-family: "Inter";
     -fx-text-fill: #333333; 
 }
-.big-text{
+
+/* Style for large text with font size 24 */
+.big-text {
     -fx-font-size: 24;
     /* -fx-text-fill will be inherited from .font or overridden by dark theme */
 }
-.pup-sanjuan-label{
+
+/* Style for PUP San Juan label with bold font and gray text color */
+.pup-sanjuan-label {
     -fx-font-family: "system-ui";
     -fx-font-size: 24;
     -fx-font-weight: bold;
     -fx-text-fill: #505050; 
 }
-.back-button:hover{
+
+/* Adds a drop shadow effect and hand cursor on hover for back button */
+.back-button:hover {
     -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
     -fx-cursor: hand; 
 }
-.error-message{
+
+/* Style for error messages with red text color */
+.error-message {
     -fx-text-fill: red;
 }
-.root{
+
+/* Style for root element with rounded corners */
+.root {
     -fx-background-radius: 23;
 }
+
+/* Style for border pane with light gray background and rounded corners */
 .border-pane {
     -fx-background-color: #e6e6e6; 
     -fx-background-radius: 20;
@@ -64,28 +91,33 @@
 
 /* ============== DARK THEME STYLES for StudentLogin.css ============== */
 
-/* Apply to the root element (StackPane or BorderPane via controller) */
+/* Placeholder for dark theme root styles */
 .dark-theme {
     /* This will be the outermost background if the root of the scene gets .dark-theme */
     /* If mainLoginPane is the one getting the class, its background is defined below */
 }
 
+/* Style for border pane in dark theme with dark gray background */
 .dark-theme .border-pane {
     -fx-background-color: #1e1e1e; 
 }
 
+/* General font style for dark theme with light gray text color */
 .dark-theme .font {
     -fx-text-fill: #c5c5c5; 
 }
 
+/* Style for large text in dark theme with lighter gray text color */
 .dark-theme .big-text {
     -fx-text-fill: #e0e0e0; 
 }
 
+/* Style for PUP San Juan label in dark theme with medium gray text color */
 .dark-theme .pup-sanjuan-label {
     -fx-text-fill: #b0b0b0; 
 }
 
+/* Style for input fields in dark theme with dark background and light text */
 .dark-theme .fields {
     -fx-background-color: #2b2b2b;
     -fx-text-fill: #e0e0e0;
@@ -95,11 +127,13 @@
     -fx-border-radius: 8;
 }
 
+/* Style for focused input fields in dark theme with red border */
 .dark-theme .fields:focused {
     -fx-border-color: #e57373; 
     -fx-background-color: #333333;
 }
 
+/* Style for birthday field in dark theme with dark background and light text */
 .dark-theme .birthday-field {
     -fx-background-color: #2b2b2b;
     -fx-text-fill: #e0e0e0;
@@ -107,45 +141,51 @@
     -fx-border-width: 1px;
 }
 
+/* Style for dropdown arrow in birthday field in dark theme */
 .dark-theme .birthday-field .arrow {
     -fx-background-color: #b0b0b0; 
 }
 
+/* Style for list cells in birthday field dropdown in dark theme */
 .dark-theme .birthday-field .list-cell {
     -fx-background-color: #2b2b2b;
     -fx-text-fill: #e0e0e0;
 }
 
+/* Style for hovered or selected list cells in birthday field dropdown in dark theme */
 .dark-theme .birthday-field .list-view .list-cell:filled:hover,
 .dark-theme .birthday-field .list-view .list-cell:filled:selected {
     -fx-background-color: #800000; 
     -fx-text-fill: white;
 }
 
+/* Style for focused birthday field in dark theme with red border */
 .dark-theme .birthday-field:focused {
     -fx-border-color: #e57373;
 }
 
+/* Style for buttons in dark theme with red background and white text */
 .dark-theme .buttons {
     -fx-background-color: #b22222; 
     -fx-text-fill: #ffffff;
 }
 
+/* Style for hovered buttons in dark theme with lighter red background */
 .dark-theme .buttons:hover {
     -fx-background-color: #e57373; 
 }
 
+/* Style for focused buttons in dark theme with lighter red background */
 .dark-theme .buttons:focused {
     -fx-background-color: #e57373;
 }
 
+/* Style for error messages in dark theme with bright red text color */
 .dark-theme .error-message {
     -fx-text-fill: #ff6b6b; 
 }
 
-/* Assuming ToggleSwitch.css handles its own dark theme variants based on a parent .dark-theme */
-/* If not, specific styles for .switch-toggle-button and its .thumb under .dark-theme might be needed here */
-
+/* Adds a drop shadow effect for back button in dark theme on hover */
 .dark-theme .back-button:hover {
     -fx-effect: dropshadow(gaussian, #606060, 20, 0.5, 0, 0); 
 }

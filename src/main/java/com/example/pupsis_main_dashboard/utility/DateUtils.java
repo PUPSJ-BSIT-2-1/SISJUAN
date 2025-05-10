@@ -1,3 +1,9 @@
+/**
+ * Utility class for common date operations.
+ * This class provides methods to calculate the number of days in a month and 
+ * convert month names to their corresponding numbers.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 public class DateUtils {

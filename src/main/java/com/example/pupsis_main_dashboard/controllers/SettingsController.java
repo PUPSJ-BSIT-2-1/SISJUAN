@@ -35,12 +35,11 @@ public class SettingsController {
     private static final String EMAIL_FIELD_PREF = "email";
     private static final String PHONE_FIELD_PREF = "phone";
 
-    @FXML
-    public void initialize() {
-        prefs = Preferences.userNodeForPackage(SettingsController.class);
-        loadUserSettings();
-        setupThemeToggleListener();
-        applyCurrentTheme(); // Apply theme on initialization
+    @FXML public void initialize() {
+        prefs = Preferences.userNodeForPackage(SettingsController.class); // Initialize user preferences storage
+        loadUserSettings(); // Load saved user settings into the UI
+        setupThemeToggleListener(); // Set up listener for theme toggle button
+        applyCurrentTheme(); // Apply the current theme on initialization
 
         themeToggle.setText(""); // Clear any text from FXML
         // themeToggle.getStyleClass().add("modern-toggle-switch"); // Style class is set in FXML
@@ -51,7 +50,7 @@ public class SettingsController {
             javafx.application.Platform.runLater(() -> rootSettingsVBox.requestFocus());
         }
     }
-
+    // Load user settings from preferences and set them in the UI components
     private void loadUserSettings() {
         emailField.setText(prefs.get(EMAIL_FIELD_PREF, "student@example.com"));
         phoneField.setText(prefs.get(PHONE_FIELD_PREF, "123-456-7890"));
@@ -64,6 +63,7 @@ public class SettingsController {
         announcementNotificationsCheckbox.setSelected(prefs.getBoolean(ANNOUNCEMENT_NOTIF_PREF, false));
     }
 
+    // Set up a listener for the theme toggle button to save the preference and apply the theme
     private void setupThemeToggleListener() {
         themeToggle.setOnAction(_ -> {
             boolean isDarkMode = themeToggle.isSelected();
@@ -72,10 +72,12 @@ public class SettingsController {
         });
     }
 
+    // Apply the current theme based on the saved preference
     private void applyCurrentTheme() {
         applyTheme(prefs.getBoolean(THEME_PREF, false));
     }
 
+    // Apply the theme to the root VBox and its scene
     private void applyTheme(boolean darkMode) {
         if (rootSettingsVBox != null && rootSettingsVBox.getScene() != null) {
             javafx.scene.Scene scene = rootSettingsVBox.getScene();
@@ -108,11 +110,17 @@ public class SettingsController {
         }
     }
 
-    @FXML
-    private void handleChangePassword() {
+    // Handle the change password action
+    // Validate the current password, new password, and confirmation
+    @FXML private void handleChangePassword() {
         String currentPass = currentPasswordField.getText();
         String newPass = newPasswordField.getText();
         String confirmPass = confirmNewPasswordField.getText();
+        
+        if (currentPass.isEmpty()) {
+            showAlert("Password Error", "Current password cannot be empty.", Alert.AlertType.ERROR);
+            return;
+        }
 
         if (newPass.isEmpty() || !newPass.equals(confirmPass)) {
             showAlert("Password Mismatch", "New passwords do not match or are empty.", Alert.AlertType.ERROR);
@@ -129,8 +137,8 @@ public class SettingsController {
         confirmNewPasswordField.clear();
     }
 
-    @FXML
-    private void handleSaveProfile() {
+    // Handle the action for saving profile information
+    @FXML private void handleSaveProfile() {
         String email = emailField.getText();
         String phone = phoneField.getText();
         // TODO: Add validation for email and phone formats
@@ -140,16 +148,16 @@ public class SettingsController {
         showAlert("Profile Saved", "Your profile information has been updated.", Alert.AlertType.INFORMATION);
     }
 
-    @FXML
-    private void handleSaveAppearance() {
+    // Handle the action for saving appearance settings
+    @FXML private void handleSaveAppearance() {
         prefs.putBoolean(THEME_PREF, themeToggle.isSelected()); 
         applyCurrentTheme(); // Re-apply theme to ensure consistency if anything else changed it
         System.out.println("Appearance settings saved: DarkMode - " + themeToggle.isSelected());
         showAlert("Appearance Saved", "Your appearance settings have been updated.", Alert.AlertType.INFORMATION);
     }
 
-    @FXML
-    private void handleSaveNotifications() {
+    // Handle the action for saving notification settings
+    @FXML private void handleSaveNotifications() {
         prefs.putBoolean(EMAIL_NOTIF_PREF, emailNotificationsCheckbox.isSelected());
         prefs.putBoolean(GRADE_NOTIF_PREF, newGradeNotificationsCheckbox.isSelected());
         prefs.putBoolean(ANNOUNCEMENT_NOTIF_PREF, announcementNotificationsCheckbox.isSelected());
@@ -157,6 +165,7 @@ public class SettingsController {
         showAlert("Notifications Saved", "Your notification preferences have been updated.", Alert.AlertType.INFORMATION);
     }
 
+    // Show an alert dialog with the specified title, message, and alert type
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

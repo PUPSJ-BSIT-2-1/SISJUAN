@@ -1,3 +1,8 @@
+/**
+ * Utility class for common controller operations.
+ * This class provides methods to animate UI components and retrieve student names from the database.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;

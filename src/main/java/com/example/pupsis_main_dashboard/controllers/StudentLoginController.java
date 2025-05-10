@@ -80,6 +80,7 @@ public class StudentLoginController {
     
     static {Runtime.getRuntime().addShutdownHook(new Thread(loginExecutor::shutdownNow));}
 
+    // Initializes the controller, sets up event handlers, and populates the UI components.
     @FXML private void initialize() {
         emailService = new EmailService();
         loginButton.setOnAction(_ -> handleLogin(leftSide, false));
@@ -88,8 +89,9 @@ public class StudentLoginController {
         Platform.runLater(this::applyInitialTheme);
     }
     
+    // Sets up the initial state of the UI components, including loading saved credentials,
     private void setupInitialState() {
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
+        RememberMeHandler rememberMeHandler = new RememberMeHandler(); 
         String[] credentials = rememberMeHandler.loadCredentials();
         if (credentials != null) {
             studentIdField.setText(credentials[0]);
@@ -122,10 +124,12 @@ public class StudentLoginController {
         yearComboBox.setOnAction(_ -> handleMonthOrYearChange());
     }
 
+    // Requests focus on the error label to ensure it is ready for user input
     private void requestInitialFocus() {
         Platform.runLater(() -> errorLabel.requestFocus());
     }
 
+    // Handles the month or year change event to update the days in the dayComboBox
     @FXML private void handleMonthOrYearChange() {
         String selectedMonth = monthComboBox.getValue();
         Integer selectedYear = yearComboBox.getValue();
@@ -135,6 +139,7 @@ public class StudentLoginController {
         }
     }
 
+    // Handles the key press event for the month combo boxes
     @FXML private void handleMonthTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("[a-zA-Z]")) {
@@ -171,6 +176,7 @@ public class StudentLoginController {
         inputClearDelay.playFromStart();
     }
 
+    // Handles the key press event for the year combo box
     @FXML private void handleYearTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("[0-9]")) {
@@ -207,6 +213,7 @@ public class StudentLoginController {
         inputClearDelay.playFromStart();
     }
 
+    // Handles the key press event for the day combo box
     @FXML  private void handleDayTyping(KeyEvent event) {
         String key = event.getCharacter();
         if (!key.matches("\\d")) {
@@ -253,6 +260,7 @@ public class StudentLoginController {
         inputClearDelay.playFromStart();
     }
 
+    // Populates the year combo box with years from the current year to 1900
     private void populateYears() {
         ObservableList<Integer> years = FXCollections.observableArrayList();
         int currentYear = Year.now().getValue();
@@ -266,6 +274,7 @@ public class StudentLoginController {
         yearComboBox.setItems(years);
     }
 
+    // Populates the day combo box with days from 1 to the specified number of days
     private void populateDays(int daysInMonth) {
         ObservableList<Integer> days = FXCollections.observableArrayList();
         for (int i = 1; i <= daysInMonth; i++) {
@@ -274,10 +283,12 @@ public class StudentLoginController {
         dayComboBox.setItems(days);
     }
 
+    // Handles the close button action to close the application
     @FXML private void handleKeyPress(KeyEvent ignoredEvent) {
         errorLabel.setText("");
     }
 
+    // Handles the close button action to close the application
     @FXML  private void backToFrontPage() {
         StageAndSceneUtils u = new StageAndSceneUtils();
         Stage stage = (Stage) closeButton.getScene().getWindow();
@@ -288,6 +299,7 @@ public class StudentLoginController {
         }
     }
 
+    // Handles the login button action to authenticate the user
     @FXML private void handleLogin(VBox leftSide, boolean fromRegistration) {
         String identifier = studentIdField.getText().trim();
         String password = passwordField.getText().trim();
@@ -355,6 +367,7 @@ public class StudentLoginController {
         });
     }
 
+    // Handles the registration button action to show the registration form
     @FXML private void handleConfirmRegistration() {
         if (reType == null) {
             logger.error("reType PasswordField is not initialized - check FXML file");
@@ -476,6 +489,7 @@ public class StudentLoginController {
         }).start();
     }
     
+    // Sends a verification email to the user
     private void sendVerificationEmail(String email, String code) {
         try {
             emailService.sendVerificationEmail(email, code);
@@ -485,6 +499,7 @@ public class StudentLoginController {
         }
     }
 
+    // Completes the registration process by inserting the user data into the database
     private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
         var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         animateBlur(mainLoginPane, true);
@@ -586,10 +601,12 @@ public class StudentLoginController {
         }
     }
 
+    // Generates a random 6-digit verification code
     private String generateVerificationCode() {
         return String.format("%06d", new Random().nextInt(999999));
     }
 
+    // Validates the password strength
     private boolean validatePasswordStrength(String password) {
         if (!isStrongPassword(password)) {
             showAlert("Invalid Password", "Password must be at least 8 characters long and contain both letters and numbers", Alert.AlertType.WARNING);
@@ -598,10 +615,11 @@ public class StudentLoginController {
         return true;
     }
 
+    // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
         if (mainLoginPane == null) {
             PauseTransition delay = new PauseTransition(Duration.millis(100));
-            delay.setOnFinished(event -> {
+            delay.setOnFinished(_ -> {
                 if (mainLoginPane == null) {
                     return;
                 }
@@ -613,6 +631,7 @@ public class StudentLoginController {
         proceedWithThemeApplication();
     }
 
+    // Applies the theme to the main login pane based on user preferences
     private void proceedWithThemeApplication() {
         Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
         boolean isDarkMode = prefs.getBoolean("darkMode", false);

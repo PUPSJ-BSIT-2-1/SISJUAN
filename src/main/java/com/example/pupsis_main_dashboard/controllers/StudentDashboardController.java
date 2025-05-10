@@ -47,6 +47,7 @@ public class StudentDashboardController {
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
 
+    // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
@@ -85,6 +86,7 @@ public class StudentDashboardController {
         });
     }
 
+    // Get the student ID from the database based on the provided identifier (email or student ID)
     private String getStudentId(String identifier) {
         String query = "SELECT student_id FROM students WHERE " + 
                       (identifier.contains("@") ? "email" : "student_id") + " = ?";
@@ -109,6 +111,7 @@ public class StudentDashboardController {
         return null;
     }
 
+    // Handle sidebar item clicks and load the corresponding content
     @FXML public void handleSidebarItemClick(MouseEvent event) {
         HBox clickedHBox = (HBox) event.getSource();
         clearAllSelections();
@@ -158,6 +161,7 @@ public class StudentDashboardController {
         }
     }
 
+    // Load content into the ScrollPane based on the provided FXML path
     private void loadContent(String fxmlPath) {
         try {
             Parent content = contentCache.get(fxmlPath);
@@ -195,14 +199,18 @@ public class StudentDashboardController {
         }
     }
 
+    // Load the home content into the ScrollPane
     private void loadHomeContent() {
         loadContent("/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml");
     }
 
+    // Load the settings content into the ScrollPane
     private void loadSettingsContent() {
         loadContent("/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml");
     }
 
+    // Apply the initial theme based on user preferences
+    // This method is called in the initialize() method and when new content is loaded
     private void applyInitialTheme() {
         Preferences prefs = Preferences.userNodeForPackage(SettingsController.class); // Use SettingsController class context for prefs
         boolean isDarkMode = prefs.getBoolean("darkMode", false); // "darkMode" is the key used in SettingsController
@@ -246,6 +254,7 @@ public class StudentDashboardController {
         }
     }
 
+    // Handle the logout button click event
     @FXML public void handleLogoutButton(MouseEvent ignoredEvent) throws IOException {
         contentCache.clear();
         StageAndSceneUtils.clearCache();
@@ -255,6 +264,7 @@ public class StudentDashboardController {
         }
     }
 
+    // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
         registrationHBox.getStyleClass().remove("selected");

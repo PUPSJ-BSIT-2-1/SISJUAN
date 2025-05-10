@@ -1,3 +1,9 @@
+/**
+ * Utility class for handling password hashing and verification.
+ * This class provides methods to hash passwords using PBKDF2 with HMAC SHA-256,
+ * generate secure random salts, and verify hashed passwords.
+ */
+
 package com.example.pupsis_main_dashboard.auth;
 
 import javax.crypto.SecretKeyFactory;

@@ -13,31 +13,23 @@ import java.time.*;
 import java.util.*;
 
 public class SchoolCalendarController extends SchoolEventLoaderDatabase {
-    @FXML
-    private GridPane calendarGrid;
-    @FXML
-    private VBox vBox;
-    @FXML
-    private GridPane monthPicker;
-    @FXML
-    private GridPane yearPicker;
-    @FXML
-    private AnchorPane anchor;
-    @FXML
-    private VBox leftButton;
-    @FXML
-    private VBox rightButton;
-    @FXML
-    private Label monthButton;
-    @FXML
-    private Label yearButton;
+    @FXML private GridPane calendarGrid;
+    @FXML private VBox vBox;
+    @FXML private GridPane monthPicker;
+    @FXML private GridPane yearPicker;
+    @FXML private AnchorPane anchor;
+    @FXML private VBox leftButton;
+    @FXML private VBox rightButton;
+    @FXML private Label monthButton;
+    @FXML private Label yearButton;
 
     private LocalDate activeMonthDate = LocalDate.now();
     private int currentYear = activeMonthDate.getYear();
     private String currentMonth = activeMonthDate.getMonth().toString();
 
-    @FXML
-    private void initialize() {
+    // Initializes the SchoolCalendarController by setting up the calendar view,
+    // loading school events, and configuring UI elements.
+    @FXML private void initialize() {
         populateCalendar(YearMonth.now());
         getCurrentDay();
         loadSchoolEvents();
@@ -52,6 +44,7 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         rightButton.setOnMouseClicked(_ -> handleNextButton());
     }
 
+    // Highlights the current day in the calendar if it matches the active month and year.
     private void getCurrentDay() {
         LocalDate today = LocalDate.now();
         if (today.getYear() == currentYear && today.getMonth().name().equals(currentMonth)) {
@@ -65,6 +58,7 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         }
     }
 
+    // Populates the calendar grid with the days of the month.
     public void populateCalendar(YearMonth yearMonth) {
         calendarGrid.getChildren().clear();
 
@@ -100,6 +94,7 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         }
     }
 
+    // Displays the events for the selected day.
     private VBox getVBox(int day) {
         Label dayNumber = new Label(String.valueOf(day));
         VBox dayButton = new VBox(dayNumber);
@@ -117,20 +112,22 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         return dayButton;
     }
 
+    // Adds an empty button to the specified position in the calendar grid.
     private void addEmptyButton(int col, int row) {
         VBox empty = new VBox(new Label(""));
         styleButton(empty);
         calendarGrid.add(empty, col, row);
     }
 
+    // Styles the button with CSS and sets its maximum size.
     private void styleButton(VBox node) {
         node.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         node.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
         node.getStyleClass().add("calendar-day");
     }
 
-    @FXML
-    private void handleNextButton() {
+    // Handles the event when the next button is clicked.
+    @FXML private void handleNextButton() {
         activeMonthDate = activeMonthDate.plusMonths(1);
         currentYear = activeMonthDate.getYear();
         currentMonth = activeMonthDate.getMonth().toString();
@@ -140,8 +137,8 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         getCurrentDay();
     }
 
-    @FXML
-    private void handleBackButton() {
+    // Handles the event when the back button is clicked.
+    @FXML private void handleBackButton() {
         activeMonthDate = activeMonthDate.minusMonths(1);
         currentYear = activeMonthDate.getYear();
         currentMonth = activeMonthDate.getMonth().toString();
@@ -150,8 +147,9 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         yearButton.setText(String.valueOf(currentYear));
         getCurrentDay();
     }
-    @FXML
-    private void handleYearandMonthChange() {
+
+    // Handles the event when the month or year is changed.
+    @FXML private void handleYearandMonthChange() {
         try {
             if (yearPicker == null) {
                 activeMonthDate = activeMonthDate.plusMonths(1);
@@ -173,8 +171,8 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         }
     }
 
-    @FXML
-    private void populateMonthPicker() {
+    // Handles the event when month is selected from the month picker.
+    @FXML private void populateMonthPicker() {
         anchor.toFront();
         monthPicker.setVisible(true);
         yearPicker.setVisible(false);
@@ -199,7 +197,7 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         }
         handleAnyClick();
     }
-
+    // Creates a label for each month and sets its action on click.
     private Label getMonth(ObservableList<String> monthsList, int i) {
         Label monthButton = new Label(monthsList.get(i));
         monthButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -231,8 +229,8 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         return monthButton;
     }
 
-    @FXML
-    private void populateYearPicker() {
+    // Handles the event when year is selected from the year picker.
+    @FXML private void populateYearPicker() {
         anchor.toFront();
         yearPicker.setVisible(true);
         monthPicker.setVisible(false);
@@ -255,6 +253,7 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         handleAnyClick();
     }
 
+    // Creates a label for each year and sets its action on click.
     private Label getYear(int i) {
         Label yearButton = new Label(String.valueOf(i));
         yearButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -272,6 +271,8 @@ public class SchoolCalendarController extends SchoolEventLoaderDatabase {
         return yearButton;
     }
 
+    // Handles the event when any area outside the month or year picker is clicked.
+    // It hides the month and year pickers.
     private void handleAnyClick() {
         anchor.setOnMouseClicked(event -> {
             if (!monthPicker.getBoundsInParent().contains(event.getX(), event.getY()) &&

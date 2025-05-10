@@ -1,3 +1,9 @@
+/**
+ * Test class for PUPSIS application.
+ * This class initializes the JavaFX application and loads the main dashboard.
+ * It serves as a test entry point for the application.
+ */
+
 package com.example.pupsis_main_dashboard;
 
 import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;

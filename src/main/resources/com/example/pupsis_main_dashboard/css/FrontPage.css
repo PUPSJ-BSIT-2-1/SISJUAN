@@ -1,32 +1,37 @@
+/* Root container styling */
 .root {
     -fx-background-color: black;
     -fx-min-height: 720;
     -fx-min-weight: 1280;
 }
 
-.backgroundVideo {
+/* Background video styling */
+.background-video {
     -fx-opacity: 0.5;
 }
 
-.navigationBar {
+/* Navigation bar styling */
+.navigation-bar {
     -fx-background-color: rgba(255, 255, 255, 0.2);
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.3, 0, 5);
 }
+
+/* Button styling */
 .buttons {
     -fx-background-color: transparent;
     -fx-text-fill: white;
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
     -fx-padding: 4px;
     -fx-border-style: none;
     -fx-border-width: 0;
-
 }
 
+/* Button hover effect */
 .buttons:hover {
-    -fx-font-size: 14px;
+    -fx-font-size: 15px;
     -fx-text-fill: #800000;
     -fx-border-style: solid;
     -fx-border-color: #800000;
@@ -34,22 +39,30 @@
     -fx-padding: 4px;
     -fx-cursor: hand;
 }
-.getStarted {
+
+/* "Get Started" button styling */
+.get-started {
     -fx-background-color: #800000;
     -fx-text-fill: white;
+    -fx-font-size: 13px;
 }
-.getStarted:hover {
+
+/* "Get Started" button hover effect */
+.get-started:hover {
     -fx-background-color: #450000;
     -fx-cursor: hand;
 }
+
+/* PUPSIS title styling */
 .pupsis {
     -fx-font-family: "Times New Roman";
     -fx-font-size: 24px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-
 }
-.labelHeader {
+
+/* Header label styling */
+.label-header {
     -fx-text-fill: white;
     -fx-font-family: "Arial Black";
     -fx-font-size: 48;

@@ -60,9 +60,9 @@
                      </children>
                   </VBox>
                   <Region prefHeight="42.0" prefWidth="194.0" HBox.hgrow="ALWAYS" />
-                  <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="134.0">
+                  <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="150.0">
                      <children>
-                        <Label fx:id="monthButton" prefHeight="35.0" prefWidth="163.0" styleClass="combo-box" text="December" />
+                        <Label fx:id="monthButton" prefHeight="35.0" prefWidth="143.0" styleClass="combo-box" text="December" />
                      </children>
                   </HBox>
                   <HBox prefHeight="42.0" prefWidth="86.0">

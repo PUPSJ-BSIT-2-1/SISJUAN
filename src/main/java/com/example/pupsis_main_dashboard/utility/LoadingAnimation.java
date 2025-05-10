@@ -1,3 +1,8 @@
+/**
+ * Utility class for creating loading animations.
+ * This class provides methods to create a pulsing dots loader animation.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import javafx.animation.FadeTransition;

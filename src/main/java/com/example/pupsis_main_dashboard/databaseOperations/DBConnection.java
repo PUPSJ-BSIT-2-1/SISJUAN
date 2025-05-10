@@ -1,3 +1,8 @@
+/**
+ * This class handles the connection to the PostgreSQL database.
+ * It uses JDBC to establish a connection with the database using the provided URL, user, and password.
+ */
+
 package com.example.pupsis_main_dashboard.databaseOperations;
 
 import java.sql.Connection;

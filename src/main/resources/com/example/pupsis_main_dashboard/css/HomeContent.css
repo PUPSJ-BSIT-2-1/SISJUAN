@@ -1,14 +1,17 @@
+/* Welcome text style */
 .welcome-text {
     -fx-font-size: 14px;
     -fx-text-fill: white;
 }
 
+/* Student name style */
 .student-name {
     -fx-font-size: 24px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: white;
 }
 
+/* Card style */
 .cards {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
@@ -18,23 +21,27 @@
     -fx-padding: 20;
 }
 
+/* Statistic value style */
 .stat-value {
     -fx-font-size: 24px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
 }
 
+/* Statistic label style */
 .stat-label {
     -fx-font-size: 14px;
     -fx-text-fill: #6c757d;
 }
 
+/* Section header style */
 .section-header {
     -fx-font-size: 18px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
 }
 
+/* Announcement list style */
 .announcement-list {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -44,27 +51,32 @@
     -fx-selection-bar-non-focused: transparent;
 }
 
+/* List view style inside announcement list */
 .announcement-list .list-view {
     -fx-background-insets: 0;
     -fx-padding: 0;
     -fx-border-width: 0;
 }
 
+/* List cell style in announcement list */
 .announcement-list .list-cell {
     -fx-font-size: 14px;
     -fx-border-width: 0;
 }
 
+/* Empty list cell style */
 .announcement-list .list-cell:empty {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
+/* Selected list cell style */
 .announcement-list .list-cell:selected {
     -fx-background-color: transparent;
     -fx-text-fill: #343a40;
 }
 
+/* Action button style */
 .action-button {
     -fx-background-color: #800000;
     -fx-text-fill: white;
@@ -73,74 +85,79 @@
     -fx-background-radius: 5;
 }
 
+/* Action button hover effect */
 .action-button:hover {
-    -fx-background-color: #5e0000; /* Darker maroon */
+    -fx-background-color: #5e0000;
 }
 
+/* Statistic icon style */
 .stat-icon {
-    -fx-fill: #800000; /* Maroon */
+    -fx-fill: #800000;
 }
 
-.font{
+/* Font style */
+.font {
     -fx-font-family: "Inter 18pt Medium";
 }
 
-.red-card{
+/* Red card style */
+.red-card {
     -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
 
-/* --- DARK THEME STYLES for Home Content --- */
-
+/* Dark theme card style */
 .dark-theme .cards {
-    -fx-background-color: #3a3a3a; /* Consistent dark card background */
-    -fx-border-color: #555555;     /* Consistent dark card border */
-    /* -fx-effect can be kept or adjusted for dark theme if needed */
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
 }
 
+/* Dark theme red card style */
 .dark-theme .red-card {
-    /* The maroon gradient might still look good, or could be adjusted if too dark/light */
-    /* For example, a slightly darker or more vibrant maroon for dark theme */
-    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3)); /* Fades to a darker, 70% opaque maroon */
-    /* Text on red-card (.welcome-text, .student-name) is already white, so it should be fine. */
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
     -fx-border-width: 0;
 }
 
+/* Dark theme statistic value style */
 .dark-theme .stat-value {
-    -fx-text-fill: #e0e0e0; /* Light text for dark theme */
+    -fx-text-fill: #e0e0e0;
 }
 
+/* Dark theme statistic label style */
 .dark-theme .stat-label {
-    -fx-text-fill: #b0b0b0; /* Lighter grey for labels */
+    -fx-text-fill: #b0b0b0;
 }
 
+/* Dark theme section header style */
 .dark-theme .section-header {
-    -fx-text-fill: #e0e0e0; /* Light text for section headers */
+    -fx-text-fill: #e0e0e0;
 }
 
-/* Announcement list already uses transparent background, text color might need adjustment if not inherited */
+/* Dark theme list cell style */
 .dark-theme .announcement-list .list-cell {
-    -fx-background-color: transparent; /* Make cell background transparent to show card background */
-    -fx-text-fill: #c5c5c5; /* Example: light grey text for announcements */
+    -fx-background-color: transparent;
+    -fx-text-fill: #c5c5c5;
 }
 
+/* Dark theme selected list cell style */
 .dark-theme .announcement-list .list-cell:selected {
-    -fx-background-color: #555555; /* Subtle dark highlight for selected item */
-    -fx-text-fill: #e0e0e0;      /* Light text for selected item in dark mode */
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
 }
 
-/* Action button already has a dark theme version in SettingsContent.css if it was intended to be global */
-/* If .action-button is specific to HomeContent, a dark theme version would be: */
+/* Dark theme action button style */
 .dark-theme .action-button {
-    -fx-background-color: #b22222; /* Consistent with settings dark button */
+    -fx-background-color: #b22222;
     -fx-text-fill: #ffffff;
 }
 
+/* Dark theme action button hover effect */
 .dark-theme .action-button:hover {
     -fx-background-color: #e57373;
 }
 
+/* Dark theme statistic icon style */
 .dark-theme .stat-icon {
-    -fx-fill: #e57373; /* Lighter maroon for icons in dark mode */
+    -fx-fill: #e57373;
 }

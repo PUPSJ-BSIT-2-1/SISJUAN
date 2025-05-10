@@ -1,3 +1,8 @@
+/**
+ * Utility class to load school events from the database and display them in a dialog.
+ * This class provides methods to load events, show events for a specific date, and display event details in a dialog.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;

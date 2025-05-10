@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.util.Objects;
 
+
 public class VerificationCodeController {
     @FXML private TextField digit1, digit2, digit3, digit4, digit5, digit6;
     @FXML private Label errorLabel, infoMessage;
@@ -20,6 +21,7 @@ public class VerificationCodeController {
     private Stage stage;
     private Runnable onSuccessCallback;
 
+    // Initialize the controller and set up the digit fields
     public void initialize() {
         TextField[] digits = {digit1, digit2, digit3, digit4, digit5, digit6};
         for (int i = 0; i < digits.length; i++) {
@@ -34,11 +36,13 @@ public class VerificationCodeController {
         }
     }
 
+    // Handle key press events for the digit fields
     private void handleKeyPress(KeyEvent e) {
         if (e.getCode() == KeyCode.BACK_SPACE) handleBackspace(e);
         else if (e.getCode() == KeyCode.ENTER) handleVerification();
     }
 
+    // Handle backspace key press to clear the current field and focus on the previous one
     private void handleBackspace(KeyEvent e) {
         TextField current = (TextField) e.getSource();
         if (current.getText().isEmpty() && getPreviousField(current) != null) {
@@ -48,6 +52,7 @@ public class VerificationCodeController {
         }
     }
 
+    // Get the previous field in the sequence of digit fields
     private TextField getPreviousField(TextField current) {
         TextField[] digits = {digit1, digit2, digit3, digit4, digit5, digit6};
         for (int i = 1; i < digits.length; i++)
@@ -55,6 +60,7 @@ public class VerificationCodeController {
         return null;
     }
 
+    // Set up the digit field with a text formatter and a listener for focus change
     private void setupDigitField(TextField current, TextField next) {
         current.setTextFormatter(new TextFormatter<>(c ->
                 c.getControlNewText().length() > 1 || !c.getControlNewText().matches("[0-9]*") ? null : c
@@ -64,6 +70,7 @@ public class VerificationCodeController {
         });
     }
 
+    // Initialize the verification process with the expected code and email
     public void initializeVerification(String code, String email, Stage stage, Runnable callback) {
         this.expectedCode = code;
         this.stage = stage;
@@ -71,12 +78,14 @@ public class VerificationCodeController {
         infoMessage.setText("Enter verification code sent to " + maskEmail(email));
     }
 
+    // Mask the email address for display purposes
     private String maskEmail(String email) {
         if (email == null || email.isEmpty()) return "**********@gmail.com";
         int at = email.indexOf('@');
         return at <= 3 ? "********" + email.substring(at) : email.substring(0, 3) + "*****" + email.substring(at);
     }
 
+    // Handle paste from clipboard if the user presses Ctrl+V
     private void handlePasteFromClipboard() {
         try {
             String text = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
@@ -90,6 +99,7 @@ public class VerificationCodeController {
         }
     }
 
+    // Handle the verification process when the user clicks the verify button
     @FXML private void handleVerification() {
         String code = digit1.getText()+digit2.getText()+digit3.getText()+digit4.getText()+digit5.getText()+digit6.getText();
         if (code.length() != 6) errorLabel.setText("Please enter all 6 digits");
@@ -97,6 +107,7 @@ public class VerificationCodeController {
         else { stage.close(); if (onSuccessCallback != null) onSuccessCallback.run(); }
     }
 
+    // Handle the action when the user clicks the resend code button
     @FXML private void handleResendCode() {
         String newCode = String.format("%06d", (int)(Math.random() * 1000000));
         String email = infoMessage.getText().substring(infoMessage.getText().lastIndexOf(" ") + 1);

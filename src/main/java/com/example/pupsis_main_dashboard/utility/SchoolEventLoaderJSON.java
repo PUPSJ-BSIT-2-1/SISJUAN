@@ -1,3 +1,9 @@
+/**
+ * Utility class for loading school events from a JSON file.
+ * This class provides methods to load events, show events for a specific date,
+ * and display event details in a dialog.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

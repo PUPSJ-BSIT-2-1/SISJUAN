@@ -1,3 +1,8 @@
+/**
+ * Utility class for handling "Remember Me" functionality.
+ * This class provides methods to save, load, and clear user credentials.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import java.util.prefs.Preferences;

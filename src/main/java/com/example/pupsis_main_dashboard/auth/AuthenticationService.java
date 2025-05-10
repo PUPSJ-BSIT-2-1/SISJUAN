@@ -1,3 +1,8 @@
+/**
+ * This class handles the authentication of users in the PUPSIS application.
+ * It checks if the provided email or student ID and password match the records in the database.
+ */
+
 package com.example.pupsis_main_dashboard.auth;
 
 import java.sql.Connection;

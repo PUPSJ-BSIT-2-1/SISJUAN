@@ -1,5 +1,6 @@
 module com.example.pupsis_main_dashboard {
-    requires javafx.controls;
+    requires transitive javafx.graphics;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires java.sql;
     requires javafx.media;

@@ -1,3 +1,8 @@
+/**
+ * Main application class for PUPSIS.
+ * This class initializes the JavaFX application and loads the main dashboard.
+ */
+
 package com.example.pupsis_main_dashboard;
 
 import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;

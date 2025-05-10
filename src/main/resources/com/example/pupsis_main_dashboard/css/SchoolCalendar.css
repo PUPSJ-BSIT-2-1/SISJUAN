@@ -93,6 +93,10 @@
     -fx-background-radius: 20;
 }
 
+.custom-dialog .button:hover {
+    -fx-background-color: #5e0000;
+}
+
 /* Date styling in event dialog */
 .custom-dialog-date {
     -fx-font-size: 11px;
@@ -248,6 +252,7 @@
 
 /* Dark theme pickers and dialogs */
 .dark-theme .month-picker,
+.dark-theme .year-picker,
 .dark-theme .custom-dialog {
     -fx-background-color: #3a3a3a;
     -fx-border-color: #555555;
@@ -302,12 +307,12 @@
     -fx-text-fill: #f0f0f0;
     }
 
-.dark-theme .custom-dialog .dialog .button {
+.dark-theme .custom-dialog .button {
     -fx-background-color: #b22222;
     -fx-text-fill: #e0e0e0;
 }
 
-.dark-theme .custom-dialog .dialog .button:hover {
+.dark-theme .custom-dialog .button:hover {
     -fx-background-color: #e57373;
 }
 

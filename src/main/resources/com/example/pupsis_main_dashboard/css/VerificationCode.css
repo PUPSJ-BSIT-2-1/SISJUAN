@@ -1,50 +1,65 @@
+/* Root container styling */
 .root {
     -fx-background-color: #f5f5f5;
 }
 
+/* Title text styling */
 .title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
 
+/* Subtitle text styling */
 .subtitle {
     -fx-text-fill: #666;
 }
 
+/* Code input field styling */
 .code-field {
     -fx-font-size: 16px;
     -fx-pref-height: 45;
     -fx-pref-width: 250;
 }
 
+/* Verify button styling */
 .verify-button {
     -fx-background-color: #800000;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+
+/* Hover effect for verify button */
 .verify-button:hover {
-	-fx-cursor: hand; 
+    -fx-cursor: hand; 
 }
 
+/* Resend button styling */
 .resend-button {
     -fx-background-color: transparent;
     -fx-text-fill: #800000;
     -fx-underline: true;
 }
 
-.resend-button:hover{
-	-fx-cursor: hand; 
+/* Hover effect for resend button */
+.resend-button:hover {
+    -fx-cursor: hand; 
 }
+
+/* Error label text styling */
 .error-label {
     -fx-text-fill: #e74c3c;
 }
-.verification-digit{
+
+/* Individual verification digit styling */
+.verification-digit {
     -fx-background-color: #e3e3e3;
     -fx-pref-height: 40;
     -fx-pref-width: 40;
     -fx-background-radius: 5;
     -fx-border-radius: 10;
 }
-.verification-container{
+
+/* Verification container styling */
+.verification-container {
     -fx-background-color: #ffffff;
 }

@@ -1,3 +1,9 @@
+/**
+ * EmailService class for sending verification emails.
+ * This class uses JavaMail API to send emails via SMTP.
+ * It is configured to use Gmail's SMTP server.
+ */
+
 package com.example.pupsis_main_dashboard.utility;
 
 import javax.mail.*;

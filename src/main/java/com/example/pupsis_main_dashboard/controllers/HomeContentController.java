@@ -8,8 +8,10 @@ import javafx.scene.control.Label;
 public class HomeContentController {
     @FXML private Label studentNameLabel;
 
-    @FXML
-    public void initialize() {
+    // Initializes the home content by loading the student's credentials,
+    // extracting their full name, and displaying their first name on the label.
+    // If an error occurs, it sets the label to a default value ("Student").
+    @FXML public void initialize() {
         try {
             RememberMeHandler rememberMeHandler = new RememberMeHandler();
             String[] credentials = rememberMeHandler.loadCredentials();

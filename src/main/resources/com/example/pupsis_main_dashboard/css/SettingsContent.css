@@ -83,18 +83,22 @@
     -fx-border-radius: 4;
     -fx-mark-color: #343a40; /* Arrow color */
 }
+
 .choice-box .label { /* Text of selected item */
     -fx-text-fill: #343a40;
     -fx-padding: 0 0 0 5;
 }
+
 .choice-box .context-menu { /* Dropdown menu */
     -fx-background-color: #ffffff;
     -fx-border-color: #ced4da;
 }
+
 .choice-box .menu-item:focused .label,
 .choice-box .menu-item .label:hover {
     -fx-text-fill: #ffffff; /* White text on hover/focus */
 }
+
 .choice-box .menu-item:focused {
     -fx-background-color: #800000; /* Maroon background on hover/focus */
 }
@@ -103,15 +107,18 @@
 .check-box {
     -fx-text-fill: #6c757d; /* Match .settings-label */
 }
+
 .check-box .box {
     -fx-background-color: #ffffff;
     -fx-border-color: #ced4da;
     -fx-border-width: 1;
     -fx-border-radius: 3;
 }
+
 .check-box:selected .box {
     -fx-background-color: #800000; /* Maroon background when selected */
 }
+
 .check-box:selected .mark {
     -fx-background-color: white; /* White check mark */
 }
@@ -123,6 +130,7 @@
     -fx-border-width: 1;
     -fx-background-radius: 4
 }
+
 .toggle-button:selected {
     -fx-background-color: #800000; /* Maroon when active */
     -fx-text-fill: white;
@@ -257,6 +265,7 @@
     -fx-shape: " "; /* Hide default arrows if using custom or overlay scrollbars */
     -fx-padding: 0;
 }
+
 .thumb{
     -fx-background-color: white;
     -fx-background-radius: 50%;
@@ -264,6 +273,7 @@
     -fx-translate-x: -11.2px; /* Added for light mode */
     
 }
+
 .dark-theme .thumb {
     -fx-background-color: white;
     -fx-background-radius: 50%;
@@ -308,6 +318,7 @@
     -fx-border-color: #555555;
     -fx-prompt-text-fill: #888888;
 }
+
 .dark-theme .text-field:focused, .dark-theme .password-field:focused {
     -fx-border-color: #e57373; /* Lighter maroon (accent) on focus */
     -fx-background-color: #333333;
@@ -319,17 +330,21 @@
     -fx-border-color: #555555;
     -fx-mark-color: #b0b0b0; /* Arrow color */
 }
+
 .dark-theme .choice-box .label {
     -fx-text-fill: #e0e0e0;
 }
+
 .dark-theme .choice-box .context-menu {
     -fx-background-color: #2b2b2b;
     -fx-border-color: #555555;
 }
+
 .dark-theme .choice-box .menu-item:focused .label,
 .dark-theme .choice-box .menu-item .label:hover {
     -fx-text-fill: #ffffff; 
 }
+
 .dark-theme .choice-box .menu-item:focused {
     -fx-background-color: #b22222; /* Dark theme accent (maroon) */
 }
@@ -337,13 +352,16 @@
 .dark-theme .check-box {
     -fx-text-fill: #b0b0b0;
 }
+
 .dark-theme .check-box .box {
     -fx-background-color: #2b2b2b;
     -fx-border-color: #555555;
 }
+
 .dark-theme .check-box:selected .box {
     -fx-background-color: #e57373; /* Lighter maroon accent */
 }
+
 .dark-theme .check-box:selected .mark {
     -fx-background-color: #2b2b2b; /* Dark mark on light maroon */
 }
@@ -353,6 +371,7 @@
     -fx-text-fill: #e0e0e0;
     -fx-border-color: #555555;
 }
+
 .dark-theme .toggle-button:selected {
     -fx-background-color: #e57373; /* Lighter maroon accent */
     -fx-text-fill: #1e1e1e; /* Dark text on light accent */
@@ -363,6 +382,7 @@
     -fx-background-color: #b22222; /* Slightly less intense maroon for dark buttons */
     -fx-text-fill: #ffffff;
 }
+
 .dark-theme .settings-button:hover {
     -fx-background-color: #e57373; /* Lighter maroon on hover */
 }

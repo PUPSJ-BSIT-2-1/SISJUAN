@@ -16,7 +16,7 @@
       <Rectangle arcHeight="30.0" arcWidth="30.0" height="720" width="1280" />
    </clip>
    <!-- Background Video -->
-   <MediaView fx:id="mediaView" fitHeight="720.0" fitWidth="1280.0" styleClass="backgroundVideo">
+   <MediaView fx:id="mediaView" fitHeight="720.0" fitWidth="1280.0" styleClass="background-video">
       <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
       <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
       <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
@@ -24,30 +24,27 @@
    </MediaView>
 
    <!-- Title -->
-   <Label fx:id="labelHeader" layoutX="286.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="labelHeader" text="Welcome to PUPSIS Portal" />
-   <HBox alignment="CENTER" layoutX="220.0" layoutY="58.0" prefHeight="68.0" prefWidth="840.0"
-         styleClass="navigationBar">
+   <Label fx:id="labelHeader" layoutX="286.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="label-header" text="Welcome to PUPSIS Portal" />
+   <HBox alignment="CENTER" layoutX="220.0" layoutY="58.0" prefHeight="68.0" prefWidth="840.0" styleClass="navigation-bar">
       <padding>
-         <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
+         <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
       </padding>
       <ImageView fitHeight="47.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
-         <Image url="@../Images/PUPSJ Logo.png"/>
+         <Image url="@../Images/PUPSJ Logo.png" />
       </ImageView>
       <Label styleClass="pupsis" text="PUPSIS">
          <HBox.margin>
-            <Insets left="10.0"/>
+            <Insets left="10.0" />
          </HBox.margin>
       </Label>
-      <Region prefHeight="47.0" prefWidth="60.0" HBox.hgrow="ALWAYS"/>
-      <Button fx:id="coaButton" alignment="CENTER" prefHeight="31.0" prefWidth="69.0" styleClass="buttons" text="COA"/>
-      <Button fx:id="programsButton" prefHeight="31.0" prefWidth="90.0" styleClass="buttons" text="Programs"/>
-      <Button fx:id="aboutButton" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="About"/>
-      <Button fx:id="othersButton" alignment="CENTER" prefHeight="31.0" prefWidth="84.0" styleClass="buttons"
-              text="Others"/>
-      <Button fx:id="getStartedButton" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0"
-              styleClass="getStarted" text="Get Started" textAlignment="CENTER">
+      <Region prefHeight="47.0" prefWidth="60.0" HBox.hgrow="ALWAYS" />
+      <Button fx:id="coaButton" alignment="CENTER" prefHeight="31.0" prefWidth="74.0" styleClass="buttons" text="COA" />
+      <Button fx:id="programsButton" prefHeight="31.0" prefWidth="97.0" styleClass="buttons" text="Programs" />
+      <Button fx:id="aboutButton" prefHeight="31.0" prefWidth="95.0" styleClass="buttons" text="About" />
+      <Button fx:id="othersButton" alignment="CENTER" prefHeight="31.0" prefWidth="84.0" styleClass="buttons" text="Others" />
+      <Button fx:id="getStartedButton" onAction="#handleGetStartedButton" prefHeight="31.0" prefWidth="166.0" styleClass="get-started" text="Get Started" textAlignment="CENTER">
          <HBox.margin>
-            <Insets left="30.0"/>
+            <Insets left="30.0" />
          </HBox.margin>
       </Button>
    </HBox>
