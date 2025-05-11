@@ -71,4 +71,5 @@ The system supports multiple user roles with role-specific functionalities:
 
 ### Resources
 🎓 [How to apply for JetBrains Education to access JetBrains licensed products](https://docs.google.com/document/d/1cbgdUefiEWQ4Foq3Q5nGUtfgU6kKiZ5xkK33xzJElcE/edit?tab=t.tttu3fjvgg7b)
+
 💻 [How to import a GitHub repo into IntelliJ IDEA](https://docs.google.com/document/d/1cbgdUefiEWQ4Foq3Q5nGUtfgU6kKiZ5xkK33xzJElcE/edit?tab=t.ni9ng2lq75rw)
