@@ -6,9 +6,6 @@
 ![Supabase](https://img.shields.io/badge/Hosted%20On-Supabase-3ECF8E?logo=supabase&logoColor=white)
 ![License](https://img.shields.io/badge/License-Academic-lightgrey)
 
-The **PUPSJ Student Portal** is a desktop application developed...
-
-
 The **PUPSJ Student Portal** is a desktop application developed for the Polytechnic University of the Philippines – San Juan Campus. It is designed to provide a centralized platform for students, faculty, and administrators to manage academic and administrative tasks efficiently.
 
 ## ✨ Features
