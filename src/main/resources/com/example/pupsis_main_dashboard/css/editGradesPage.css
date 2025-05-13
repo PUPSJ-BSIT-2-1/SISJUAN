@@ -1,0 +1,82 @@
+.root {
+    -fx-font-family: "Inter";
+    -fx-background-radius: 20;
+    -fx-background-color: white; /* or your desired background color */
+    -fx-border-radius: 20;
+}
+
+.label {
+    -fx-font-family: 'Inter';
+}
+
+.rounded-border-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+/* Apply to all text elements in TableView */
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Column headers */
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-padding: 10;
+    -fx-font-size: 12px; /* Ensures header text is 12px */
+}
+
+.table-view .column-header .label {
+    -fx-padding: 12;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+}
+
+/* Table cells */
+.table-view .table-cell {
+    -fx-padding: 10;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+}
+
+/* Selection color */
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-table-cell-border-color: rgba(0, 0, 0, 0.25);
+    -fx-font-family: 'Inter';
+    -fx-text-fill: #000000;
+
+}
+
+.pane-header {
+    -fx-background-color: linear-gradient(to right, #800000 20%, #D97676);
+    -fx-background-radius: 20 20 0 0; /* top-left, top-right, bottom-right, bottom-left */
+    -fx-border-radius: 20 20 0 0;
+}
+
+.pane-footer {
+    -fx-background-color: linear-gradient(to right, #800000 60%, #D97676);
+    -fx-background-radius: 0 0 20 20; /* top-left, top-right, bottom-right, bottom-left */
+    -fx-border-radius: 0 0 20 20;
+}
