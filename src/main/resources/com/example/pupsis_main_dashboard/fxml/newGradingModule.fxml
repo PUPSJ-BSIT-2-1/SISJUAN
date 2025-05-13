@@ -81,7 +81,7 @@
                               <TextField fx:id="searchBar" layoutX="54.0" layoutY="9.0" promptText="Search..." />
                               <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="23.0" layoutY="11.0" pickOnBounds="true" smooth="false">
                                  <image>
-                                    <Image url="@../images/Rectangle.jpg" />
+                                    <Image url="@../Images/Rectangle.jpg" />
                                  </image>
                               </ImageView>
                               <MenuButton layoutX="594.0" layoutY="8.0" mnemonicParsing="false" prefWidth="110.0">

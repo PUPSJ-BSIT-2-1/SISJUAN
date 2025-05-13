@@ -18,7 +18,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/editGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.GradingModule.EditPageController">
+<AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/editGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EditPageController">
     <children>
         <BorderPane prefHeight="1080.0" prefWidth="810.0">
             <top>
@@ -83,7 +83,7 @@
                                         <TextField fx:id="searchBar" layoutX="40.0" layoutY="9.0" promptText="Search..." />
                                         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" smooth="false">
                                             <image>
-                                                <Image url="@../images/Rectangle.jpg" />
+                                                <Image url="@../Images/Rectangle.jpg" />
                                             </image>
                                         </ImageView>
                                         <MenuButton fx:id="yrSecCombBox" layoutX="225.0" layoutY="9.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Year &amp; Section">
