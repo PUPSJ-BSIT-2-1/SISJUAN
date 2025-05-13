@@ -1,6 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.ControllerUtils;
+//import com.example.pupsis_main_dashboard.utility.ControllerUtils;
 import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
@@ -185,6 +185,7 @@ public class StudentDashboardController {
                         break;
                     case "gradesHBox":
                         // Add grades content loading here
+                        content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newGradingModule.fxml")));
                         break;
                     case "scheduleHBox":
                         // Add schedule content loading here

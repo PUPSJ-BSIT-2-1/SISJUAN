@@ -1,6 +1,5 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.ControllerUtils;
 import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -17,7 +16,7 @@ public class HomeContentController {
             String[] credentials = rememberMeHandler.loadCredentials();
             
             if (credentials != null && credentials.length > 0) {
-                String fullName = ControllerUtils.getStudentFullName(credentials[0], credentials[0].contains("@"));
+                String fullName = StudentLoginController.getStudentFullName(credentials[0], credentials[0].contains("@"));
                 if (fullName.contains(",")) {
                     String[] nameParts = fullName.split(",");
                     String firstName = nameParts.length > 1 ? 
