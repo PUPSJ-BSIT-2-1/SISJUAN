@@ -1,4 +1,4 @@
-package com.example.GradingModule;
+package com.example.pupsis_main_dashboard.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,7 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.converter.DefaultStringConverter;
 import java.net.URL;
 import java.util.ResourceBundle;
-import com.example.dbconnection.dbConnection2;
+import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;

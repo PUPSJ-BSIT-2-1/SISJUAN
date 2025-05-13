@@ -1,4 +1,4 @@
-package com.example.GradingModule;
+package com.example.pupsis_main_dashboard.utility;
 
 public class Subject {
     private String yearSection;

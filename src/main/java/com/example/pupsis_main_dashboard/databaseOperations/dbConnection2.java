@@ -1,4 +1,4 @@
-package com.example.dbconnection;
+package com.example.pupsis_main_dashboard.databaseOperations;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-package com.example.GradingModule;
+package com.example.pupsis_main_dashboard.utility;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

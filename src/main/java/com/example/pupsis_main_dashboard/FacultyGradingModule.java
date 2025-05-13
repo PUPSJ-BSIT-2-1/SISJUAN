@@ -1,4 +1,4 @@
-package com.example.GradingModule;
+package com.example.pupsis_main_dashboard;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
