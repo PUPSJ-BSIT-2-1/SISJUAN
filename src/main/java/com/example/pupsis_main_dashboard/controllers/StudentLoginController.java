@@ -347,8 +347,15 @@ public class StudentLoginController {
                         Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                            if (stage.getScene() != null) {
+                                com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
+                                logger.info("Applied global theme to StudentDashboard scene after login.");
+                            } else {
+                                logger.warn("StudentDashboard scene was null after loadStage; theme not applied immediately post-login.");
+                            }
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            logger.error("Failed to load StudentDashboard.fxml", e);
+                            showAlert("Navigation Error", "Could not load the student dashboard.", Alert.AlertType.ERROR);
                         }
                     } else {
                         showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);

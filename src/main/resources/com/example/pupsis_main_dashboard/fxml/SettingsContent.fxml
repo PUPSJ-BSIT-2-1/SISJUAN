@@ -53,7 +53,7 @@
          </StackPane> 
         </HBox>
         <!-- HBox for language selection removed -->
-        <Button maxWidth="Infinity" onAction="#handleSaveAppearance" styleClass="settings-button" text="Save Appearance Settings" />
+        <!-- <Button maxWidth="Infinity" onAction="#handleSaveAppearance" styleClass="settings-button" text="Save Appearance Settings" /> -->
     </VBox>
 
     <!-- Notification Settings Section -->
@@ -62,6 +62,5 @@
         <CheckBox fx:id="emailNotificationsCheckbox" text="Receive Email Notifications" />
         <CheckBox fx:id="newGradeNotificationsCheckbox" text="Notify for New Grades" />
         <CheckBox fx:id="announcementNotificationsCheckbox" text="Notify for Announcements" />
-        <Button maxWidth="Infinity" onAction="#handleSaveNotifications" styleClass="settings-button" text="Save Notification Preferences" />
     </VBox>
 </VBox>

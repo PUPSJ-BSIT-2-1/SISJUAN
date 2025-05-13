@@ -51,6 +51,7 @@ public class SettingsController {
         
         loadUserSettings(); // Load saved user settings into the UI
         setupThemeToggleListener(); // Set up listener for theme toggle button
+        setupNotificationCheckboxListeners(); // Set up listeners for notification checkboxes
         applyCurrentTheme(); // Apply the current theme on initialization
 
         themeToggle.setText(""); // Clear any text from FXML
@@ -132,6 +133,40 @@ public class SettingsController {
         });
     }
 
+    // Set up listeners for notification checkboxes to automatically save preferences
+    private void setupNotificationCheckboxListeners() {
+        emailNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            prefs.putBoolean(EMAIL_NOTIF_PREF, newVal);
+            updateNotificationPreference("emailNotifications", newVal);
+            System.out.println("Email notifications preference updated: " + newVal);
+        });
+        
+        newGradeNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            prefs.putBoolean(GRADE_NOTIF_PREF, newVal);
+            updateNotificationPreference("gradeNotifications", newVal);
+            System.out.println("Grade notifications preference updated: " + newVal);
+        });
+        
+        announcementNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            prefs.putBoolean(ANNOUNCEMENT_NOTIF_PREF, newVal);
+            updateNotificationPreference("announcementNotifications", newVal);
+            System.out.println("Announcement notifications preference updated: " + newVal);
+        });
+    }
+    
+    // Helper method to update notification preferences in NotificationManager
+    private void updateNotificationPreference(String key, boolean value) {
+        Preferences notifPrefs = Preferences.userNodeForPackage(NotificationManager.class);
+        notifPrefs.putBoolean(key, value);
+        
+        // Add a notification about the preference change
+        notificationManager.addNotification(
+            "Notification Setting Updated",
+            "Your notification preferences have been updated.",
+            NotificationManager.NotificationType.SYSTEM
+        );
+    }
+
     // Apply the current theme based on the saved preference
     private void applyCurrentTheme() {
         applyTheme(prefs.getBoolean(THEME_PREF, false));
@@ -139,51 +174,12 @@ public class SettingsController {
 
     // Apply the theme to the root VBox and its scene
     private void applyTheme(boolean darkMode) {
-        if (rootSettingsVBox != null && rootSettingsVBox.getScene() != null) {
-            javafx.scene.Scene scene = rootSettingsVBox.getScene();
-            javafx.scene.Node sceneRoot = scene.getRoot();
-
-            // Ensure the CSS file containing general content definitions is applied to the scene
-            String settingsCssPath = "/com/example/pupsis_main_dashboard/css/SettingsContent.css";
-            String darkThemeCssPath = "/com/example/pupsis_main_dashboard/css/DarkMode.css";
-
-            try {
-                String settingsCssUrl = Objects.requireNonNull(getClass().getResource(settingsCssPath)).toExternalForm();
-                if (!scene.getStylesheets().contains(settingsCssUrl)) {
-                    scene.getStylesheets().add(settingsCssUrl);
-                }
-            } catch (NullPointerException e) {
-                System.err.println("Error: Cannot load settings CSS: " + settingsCssPath);
-                showAlert("Theme Error", "Could not load settings stylesheet. Theme may not apply correctly.", javafx.scene.control.Alert.AlertType.ERROR);
-            }
-
-            String darkThemeCssUrl = null;
-            try {
-                darkThemeCssUrl = Objects.requireNonNull(getClass().getResource(darkThemeCssPath)).toExternalForm();
-            } catch (NullPointerException e) {
-                System.err.println("Error: Cannot load dark theme CSS: " + darkThemeCssPath);
-                // Optionally show an alert or log this, but continue to apply base theme classes
-            }
-
-            // Apply the theme class to the scene root
-            if (darkMode) {
-                if (!sceneRoot.getStyleClass().contains("dark-theme")) {
-                    sceneRoot.getStyleClass().add("dark-theme");
-                }
-                sceneRoot.getStyleClass().remove("light-theme");
-                if (darkThemeCssUrl != null && !scene.getStylesheets().contains(darkThemeCssUrl)) {
-                    scene.getStylesheets().add(darkThemeCssUrl);
-                }
-            } else {
-                if (!sceneRoot.getStyleClass().contains("light-theme")) {
-                    sceneRoot.getStyleClass().add("light-theme");
-                }
-                sceneRoot.getStyleClass().remove("dark-theme");
-                if (darkThemeCssUrl != null) {
-                    scene.getStylesheets().remove(darkThemeCssUrl);
-                }
-            }
-        }
+        // The darkMode parameter is passed from the toggle listener.
+        // The preference is already saved by setupThemeToggleListener before this is called.
+        // Now, we trigger a global update which will read the latest preference.
+        System.out.println("SettingsController.applyTheme called with darkMode: " + darkMode + ". Triggering global theme update.");
+        com.example.pupsis_main_dashboard.PUPSIS.triggerGlobalThemeUpdate();
+        System.out.println("SettingsController.applyTheme: PUPSIS.triggerGlobalThemeUpdate() called.");
     }
 
     // Handle the change password action
@@ -300,15 +296,8 @@ public class SettingsController {
         );
     }
 
-    // Handle the action for saving appearance settings
-    @FXML private void handleSaveAppearance() {
-        prefs.putBoolean(THEME_PREF, themeToggle.isSelected()); 
-        applyCurrentTheme(); // Re-apply the theme to ensure consistency if anything else changed it
-        System.out.println("Appearance settings saved: DarkMode - " + themeToggle.isSelected());
-        showAlert("Appearance Saved", "Your appearance settings have been updated.", Alert.AlertType.INFORMATION);
-    }
-
     // Handle the action for saving notification settings
+    // This method is retained for compatibility but no longer connected to a button in the UI
     @FXML private void handleSaveNotifications() {
         prefs.putBoolean(EMAIL_NOTIF_PREF, emailNotificationsCheckbox.isSelected());
         prefs.putBoolean(GRADE_NOTIF_PREF, newGradeNotificationsCheckbox.isSelected());

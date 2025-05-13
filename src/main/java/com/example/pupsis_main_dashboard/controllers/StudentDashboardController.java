@@ -12,9 +12,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -112,9 +115,6 @@ public class StudentDashboardController {
         }
         loadHomeContent();
 
-        // Apply saved theme preference on startup
-        Platform.runLater(this::applyInitialTheme);
-
         // Initialize fade1 as fully transparent
         fade1.setOpacity(0);
         
@@ -193,7 +193,26 @@ public class StudentDashboardController {
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml")));
                         break;
                     case "aboutHBox":
-                        content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml")));
+                        // Create temporary content for About section since AboutContent.fxml doesn't exist
+                        VBox aboutContent = new VBox(20);
+                        aboutContent.setPadding(new Insets(30));
+                        aboutContent.setAlignment(Pos.CENTER);
+                        
+                        Label titleLabel = new Label("About PUP Student Information System");
+                        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+                        
+                        Label descriptionLabel = new Label(
+                            "The Polytechnic University of the Philippines Student Information System (PUPSIS) " +
+                            "is a comprehensive platform designed to provide students with easy access to their " +
+                            "academic information, grades, schedule, and university resources.");
+                        descriptionLabel.setWrapText(true);
+                        descriptionLabel.setStyle("-fx-font-size: 14px;");
+                        
+                        Label versionLabel = new Label("Version 1.0.0");
+                        versionLabel.setStyle("-fx-font-size: 12px; -fx-font-style: italic;");
+                        
+                        aboutContent.getChildren().addAll(titleLabel, descriptionLabel, versionLabel);
+                        content = aboutContent;
                         break;
                     default:
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml")));
@@ -229,7 +248,6 @@ public class StudentDashboardController {
                 });
             }
             contentPane.setContent(content);
-            Platform.runLater(this::applyInitialTheme); // Re-apply the theme after new content is set
 
             // Immediate reset and delayed double check
             Platform.runLater(() -> {
@@ -254,68 +272,6 @@ public class StudentDashboardController {
     // Load the settings content into the ScrollPane
     private void loadSettingsContent() {
         loadContent("/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml");
-    }
-
-    // Apply the initial theme based on user preferences
-    // This method is called in the initialize() method and when new content is loaded
-    private void applyInitialTheme() {
-        Preferences prefs = Preferences.userNodeForPackage(SettingsController.class); // Use SettingsController class context for prefs
-        boolean isDarkMode = prefs.getBoolean("darkMode", false); // "darkMode" is the key used in SettingsController
-
-        if (contentPane != null && contentPane.getScene() != null) {
-            Scene scene = contentPane.getScene();
-            
-            // Ensure the main CSS file (SettingsContent.css) is loaded
-            String settingsContentCssPath = "/com/example/pupsis_main_dashboard/css/SettingsContent.css";
-            try {
-                String cssUrl = getClass().getResource(settingsContentCssPath).toExternalForm();
-                if (!scene.getStylesheets().contains(cssUrl)) {
-                    scene.getStylesheets().add(cssUrl);
-                }
-            } catch (Exception e) {
-                logger.error("Error loading SettingsContent.css: " + settingsContentCssPath, e);
-            }
-
-            // Define path for the isolated dark theme CSS
-            String darkThemeIsolatedCss = "/com/example/pupsis_main_dashboard/css/DarkMode.css";
-            String darkThemeIsolatedCssUrl = null;
-            try {
-                darkThemeIsolatedCssUrl = Objects.requireNonNull(getClass().getResource(darkThemeIsolatedCss)).toExternalForm();
-            } catch (NullPointerException e) {
-                logger.error("Critical Error: DarkMode.css not found at: " + darkThemeIsolatedCss, e);
-                // Optionally, inform the user or fallback to a default state
-                return; // Exit if dark theme CSS is crucial and not found
-            }
-
-            Node sceneRoot = scene.getRoot();
-            if (sceneRoot != null) {
-                if (isDarkMode) {
-                    // Add dark theme class and specific dark theme CSS file
-                    if (!sceneRoot.getStyleClass().contains("dark-theme")) {
-                        sceneRoot.getStyleClass().add("dark-theme");
-                    }
-                    sceneRoot.getStyleClass().remove("light-theme");
-                    if (!scene.getStylesheets().contains(darkThemeIsolatedCssUrl)) {
-                        scene.getStylesheets().add(darkThemeIsolatedCssUrl);
-                        logger.info("Dark theme applied via StudentDashboardController.");
-                    }
-                } else {
-                    // Add light theme class and remove specific dark theme CSS file
-                    if (!sceneRoot.getStyleClass().contains("light-theme")) {
-                        sceneRoot.getStyleClass().add("light-theme");
-                    }
-                    sceneRoot.getStyleClass().remove("dark-theme");
-                    if (scene.getStylesheets().contains(darkThemeIsolatedCssUrl)) {
-                        scene.getStylesheets().remove(darkThemeIsolatedCssUrl);
-                        logger.info("Light theme applied via StudentDashboardController.");
-                    }
-                }
-            } else {
-                logger.warn("Scene root was null during initial theme application.");
-            }
-        } else {
-            logger.warn("Scene or ContentPane was null during initial theme application. Theme might not apply immediately.");
-        }
     }
 
     // Handle the logout button click event
