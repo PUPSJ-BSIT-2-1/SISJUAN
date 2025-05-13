@@ -1,7 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 //import com.example.pupsis_main_dashboard.utility.DBConnection;
-import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
+import com.example.pupsis_main_dashboard.utility.DBConnection;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;

@@ -1,19 +1,22 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 //import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
-import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
+
 import com.example.pupsis_main_dashboard.utility.DBConnection;
+import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,17 +25,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class StudentDashboardController {
+public class FacultyDashboardController {
 
     @FXML private HBox homeHBox;
     @FXML private HBox registrationHBox;
-    @FXML private HBox paymentInfoHBox;
     @FXML private HBox subjectsHBox;
     @FXML private HBox gradesHBox;
-    @FXML private HBox scheduleHBox;
     @FXML private HBox schoolCalendarHBox;
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
@@ -43,7 +41,7 @@ public class StudentDashboardController {
     @FXML private Node fade1;
     @FXML private Node fade2;
 
-    private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacultyDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
     
@@ -303,10 +301,8 @@ public class StudentDashboardController {
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
         registrationHBox.getStyleClass().remove("selected");
-        paymentInfoHBox.getStyleClass().remove("selected");
         subjectsHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
-        scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
