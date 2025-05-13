@@ -1,0 +1,398 @@
+/* Combined Dark Theme Styles */
+
+/* ============== DARK THEME STYLES from SettingsContent.css ============== */
+
+/* --- Global Dark Theme Definitions --- */
+.dark-theme { /* Applied to the scene root by SettingsController */
+    /* This sets the base background for the ENTIRE scene when dark mode is active */
+    -fx-background-color: #1e1e1e;
+}
+
+/* --- Main Application Structure Dark Theme (from StudentDashboard.fxml) --- */
+.dark-theme.main-container { /* Targets the root BorderPane of StudentDashboard.fxml */
+    -fx-background-color: #1e1e1e; /* Primary dark background for the main application window */
+    /* -fx-padding: 10; */ /* Inherits from StudentDashboard.css if not overridden */
+    /* -fx-background-radius: 10; */ /* Inherits from StudentDashboard.css if not overridden */
+}
+
+.dark-theme .root {
+    /* Styles for elements that have class 'root' AND are inside a 'dark-theme' container */
+    /* This might be for the root of FXMLs loaded into content panes, etc. */
+    /* Typically, content loaded into contentPane will sit on .content-container background */
+    -fx-background-color: transparent; 
+}
+
+.dark-theme .content-container { /* From StudentDashboard.css, for the main ScrollPane area */
+    -fx-background-color: #2b2b2b; 
+    -fx-border-color: #4a4a4a; 
+}
+
+/* --- Sidebar Dark Theme (from StudentDashboard.css) --- */
+.dark-theme .sidebar-items {
+    /* Base style for non-selected, non-hovered - text/icon color handled by .sidebar-label-font & .icons */
+    -fx-background-color: transparent; /* Ensure items are transparent by default against ListView background */
+}
+
+.dark-theme .sidebar-items:hover {
+    -fx-background-color: #4a4a4a; 
+}
+
+.dark-theme .sidebar-items.selected {
+    -fx-background-color: #b22222; 
+}
+
+.dark-theme .sidebar-label-font {
+    -fx-text-fill: #b0b0b0; 
+}
+
+.dark-theme .icons {
+    -fx-fill: #b0b0b0; 
+}
+
+.dark-theme .sidebar-items:hover .sidebar-label-font,
+.dark-theme .sidebar-items:hover .icons {
+    -fx-text-fill: #e0e0e0; 
+    -fx-fill: #e0e0e0;
+}
+
+.dark-theme .sidebar-items.selected .sidebar-label-font,
+.dark-theme .sidebar-items.selected .icons {
+    -fx-text-fill: #ffffff; 
+    -fx-fill: #ffffff;
+}
+
+/* --- General Text and Other Elements Dark Theme (from StudentDashboard.css) --- */
+.dark-theme .label { /* Default label color if not more specific */
+    -fx-text-fill: #c5c5c5;
+}
+
+.dark-theme .header-text { /* From StudentDashboard.css */
+    -fx-text-fill: #e0e0e0;
+}
+
+/* --- Settings Page Specific Dark Theme (from SettingsContent.css) --- */
+.dark-theme #rootSettingsVBox {
+    -fx-background-color: transparent; /* Should inherit from .content-container in dark mode */
+}
+
+.dark-theme .settings-title {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .settings-section {
+    -fx-background-color: #2b2b2b; /* Darker card background */
+    -fx-border-color: #4a4a4a;     /* Darker border */
+}
+
+.dark-theme .settings-section-header {
+    -fx-text-fill: #d0d0d0;
+    -fx-border-color: #4a4a4a; /* Darker border */
+}
+
+.dark-theme .settings-label {
+    -fx-text-fill: #a0a0a0;
+}
+
+.dark-theme .text-field, .dark-theme .password-field {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #888888;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .text-field:focused, .dark-theme .password-field:focused {
+    -fx-border-color: #e57373; /* Light maroon/red for focus */
+    -fx-background-color: #333333; /* Slightly different background on focus */
+}
+
+.dark-theme .choice-box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-mark-color: #c5c5c5; /* Arrow color */
+}
+.dark-theme .choice-box .label {
+    -fx-text-fill: #e0e0e0;
+}
+.dark-theme .choice-box .context-menu {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+.dark-theme .choice-box .menu-item:focused .label,
+.dark-theme .choice-box .menu-item .label:hover {
+    -fx-text-fill: #ffffff;
+}
+.dark-theme .choice-box .menu-item:focused {
+    -fx-background-color: #b22222; /* Maroon selection */
+}
+
+
+.dark-theme .check-box {
+    -fx-text-fill: #a0a0a0;
+}
+.dark-theme .check-box .box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+.dark-theme .check-box:selected .box {
+    -fx-background-color: #b22222; /* Maroon when selected */
+}
+.dark-theme .check-box:selected .mark {
+    -fx-background-color: #ffffff; /* White check mark */
+}
+
+.dark-theme .toggle-button {
+    -fx-background-color: #4a4a4a;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #555555;
+}
+.dark-theme .toggle-button:selected {
+    -fx-background-color: #b22222; /* Maroon when active */
+    -fx-text-fill: white;
+    -fx-border-color: #b22222;
+}
+
+.dark-theme .settings-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+}
+.dark-theme .settings-button:hover {
+    -fx-background-color: #e57373; /* Lighter maroon for hover */
+}
+
+/* Styles from ToggleSwitch.css - ensure they respect .dark-theme */
+/* Assuming these are loaded globally and might need dark theme overrides IF NOT already handled by .dark-theme selector in ToggleSwitch.css */
+/* If ToggleSwitch.css already uses .dark-theme .switch-toggle-button, these are redundant */
+
+.dark-theme .switch-toggle-button {
+    -fx-background-color: #505050; /* Darker grey for the track */
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #404040; /* Slightly darker border for definition */
+    -fx-border-width: 1;
+}
+.dark-theme .thumb {
+    -fx-translate-x:10.2px;
+}
+.dark-theme .switch-toggle-button.selected {
+    -fx-background-color: #006400; /* DarkGreen for selected track */
+    -fx-border-color: #004d00;
+}
+
+
+
+
+/* ============== DARK THEME STYLES from StudentLogin.css ============== */
+
+/* Apply to the root element (StackPane or BorderPane via controller) */
+/* .dark-theme {} is already defined above, so we don't need it again */
+
+.dark-theme .border-pane { /* This was specific to StudentLogin, might need to be namespaced if conflicts arise, or ensure it applies correctly. */
+    -fx-background-color: #1e1e1e; /* Consistent dark background */
+}
+
+/* Login Form Specific */
+.dark-theme .login-container {
+    -fx-background-color: #2b2b2b; /* Darker card for login form */
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #4a4a4a; /* Darker border for the container */
+}
+
+.dark-theme .login-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .login-label {
+    -fx-text-fill: #a0a0a0;
+}
+
+.dark-theme .login-input { /* Targets TextFields and PasswordFields */
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #888888;
+    -fx-border-color: #555555;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.dark-theme .login-input:focused {
+    -fx-border-color: #b22222; /* Maroon focus like in settings */
+    -fx-background-color: #333333;
+}
+
+.dark-theme .login-button {
+    -fx-background-color: #b22222; /* Firebrick red */
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+.dark-theme .login-button:hover {
+    -fx-background-color: #e57373; /* Lighter maroon */
+}
+
+.dark-theme .error-label {
+    -fx-text-fill: #ff6b6b; /* Bright red for errors */
+}
+
+.dark-theme .signup-link {
+    -fx-text-fill: #87CEFA; /* LightSkyBlue for links */
+}
+.dark-theme .signup-link:hover {
+    -fx-text-fill: #add8e6; /* Lighter blue on hover */
+}
+
+
+/* Verification Code View Dark Theme Specifics (from VerificationCode.fxml) */
+.dark-theme .verification-root {
+    -fx-background-color: #1e1e1e; /* Base background */
+}
+
+.dark-theme .verification-container {
+    -fx-background-color: #2b2b2b; /* Slightly lighter card */
+    -fx-border-color: #4a4a4a; /* Darker border for the container */
+}
+
+.dark-theme .verification-title {
+    -fx-text-fill: #e0e0e0; /* Lighter text for title */
+}
+
+.dark-theme .verification-instruction {
+    -fx-text-fill: #b0b0b0; /* Softer text for instructions */
+}
+
+.dark-theme .verification-code-field {
+    -fx-background-color: #3a3a3a; /* Dark input field */
+    -fx-text-fill: #e0e0e0; /* Light text */
+    -fx-prompt-text-fill: #888888; /* Placeholder text color */
+    -fx-border-color: #555555; /* Border for input field */
+}
+
+.dark-theme .verification-code-field:focused {
+    -fx-border-color: #b22222; /* Consistent focus color */
+}
+
+.dark-theme .verify-button {
+    -fx-background-color: #b22222; /* Consistent button color */
+    -fx-text-fill: white;
+}
+.dark-theme .verify-button:hover {
+    -fx-background-color: #e57373; /* Consistent hover color */
+}
+
+.dark-theme .verification-error-label {
+    -fx-text-fill: #ff6b6b; /* Error message color */
+}
+
+.dark-theme .resend-code-link {
+    -fx-text-fill: #87CEFA; /* Link color */
+}
+.dark-theme .resend-code-link:hover {
+    -fx-text-fill: #add8e6; /* Link hover color */
+}
+
+/* --- Fade Effects Dark Theme (from StudentDashboard.css) --- */
+.dark-theme .fade-bottom {
+    -fx-background-color: linear-gradient(from 0% 100% to 0% 95%, #2B2B2BFF 0%, rgba(128,128,128,0) 100%); /* Gray fading to transparent gray */
+}
+
+.dark-theme .fade-top {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 5%, #2B2B2BFF 0%, rgba(128,128,128,0) 100%); /* Gray fading to transparent gray */
+}
+
+/* --- ScrollBar Dark Theme (within .content-container or globally if needed) --- */
+
+/* ============== DARK THEME STYLES from HomeContent.css ============== */
+/* Specific styles for HomeContent.fxml when in dark mode */
+
+.dark-theme .home-content-pane {
+    -fx-background-color: transparent; /* Let the parent dark theme background show */
+}
+
+.dark-theme .welcome-text {
+    -fx-text-fill: #e0e0e0; /* Light text for welcome message */
+}
+
+.dark-theme .info-text {
+    -fx-text-fill: #b0b0b0; /* Softer text for informational content */
+}
+
+.dark-theme .card {
+    -fx-background-color: #2b2b2b; /* Dark card background */
+    -fx-border-color: #4a4a4a;     /* Darker border for cards */
+}
+
+.dark-theme .card-title {
+    -fx-text-fill: #d0d0d0; /* Lighter title text for cards */
+}
+
+.dark-theme .chart-plot-background {
+    -fx-background-color: #2b2b2b; /* Dark background for charts */
+}
+
+.dark-theme .chart-content {
+    -fx-padding: 10px;
+}
+
+.dark-theme .axis {
+    -fx-tick-label-fill: #b0b0b0; /* Light color for axis tick labels */
+    -fx-border-color: #4a4a4a;     /* Darker axis lines */
+}
+
+.dark-theme .axis-label {
+    -fx-text-fill: #c5c5c5; /* Light color for axis labels */
+}
+
+.dark-theme .chart-legend {
+    -fx-background-color: #3a3a3a; /* Dark background for legend */
+    -fx-text-fill: #b0b0b0;       /* Light text for legend items */
+    -fx-border-color: #4a4a4a;
+}
+
+.dark-theme .default-color0.chart-bar {
+    -fx-bar-fill: #b22222; /* Firebrick for first series */
+}
+.dark-theme .default-color1.chart-bar {
+    -fx-bar-fill: #4682b4; /* SteelBlue for second series */
+}
+/* Add more .default-colorN.chart-bar styles if you have more series */
+
+/* For LineChart */
+.dark-theme .chart-series-line {
+    -fx-stroke-width: 2px;
+}
+.dark-theme .default-color0.chart-series-line {
+    -fx-stroke: #b22222;
+}
+.dark-theme .default-color1.chart-series-line {
+    -fx-stroke: #4682b4;
+}
+
+.dark-theme .chart-line-symbol {
+    -fx-background-color: #ffffff, #1e1e1e;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 3px;
+    -fx-padding: 3px;
+}
+.dark-theme .default-color0.chart-line-symbol {
+    -fx-background-color: #b22222, #1e1e1e;
+}
+.dark-theme .default-color1.chart-line-symbol {
+    -fx-background-color: #4682b4, #1e1e1e;
+}
+
+/* Ensure birthday field remains rounded in dark mode */
+.dark-theme .birthday-field:focused {
+    -fx-background-color: #333333; /* Same as .dark-theme .fields:focused */
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #e57373; /* Accent border color for focus */
+    -fx-border-width: 1px;
+    -fx-background-radius: 8; /* Round background on focus */
+    -fx-border-radius: 8; /* Round border on focus */
+}
+
+/* Styling for the dropdown arrow in dark mode */
+.dark-theme .birthday-field .arrow {
+    -fx-background-color: #e0e0e0; /* Lighter arrow color */
+    -fx-background-radius: 8; /* Match the rounded corners of the birthday field */
+    -fx-padding: 0 0 0 5; /* Adjust padding to align with the rounded corners */
+    -fx-shape: "M 0 -3.5 L 4.5 0 L 0 3.5 z"; /* Arrow shape */
+}

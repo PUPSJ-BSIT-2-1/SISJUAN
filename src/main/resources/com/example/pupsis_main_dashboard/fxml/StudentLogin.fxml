@@ -278,7 +278,6 @@
          <String fx:value="border-pane" />
       </styleClass>
     </BorderPane>
-   <Pane fx:id="blurPane" mouseTransparent="true" prefHeight="200.0" prefWidth="200.0" />
     <BorderPane disable="true" mouseTransparent="true">
         <right>
             <VBox fx:id="centerVBox" alignment="TOP_RIGHT" prefHeight="451.0" prefWidth="862.0" BorderPane.alignment="CENTER">

@@ -11,20 +11,21 @@
 /* Style for birthday input field with white background and rounded corners */
 .birthday-field {
     -fx-background-color: white;
-    -fx-background-radius: 8;
     -fx-pref-height: 30;
-    -fx-text-fill: black; 
+    -fx-text-fill: black;
+    -fx-background-radius: 8;
 }
 
 /* Adds a hand cursor when hovering over the birthday field */
 .birthday-field:hover {
-    -fx-cursor: hand; 
+    -fx-cursor: hand;
 }
 
 /* Adds a maroon border when the birthday field is focused */
 .birthday-field:focused {
     -fx-border-color: maroon;
     -fx-border-radius: 8;
+    -fx-background-radius: 8;
     -fx-border-width: 2;
 }
 
@@ -139,6 +140,7 @@
     -fx-text-fill: #e0e0e0;
     -fx-border-color: #555555;
     -fx-border-width: 1px;
+    -fx-border-radius: 8;
 }
 
 /* Style for dropdown arrow in birthday field in dark theme */
