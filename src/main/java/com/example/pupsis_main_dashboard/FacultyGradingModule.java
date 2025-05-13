@@ -12,7 +12,7 @@ import java.net.URL;
 public class FacultyGradingModule extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        URL fxmlLocation = FacultyGradingModule.class.getResource("/fxml/newGradingModule.fxml");
+      URL fxmlLocation = FacultyGradingModule.class.getResource("/com/example/pupsis_main_dashboard/fxml/newGradingModule.fxml");
         if (fxmlLocation == null) {
             throw new IOException("Cannot find FXML file: /fxml/newGradingModule.fxml");
         }
