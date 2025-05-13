@@ -193,26 +193,7 @@ public class StudentDashboardController {
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml")));
                         break;
                     case "aboutHBox":
-                        // Create temporary content for About section since AboutContent.fxml doesn't exist
-                        VBox aboutContent = new VBox(20);
-                        aboutContent.setPadding(new Insets(30));
-                        aboutContent.setAlignment(Pos.CENTER);
-                        
-                        Label titleLabel = new Label("About PUP Student Information System");
-                        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-                        
-                        Label descriptionLabel = new Label(
-                            "The Polytechnic University of the Philippines Student Information System (PUPSIS) " +
-                            "is a comprehensive platform designed to provide students with easy access to their " +
-                            "academic information, grades, schedule, and university resources.");
-                        descriptionLabel.setWrapText(true);
-                        descriptionLabel.setStyle("-fx-font-size: 14px;");
-                        
-                        Label versionLabel = new Label("Version 1.0.0");
-                        versionLabel.setStyle("-fx-font-size: 12px; -fx-font-style: italic;");
-                        
-                        aboutContent.getChildren().addAll(titleLabel, descriptionLabel, versionLabel);
-                        content = aboutContent;
+                        // Add schedule content loading here
                         break;
                     default:
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml")));

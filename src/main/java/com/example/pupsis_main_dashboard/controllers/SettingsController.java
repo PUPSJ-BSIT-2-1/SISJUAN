@@ -138,19 +138,16 @@ public class SettingsController {
         emailNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
             prefs.putBoolean(EMAIL_NOTIF_PREF, newVal);
             updateNotificationPreference("emailNotifications", newVal);
-            System.out.println("Email notifications preference updated: " + newVal);
         });
         
         newGradeNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
             prefs.putBoolean(GRADE_NOTIF_PREF, newVal);
             updateNotificationPreference("gradeNotifications", newVal);
-            System.out.println("Grade notifications preference updated: " + newVal);
         });
         
         announcementNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
             prefs.putBoolean(ANNOUNCEMENT_NOTIF_PREF, newVal);
             updateNotificationPreference("announcementNotifications", newVal);
-            System.out.println("Announcement notifications preference updated: " + newVal);
         });
     }
     
@@ -177,9 +174,7 @@ public class SettingsController {
         // The darkMode parameter is passed from the toggle listener.
         // The preference is already saved by setupThemeToggleListener before this is called.
         // Now, we trigger a global update which will read the latest preference.
-        System.out.println("SettingsController.applyTheme called with darkMode: " + darkMode + ". Triggering global theme update.");
         com.example.pupsis_main_dashboard.PUPSIS.triggerGlobalThemeUpdate();
-        System.out.println("SettingsController.applyTheme: PUPSIS.triggerGlobalThemeUpdate() called.");
     }
 
     // Handle the change password action
