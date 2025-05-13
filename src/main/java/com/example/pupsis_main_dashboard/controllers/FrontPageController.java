@@ -6,19 +6,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 
 public class FrontPageController {
-    @FXML private MediaView mediaView;
+    @FXML private ImageView background;
     @FXML private Label labelHeader;
     @FXML private Button coaButton;
     @FXML private Button programsButton;
@@ -28,32 +24,11 @@ public class FrontPageController {
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
 
-    
-    // Initialize the controller and set up the media player, buttons, and label fade animation
-    @FXML public void initialize() {
-        try {
-            File file = new File("src/main/resources/com/example/pupsis_main_dashboard/Images/PUPSJ DRONE 2024.mp4");
-            if (!file.exists()) {
-                throw new FileNotFoundException("Video file not found");
-            }
-            Media media = new Media(file.toURI().toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
-            
-            mediaPlayer.setOnError(() -> {
-                System.err.println("MediaPlayer Error: " + mediaPlayer.getError().getMessage());
-                showFallbackImage();
-            });
-            
-            mediaView.setMediaPlayer(mediaPlayer);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.setMute(true);
-            mediaPlayer.play();
-
-        } catch (Exception e) {
-            System.err.println("Error loading video: " + e.getMessage());
-            showFallbackImage();
-        }
+    @FXML
+    public void initialize() {
+        loadBackgroundImage();
         startLabelFade();
+
         coaButton.setOnAction(_ -> handleCOAButton());
         programsButton.setOnAction(_ -> handleProgramsButton());
         aboutButton.setOnAction(_ -> handleAboutButton());
@@ -67,7 +42,17 @@ public class FrontPageController {
         });
     }
 
-    // Start a fade animation for the labelHeader
+    // Load the background image
+    private void loadBackgroundImage() {
+        try {
+            Image bgImage = new Image(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/PUPSJ.png")).toExternalForm());
+            background.setImage(bgImage);
+        } catch (Exception e) {
+            System.err.println("Failed to load background image: " + e.getMessage());
+        }
+    }
+
+    // Fade animation for the header
     private void startLabelFade() {
         FadeTransition fade = new FadeTransition(Duration.seconds(1.5), labelHeader);
         fade.setFromValue(1.0);
@@ -77,43 +62,24 @@ public class FrontPageController {
         fade.play();
     }
 
-    // Handle the action for the COA button by opening a URL in the default browser
+    // Button handlers to open URLs
     @FXML private void handleCOAButton() {
-        try {
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/certificate"));
-        } catch (Exception e) {
-            System.err.println("Failed to load COA: " + e.getMessage());
-        }
+        openURL("http://pup-con.me/certificate");
     }
 
-    // Handle the action for the Programs button by opening a URL in the default browser
     @FXML private void handleProgramsButton() {
-        try {
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/programs"));
-        } catch (Exception e) {
-            System.err.println("Failed to load programs: " + e.getMessage());
-        }
+        openURL("http://pup-con.me/programs");
     }
 
-    // Handle the action for the About button by opening a URL in the default browser
     @FXML private void handleAboutButton() {
-        try {
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/about"));
-        } catch (Exception e) {
-            System.err.println("Failed to load about: " + e.getMessage());
-        }
+        openURL("http://pup-con.me/about");
     }
 
-    // Handle the action for the Other's button by opening a URL in the default browser
     @FXML private void handleOthersButton() {
-        try {
-            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://pup-con.me/others"));
-        } catch (Exception e) {
-            System.err.println("Failed to load others: " + e.getMessage());
-        }
+        openURL("http://pup-con.me/others");
     }
 
-    // Handle the action for the Get Started button by loading a new stage
+    // Load the next stage
     @FXML private void handleGetStartedButton() throws IOException {
         if (getStartedButton.getScene() != null && getStartedButton.getScene().getWindow() != null) {
             Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
@@ -121,12 +87,12 @@ public class FrontPageController {
         }
     }
 
-    // Show a fallback image in case the video fails to load
-    private void showFallbackImage() {
-        Image fallback = new Image("src/main/resources/com/example/pupsis_main_dashboard/Images/PUPSJ.png");
-        ImageView imageView = new ImageView(fallback);
-        imageView.setFitWidth(mediaView.getFitWidth());
-        imageView.setFitHeight(mediaView.getFitHeight());
-        mediaView.getParent().getChildrenUnmodifiable().add(imageView);
+    // Reusable method to open a URL
+    private void openURL(String url) {
+        try {
+            java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+        } catch (Exception e) {
+            System.err.println("Failed to open URL: " + e.getMessage());
+        }
     }
 }

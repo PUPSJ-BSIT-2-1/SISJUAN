@@ -149,6 +149,7 @@
 
 .settings-button:hover { /* Matches .action-button:hover */
     -fx-background-color: #5e0000; /* Darker maroon */
+    -fx-cursor: hand;
 }
 
 /* Ensure .content-container (from StudentDashboard) styles are correctly applied */

@@ -22,6 +22,8 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
+    -fx-alignment: center;
+    -fx-padding: 5;
 }
 
 /* Individual weekday label styling */
@@ -53,11 +55,6 @@
     -fx-cursor: hand;
 }
 
-/* Navigation button hover effects */
-.icons-container:hover {
-    -fx-cursor: hand;
-}
-
 /* Month/Year selector combo box */
 .combo-box {
     -fx-background-color: transparent;
@@ -66,7 +63,6 @@
     -fx-font-weight: bold;
     -fx-font-size: 24px;
     -fx-padding: 0;
-    -fx-alignment: center;
 }
 
 /* Month/Year selector combo box hover effect */

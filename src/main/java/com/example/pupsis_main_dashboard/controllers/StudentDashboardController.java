@@ -193,7 +193,7 @@ public class StudentDashboardController {
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml")));
                         break;
                     case "aboutHBox":
-                        // Add about content loading here
+                        content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml")));
                         break;
                     default:
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml")));

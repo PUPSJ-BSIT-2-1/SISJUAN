@@ -54,24 +54,20 @@
          <children>
             <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
                <children>
-                  <VBox fx:id="leftButton" alignment="CENTER" styleClass="icons-container">
+                  <VBox fx:id="leftButton" alignment="CENTER">
                      <children>
                         <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
                      </children>
                   </VBox>
-                  <Region prefHeight="42.0" prefWidth="194.0" HBox.hgrow="ALWAYS" />
-                  <HBox onMouseClicked="#populateMonthPicker" prefHeight="42.0" prefWidth="150.0">
+                  <Region prefHeight="42.0" prefWidth="103.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER" prefHeight="42.0" prefWidth="186.0" spacing="15.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label fx:id="monthButton" prefHeight="35.0" prefWidth="143.0" styleClass="combo-box" text="December" />
-                     </children>
-                  </HBox>
-                  <HBox prefHeight="42.0" prefWidth="86.0">
-                     <children>
-                        <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" styleClass="combo-box" text="2025" />
+                        <Label fx:id="monthButton" alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="151.0" styleClass="combo-box" text="MAY" />
+                        <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" prefHeight="35.0" prefWidth="64.0" styleClass="combo-box" text="2025" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <VBox fx:id="rightButton" alignment="CENTER" styleClass="icons-container">
+                  <VBox fx:id="rightButton" alignment="CENTER">
                      <children>
                         <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" styleClass="icons" />
                      </children>
@@ -81,7 +77,7 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
             </HBox>
-            <Region prefHeight="13.0" prefWidth="810.0" />
+            <Region prefHeight="20.0" prefWidth="810.0" />
             <GridPane alignment="CENTER" style="-fx-alignment: center;" styleClass="days-container">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
@@ -108,7 +104,7 @@
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Region layoutX="10.0" layoutY="137.0" prefHeight="13.0" prefWidth="810.0" />
+            <Region layoutX="10.0" layoutY="137.0" prefHeight="20.0" prefWidth="810.0" />
             <GridPane fx:id="calendarGrid" alignment="CENTER" gridLinesVisible="true" hgap="3.0" prefHeight="420.0" prefWidth="810.0" styleClass="calendar" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

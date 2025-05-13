@@ -5,8 +5,7 @@
     -fx-min-weight: 1280;
 }
 
-/* Background video styling */
-.background-video {
+.background {
     -fx-opacity: 0.5;
 }
 
