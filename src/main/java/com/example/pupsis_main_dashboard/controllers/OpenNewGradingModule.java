@@ -6,19 +6,25 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import com.example.pupsis_main_dashboard.utility.Subject;
-import com.example.pupsis_main_dashboard.utility.Student;
+import com.example.pupsis_main_dashboard.FacultyGradingModule;
 import java.io.IOException;
+import java.net.URL;
 
 public class OpenNewGradingModule {
-    private final javafx.scene.control.TableView<Subject> subjectsTable; // Added field for subjectsTable
+    private final javafx.scene.control.TableView<Subject> subjectsTable;
 
-    public OpenNewGradingModule(javafx.scene.control.TableView<Subject> subjectsTable) { // Added constructor
+    public OpenNewGradingModule(javafx.scene.control.TableView<Subject> subjectsTable) {
         this.subjectsTable = subjectsTable;
     }
 
     public void open() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/newEditingGradePage.fxml"));
+            URL fxmlLocation = FacultyGradingModule.class.getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml");
+            if (fxmlLocation == null) {
+                throw new IOException("Cannot find FXML file: /com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
             EditPageController controller = loader.getController();
