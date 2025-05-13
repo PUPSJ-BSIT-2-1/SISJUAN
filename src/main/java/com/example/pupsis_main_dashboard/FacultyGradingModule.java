@@ -4,10 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
-import javafx.stage.StageStyle;
 
 public class FacultyGradingModule extends Application {
     @Override
@@ -16,7 +16,7 @@ public class FacultyGradingModule extends Application {
         if (fxmlLocation == null) {
             throw new IOException("Cannot find FXML file: /fxml/newGradingModule.fxml");
         }
-        
+
         FXMLLoader fxmlLoader = new FXMLLoader(fxmlLocation);
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Faculty Grading Module");
