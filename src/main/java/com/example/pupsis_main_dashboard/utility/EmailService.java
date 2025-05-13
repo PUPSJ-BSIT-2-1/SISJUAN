@@ -55,6 +55,46 @@ public class EmailService {
         }
     }
 
+    public void sendNotificationEmail(String recipient, String subject, String body) throws MessagingException {
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username, "PUPSIS System Notification"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setSubject(subject);
+            message.setHeader("X-Mailer", "JavaMail");
+            message.setHeader("Precedence", "bulk"); // Consider if this is always appropriate
+
+            // For simplicity, sending plain text notifications. Can be enhanced with HTML.
+            MimeMultipart multipart = new MimeMultipart();
+
+            // Text part
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(body);
+
+            // HTML part (optional, but good for richer formatting if desired later)
+            MimeBodyPart htmlPart = new MimeBodyPart();
+            String htmlContent = "<html><body><p>" + body.replace("\n", "<br>") + "</p></body></html>";
+            htmlPart.setContent(htmlContent, "text/html");
+
+            multipart.addBodyPart(textPart);
+            multipart.addBodyPart(htmlPart); // Choose one or both based on needs
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+        } catch (UnsupportedEncodingException e) {
+            throw new MessagingException("Encoding error while sending notification email", e);
+        } catch (MessagingException e) {
+            throw new MessagingException("Error while sending notification email", e);
+        }
+    }
+
     private static MimeMultipart getMimeMultipart(String code) throws MessagingException {
         MimeMultipart multipart = new MimeMultipart();
 

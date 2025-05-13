@@ -342,7 +342,7 @@ public class StudentLoginController {
 
                     if (isAuthenticated) {
                         RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
-                        ControllerUtils.getStudentFullName(identifier, isEmail, null, null, null);
+                        ControllerUtils.getStudentFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
