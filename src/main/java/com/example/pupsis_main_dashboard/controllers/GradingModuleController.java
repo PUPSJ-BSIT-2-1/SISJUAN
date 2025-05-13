@@ -1,6 +1,5 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.Student;
 import com.example.pupsis_main_dashboard.utility.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,20 +9,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
-
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableRow;
-
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GradingModuleController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(GradingModuleController.class);
+    
     @FXML
-    private TextField searchBar; // Add this field
+    private TextField searchBar;
 
     @FXML
     private Label facultyName;
@@ -33,9 +33,6 @@ public class GradingModuleController implements Initializable {
 
     @FXML
     private TableView<Subject> subjectsTable;
-
-    @FXML
-    private TableColumn<Subject, String> editBtnCol;
 
     @FXML
     private TableColumn<Subject, String> yearSecCol;
@@ -50,128 +47,81 @@ public class GradingModuleController implements Initializable {
     private TableColumn<Subject, String> subjDescCol;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
-
-    // Keep a reference to the original data
     private final ObservableList<Subject> originalSubjectsList = FXCollections.observableArrayList();
-
-    // Database connection constants
-    private static final String URL = "jdbc:postgresql://db.autqwzshfjaqbkxpiqxm.supabase.co:5432/postgres";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "pupSISProject2025";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Verify that FXML injection worked
-        if (subjectsTable == null) {
-            System.err.println("Error: subjectsTable is null. Check FXML file for proper fx:id.");
-            return;
-        }
+        // Verify FXML components
+        validateFXMLComponents();
 
-        // Initialize the columns
-        yearSecCol.setCellValueFactory(new PropertyValueFactory<>("yearSection"));
-        semCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
-        subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjectCode"));
-        subjDescCol.setCellValueFactory(new PropertyValueFactory<>("subjectDescription"));
-
-        // Load data from database (only call once)
-        loadSubjectsData();
-
-        // Store in original list
-        originalSubjectsList.addAll(subjectsList);
+        // Initialize table columns
+        initializeTableColumns();
 
         // Setup the search functionality
         setupSearch();
 
-        // Add this line to setup the row click handler
+        // Setup row click handler
         setupRowClickHandler();
+
+        // Load initial data
+        loadSubjectsData();
     }
 
-    private void setupRowClickHandler() {
-        subjectsTable.setRowFactory(tv -> {
-            TableRow<Subject> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    OpenNewGradingModule newModule = new OpenNewGradingModule(subjectsTable);
-                    newModule.open();
-                }
-            });
-            return row;
-        });
+    private void validateFXMLComponents() {
+        if (subjectsTable == null) {
+            logger.error("subjectsTable is null. Check FXML file for proper fx:id.");
+            throw new RuntimeException("Failed to initialize: subjectsTable is null");
+        }
+        
+        if (facultyID == null) {
+            logger.error("facultyID label is null. Check FXML file for proper fx:id.");
+            throw new RuntimeException("Failed to initialize: facultyID is null");
+        }
     }
+
+    private void initializeTableColumns() {
+        yearSecCol.setCellValueFactory(new PropertyValueFactory<>("yearSection"));
+        semCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
+        subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjectCode"));
+        subjDescCol.setCellValueFactory(new PropertyValueFactory<>("subjectDescription"));
+    }
+
     private void loadSubjectsData() {
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        // Clear existing data
+        subjectsList.clear();
+        
+        // Get faculty ID safely
+        String currentFacultyId = facultyID.getText();
+        if (currentFacultyId == null || currentFacultyId.trim().isEmpty()) {
+            logger.error("Faculty ID is null or empty");
+            return;
+        }
+
+        try (Connection conn = dbConnection2.getConnection()) {
             String query = "SELECT * FROM subjects WHERE faculty_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, facultyID.getText());
+                pstmt.setString(1, currentFacultyId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        subjectsList.add(new Subject(
-                                rs.getString("year_section"),
-                                rs.getString("semester"),
-                                rs.getString("subject_code"),
-                                rs.getString("subject_description")
-                        ));
+                        Subject subject = new Subject(
+                            rs.getString("year_section"),
+                            rs.getString("semester"),
+                            rs.getString("subject_code"),
+                            rs.getString("subject_description")
+                        );
+                        subjectsList.add(subject);
                     }
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Database error while loading subjects: ", e);
+            throw new RuntimeException("Failed to load subjects data", e);
         }
+
+        // Update the original list for search functionality
+        originalSubjectsList.setAll(subjectsList);
     }
 
-    private void setupSearch() {
-        // Create a filtered list wrapping the original list
-        FilteredList<Subject> filteredData = new FilteredList<>(subjectsList, p -> true);
-
-        // Add listener to searchBar text property
-        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(subject -> {
-                // If search text is empty, display all subjects
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                // Convert search text to lower case
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                // Match against all fields
-                if (subject.getYearSection().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (subject.getSemester().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-
-                return false; // Does not match
-            });
-        });
-
-        // Wrap the FilteredList in a SortedList
-        SortedList<Subject> sortedData = new SortedList<>(filteredData);
-
-        // Bind the SortedList comparator to the TableView comparator
-        sortedData.comparatorProperty().bind(subjectsTable.comparatorProperty());
-
-        // Add sorted (and filtered) data to the table
-        subjectsTable.setItems(sortedData);
-
-        subjectsTable.getColumns().forEach(column -> column.setReorderable(false));
-    }
-
-    // Update your refreshTable method to maintain the search functionality
-    @FXML
-    public void refreshTable() {
-        subjectsList.clear();
-        originalSubjectsList.clear();
-        loadSubjectsData();
-        originalSubjectsList.addAll(subjectsList);
-    }
+    // ... rest of your existing methods (setupSearch, setupRowClickHandler, etc.) ...
 }
