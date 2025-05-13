@@ -1,5 +1,8 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.utility.Student;
+import com.example.pupsis_main_dashboard.utility.Subject;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
