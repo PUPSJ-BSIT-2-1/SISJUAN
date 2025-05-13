@@ -54,8 +54,55 @@ public class StudentDashboardController {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
         String[] credentials = rememberMeHandler.loadCredentials();
         if (credentials != null && credentials.length == 2) {
-            String studentFullName = ControllerUtils.getStudentFullName(credentials[0], credentials[0].contains("@"));
-            studentNameLabel.setText(studentFullName);
+            // Get student full name from database
+            String identifier = credentials[0];
+            boolean isEmail = identifier.contains("@");
+            
+            // Get the name parts
+            String firstName = null;
+            String middleName = null;
+            String lastName = null;
+            
+            String query = isEmail 
+                ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
+                : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
+                
+            try (Connection connection = DBConnection.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, identifier);
+                ResultSet result = statement.executeQuery();
+                
+                if (result.next()) {
+                    firstName = result.getString("firstName");
+                    middleName = result.getString("middleName");
+                    lastName = result.getString("lastName");
+                    
+                    // Format as "LastName, FirstName MiddleInitial."
+                    StringBuilder formattedName = new StringBuilder();
+                    
+                    // Add last name
+                    if (lastName != null && !lastName.trim().isEmpty()) {
+                        formattedName.append(lastName.trim());
+                        formattedName.append(", ");
+                    }
+                    
+                    // Add first name
+                    if (firstName != null && !firstName.trim().isEmpty()) {
+                        formattedName.append(firstName.trim());
+                        formattedName.append(" ");
+                    }
+                    
+                    // Add middle initial with period
+                    if (middleName != null && !middleName.trim().isEmpty()) {
+                        formattedName.append(middleName.trim().charAt(0));
+                        formattedName.append(".");
+                    }
+                    
+                    studentNameLabel.setText(formattedName.toString().trim());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             
             // Get and display student ID
             String studentId = getStudentId(credentials[0]);
@@ -218,29 +265,56 @@ public class StudentDashboardController {
         if (contentPane != null && contentPane.getScene() != null) {
             Scene scene = contentPane.getScene();
             
-            // Ensure the main CSS file (which includes theme definitions) is loaded
-            String cssPath = "/com/example/pupsis_main_dashboard/css/SettingsContent.css";
+            // Ensure the main CSS file (SettingsContent.css) is loaded
+            String settingsContentCssPath = "/com/example/pupsis_main_dashboard/css/SettingsContent.css";
             try {
-                String cssUrl = Objects.requireNonNull(getClass().getResource(cssPath)).toExternalForm();
-                if (cssUrl != null && !scene.getStylesheets().contains(cssUrl)) {
+                String cssUrl = getClass().getResource(settingsContentCssPath).toExternalForm();
+                if (!scene.getStylesheets().contains(cssUrl)) {
                     scene.getStylesheets().add(cssUrl);
-                } else if (cssUrl == null) {
-                    logger.error("Critical Error: Theme CSS file not found at: {}", cssPath);
-                    // Consider showing a user-facing error here
                 }
-            } catch (Exception e) { // Catch broader exceptions during resource loading
-                logger.error("Error loading global theme CSS from StudentDashboardController: {}", cssPath, e);
+            } catch (Exception e) {
+                logger.error("Error loading SettingsContent.css: " + settingsContentCssPath, e);
+            }
+
+            // Define path for the isolated dark theme CSS
+            String darkThemeIsolatedCss = "/com/example/pupsis_main_dashboard/css/DarkMode.css";
+            String darkThemeIsolatedCssUrl = null;
+            try {
+                darkThemeIsolatedCssUrl = Objects.requireNonNull(getClass().getResource(darkThemeIsolatedCss)).toExternalForm();
+            } catch (NullPointerException e) {
+                logger.error("Critical Error: DarkMode.css not found at: " + darkThemeIsolatedCss, e);
+                // Optionally, inform the user or fallback to a default state
+                return; // Exit if dark theme CSS is crucial and not found
             }
 
             Node sceneRoot = scene.getRoot();
             if (sceneRoot != null) {
-                SettingsController.applyPreferredTheme(isDarkMode, sceneRoot);
+                if (isDarkMode) {
+                    // Add dark theme class and specific dark theme CSS file
+                    if (!sceneRoot.getStyleClass().contains("dark-theme")) {
+                        sceneRoot.getStyleClass().add("dark-theme");
+                    }
+                    sceneRoot.getStyleClass().remove("light-theme");
+                    if (!scene.getStylesheets().contains(darkThemeIsolatedCssUrl)) {
+                        scene.getStylesheets().add(darkThemeIsolatedCssUrl);
+                        logger.info("Dark theme applied via StudentDashboardController.");
+                    }
+                } else {
+                    // Add light theme class and remove specific dark theme CSS file
+                    if (!sceneRoot.getStyleClass().contains("light-theme")) {
+                        sceneRoot.getStyleClass().add("light-theme");
+                    }
+                    sceneRoot.getStyleClass().remove("dark-theme");
+                    if (scene.getStylesheets().contains(darkThemeIsolatedCssUrl)) {
+                        scene.getStylesheets().remove(darkThemeIsolatedCssUrl);
+                        logger.info("Light theme applied via StudentDashboardController.");
+                    }
+                }
             } else {
                 logger.warn("Scene root was null during initial theme application.");
             }
         } else {
             logger.warn("Scene or ContentPane was null during initial theme application. Theme might not apply immediately.");
-            // This might happen if called too early. Platform.runLater in initialize() should help.
         }
     }
 

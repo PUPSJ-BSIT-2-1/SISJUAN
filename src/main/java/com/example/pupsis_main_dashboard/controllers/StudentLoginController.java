@@ -10,9 +10,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -34,6 +34,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -634,13 +635,46 @@ public class StudentLoginController {
     // Applies the theme to the main login pane based on user preferences
     private void proceedWithThemeApplication() {
         Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+        boolean isDarkMode = prefs.getBoolean(SettingsController.THEME_PREF, false); // Use public constant
 
         Scene scene = mainLoginPane.getScene();
-        if (scene != null) {
-            Node sceneRoot = scene.getRoot();
-            if (sceneRoot != null) {
-                SettingsController.applyPreferredTheme(isDarkMode, sceneRoot);
+        if (scene == null) {
+            logger.warn("Scene is null during theme application in StudentLoginController. Theme not applied.");
+            return;
+        }
+
+        Node sceneRoot = scene.getRoot();
+        if (sceneRoot == null) {
+            logger.warn("Scene root is null during theme application in StudentLoginController. Theme not applied.");
+            return;
+        }
+
+        // Define path for the isolated dark theme CSS
+        String darkThemeCssPath = "/com/example/pupsis_main_dashboard/css/DarkMode.css";
+        String darkThemeCssUrl = null;
+        try {
+            darkThemeCssUrl = Objects.requireNonNull(getClass().getResource(darkThemeCssPath)).toExternalForm();
+        } catch (NullPointerException e) {
+            logger.error("CRITICAL: DarkMode.css not found at path: {}. Cannot apply dark theme.", darkThemeCssPath, e);
+            // Optionally fallback or notify user. For now, we prevent adding/removing it.
+        }
+
+        // Remove potentially conflicting theme classes first
+        sceneRoot.getStyleClass().removeIf(styleClass -> styleClass.equals("light-theme") || styleClass.equals("dark-theme"));
+
+        if (isDarkMode) {
+            // Add dark theme class and specific dark theme CSS file
+            sceneRoot.getStyleClass().add("dark-theme");
+            if (darkThemeCssUrl != null && !scene.getStylesheets().contains(darkThemeCssUrl)) {
+                scene.getStylesheets().add(darkThemeCssUrl);
+                logger.info("Dark theme applied via StudentLoginController.");
+            }
+        } else {
+            // Add light theme class and remove specific dark theme CSS file
+            sceneRoot.getStyleClass().add("light-theme");
+            if (darkThemeCssUrl != null && scene.getStylesheets().contains(darkThemeCssUrl)) {
+                scene.getStylesheets().remove(darkThemeCssUrl);
+                logger.info("Light theme applied via StudentLoginController.");
             }
         }
     }
