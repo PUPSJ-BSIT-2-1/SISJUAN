@@ -1,9 +1,15 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.auth.PasswordHandler;
+//import com.example.pupsis_main_dashboard.databaseOperations.PasswordHandler;
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
-import com.example.pupsis_main_dashboard.utility.*;
+import com.example.pupsis_main_dashboard.utility.EmailService;
+import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,11 +20,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -40,11 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate;
-import static com.example.pupsis_main_dashboard.utility.ControllerUtils.animateBlur;
-import static com.example.pupsis_main_dashboard.utility.DateUtils.getDaysInMonth;
-import static com.example.pupsis_main_dashboard.utility.DateUtils.getMonthNumber;
-import static com.example.pupsis_main_dashboard.utility.StageAndSceneUtils.showAlert;
-import static com.example.pupsis_main_dashboard.utility.ValidationUtils.*;
+//import static com.example.pupsis_main_dashboard.utility.AuthenticationService.authenticate;
 
 public class StudentLoginController {
     @FXML private VBox leftSide;
@@ -104,8 +111,8 @@ public class StudentLoginController {
         populateYears();
         
         confirmReg.setOnAction(_ -> handleConfirmRegistration());
-        registerButton.setOnAction(_ -> ControllerUtils.animateVBox(centerVBox, -417));
-        backButton.setOnMouseClicked(_ -> ControllerUtils.animateVBox(centerVBox, 0));
+        registerButton.setOnAction(_ -> animateVBox(centerVBox, -417));
+        backButton.setOnMouseClicked(_ -> animateVBox(centerVBox, 0));
         
         monthComboBox.valueProperty().addListener((_, _, newValue) -> {
             if (newValue != null) {
@@ -318,7 +325,7 @@ public class StudentLoginController {
             return;
         }
         
-        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
+        var loader = createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
         
         if (fromRegistration) {
             rightSide.getChildren().add(loader);
@@ -342,23 +349,22 @@ public class StudentLoginController {
 
                     if (isAuthenticated) {
                         RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
-                        ControllerUtils.getStudentFullName(identifier, isEmail);
+                        getStudentFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                             if (stage.getScene() != null) {
                                 com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
-                                logger.info("Applied global theme to StudentDashboard scene after login.");
-                            } else {
-                                logger.warn("StudentDashboard scene was null after loadStage; theme not applied immediately post-login.");
                             }
                         } catch (IOException e) {
-                            logger.error("Failed to load StudentDashboard.fxml", e);
-                            showAlert("Navigation Error", "Could not load the student dashboard.", Alert.AlertType.ERROR);
+                            showAlert(Alert.AlertType.ERROR,
+                                    "Login Error",
+                                    "Unable to load dashboard",
+                                    "There was an error loading the dashboard. Please try again.");
                         }
                     } else {
-                        showAlert("Login Failed", "Invalid credentials or user not found. Please try again.", Alert.AlertType.ERROR);
+                        errorLabel.setText("Invalid credentials");
                     }
                 });
             } catch (Exception e) {
@@ -369,320 +375,358 @@ public class StudentLoginController {
                         leftSide.getChildren().remove(loader);
                     }
                     animateBlur(mainLoginPane, false);
-                    showAlert("Error", "Login failed: " + e.getMessage(), Alert.AlertType.ERROR);
+                    showAlert(Alert.AlertType.ERROR,
+                            "Login Error",
+                            "Unable to connect to the server",
+                            "Check your internet connection and try again.");
                 });
+                logger.error("Authentication error", e);
             }
         });
     }
 
     // Handles the registration button action to show the registration form
     @FXML private void handleConfirmRegistration() {
-        if (reType == null) {
-            logger.error("reType PasswordField is not initialized - check FXML file");
-            showAlert("System Error", "Registration currently unavailable", Alert.AlertType.ERROR);
-            return;
-        }
-        String passwordInput = this.password.getText().trim();
-        String reTypePassword = this.reType.getText().trim();
-        String firstName = this.firstName.getText().trim();
-        String middleName = this.middleName.getText().trim();
-        String lastName = this.lastName.getText().trim();
-        String email = this.email.getText().trim();
-        String month = this.monthComboBox.getValue();
-        Integer day = this.dayComboBox.getValue();
-        Integer year = this.yearComboBox.getValue();
+        String firstNameInput = firstName.getText().trim();
+        String middleNameInput = middleName.getText().trim();
+        String lastNameInput = lastName.getText().trim();
+        String emailInput = email.getText().trim();
+        String passwordInput = password.getText().trim();
+        String reTypeInput = reType.getText().trim();
 
-        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        this.rightSide.getChildren().add(loader);
-        animateBlur(mainLoginPane, true);
+        // Get the selected month from the combo box
+        String month = monthComboBox.getValue();
+        Integer day = dayComboBox.getValue();
+        Integer year = yearComboBox.getValue();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || passwordInput.isEmpty() || reTypePassword.isEmpty() ||
-                email.isEmpty() || month == null || day == null || year == null) {
-            Platform.runLater(() -> {
-                showAlert("Input Error", "Please fill out all required fields!");
-                this.rightSide.getChildren().remove(loader);
-                animateBlur(mainLoginPane, false);
-            });
+        if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty()
+                || passwordInput.isEmpty() || reTypeInput.isEmpty() || month == null || day == null || year == null) {
+            errorLabel.setText("Please fill in all fields");
             return;
         }
 
-        if (containsNumbers(firstName) || containsNumbers(middleName) || containsNumbers(lastName)) {
-            Platform.runLater(() -> {
-                showAlert("Input Error", "Names must not contain numbers!");
-                this.rightSide.getChildren().remove(loader);
-                animateBlur(mainLoginPane, false);
-            });
+        if (isValidEmail(emailInput)) {
+            errorLabel.setText("Please enter a valid email address");
             return;
         }
 
-        if (isValidEmail(email)) {
-            Platform.runLater(() -> {
-                showAlert("Input Error", "Please enter a valid email address!");
-                this.rightSide.getChildren().remove(loader);
-                animateBlur(mainLoginPane, false);
-            });
+        if (!passwordInput.equals(reTypeInput)) {
+            errorLabel.setText("Passwords do not match");
             return;
         }
 
-        if (!passwordInput.equals(reTypePassword)) {
-            Platform.runLater(() -> {
-                showAlert("Password Error", "Passwords do not match!");
-                this.rightSide.getChildren().remove(loader);
-                animateBlur(mainLoginPane, false);
-            });
+        if (containsNumbers(firstNameInput) || containsNumbers(middleNameInput) || containsNumbers(lastNameInput)) {
+            errorLabel.setText("Names should not contain numbers");
             return;
         }
 
         if (!validatePasswordStrength(passwordInput)) {
-            this.rightSide.getChildren().remove(loader);
-            animateBlur(mainLoginPane, false);
-            return;
-        }
-
-        String checkEmailQuery = "SELECT email FROM students WHERE email = ?";
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(checkEmailQuery)) {
-
-            preparedStatement.setString(1, email);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                Platform.runLater(() -> {
-                    showAlert("Account Exists", "This email is already registered!");
-                    studentIdField.setText(email);
-                    ControllerUtils.animateVBox(centerVBox, 0);
-                    this.rightSide.getChildren().remove(loader);
-                    animateBlur(mainLoginPane, false);
-                });
-                return;
-            }
-        } catch (SQLException e) {
-            Platform.runLater(() -> {
-                showAlert("Database Error", "Failed to check email availability");
-                this.rightSide.getChildren().remove(loader);
-                animateBlur(mainLoginPane, false);
-            });
+            showAlert(Alert.AlertType.WARNING, "Weak Password",
+                    "Your password is not strong enough",
+                    "Passwords must be at least 8 characters long and include both letters and numbers.");
             return;
         }
 
         String verificationCode = generateVerificationCode();
-        
-        new Thread(() -> {
-            sendVerificationEmail(email, verificationCode);
-            
-            Platform.runLater(() -> {
-                this.rightSide.getChildren().remove(loader);
-                animateBlur(mainLoginPane, false);
-                
-                Stage verificationStage = new Stage();
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
-                    Parent root = fxmlLoader.load();
-                    VerificationCodeController controller = fxmlLoader.getController();
-                    controller.initializeVerification(
-                            verificationCode,
-                            email,
-                            verificationStage,
-                            () -> completeRegistration(firstName, middleName, lastName, email, passwordInput, month, day, year)
-                    );
+        try {
+            sendVerificationEmail(emailInput, verificationCode);
 
-                    verificationStage.setScene(new Scene(root));
-                    verificationStage.initModality(Modality.APPLICATION_MODAL);
-                    verificationStage.showAndWait();
-                } catch (IOException e) {
-                    logger.error("Error loading verification window");
-                    showAlert("Error", "Failed to load verification window");
+            // Show verification dialog
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("Verification");
+            dialog.setHeaderText("Please check your email for the verification code.");
+
+            TextField codeField = new TextField();
+            codeField.setPromptText("Enter verification code");
+
+            dialog.getDialogPane().setContent(codeField);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+            dialog.setResultConverter(button -> {
+                if (button == ButtonType.OK) {
+                    return codeField.getText().trim();
+                }
+                return null;
+            });
+
+            dialog.showAndWait().ifPresent(result -> {
+                if (result.equals(verificationCode)) {
+                    completeRegistration(
+                            firstNameInput, middleNameInput, lastNameInput,
+                            emailInput, passwordInput, month, day, year);
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Verification Failed",
+                            "Incorrect verification code",
+                            "The verification code you entered is incorrect. Please try again.");
                 }
             });
-        }).start();
-    }
-    
-    // Sends a verification email to the user
-    private void sendVerificationEmail(String email, String code) {
-        try {
-            emailService.sendVerificationEmail(email, code);
+
         } catch (MessagingException e) {
-            Platform.runLater(() -> showAlert("Email Error", "Failed to send verification email: " + e.getMessage()));
-            logger.error("Error sending verification email");
+            showAlert(Alert.AlertType.ERROR, "Email Error",
+                    "Failed to send verification email",
+                    "Please check your internet connection and try again.");
+            logger.error("Email sending error during registration", e);
         }
+    }
+
+    // Sends a verification email to the user
+    private void sendVerificationEmail(String email, String code) throws MessagingException {
+        emailService.sendVerificationEmail(email, code);
     }
 
     // Completes the registration process by inserting the user data into the database
-    private void completeRegistration(String firstName, String middleName, String lastName, String email, String passwordInput, String month, Integer day, Integer year) {
-        var loader = LoadingAnimation.createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        animateBlur(mainLoginPane, true);
-        this.rightSide.getChildren().add(loader);
-        
-        String formattedStudentId;
-        String getLastIdQuery = "SELECT student_id FROM students ORDER BY student_id DESC LIMIT 1";
-        String currentYear = String.valueOf(Year.now().getValue());
-        
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement idStatement = connection.prepareStatement(getLastIdQuery);
-             ResultSet rs = idStatement.executeQuery()) {
-            
-            long nextId = 1; 
-            if (rs.next()) {
-                String lastId = rs.getString("student_id");
-                String[] parts = lastId.split("-");
-                
-                if (parts.length >= 2) {
-                    String lastYear = parts[0];
-                    if (lastYear.equals(currentYear)) {
-                        nextId = Long.parseLong(parts[1]) + 1;
-                    } 
+    private void completeRegistration(String firstName, String middleName, String lastName, String email,
+                                     String passwordInput, String month, Integer day, Integer year) {
+        try {
+            // Hash the password for secure storage
+//            String hashedPassword = PasswordHandler.hashPassword(passwordInput);
+
+            // Create the birthday string in the format yyyy-MM-dd
+            String birthday = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
+
+            // Generate a random student ID in the format yyyy-nnnnnn-SJ-01
+            // where yyyy is the current year and nnnnnn is a random 6-digit number
+            Random random = new Random();
+            int randomNum = 100000 + random.nextInt(900000); // 6-digit number
+            int currentYear = Year.now().getValue();
+            String studentId = String.format("%04d-%06d-SJ-01", currentYear, randomNum);
+
+            // Insert the student data into the database
+            String query = "INSERT INTO students (student_id, firstName, middleName, lastName, email, password, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            try (Connection connection = DBConnection.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, studentId);
+                statement.setString(2, firstName);
+                statement.setString(3, middleName.isEmpty() ? null : middleName);
+                statement.setString(4, lastName);
+                statement.setString(5, email);
+//                statement.setString(6, hashedPassword);
+                statement.setString(7, birthday);
+
+                int rowsAffected = statement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    showAlert(Alert.AlertType.INFORMATION, "Registration Successful",
+                            "Your account has been created",
+                            "Your student ID is: " + studentId + "\nPlease use this ID or your email to log in.");
+
+                    // Clear the registration form and go back to login
+                    this.firstName.clear();
+                    this.middleName.clear();
+                    this.lastName.clear();
+                    this.email.clear();
+                    this.password.clear();
+                    this.reType.clear();
+                    monthComboBox.getSelectionModel().clearSelection();
+                    dayComboBox.getSelectionModel().clearSelection();
+                    yearComboBox.getSelectionModel().clearSelection();
+
+                    // Navigate back to login page
+                    animateVBox(centerVBox, 0);
+
+                    // Pre-fill login fields with the new email
+                    studentIdField.setText(email);
+                    passwordField.clear();
+                    passwordField.requestFocus();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Registration Failed",
+                            "Failed to create your account",
+                            "Please try again later or contact support.");
                 }
             }
-            
-            String studentIdNumber = String.format("%06d", nextId); 
-            formattedStudentId = currentYear + "-" + studentIdNumber + "-SJ-01";
-            
         } catch (SQLException e) {
-            Platform.runLater(() -> {
-                showAlert("Database Error", "Failed to generate student ID: " + e.getMessage());
-                animateBlur(mainLoginPane, false);
-                this.rightSide.getChildren().remove(loader);
-            });
-            return;
-        } catch (NumberFormatException e) {
-            Platform.runLater(() -> {
-                showAlert("ID Error", "Invalid student ID format in database");
-                animateBlur(mainLoginPane, false);
-                this.rightSide.getChildren().remove(loader);
-            });
-            return;
-        }
-        
-        String hashedPassword = PasswordHandler.hashPassword(passwordInput);
-        java.sql.Date dateOfBirth;
-        try {
-            String formattedDate = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
-            dateOfBirth = java.sql.Date.valueOf(formattedDate);
-        } catch (IllegalArgumentException e) {
-            Platform.runLater(() -> {
-                showAlert("Input Error", "Invalid date of birth provided!");
-                animateBlur(mainLoginPane, false);
-                this.rightSide.getChildren().remove(loader);
-            });
-            return;
-        }
-
-        String query = "INSERT INTO students(student_id, password, firstName, middleName, lastName, email, birthday) VALUES(?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setString(1, formattedStudentId);
-            preparedStatement.setString(2, hashedPassword);
-            preparedStatement.setString(3, firstName);
-            preparedStatement.setString(4, middleName);
-            preparedStatement.setString(5, lastName);
-            preparedStatement.setString(6, email);
-            preparedStatement.setDate(7, dateOfBirth);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                Platform.runLater(() -> {
-                    animateBlur(mainLoginPane, false);
-                    this.rightSide.getChildren().remove(loader);
-                    showAlert("Registration Successful", "Your account has been created! Student ID: " + formattedStudentId);
-                    studentIdField.setText(email);
-                    passwordField.setText(passwordInput);
-                    handleLogin(leftSide, true);
-                });
+            String errorMessage = e.getMessage().toLowerCase();
+            if (errorMessage.contains("duplicate") || errorMessage.contains("unique constraint")) {
+                showAlert(Alert.AlertType.ERROR, "Registration Failed",
+                        "Email already in use",
+                        "This email address is already registered. Please use a different email or try to log in.");
             } else {
-                Platform.runLater(() -> {
-                    animateBlur(mainLoginPane, false);
-                    this.rightSide.getChildren().remove(loader);
-                    showAlert("Registration Failed", "An error occurred during registration.");
-                });
+                showAlert(Alert.AlertType.ERROR, "Registration Failed",
+                        "Database error",
+                        "There was an error creating your account. Please try again later.");
             }
-        } catch (SQLException e) {
-            Platform.runLater(() -> showAlert("Database Error", e.getMessage()));
-            logger.error("Error during registration");
-        } finally {
-            Platform.runLater(() -> {
-                animateBlur(mainLoginPane, false);
-                this.rightSide.getChildren().remove(loader);
-            });
+            logger.error("Database error during registration", e);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Registration Failed",
+                    "Unexpected error",
+                    "There was an unexpected error creating your account. Please try again later.");
+            logger.error("Unexpected error during registration", e);
         }
     }
 
     // Generates a random 6-digit verification code
     private String generateVerificationCode() {
-        return String.format("%06d", new Random().nextInt(999999));
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000); // 6-digit number
+        return String.valueOf(code);
     }
 
     // Validates the password strength
     private boolean validatePasswordStrength(String password) {
-        if (!isStrongPassword(password)) {
-            showAlert("Invalid Password", "Password must be at least 8 characters long and contain both letters and numbers", Alert.AlertType.WARNING);
-            return false;
-        }
-        return true;
+        return isStrongPassword(password);
     }
 
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        if (mainLoginPane == null) {
-            PauseTransition delay = new PauseTransition(Duration.millis(100));
-            delay.setOnFinished(_ -> {
-                if (mainLoginPane == null) {
-                    return;
-                }
-                proceedWithThemeApplication();
-            });
-            delay.play();
-            return;
+        Preferences prefs = Preferences.userNodeForPackage(getClass());
+        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+
+        if (isDarkMode) {
+            proceedWithThemeApplication();
         }
-        proceedWithThemeApplication();
     }
 
     // Applies the theme to the main login pane based on user preferences
     private void proceedWithThemeApplication() {
-        Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean isDarkMode = prefs.getBoolean(SettingsController.THEME_PREF, false); // Use public constant
-
         Scene scene = mainLoginPane.getScene();
-        if (scene == null) {
-            logger.warn("Scene is null during theme application in StudentLoginController. Theme not applied.");
-            return;
+        if (scene != null) {
+            scene.getRoot().getStyleClass().add("dark-theme");
+        }
+    }
+
+    // Integrated utility methods from other classes
+
+    // From LoadingAnimation
+    public Node createPulsingDotsLoader(int dotCount, double dotRadius, Color color, double spacing, double animationDurationSeconds) {
+        HBox container = new HBox(spacing);
+        container.setAlignment(Pos.CENTER);
+
+        for (int i = 0; i < dotCount; i++) {
+            Circle dot = new Circle(dotRadius, color);
+
+            // Animation for each dot (pulsing effect)
+            ScaleTransition scale = new ScaleTransition(Duration.seconds(animationDurationSeconds), dot);
+            scale.setFromX(1);
+            scale.setFromY(1);
+            scale.setToX(1.5);
+            scale.setToY(1.5);
+            scale.setAutoReverse(true);
+            scale.setCycleCount(Timeline.INDEFINITE);
+            scale.setDelay(Duration.seconds(i * animationDurationSeconds / dotCount)); // Stagger the animations
+            scale.play();
+
+            container.getChildren().add(dot); // Add each dot to the HBox
         }
 
-        Node sceneRoot = scene.getRoot();
-        if (sceneRoot == null) {
-            logger.warn("Scene root is null during theme application in StudentLoginController. Theme not applied.");
-            return;
-        }
+        StackPane wrapper = new StackPane(container);
+        StackPane.setAlignment(container, Pos.CENTER);
 
-        // Define path for the isolated dark theme CSS
-        String darkThemeCssPath = "/com/example/pupsis_main_dashboard/css/DarkMode.css";
-        String darkThemeCssUrl = null;
-        try {
-            darkThemeCssUrl = Objects.requireNonNull(getClass().getResource(darkThemeCssPath)).toExternalForm();
-        } catch (NullPointerException e) {
-            logger.error("CRITICAL: DarkMode.css not found at path: {}. Cannot apply dark theme.", darkThemeCssPath, e);
-            // Optionally fallback or notify user. For now, we prevent adding/removing it.
-        }
+        wrapper.setOpacity(0);
+        // Create a fade-in effect
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), wrapper);
+        fadeIn.setFromValue(0); // Start completely invisible
+        fadeIn.setToValue(1);   // End fully visible
+        fadeIn.play();          // Play the fade-in animation
 
-        // Remove potentially conflicting theme classes first
-        sceneRoot.getStyleClass().removeIf(styleClass -> styleClass.equals("light-theme") || styleClass.equals("dark-theme"));
+        return wrapper; // Return the StackPane as the loader
+    }
 
-        if (isDarkMode) {
-            // Add dark theme class and specific dark theme CSS file
-            sceneRoot.getStyleClass().add("dark-theme");
-            if (darkThemeCssUrl != null && !scene.getStylesheets().contains(darkThemeCssUrl)) {
-                scene.getStylesheets().add(darkThemeCssUrl);
-                logger.info("Dark theme applied via StudentLoginController.");
-            }
+    // From DateUtils
+    public static int getDaysInMonth(String month, int year) {
+        int monthNumber = getMonthNumber(month);
+        return switch (monthNumber) {
+            case 1, 3, 5, 7, 8, 10, 12 -> 31; // Months with 31 days
+            case 4, 6, 9, 11 -> 30; // Months with 30 days
+            case 2 -> // Handle February
+                    (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
+            default -> throw new IllegalArgumentException("Invalid month: " + month);
+        };
+    }
+
+    public static int getMonthNumber(String month) {
+        return switch (month) {
+            case "January" -> 1;
+            case "February" -> 2;
+            case "March" -> 3;
+            case "April" -> 4;
+            case "May" -> 5;
+            case "June" -> 6;
+            case "July" -> 7;
+            case "August" -> 8;
+            case "September" -> 9;
+            case "October" -> 10;
+            case "November" -> 11;
+            case "December" -> 12;
+            default -> 0;
+        };
+    }
+
+    // From ValidationUtils
+    public static boolean containsNumbers(String input) {
+        return input != null && input.matches(".*\\d.*");
+    }
+
+    public static boolean isValidEmail(String email) {
+        return email == null || !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+    }
+
+    public static boolean isStrongPassword(String password) {
+        return password != null &&
+               password.length() >= 8 &&
+               password.matches(".*[a-zA-Z].*") &&
+               password.matches(".*\\d.*");
+    }
+
+    // From ControllerUtils
+    public static void animateVBox(VBox vbox, double translationX) {
+        TranslateTransition animation = new TranslateTransition(Duration.millis(300), vbox);
+        animation.setToX(translationX);
+        animation.play();
+    }
+
+    public static void animateBlur(Pane pane, boolean enableBlur) {
+        if (enableBlur) {
+            GaussianBlur blur = new GaussianBlur(10);
+            pane.setEffect(blur);
         } else {
-            // Add light theme class and remove specific dark theme CSS file
-            sceneRoot.getStyleClass().add("light-theme");
-            if (darkThemeCssUrl != null && scene.getStylesheets().contains(darkThemeCssUrl)) {
-                scene.getStylesheets().remove(darkThemeCssUrl);
-                logger.info("Light theme applied via StudentLoginController.");
-            }
+            pane.setEffect(null);
         }
+    }
+
+    public static String getStudentFullName(String identifier, boolean isEmail) {
+        if (identifier == null || identifier.isEmpty()) return "";
+
+        String query = isEmail
+            ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
+            : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, identifier);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                String firstName = result.getString("firstName");
+                String middleName = result.getString("middleName");
+                String lastName = result.getString("lastName");
+                String middleInitial = middleName != null && !middleName.isEmpty()
+                    ? middleName.charAt(0) + "."
+                    : "";
+                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim();
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting student full name", e);
+        }
+        return "";
+    }
+
+    // From StageAndSceneUtils (integrated version for alerts only)
+    public static void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        // Check if the scene has dark theme applied and style the alert accordingly
+        Scene currentScene = new Scene(new VBox()); // Creating a temporary scene to get access to stylesheets
+        // Get the active scene
+        if (currentScene != null && currentScene.getRoot().getStyleClass().contains("dark-theme")) {
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStyleClass().add("dark-theme");
+            // Add any additional dark theme styling if needed
+        }
+
+        alert.showAndWait();
     }
 }
