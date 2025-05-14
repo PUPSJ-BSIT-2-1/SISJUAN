@@ -100,81 +100,27 @@ public class EditPageController implements Initializable {
         loadStudentData();
     }
 
-private boolean isValidGrade(String grade) {
-    try {
-        float gradeValue = Float.parseFloat(grade);
-        // Check if grade is within valid range (1.0 to 5.0)
-        if (gradeValue >= 1.0 && gradeValue <= 5.0) {
-            // Check if grade has correct decimal places (e.g., 1.00, 1.25, 1.50, 1.75)
-            String[] parts = grade.split("\\.");
-            if (parts.length == 2) {
-                int decimalPart = Integer.parseInt(parts[1]);
-                return decimalPart == 0 || decimalPart == 25 || decimalPart == 50 || decimalPart == 75;
-            }
+    private boolean isValidGrade(String grade) {
+        try {
+            float gradeValue = Float.parseFloat(grade);
+            return gradeValue >= 1.0 && gradeValue <= 5.0; // Adjust range as needed
+        } catch (NumberFormatException e) {
             return false;
         }
-        return false;
-    } catch (NumberFormatException e) {
-        return false;
     }
-}
 
-private void updateGradeInDatabase(Student student) {
-    try (Connection conn = DriverManager.getConnection(url, user, password)) {
-        // SQL query to update the final grade
-        String query = "UPDATE students_subj SET \"finalGrade\" = ?, \"gradeStat\" = ? " +
-                      "WHERE \"student_ID\" = ? AND \"subj_Code\" = ?";
-        
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+    private void updateGradeInDatabase(Student student) {
+        // Implement your database update logic here
+        // You can use your existing dbInput class methods
+        try {
             float finalGrade = Float.parseFloat(student.getFinalGrade());
-            
-            // Set the parameters
-            pstmt.setString(1, student.getFinalGrade());
-            // Calculate grade status based on final grade
-            String gradeStatus = calculateGradeStatus(finalGrade);
-            pstmt.setString(2, gradeStatus);
-            pstmt.setString(3, student.getStudentId());
-            pstmt.setString(4, student.getSubjCode());
-            
-            // Execute the update
-            int rowsAffected = pstmt.executeUpdate();
-            
-            if (rowsAffected > 0) {
-                // Update was successful
-                student.setGradeStatus(gradeStatus); // Update the UI
-                studentsTable.refresh(); // Refresh the table view
-                showSuccess("Grade Updated", "The grade has been successfully updated.");
-            } else {
-                showError("Update Failed", "No records were updated in the database.");
-            }
+            // Call your database update method here
+            // Example:
+            // dbInput.updateGrade(student.getStudentId(), student.getSubjectCode(), finalGrade);
+        } catch (Exception e) {
+            System.err.println("Error updating grade: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("Error updating grade: " + e.getMessage());
-        showError("Database Error", "Failed to update grade: " + e.getMessage());
-    } catch (NumberFormatException e) {
-        showError("Invalid Input", "Please enter a valid numeric grade.");
     }
-}
-
-// Helper method to calculate grade status
-private String calculateGradeStatus(float grade) {
-    if (grade >= 1.0 && grade <= 3.0) {
-        return "PASSED";
-    } else if (grade > 3.0 && grade <= 5.0) {
-        return "FAILED";
-    } else {
-        return "INVALID";
-    }
-}
-
-// Method to show success message
-private void showSuccess(String title, String content) {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(content);
-    alert.showAndWait();
-}
     private void loadStudentData() {
         if (studentsTable == null) {
             System.err.println("Error: studentsTable is null. Check FXML file for proper fx:id.");
