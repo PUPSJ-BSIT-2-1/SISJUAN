@@ -20,6 +20,12 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableRow;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
+import java.io.IOException;
+import java.util.Objects;
+
 
 public class GradingModuleController implements Initializable {
     @FXML
@@ -91,8 +97,20 @@ public class GradingModuleController implements Initializable {
             TableRow<Subject> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
-                    OpenNewGradingModule newModule = new OpenNewGradingModule(subjectsTable);
-                    newModule.open();
+                    try {
+                        // Get the parent ScrollPane (contentPane)
+                        ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
+                    
+                        if (contentPane != null) {
+                            // Load the editing grade page
+                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
+                                getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
+                            ));
+                            contentPane.setContent(newContent);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             return row;

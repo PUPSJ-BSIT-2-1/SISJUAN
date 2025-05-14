@@ -88,8 +88,6 @@
                                         </ImageView>
                                         <MenuButton fx:id="yrSecCombBox" layoutX="225.0" layoutY="9.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Year &amp; Section">
                                             <items>
-                                                <MenuItem mnemonicParsing="false" text="Action 1" />
-                                                <MenuItem mnemonicParsing="false" text="Action 2" />
                                             </items>
                                  <effect>
                                     <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
