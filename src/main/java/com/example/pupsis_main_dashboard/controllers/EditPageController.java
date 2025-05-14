@@ -164,43 +164,17 @@ public class EditPageController implements Initializable {
 
     private boolean isValidGrade(String grade) {
         try {
-            // Check if the grade follows the format X.XX
-            if (!grade.matches("^[1-5]\\.[0-9]{2}$")) {
-                return false;
-            }
-
             float gradeValue = Float.parseFloat(grade);
-            
-            // Check if grade is within valid range (1.00 to 5.00)
-            if (gradeValue < 1.00 || gradeValue > 5.00) {
-                return false;
-            }
-
-            // Check if the decimal part is valid (00, 25, 50, or 75)
-            String[] parts = grade.split("\\.");
-            int decimalPart = Integer.parseInt(parts[1]);
-            return decimalPart == 0 || decimalPart == 25 || decimalPart == 50 || decimalPart == 75;
-            
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            return gradeValue >= 1.0 && gradeValue <= 5.0; // Adjust range as needed
+        } catch (NumberFormatException e) {
+            showError("Invalid Grade",
+            "Please enter a valid grade:\n" +
+            "• Must be between 1.00 and 5.00\n" +
+            "• Must end with .00, .25, .50, or .75\n" +
+            "• Example: 1.25, 2.50, 3.00"
+        );
             return false;
         }
-    }
-
-    private void handleGradeInput(TextField textField) {
-        String input = textField.getText();
-        
-        if (!isValidGrade(input)) {
-            cancelEdit();
-            showError("Invalid Grade", 
-                "Please enter a valid grade:\n" +
-                "• Must be between 1.00 and 5.00\n" +
-                "• Must end with .00, .25, .50, or .75\n" +
-                "• Example: 1.25, 2.50, 3.00"
-            );
-            return;
-        }
-        
-        commitEdit(input);
     }
     
     private void setupRowClickHandler() {
