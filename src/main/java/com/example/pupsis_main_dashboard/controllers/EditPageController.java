@@ -3,14 +3,18 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utility.Student;
 import com.example.pupsis_main_dashboard.utility.Subject;
 import javafx.application.Application;
+
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.converter.DefaultStringConverter;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
 import javafx.collections.FXCollections;
@@ -18,14 +22,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuButton;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
+import javafx.scene.input.KeyCode;
 
 public class EditPageController implements Initializable {
     @FXML
@@ -62,34 +65,93 @@ public class EditPageController implements Initializable {
     String user = dbConn.USER;
     String password = dbConn.PASSWORD;
 
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Make table editable
         studentsTable.setEditable(true);
 
-        // Set up the final grade column to be editable
+        // Set up the columns
+        noStudCol.setCellValueFactory(new PropertyValueFactory<>("studentNo"));
+        studIDCol.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        studNameCol.setCellValueFactory(new PropertyValueFactory<>("studentName"));
+        subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjCode"));
         finGradeCol.setCellValueFactory(new PropertyValueFactory<>("finalGrade"));
-        finGradeCol.setCellFactory(TextFieldTableCell.forTableColumn(new DefaultStringConverter()));
-        finGradeCol.setOnEditCommit(event -> {
-            try {
-                Student student = event.getRowValue();
-                String newValue = event.getNewValue();
+        gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
+
+        // Make final grade column editable with custom cell factory
+        finGradeCol.setCellFactory(tc -> new TableCell<Student, String>() {
+            private TextField textField;
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
                 
-                // Add validation for grade input
-                if (isValidGrade(newValue)) {
-                    student.setFinalGrade(newValue);
-                    // Add your database update logic here
-                    updateGradeInDatabase(student);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
                 } else {
-                    // If invalid, refresh the table to show original value
-                    studentsTable.refresh();
+                    setText(item);
+                    setGraphic(null);
                 }
-            } catch (Exception e) {
-                // Handle any errors
-                studentsTable.refresh();
+            }
+
+            @Override
+            public void startEdit() {
+                super.startEdit();
+                
+                if (textField == null) {
+                    createTextField();
+                }
+                setText(null);
+                setGraphic(textField);
+                textField.requestFocus();
+            }
+
+            @Override
+            public void cancelEdit() {
+                super.cancelEdit();
+                setText(getItem());
+                setGraphic(null);
+            }
+
+            private void createTextField() {
+                textField = new TextField(getItem());
+                textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
+                
+                textField.setOnKeyPressed(e -> {
+                    if (e.getCode() == KeyCode.ENTER) {
+                        if (isValidGrade(textField.getText())) {
+                            commitEdit(textField.getText());
+                        } else {
+                            cancelEdit();
+                            showError("Invalid Grade", "Please enter a valid grade between 1.0 and 5.0");
+                        }
+                    } else if (e.getCode() == KeyCode.ESCAPE) {
+                        cancelEdit();
+                    }
+                });
+
+                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused) {
+                        if (isValidGrade(textField.getText())) {
+                            commitEdit(textField.getText());
+                        } else {
+                            cancelEdit();
+                            showError("Invalid Grade", "Please enter a valid grade between 1.0 and 5.0");
+                        }
+                    }
+                });
             }
         });
 
-        // Make sure other columns remain non-editable
+        // Handle the commit of edits
+        finGradeCol.setOnEditCommit(event -> {
+            Student student = event.getRowValue();
+            student.setFinalGrade(event.getNewValue());
+            updateGradeInDatabase(student);
+        });
+
+        // Make other columns non-editable
         noStudCol.setEditable(false);
         studIDCol.setEditable(false);
         studNameCol.setEditable(false);
@@ -107,6 +169,31 @@ public class EditPageController implements Initializable {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+    
+    private void setupRowClickHandler() {
+        studentsTable.setRowFactory(tv -> {
+            TableRow<Student> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 2) {
+                    try {
+                        // Get the parent ScrollPane (contentPane)
+                        ScrollPane contentPane = (ScrollPane) studentsTable.getScene().lookup("#contentPane");
+                    
+                        if (contentPane != null) {
+                            // Load the editing grade page
+                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
+                                getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
+                            ));
+                            contentPane.setContent(newContent);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return row;
+        });
     }
 
     private void updateGradeInDatabase(Student student) {
