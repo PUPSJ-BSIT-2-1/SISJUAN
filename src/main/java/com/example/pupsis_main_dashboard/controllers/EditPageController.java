@@ -213,11 +213,11 @@ private void updateGradeInDatabase(Student student) {
             // Calculate grade status
             String gradeStatus;
             if (gradeValue >= 1.00 && gradeValue <= 3.00) {
-                gradeStatus = "PASSED";
+                gradeStatus = "P";
             } else if (gradeValue > 3.00 && gradeValue <= 5.00) {
-                gradeStatus = "FAILED";
+                gradeStatus = "F";
             } else {
-                gradeStatus = "INVALID";
+                gradeStatus = "INC";
             }
             
             // Set parameters for update - note the use of setFloat for finalGrade
