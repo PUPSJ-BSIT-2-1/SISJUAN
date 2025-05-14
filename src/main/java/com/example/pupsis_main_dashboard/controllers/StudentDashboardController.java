@@ -9,22 +9,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,14 +52,14 @@ public class StudentDashboardController {
         RememberMeHandler rememberMeHandler = new RememberMeHandler();
         String[] credentials = rememberMeHandler.loadCredentials();
         if (credentials != null && credentials.length == 2) {
-            // Get student full name from database
+            // Get a student's full name from a database
             String identifier = credentials[0];
             boolean isEmail = identifier.contains("@");
             
             // Get the name parts
-            String firstName = null;
-            String middleName = null;
-            String lastName = null;
+            String firstName;
+            String middleName;
+            String lastName;
             
             String query = isEmail 
                 ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
@@ -81,26 +76,8 @@ public class StudentDashboardController {
                     lastName = result.getString("lastName");
                     
                     // Format as "LastName, FirstName MiddleInitial."
-                    StringBuilder formattedName = new StringBuilder();
-                    
-                    // Add last name
-                    if (lastName != null && !lastName.trim().isEmpty()) {
-                        formattedName.append(lastName.trim());
-                        formattedName.append(", ");
-                    }
-                    
-                    // Add first name
-                    if (firstName != null && !firstName.trim().isEmpty()) {
-                        formattedName.append(firstName.trim());
-                        formattedName.append(" ");
-                    }
-                    
-                    // Add middle initial with period
-                    if (middleName != null && !middleName.trim().isEmpty()) {
-                        formattedName.append(middleName.trim().charAt(0));
-                        formattedName.append(".");
-                    }
-                    
+                    StringBuilder formattedName = getStringBuilder(lastName, firstName, middleName);
+
                     studentNameLabel.setText(formattedName.toString().trim());
                 }
             } catch (SQLException e) {
@@ -131,6 +108,29 @@ public class StudentDashboardController {
                 fade2.setOpacity(vvalue > 0.05 ? 1 : 0); // Visible if scrolled down, but not at the bottom
             }
         });
+    }
+
+    private StringBuilder getStringBuilder(String lastName, String firstName, String middleName) {
+        StringBuilder formattedName = new StringBuilder();
+
+        // Add last name
+        if (lastName != null && !lastName.trim().isEmpty()) {
+            formattedName.append(lastName.trim());
+            formattedName.append(", ");
+        }
+
+        // Add first name
+        if (firstName != null && !firstName.trim().isEmpty()) {
+            formattedName.append(firstName.trim());
+            formattedName.append(" ");
+        }
+
+        // Add the middle initial with a period
+        if (middleName != null && !middleName.trim().isEmpty()) {
+            formattedName.append(middleName.trim().charAt(0));
+            formattedName.append(".");
+        }
+        return formattedName;
     }
 
     // Get the student ID from the database based on the provided identifier (email or student ID)
@@ -194,7 +194,7 @@ public class StudentDashboardController {
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml")));
                         break;
                     case "aboutHBox":
-                        // Add schedule content loading here
+                        content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml")));
                         break;
                     default:
                         content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml")));

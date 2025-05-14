@@ -46,12 +46,12 @@
 
 /* Icons in the header (arrows etc) */
 .icons {
-    -fx-text-fill: white;
+    -fx-fill: #2b2b2b;
 }
 
 /* Navigation button hover effects */
 .icons:hover {
-    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
     -fx-cursor: hand;
 }
 
@@ -245,12 +245,14 @@
 
 /* Dark theme icons in the header (arrows etc) */
 .dark-theme .icons {
-    -fx-text-fill: #2b2b2b;
+    -fx-fill: white;
 }
 
 /* Dark theme button hover effects */
 .dark-theme .icons:hover {
-    -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+
 }
 
 /* Dark theme combo box */

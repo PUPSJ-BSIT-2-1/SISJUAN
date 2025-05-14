@@ -1,0 +1,277 @@
+.root {
+    -fx-background-color: transparent;
+}
+
+.title {
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 28px;
+    -fx-text-fill: #343a40;
+    -fx-padding: 0 0 20 0;
+}
+
+.about-containers {
+    -fx-background-color: #f8fcfc;
+    -fx-padding: 20;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.about-headers { /* Matches .section-header from HomeContent.css */
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 18px;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 15 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #ccc;
+}
+
+.description {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+    -fx-wrap-text: true;
+    -fx-text-alignment: justify;
+    -fx-padding: 10, 0, 0, 0;
+    -fx-font-weight: 600;
+}
+
+.modules {
+    -fx-background-color: #800000;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.modules:hover {
+    -fx-cursor: hand;
+}
+
+.modules .arrow {
+    -fx-background-color: #f8fcfc;
+}
+
+.modules .list-view {
+    -fx-background-color: #800000;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.modules .list-cell {
+    -fx-background-color: #800000;
+    -fx-text-fill: #f8fcfc;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.modules .list-cell:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
+
+.buttons {
+    -fx-shape: "M0 0 L4 4 L0 8 Z";
+    -fx-padding: 8;
+    -fx-background-radius: 50%;
+}
+
+.buttons:hover {
+    -fx-shape: "M0 0 L4 4 L0 8 Z";
+    -fx-padding: 8;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.dev-containers {
+    -fx-background-color: #f8fcfc;
+    -fx-padding: 20;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 16;
+    -fx-background-color: rgba(255, 255, 255, 0.75);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 12, 0.5, 0, 2);
+}
+
+.image {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.dev-name { /* Matches .section-header from HomeContent.css */
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d32f2f;
+    -fx-padding: 0 0 15 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e3e5e6;
+}
+
+.dev-role {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+    -fx-padding: 0 0 15 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e3e5e6;
+}
+
+.dev-description {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+    -fx-wrap-text: true;
+    -fx-text-alignment: justify;
+    -fx-padding: 10, 0, 0, 0;
+    -fx-font-weight: 600;
+}
+
+/* DARK_THEME for About Content */
+
+.dark-theme .title {
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 28px;
+    -fx-text-fill: #f1f1f1;
+    -fx-padding: 0 0 20 0;
+}
+
+.dark-theme .about-containers {
+    -fx-background-color: #2a2a2a;
+    -fx-padding: 20;
+    -fx-border-color: #444;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.dark-theme .about-headers {
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 18px;
+    -fx-text-fill: #f1f1f1;
+    -fx-padding: 0 0 15 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #444;
+}
+
+.dark-theme .description {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #bbbbbb;
+    -fx-wrap-text: true;
+    -fx-text-alignment: justify;
+    -fx-padding: 10, 0, 0, 0;
+    -fx-font-weight: 600;
+}
+
+.dark-theme .modules {
+    -fx-background-color: #b22222;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #ffffff;
+}
+
+.dark-theme .modules:hover {
+    -fx-cursor: hand;
+}
+
+/* Dropdown arrow button */
+.dark-theme .modules .arrow-button {
+    -fx-background-color: #b22222;
+    -fx-background-radius: 0 8 8 0;
+}
+
+/* Arrow icon inside the button */
+.dark-theme .modules .arrow {
+    -fx-background-color: #f8fcfc;
+}
+
+/* List view background (dropdown) */
+.dark-theme .modules .list-view {
+    -fx-background-color: #b22222;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Individual list cells */
+.dark-theme .modules .list-cell {
+    -fx-background-color: #b22222;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Hovered list cell */
+.dark-theme .modules .list-cell:hover {
+    -fx-background-color: #e57373;
+    -fx-cursor: hand;
+}
+
+.dark-buttons {
+    -fx-shape: "M0 0 L4 4 L0 8 Z";
+    -fx-padding: 8;
+    -fx-background-radius: 50%;
+}
+
+.dark-buttons:hover {
+    -fx-shape: "M0 0 L4 4 L0 8 Z";
+    -fx-padding: 8;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 5, 0, 0, 4);
+}
+
+.dark-theme .dev-containers {
+    -fx-background-color: #2b2b2b;
+    -fx-padding: 20;
+    -fx-border-color: #444;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 16;
+    -fx-background-color: rgba(40, 40, 40, 0.75);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 12, 0.5, 0, 2);
+}
+
+.dark-theme .image {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 2);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .dev-name {
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f44336;
+    -fx-padding: 0 0 15 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #444;
+}
+
+.dark-theme .dev-role {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #cccccc;
+    -fx-padding: 0 0 15 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #444;
+}
+
+.dark-theme .dev-description {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #bbbbbb;
+    -fx-wrap-text: true;
+    -fx-text-alignment: justify;
+    -fx-padding: 10, 0, 0, 0;
+    -fx-font-weight: 600;
+}
+

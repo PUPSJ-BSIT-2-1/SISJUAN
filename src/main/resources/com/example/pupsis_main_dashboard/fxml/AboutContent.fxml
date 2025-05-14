@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1500.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AboutContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AboutContentController">
+   <children>
+      <Label prefWidth="77.0" styleClass="title" text="About" />
+      <Region layoutX="10.0" layoutY="236.0" prefHeight="20.0" prefWidth="810.0" />
+      <VBox prefHeight="166.0" prefWidth="810.0" spacing="10.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="About the System" />
+            <Label prefHeight="82.0" prefWidth="755.0" styleClass="description" text="This Student Information System (SIS) is a modular project developed by BSIT students of PUP. It is designed to assist students, faculty, and administrators in managing academic processes and records.&quot;" />
+         </children>
+      </VBox>
+      <Region prefHeight="20.0" prefWidth="810.0" />
+      <VBox prefHeight="234.0" prefWidth="810.0" spacing="1.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="System Overview" />
+            <Label prefHeight="173.0" prefWidth="755.0" styleClass="description" text="The PUPSJ Student Portal is a desktop-based academic management system developed for the Polytechnic University of the Philippines – San Juan Campus. Designed using JavaFX and powered by PostgreSQL via Supabase, the system streamlines essential academic operations for students, faculty, and administrative staff.The portal provides centralized access to enrollment processes, class schedules, grades, payments, and faculty assignments. Each user role—Student, Faculty, and Admin—is given a tailored interface to ensure efficient and secure interaction with the system." textAlignment="CENTER" />
+         </children>
+      </VBox>
+      <Region layoutX="10.0" layoutY="256.0" prefHeight="20.0" prefWidth="810.0" />
+      <VBox prefHeight="460.0" prefWidth="810.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="Developers Credits" />
+            <HBox prefHeight="34.0" prefWidth="766.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+               <children>
+                  <ComboBox fx:id="modulePicker" prefHeight="38.0" prefWidth="160.0" promptText="Modules" styleClass="modules" />
+                  <Region prefHeight="9.0" prefWidth="519.0" />
+                  <ImageView fx:id="previous" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" styleClass="buttons" />
+                  <Region prefHeight="33.0" prefWidth="14.0" />
+                  <ImageView fx:id="next" fitHeight="36.0" fitWidth="35.0" layoutX="692.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" styleClass="buttons" />
+               </children>
+            </HBox>
+            <BorderPane prefHeight="287.0" prefWidth="734.0" styleClass="dev-containers">
+               <left>
+                  <ImageView fx:id="image" fitHeight="235.0" fitWidth="201.0" pickOnBounds="true" preserveRatio="true" styleClass="image" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@../Images/pupsj-logo.png" />
+                     </image>
+                  </ImageView>
+               </left>
+               <right>
+                  <VBox prefHeight="238.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label fx:id="name" prefHeight="43.0" prefWidth="330.0" styleClass="dev-name" text="Ning Ning">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Label>
+                              <Label fx:id="role" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="46.0" prefWidth="164.0" styleClass="dev-role" text="Main Dashboard">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label fx:id="description" prefHeight="144.0" prefWidth="492.0" styleClass="dev-description" text="The PUPSJ Student Portal is a desktop-based academic management system developed for the Polytechnic University of the Philippines – San Juan Campus. Designed using JavaFX and powered by PostgreSQL via Supabase, the system streamlines essential academic operations for students, faculty, and administrative staff.The portal provides centralized access to enrollment processes, class schedules, grades, payments, and faculty assignments." textAlignment="CENTER" />
+                     </children>
+                     <padding>
+                        <Insets top="40.0" />
+                     </padding>
+                  </VBox>
+               </right>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </BorderPane>
+         </children></VBox>
+   </children>
+</VBox>
