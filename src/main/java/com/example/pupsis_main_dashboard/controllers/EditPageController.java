@@ -200,18 +200,73 @@ public class EditPageController implements Initializable {
         });
     }
 
-    private void updateGradeInDatabase(Student student) {
-        // Implement your database update logic here
-        // You can use your existing dbInput class methods
-        try {
-            float finalGrade = Float.parseFloat(student.getFinalGrade());
-            // Call your database update method here
-            // Example:
-            // dbInput.updateGrade(student.getStudentId(), student.getSubjectCode(), finalGrade);
-        } catch (Exception e) {
-            System.err.println("Error updating grade: " + e.getMessage());
+private void updateGradeInDatabase(Student student) {
+    try (Connection conn = DriverManager.getConnection(url, user, password)) {
+        // Update both final grade and grade status
+        String query = "UPDATE students_subj SET \"finalGrade\" = ?, \"gradeStat\" = ? " +
+                      "WHERE \"student_ID\" = ? AND \"subj_Code\" = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            String newGrade = student.getFinalGrade();
+            
+            // Calculate grade status
+            String gradeStatus;
+            float gradeValue = Float.parseFloat(newGrade);
+            if (gradeValue >= 1.00 && gradeValue <= 3.00) {
+                gradeStatus = "PASSED";
+            } else if (gradeValue > 3.00 && gradeValue <= 5.00) {
+                gradeStatus = "FAILED";
+            } else {
+                gradeStatus = "INVALID";
+            }
+            
+            // Set parameters for update
+            pstmt.setString(1, newGrade);
+            pstmt.setString(2, gradeStatus);
+            pstmt.setString(3, student.getStudentId());
+            pstmt.setString(4, student.getSubjCode());
+            
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // Update the student object's grade status
+                student.setGradeStatus(gradeStatus);
+                
+                // Refresh the specific row in the table
+                Student updatedStudent = student;
+                int rowIndex = studentsList.indexOf(student);
+                if (rowIndex >= 0) {
+                    studentsList.set(rowIndex, updatedStudent);
+                }
+                
+                // Refresh the TableView
+                studentsTable.refresh();
+                
+                // Show success message
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Success");
+                alert.setHeaderText(null);
+                alert.setContentText("Grade successfully updated to: " + newGrade + 
+                                   "\nStatus: " + gradeStatus);
+                alert.showAndWait();
+            }
         }
+    } catch (SQLException e) {
+        showError("Database Error", "Failed to update grade: " + e.getMessage());
+        e.printStackTrace();
+    } catch (NumberFormatException e) {
+        showError("Invalid Grade Format", "Please enter a valid numeric grade");
+        e.printStackTrace();
     }
+}
+
+// Add this helper method to show success messages
+private void showSuccess(String title, String content) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(content);
+    alert.showAndWait();
+}
     private void loadStudentData() {
         if (studentsTable == null) {
             System.err.println("Error: studentsTable is null. Check FXML file for proper fx:id.");
