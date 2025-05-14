@@ -208,10 +208,10 @@ private void updateGradeInDatabase(Student student) {
         
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             String newGrade = student.getFinalGrade();
+            float gradeValue = Float.parseFloat(newGrade);
             
             // Calculate grade status
             String gradeStatus;
-            float gradeValue = Float.parseFloat(newGrade);
             if (gradeValue >= 1.00 && gradeValue <= 3.00) {
                 gradeStatus = "PASSED";
             } else if (gradeValue > 3.00 && gradeValue <= 5.00) {
@@ -220,8 +220,8 @@ private void updateGradeInDatabase(Student student) {
                 gradeStatus = "INVALID";
             }
             
-            // Set parameters for update
-            pstmt.setString(1, newGrade);
+            // Set parameters for update - note the use of setFloat for finalGrade
+            pstmt.setFloat(1, gradeValue);  // Changed from setString to setFloat
             pstmt.setString(2, gradeStatus);
             pstmt.setString(3, student.getStudentId());
             pstmt.setString(4, student.getSubjCode());
@@ -245,8 +245,8 @@ private void updateGradeInDatabase(Student student) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Success");
                 alert.setHeaderText(null);
-                alert.setContentText("Grade successfully updated to: " + newGrade + 
-                                   "\nStatus: " + gradeStatus);
+                alert.setContentText(String.format("Grade successfully updated to: %.2f\nStatus: %s", 
+                                   gradeValue, gradeStatus));
                 alert.showAndWait();
             }
         }
