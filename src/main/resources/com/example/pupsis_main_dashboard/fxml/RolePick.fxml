@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@../css/PickRole.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.RolePickController">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Label prefHeight="12.0" prefWidth="20.0" />
+            <ImageView fx:id="closeButton" fitHeight="37.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+               <image>
+                  <Image url="@../Images/Back%20Icon.png" />
+               </image>
+            </ImageView>
+            <Label prefHeight="20.0" prefWidth="95.0" />
+            <ImageView fitHeight="104.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/PUPSJ%20Logo.png" />
+               </image>
+            </ImageView>
+         </children>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </HBox>
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="156.0" styleClass="formal-label" text="Hi, PUPian!" textAlignment="CENTER">
+         <VBox.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </VBox.margin>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <font>
+            <Font size="5.0" />
+         </font>
+      </Label>
+      <VBox alignment="TOP_CENTER" prefHeight="224.0" prefWidth="364.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="26.0" prefWidth="406.0">
+               <children>
+<SVGPath fx:id="mySvgPath" xmlns="http://javafx.com/javafx">
+    <content>
+       M0 0 C0.9075 0.185625 1.815 0.37125 2.75 0.5625 C5.68314324 0.95734621 7.2644657 0.94691572 10 0 C8.95125002 2.62187494 8.35068687 3.79371361 5.875 5.25 C5.25625 5.4975 4.6375 5.745 4 6 C2.62437146 4.71034824 1.29233607 3.37310707 0 2 C0 1.34 0 0.68 0 0 Z     </content>
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+</SVGPath>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="242.0" styleClass="text-please" text="Please click or tap your destination. ">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </HBox>
+            <Button fx:id="studentButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="role-button" text="Student" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="facultyButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="role-button" text="Faculty" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="adminButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="role-button" text="Admin" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin></Button>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </VBox>
+   </children>
+</VBox>
