@@ -3,7 +3,7 @@
  * It checks if the provided email or student ID and password match the records in the database.
  */
 
-package com.example.pupsis_main_dashboard.auth;
+package com.example.pupsis_main_dashboard.utility;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,8 +12,6 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 
 public class AuthenticationService {
 
