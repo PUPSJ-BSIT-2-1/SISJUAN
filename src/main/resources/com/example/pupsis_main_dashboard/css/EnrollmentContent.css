@@ -1,0 +1,169 @@
+/* Welcome text style */
+.welcome-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+/* Student name style */
+.student-name {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+
+/* Card style */
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+/* Statistic value style */
+.stat-value {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #343a40;
+}
+
+/* Statistic label style */
+.stat-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+}
+
+/* Section header style */
+.section-header {
+    -fx-font-size: 18px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #343a40;
+}
+
+/* Announcement list style */
+.announcement-list {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-selection-bar: transparent;
+    -fx-selection-bar-non-focused: transparent;
+}
+
+/* List view style inside announcement list */
+.announcement-list .list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+/* List cell style in announcement list */
+.announcement-list .list-cell {
+    -fx-font-size: 14px;
+    -fx-border-width: 0;
+}
+
+/* Empty list cell style */
+.announcement-list .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Selected list cell style */
+.announcement-list .list-cell:selected {
+    -fx-background-color: transparent;
+    -fx-text-fill: #343a40;
+}
+
+/* Action button style */
+.action-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 15;
+    -fx-background-radius: 5;
+}
+
+/* Action button hover effect */
+.action-button:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
+/* Statistic icon style */
+.stat-icon {
+    -fx-fill: #800000;
+}
+
+/* Font style */
+.font {
+    -fx-font-family: "Inter 18pt Medium";
+}
+
+/* Red card style */
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+/* Dark theme card style */
+.dark-theme .cards {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme red card style */
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-border-width: 0;
+}
+
+/* Dark theme statistic value style */
+.dark-theme .stat-value {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme statistic label style */
+.dark-theme .stat-label {
+    -fx-text-fill: #b0b0b0;
+}
+
+/* Dark theme section header style */
+.dark-theme .section-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme list cell style */
+.dark-theme .announcement-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #c5c5c5;
+}
+
+/* Dark theme selected list cell style */
+.dark-theme .announcement-list .list-cell:selected {
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme action button style */
+.dark-theme .action-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: #ffffff;
+}
+
+/* Dark theme action button hover effect */
+.dark-theme .action-button:hover {
+    -fx-background-color: #e57373;
+}
+
+/* Dark theme statistic icon style */
+.dark-theme .stat-icon {
+    -fx-fill: #e57373;
+}
+.combo-box{
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: #e3e5e6;
+    -fx-border-radius: 5;
+}

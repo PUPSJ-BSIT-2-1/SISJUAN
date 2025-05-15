@@ -52,6 +52,7 @@ public class StudentDashboardController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/newGradingModule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
+    private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/EnrollmentContent.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -229,8 +230,7 @@ public class StudentDashboardController {
     // Get FXML path based on clicked HBox
     private String getFxmlPathFromHBox(HBox clickedHBox) throws IOException {
         return switch (clickedHBox.getId()) {
-            case "registrationHBox" ->
-                    null;
+            case "registrationHBox" ->ENROLLMENT_FXML;
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;

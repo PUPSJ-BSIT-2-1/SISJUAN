@@ -5,7 +5,7 @@
 
 package com.example.pupsis_main_dashboard;
 
-import com.example.pupsis_main_dashboard.controllers.SettingsController; 
+import com.example.pupsis_main_dashboard.controllers.SettingsController;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
