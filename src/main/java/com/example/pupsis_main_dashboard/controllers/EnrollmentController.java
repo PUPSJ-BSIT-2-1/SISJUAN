@@ -213,7 +213,7 @@ public class EnrollmentController implements Initializable {
         scheduleCombo.setPrefWidth(180);
         scheduleCombo.setPrefHeight(30);
         scheduleCombo.setPromptText("Select Schedule");
-        scheduleCombo.getStyleClass().add("modern-combo");
+        scheduleCombo.getStyleClass().addAll("modern-combo", "no-gray-disabled");
         scheduleCombo.setDisable(true);
         
         // Enable/disable schedule combo box based on checkbox state

@@ -200,21 +200,32 @@
     -fx-border-radius: 5;
 }
 
-/* Modern ComboBox styles */
 .modern-combo {
     -fx-background-color: white;
-    -fx-border-color: #dcdcdc;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
-}
-
-.modern-combo:hover {
-    -fx-border-color: #aaaaaa;
+    -fx-border-color: #d5d5d5;
+    -fx-border-radius: 5;
+    -fx-font-size: 14px;
 }
 
 .modern-combo:focused {
     -fx-border-color: #800000;
     -fx-background-color: white;
+}
+
+/* No gray out when combo box is disabled */
+.no-gray-disabled:disabled {
+    -fx-opacity: 1.0;
+}
+
+/* Arrow button in disabled combo box */
+.no-gray-disabled:disabled .arrow-button {
+    -fx-opacity: 1.0;
+}
+
+/* Make the text in disabled combo box look normal */
+.no-gray-disabled:disabled .text {
+    -fx-fill: #333333;
+    -fx-opacity: 1.0;
 }
 
 /* Subject row styles */
