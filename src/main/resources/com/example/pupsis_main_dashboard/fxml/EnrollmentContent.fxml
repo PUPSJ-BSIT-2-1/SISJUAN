@@ -1,49 +1,245 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" styleClass="font" stylesheets="@../css/EnrollmentContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
+   <padding>
+      <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+   </padding>
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" styleClass="cards">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </HBox>
-      <GridPane hgap="10.0" prefHeight="118.0" prefWidth="810.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <!-- Header Section -->
+      <HBox alignment="CENTER_LEFT" styleClass="red-card">
          <children>
-            <Label prefHeight="15.0" prefWidth="609.0" styleClass="section-header" text="Subject Code" />
-            <ComboBox prefHeight="25.0" prefWidth="274.0" promptText="--Please Select Schedule--" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label layoutX="20.0" layoutY="28.0" styleClass="section-header" text="Schedule" GridPane.columnIndex="2" />
-            <ComboBox layoutX="416.0" layoutY="55.0" prefHeight="25.0" prefWidth="282.0" promptText="--Please Select Schedule--" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Label styleClass="section-header" text="Description" GridPane.columnIndex="1" />
-            <Label layoutX="20.0" layoutY="25.0" prefHeight="15.0" prefWidth="609.0" text="SUBJECT 001" GridPane.rowIndex="1" />
-            <Label layoutX="20.0" layoutY="61.0" prefHeight="15.0" prefWidth="609.0" text="SUBJECT 002" GridPane.rowIndex="2" />
-            <Label prefHeight="15.0" prefWidth="609.0" text="Subject Name 1" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label layoutX="20.0" layoutY="94.0" prefHeight="15.0" prefWidth="609.0" text="Subject Name 2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-text-fill: white;" styleClass="header-title" text="Subject Enrollment" />
+                  <Label style="-fx-text-fill: lightgrey;" styleClass="header-subtitle" text="Select your preferred schedules for the subjects below" />
+               </children>
+               <padding>
+                  <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+               </padding>
+            </VBox>
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+               <children>
+                  <Label style="-fx-text-fill: white;" styleClass="academic-year" text="Academic Year 2024-2025" />
+               </children>
+               <padding>
+                  <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+               </padding>
+            </HBox>
          </children>
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <VBox.margin>
-            <Insets />
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
          </VBox.margin>
-      </GridPane>
+      </HBox>
+      
+      <!-- Semester Selection -->
+      <HBox alignment="CENTER_LEFT" spacing="15" styleClass="cards">
+         <children>
+            <Label styleClass="semester-label" text="Current Semester:" />
+            <Label styleClass="value-label" text="1st Semester" />
+            <Label styleClass="semester-label" text="Year Level:">
+               <HBox.margin>
+                  <Insets left="30.0" />
+               </HBox.margin>
+            </Label>
+            <Label styleClass="value-label" text="2nd Year" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+      </HBox>
+      
+      <!-- Subject List Section -->
+      <VBox spacing="10" styleClass="cards">
+         <children>
+            <Label styleClass="section-title" text="Available Subjects">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="0.0" right="0.0" top="0.0" />
+               </VBox.margin>
+            </Label>
+            <Separator />
+            
+            <!-- Subject 1 -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="subject-row">
+               <children>
+                  <CheckBox mnemonicParsing="false" styleClass="custom-checkbox">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <VBox prefWidth="200" spacing="3">
+                     <children>
+                        <Label styleClass="section-header" text="Subject Code" />
+                        <Label styleClass="subject-code" text="COMP 101" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox prefWidth="300" spacing="3" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="section-header" text="Description" />
+                        <Label styleClass="subject-description" text="Introduction to Computing" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="CENTER" prefWidth="200">
+                     <children>
+                        <Label styleClass="section-header" text="Schedule" />
+                        <ComboBox prefHeight="30.0" prefWidth="180.0" promptText="Select Schedule" styleClass="modern-combo" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+               </VBox.margin>
+            </HBox>
+            
+            <Separator />
+            
+            <!-- Subject 2 -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="subject-row">
+               <children>
+                  <CheckBox mnemonicParsing="false" styleClass="custom-checkbox">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <VBox prefWidth="200" spacing="3">
+                     <children>
+                        <Label styleClass="section-header" text="Subject Code" />
+                        <Label styleClass="subject-code" text="MATH 201" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox prefWidth="300" spacing="3" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="section-header" text="Description" />
+                        <Label styleClass="subject-description" text="Calculus and Analytical Geometry" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="CENTER" prefWidth="200">
+                     <children>
+                        <Label styleClass="section-header" text="Schedule" />
+                        <ComboBox prefHeight="30.0" prefWidth="180.0" promptText="Select Schedule" styleClass="modern-combo" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+               </VBox.margin>
+            </HBox>
+            
+            <Separator />
+            
+            <!-- Subject 3 -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="subject-row">
+               <children>
+                  <CheckBox mnemonicParsing="false" styleClass="custom-checkbox">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <VBox prefWidth="200" spacing="3">
+                     <children>
+                        <Label styleClass="section-header" text="Subject Code" />
+                        <Label styleClass="subject-code" text="ENGL 101" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox prefWidth="300" spacing="3" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="section-header" text="Description" />
+                        <Label styleClass="subject-description" text="Technical Writing and Communication" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="CENTER" prefWidth="200">
+                     <children>
+                        <Label styleClass="section-header" text="Schedule" />
+                        <ComboBox prefHeight="30.0" prefWidth="180.0" promptText="Select Schedule" styleClass="modern-combo" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="0.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+      </VBox>
+      
+      <!-- Action Buttons -->
+      <HBox alignment="CENTER_RIGHT" spacing="10">
+         <children>
+            <Button mnemonicParsing="false" styleClass="secondary-button" text="Cancel">
+               <padding>
+                  <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" styleClass="action-button" text="Enroll in Selected Subjects">
+               <padding>
+                  <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+               </padding>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="0.0" right="10.0" top="10.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+      </HBox>
    </children>
 </VBox>

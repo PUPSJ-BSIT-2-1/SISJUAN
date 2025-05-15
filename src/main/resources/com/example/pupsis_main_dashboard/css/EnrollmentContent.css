@@ -18,7 +18,8 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.03), 8, 0, 0, 2);
 }
 
 /* Statistic value style */
@@ -36,7 +37,7 @@
 
 /* Section header style */
 .section-header {
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
 }
@@ -83,12 +84,30 @@
     -fx-font-weight: bold;
     -fx-padding: 10 15;
     -fx-background-radius: 5;
+    -fx-cursor: hand;
 }
 
 /* Action button hover effect */
 .action-button:hover {
     -fx-background-color: #5e0000;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
+}
+
+/* Secondary button style */
+.secondary-button {
+    -fx-background-color: #f2f2f2;
+    -fx-text-fill: #4f4f4f;
+    -fx-font-weight: bold;
+    -fx-padding: 10 15;
+    -fx-background-radius: 5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5;
     -fx-cursor: hand;
+}
+
+/* Secondary button hover effect */
+.secondary-button:hover {
+    -fx-background-color: #e0e0e0;
 }
 
 /* Statistic icon style */
@@ -105,7 +124,8 @@
 .red-card {
     -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
     -fx-background-radius: 10;
-    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
 }
 
 /* Dark theme card style */
@@ -162,8 +182,197 @@
 .dark-theme .stat-icon {
     -fx-fill: #e57373;
 }
-.combo-box{
+
+/* ComboBox styles */
+.combo-box {
     -fx-background-color: #f8fcfc;
     -fx-border-color: #e3e5e6;
     -fx-border-radius: 5;
+}
+
+/* Modern ComboBox styles */
+.modern-combo {
+    -fx-background-color: white;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 2;
+}
+
+.modern-combo:hover {
+    -fx-border-color: #aaaaaa;
+}
+
+.modern-combo:focused {
+    -fx-border-color: #800000;
+    -fx-background-color: white;
+}
+
+/* Subject row styles */
+.subject-row {
+    -fx-background-color: transparent;
+    -fx-border-radius: 3;
+    -fx-padding: 3;
+}
+
+/* Custom checkbox style */
+.custom-checkbox .box {
+    -fx-background-color: white;
+    -fx-border-color: #cdcdcd;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.custom-checkbox:selected .box {
+    -fx-background-color: #800000;
+    -fx-border-color: #800000;
+}
+
+.custom-checkbox:selected .mark {
+    -fx-background-color: white;
+}
+
+.custom-checkbox:hover .box {
+    -fx-border-color: #800000;
+}
+
+/* Subject code style */
+.subject-code {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #800000;
+}
+
+/* Subject description style */
+.subject-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #444444;
+}
+
+/* Value label style */
+.value-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+/* Separator style */
+.separator .line {
+    -fx-border-color: #e8e8e8;
+    -fx-border-width: 1px;
+}
+
+/* ScrollPane style */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #cdcdcd;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #b8b8b8;
+}
+
+/* Dark theme additions */
+.dark-theme .modern-combo {
+    -fx-background-color: #454545;
+    -fx-border-color: #565656;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .modern-combo:hover {
+    -fx-border-color: #757575;
+}
+
+.dark-theme .modern-combo:focused {
+    -fx-border-color: #c22222;
+}
+
+.dark-theme .subject-code {
+    -fx-text-fill: #e57373;
+}
+
+.dark-theme .subject-description {
+    -fx-text-fill: #c5c5c5;
+}
+
+.dark-theme .secondary-button {
+    -fx-background-color: #454545;
+    -fx-text-fill: #c5c5c5;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .secondary-button:hover {
+    -fx-background-color: #555555;
+}
+
+.dark-theme .separator .line {
+    -fx-border-color: #555555;
+}
+
+/* Header styles */
+.header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.header-subtitle {
+    -fx-font-size: 13px;
+}
+
+.academic-year {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Section header styles */
+.semester-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* Button styles */
+.secondary-button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #444444;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.action-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: #600000;
 }
