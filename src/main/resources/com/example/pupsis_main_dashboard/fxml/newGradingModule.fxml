@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -16,11 +15,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyInput.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GradingModuleController">
+<AnchorPane prefHeight="800.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyInput.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GradingModuleController">
    <children>
-      <BorderPane prefHeight="720.0" prefWidth="810.0">
+      <BorderPane prefHeight="800.0" prefWidth="810.0">
          <top>
-            <Pane prefHeight="80.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
@@ -28,7 +27,7 @@
                   <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                </padding>
                <children>
-                  <HBox prefHeight="80.0" prefWidth="810.0" spacing="20.0" styleClass="pane-header">
+                  <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
                      <children>
                         <Label contentDisplay="CENTER" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
                            <font>
@@ -69,48 +68,42 @@
                      </padding>
                   </HBox>
                </children>
+               <styleClass>
+                  <String fx:value="cards" />
+                  <String fx:value="red-card" />
+               </styleClass>
             </Pane>
          </top>
          <center>
-            <Pane prefHeight="640.0" prefWidth="710.0" BorderPane.alignment="CENTER">
+            <Pane prefHeight="650.0" prefWidth="750.0" BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefHeight="643.0" prefWidth="710.0" spacing="5.0">
+                  <VBox prefHeight="650.0" prefWidth="750.0" spacing="20.0">
                      <children>
-                        <Pane prefHeight="40.0" prefWidth="200.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="10.0" styleClass="small-cards">
                            <children>
-                              <TextField fx:id="searchBar" layoutX="54.0" layoutY="9.0" promptText="Search..." />
-                              <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="23.0" layoutY="11.0" pickOnBounds="true" smooth="false">
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" smooth="false">
                                  <image>
                                     <Image url="@../Images/Rectangle.jpg" />
                                  </image>
                               </ImageView>
-                              <MenuButton layoutX="594.0" layoutY="8.0" mnemonicParsing="false" prefWidth="110.0">
-                                <items>
-                                  <MenuItem mnemonicParsing="false" text="Action 1" />
-                                  <MenuItem mnemonicParsing="false" text="Action 2" />
-                                </items>
-                              </MenuButton>
+                              <TextField fx:id="searchBar" promptText="Search..." />
                            </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </Pane>
-                        <AnchorPane prefHeight="400.0" prefWidth="750.0">
+                        </HBox>
+                        <AnchorPane prefHeight="400.0" prefWidth="750.0" styleClass="small-cards">
                            <children>
-                              <TableView id="mainGradingTable" fx:id="subjectsTable" prefHeight="460.0" prefWidth="710.0">
+                              <TableView id="mainGradingTable" fx:id="subjectsTable" layoutX="22.0" layoutY="18.0" prefHeight="460.0" prefWidth="710.0">
                                 <columns>
                                   <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" text="Year &amp; Section" />
-                                  <TableColumn fx:id="semCol" editable="false" maxWidth="110.0" minWidth="110.0" prefWidth="110.0" text="Semester" />
-                                    <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="133.0" minWidth="133.0" prefWidth="133.0" text="Subject Code" />
-                                    <TableColumn fx:id="subjDescCol" editable="false" maxWidth="250.0" minWidth="270.0" prefWidth="210.0" text="Subject Description" />
-                                    <TableColumn fx:id="editBtnCol" editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="Edit" />
+                                  <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" text="Semester" />
+                                    <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" text="Subject Code" />
+                                    <TableColumn fx:id="subjDescCol" editable="false" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" text="Subject Description" />
                                 </columns>
                               </TableView>
                            </children>
                         </AnchorPane>
                      </children>
                      <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="30.0" />
+                        <Insets top="20.0" />
                      </padding>
                   </VBox>
                </children>
@@ -123,18 +116,15 @@
             <Pane prefHeight="200.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
          </right>
          <bottom>
-            <Pane prefHeight="80.0" prefWidth="200.0" styleClass="pane-footer" BorderPane.alignment="CENTER">
+            <Pane prefHeight="80.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <padding>
 
                   <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                </padding>
-               <children>
-                  <HBox prefHeight="80.0" prefWidth="810.0" style="-fx-background-color: #800000;" styleClass="pane-footer">
-                     <padding>
-                        <Insets bottom="16.0" left="30.0" right="16.0" top="16.0" />
-                     </padding>
-                  </HBox>
-               </children>
+               <styleClass>
+                  <String fx:value="red-card" />
+                  <String fx:value="cards" />
+               </styleClass>
             </Pane>
          </bottom>
       </BorderPane>
