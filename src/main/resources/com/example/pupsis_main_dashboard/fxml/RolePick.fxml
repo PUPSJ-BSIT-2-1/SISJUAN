@@ -7,10 +7,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@../css/PickRole.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.RolePickController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@../css/PickRole.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.RolePickController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
          <children>
@@ -46,13 +45,6 @@
          <children>
             <HBox alignment="CENTER" prefHeight="26.0" prefWidth="406.0">
                <children>
-<SVGPath fx:id="mySvgPath" xmlns="http://javafx.com/javafx">
-    <content>
-       M0 0 C0.9075 0.185625 1.815 0.37125 2.75 0.5625 C5.68314324 0.95734621 7.2644657 0.94691572 10 0 C8.95125002 2.62187494 8.35068687 3.79371361 5.875 5.25 C5.25625 5.4975 4.6375 5.745 4 6 C2.62437146 4.71034824 1.29233607 3.37310707 0 2 C0 1.34 0 0.68 0 0 Z     </content>
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-</SVGPath>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="242.0" styleClass="text-please" text="Please click or tap your destination. ">
                      <HBox.margin>
                         <Insets />
