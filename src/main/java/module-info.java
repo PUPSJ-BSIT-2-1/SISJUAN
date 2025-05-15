@@ -15,6 +15,5 @@ module com.example.pupsis_main_dashboard {
     exports com.example.pupsis_main_dashboard.controllers;
     opens com.example.pupsis_main_dashboard.controllers to javafx.fxml;
     exports com.example.pupsis_main_dashboard.utilities to com.fasterxml.jackson.databind;
-    exports com.example.pupsis_main_dashboard.controllers.contents;
     opens com.example.pupsis_main_dashboard.controllers.contents to javafx.fxml;
 }
