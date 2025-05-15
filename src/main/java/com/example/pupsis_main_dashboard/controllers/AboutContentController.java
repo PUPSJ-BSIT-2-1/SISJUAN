@@ -1,5 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -9,7 +11,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AboutContentController {
 
@@ -22,9 +29,63 @@ public class AboutContentController {
     @FXML private Label role;
     @FXML private Label description;
 
+    private List<Developer> developers;
+    private List<Developer> filteredDevelopers = new ArrayList<>();
+    private int currentIndex = 0;
+
+    public static class Developer {
+        private String devName;
+        private String devRole;
+        private String devDesc;
+        private String devImage;
+        private String devModule;
+
+        @SuppressWarnings("unused")
+        public Developer(String devName, String devRole, String devDesc, String devImage, String devModule) {
+            this.devName = devName;
+            this.devRole = devRole;
+            this.devDesc = devDesc;
+            this.devImage = devImage;
+            this.devModule = devModule;
+        }
+
+        public Developer() {}
+
+        public String getDevName() {
+            return devName;
+        }
+
+        public String getDevRole() {
+            return devRole;
+        }
+
+        public String getDevDesc() {
+            return devDesc;
+        }
+
+        public String getDevImage() {
+            return devImage;
+        }
+
+        public String getDevModule() {
+            return devModule;
+        }
+    }
+
     @FXML
     private void initialize() {
         populateModule();
+        loadDevelopersContent();
+        if (!modulePicker.getItems().isEmpty()) {
+            modulePicker.getSelectionModel().selectFirst();  // Select the first module initially
+            String selectedModule = modulePicker.getValue();
+            filteredDevelopers = developers.stream()
+                    .filter(dev -> dev.getDevModule().equalsIgnoreCase(selectedModule))
+                    .collect(Collectors.toList());
+            showDeveloperDetails(currentIndex);
+        }
+        handleModuleSelection();
+        handleButtons();
 
         // Wait until the scene is available to check the theme
         root.sceneProperty().addListener((_, _, newScene) -> {
@@ -37,6 +98,59 @@ public class AboutContentController {
                         updateIconsBasedOnTheme());
             }
         });
+    }
+
+    private void loadDevelopersContent() {
+        final String devPath = "/com/example/pupsis_main_dashboard/json/DevelopersTeam.json";
+        try (InputStream inputStream = getClass().getResourceAsStream(devPath)) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            developers = objectMapper.readValue(inputStream, new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleModuleSelection() {
+        modulePicker.setOnAction(_ -> {
+            currentIndex = 0;
+            String selectedModule = modulePicker.getValue();
+            filteredDevelopers = developers.stream()
+                    .filter(dev -> dev.getDevModule().equalsIgnoreCase(selectedModule))
+                    .collect(Collectors.toList());
+            showDeveloperDetails(currentIndex);
+        });
+    }
+
+    private void handleButtons() {
+        next.setOnMouseClicked(_ -> {
+            if (!filteredDevelopers.isEmpty()) {
+                currentIndex = (currentIndex + 1) % filteredDevelopers.size();
+                showDeveloperDetails(currentIndex);
+            }
+        });
+
+        previous.setOnMouseClicked(_ -> {
+            if (!filteredDevelopers.isEmpty()) {
+                currentIndex = (currentIndex - 1 + filteredDevelopers.size()) % filteredDevelopers.size();
+                showDeveloperDetails(currentIndex);
+            }
+        });
+    }
+
+    private void showDeveloperDetails(int index) {
+        if (index >= 0 && index < filteredDevelopers.size()) {
+            Developer dev = filteredDevelopers.get(index);
+            name.setText(dev.getDevName());
+            role.setText(dev.getDevRole());
+            description.setText(dev.getDevDesc());
+            try {
+                Image devImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/pupsis_main_dashboard/" + dev.getDevImage())));
+                image.setImage(devImage);
+            } catch (NullPointerException e) {
+                System.err.println("Failed to load image resources: " + e.getMessage());
+            }
+        }
     }
 
     private void populateModule() {

@@ -1,0 +1,65 @@
+[
+  {
+    "devModule": "Main Dashboard",
+    "devName": "Cedrick Reyes",
+    "devRole": "UI/UX Designer",
+    "devImage": "Images/PUPSJ.png",
+    "devDesc": "Responsible for designing the user interface and improving user experience."
+  },
+  {
+    "devModule": "Main Dashboard",
+    "devName": "Andrea Lee",
+    "devRole": "Backend Developer",
+    "devImage": "Images/PUPSJ.png",
+    "devDesc": "Handles server-side logic and integration with databases."
+  },
+  {
+    "devModule": "Grading",
+    "devName": "Mark Santos",
+    "devRole": "Full Stack Developer",
+    "devImage": "Images/PUPSJ Logo.png",
+    "devDesc": "Develops both frontend and backend features for the grading system."
+  },
+  {
+    "devModule": "Registration",
+    "devName": "Nina Gomez",
+    "devRole": "Frontend Developer",
+    "devImage": "Images/PUP Logo.png",
+    "devDesc": "Creates the registration module interface and ensures responsiveness."
+  },
+  {
+    "devModule": "Payment",
+    "devName": "Joshua Tan",
+    "devRole": "Database Admin",
+    "devImage": "Images/PUP Logo.png",
+    "devDesc": "Manages the payment database and ensures data integrity."
+  },
+  {
+    "devModule": "Payment",
+    "devName": "Liam Cruz",
+    "devRole": "Backend Developer",
+    "devImage": "Images/PUP Logo.png",
+    "devDesc": "Develops backend APIs and payment processing logic."
+  },
+  {
+    "devModule": "Class Schedule",
+    "devName": "Ella Navarro",
+    "devRole": "Backend Developer",
+    "devImage": "Images/PUP Logo.png",
+    "devDesc": "Works on backend services related to class scheduling."
+  },
+  {
+    "devModule": "Room Assignment",
+    "devName": "Kevin Lim",
+    "devRole": "System Analyst",
+    "devImage": "Images/PUPSJ Logo.png",
+    "devDesc": "Analyzes system requirements and coordinates room assignment logic."
+  },
+  {
+    "devModule": "Faculty",
+    "devName": "Sophia Villanueva",
+    "devRole": "Full Stack Developer",
+    "devImage": "Images/PUPSJ Logo.png",
+    "devDesc": "Develops frontend and backend functionalities for the faculty module."
+  }
+]
