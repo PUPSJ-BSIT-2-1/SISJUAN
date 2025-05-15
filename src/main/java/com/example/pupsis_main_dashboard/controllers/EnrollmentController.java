@@ -30,12 +30,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class EnrollmentController implements Initializable {
-
-    private static final Logger LOGGER = Logger.getLogger(EnrollmentController.class.getName());
 
     @FXML
     private Button selectAllButton;
@@ -97,8 +93,6 @@ public class EnrollmentController implements Initializable {
         subjectListContainer.getChildren().clear();
         subjectCheckboxes.clear();
         
-        System.out.println("Loading subjects from database...");
-        
         // Create a loading indicator
         Label loadingLabel = new Label("Loading subjects...");
         loadingLabel.getStyleClass().add("loading-text");
@@ -117,7 +111,6 @@ public class EnrollmentController implements Initializable {
                 try {
                     // Establish database connection
                     Connection connection = DBConnection.getConnection();
-                    System.out.println("Database connection established successfully");
                     
                     // Query for all subjects with their professor names
                     String query = "SELECT s.subject_code, s.description, f.firstname, f.lastname " +
@@ -125,7 +118,6 @@ public class EnrollmentController implements Initializable {
                                    "LEFT JOIN faculty f ON s.professor = f.faculty_id " +
                                    "ORDER BY s.subject_code";
                     
-                    System.out.println("Executing query: " + query);
                     try (Statement stmt = connection.createStatement();
                          ResultSet rs = stmt.executeQuery(query)) {
                         
@@ -140,7 +132,6 @@ public class EnrollmentController implements Initializable {
                                 professorName = "Prof. " + professorFirstName + " " + professorLastName;
                             }
                             
-                            System.out.println("Found subject: " + subjectCode + " - " + description + " (" + professorName + ")");
                             subjects.add(new SubjectData(subjectCode, description, professorName));
                         }
                     }
@@ -149,7 +140,6 @@ public class EnrollmentController implements Initializable {
                     
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    System.err.println("Database error: " + e.getMessage());
                     throw e; // Rethrow to be caught by onFailed
                 }
                 return subjects;
@@ -162,12 +152,9 @@ public class EnrollmentController implements Initializable {
             List<SubjectData> subjects = loadSubjectsTask.getValue();
             
             if (subjects.isEmpty()) {
-                System.out.println("No subjects found in the database");
                 showAlert("No Available Subjects", 
                          "There are no subjects available for enrollment at this time.");
             } else {
-                System.out.println("Successfully loaded " + subjects.size() + " subjects from database");
-                
                 // Add all subjects to the UI
                 for (SubjectData subject : subjects) {
                     addSubjectRow(subject.code, subject.description, subject.professor);

@@ -58,14 +58,6 @@ public class StudentDashboardController {
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials != null && credentials.length == 2) {
-            // Get student info from a database
-            String identifier = credentials[0];
-            loadStudentInfo(identifier);
-        }
-        
         // Initialize fade1 as fully transparent
         fade1.setOpacity(0);
         
@@ -74,6 +66,15 @@ public class StudentDashboardController {
         
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
+        
+        // Load student info from credentials
+        RememberMeHandler rememberMeHandler = new RememberMeHandler();
+        String[] credentials = rememberMeHandler.loadCredentials();
+        if (credentials != null && credentials.length == 2) {
+            // Get student info from a database
+            String identifier = credentials[0];
+            loadStudentInfo(identifier);
+        }
     }
     
     // Set up scroll pane fade effects based on scroll position
@@ -119,39 +120,73 @@ public class StudentDashboardController {
     
     // Load student information from a database
     private void loadStudentInfo(String identifier) {
-        // Get and display a formatted student name
-        loadStudentName(identifier);
+        // Set placeholders while loading
+        studentNameLabel.setText("Loading...");
+        studentIdLabel.setText("Loading...");
         
-        // Get and display formatted student ID
-        String studentId = getStudentId(identifier);
-        if (studentId != null) {
-            studentIdLabel.setText(studentId);
-        }
-    }
-    
-    // Load and format student name
-    private void loadStudentName(String identifier) {
-        boolean isEmail = identifier.contains("@");
-        String query = isEmail 
-            ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
-            : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
-            
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, identifier);
-            ResultSet result = statement.executeQuery();
-            
-            if (result.next()) {
-                String firstName = result.getString("firstName");
-                String middleName = result.getString("middleName");
-                String lastName = result.getString("lastName");
+        // Create a background task
+        Thread thread = new Thread(() -> {
+            try {
+                // Get student name
+                boolean isEmail = identifier.contains("@");
+                String nameQuery;
                 
-                String formattedName = formatStudentName(firstName, middleName, lastName);
-                studentNameLabel.setText(formattedName);
+                if (isEmail) {
+                    // Case-insensitive email comparison
+                    nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
+                } else {
+                    nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_id = ?";
+                }
+                
+                String finalName = null;
+                
+                try (Connection connection = DBConnection.getConnection();
+                     PreparedStatement statement = connection.prepareStatement(nameQuery)) {
+                    statement.setString(1, identifier);
+                    ResultSet result = statement.executeQuery();
+                    
+                    if (result.next()) {
+                        String firstName = result.getString("firstname");
+                        String middleName = result.getString("middlename");
+                        String lastName = result.getString("lastname");
+                        
+                        finalName = formatStudentName(firstName, middleName, lastName);
+                        
+                        // Log the student name
+                        logger.info("Student logged in: {} (identifier: {})", finalName, identifier);
+                    }
+                }
+                
+                // Get student ID
+                String finalStudentId = getStudentId(identifier);
+                
+                // Update UI on JavaFX Application Thread
+                String nameToDisplay = finalName;
+                Platform.runLater(() -> {
+                    if (nameToDisplay != null) {
+                        studentNameLabel.setText(nameToDisplay);
+                    } else {
+                        studentNameLabel.setText("Name not found");
+                    }
+                    
+                    if (finalStudentId != null) {
+                        studentIdLabel.setText(finalStudentId);
+                    } else {
+                        studentIdLabel.setText("ID not found");
+                    }
+                });
+                
+            } catch (SQLException e) {
+                logger.error("Error loading student information", e);
+                Platform.runLater(() -> {
+                    studentNameLabel.setText("Error loading name");
+                    studentIdLabel.setText("Error loading ID");
+                });
             }
-        } catch (SQLException e) {
-            logger.error("Error loading student name", e);
-        }
+        });
+        
+        thread.setDaemon(true);
+        thread.start();
     }
     
     // Format student name as "LastName, FirstName MiddleInitial."
@@ -181,8 +216,14 @@ public class StudentDashboardController {
 
     // Get the student ID from the database based on the provided identifier (email or student ID)
     private String getStudentId(String identifier) {
-        String query = "SELECT student_id FROM students WHERE " + 
-                      (identifier.contains("@") ? "email" : "student_id") + " = ?";
+        String query;
+        
+        if (identifier.contains("@")) {
+            // Case-insensitive email comparison
+            query = "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            query = "SELECT student_id FROM students WHERE student_id = ?";
+        }
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {

@@ -1,6 +1,5 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-//import com.example.pupsis_main_dashboard.databaseOperations.PasswordHandler;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.EmailService;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
@@ -488,7 +487,7 @@ public class StudentLoginController {
             String studentId = String.format("%04d-%06d-SJ-01", currentYear, randomNum);
 
             // Insert the student data into the database
-            String query = "INSERT INTO students (student_id, firstName, middleName, lastName, email, password, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO students (student_id, firstname, middlename, lastname, email, password, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             try (Connection connection = DBConnection.getConnection();
                  PreparedStatement statement = connection.prepareStatement(query)) {
@@ -683,9 +682,14 @@ public class StudentLoginController {
     public static String getStudentFullName(String identifier, boolean isEmail) {
         if (identifier == null || identifier.isEmpty()) return "";
 
-        String query = isEmail
-            ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
-            : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
+        String query;
+        
+        if (isEmail) {
+            // Case-insensitive email comparison
+            query = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            query = "SELECT firstname, middlename, lastname FROM students WHERE student_id = ?";
+        }
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -693,9 +697,9 @@ public class StudentLoginController {
             ResultSet result = statement.executeQuery();
 
             if (result.next()) {
-                String firstName = result.getString("firstName");
-                String middleName = result.getString("middleName");
-                String lastName = result.getString("lastName");
+                String firstName = result.getString("firstname");
+                String middleName = result.getString("middlename");
+                String lastName = result.getString("lastname");
                 String middleInitial = middleName != null && !middleName.isEmpty()
                     ? middleName.charAt(0) + "."
                     : "";
