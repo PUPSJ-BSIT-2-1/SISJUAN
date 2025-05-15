@@ -34,34 +34,7 @@
                               <Font size="30.0" />
                            </font>
                         </Label>
-                        <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0">
-                           <children>
-                              <Label fx:id="facultyName" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="18.0" prefWidth="128.0" text="Elias, Austria A." textAlignment="RIGHT" textFill="WHITE">
-                                 <padding>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </padding>
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="facultyPosition" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="183.0" text="Information Technology Instructor" textAlignment="RIGHT" textFill="WHITE">
-                                 <padding>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </padding>
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="facultyID" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="63.0" text="FAC002" textAlignment="RIGHT" textFill="WHITE">
-                                 <padding>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </padding>
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
+                        <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0" />
                      </children>
                      <padding>
                         <Insets bottom="16.0" left="30.0" right="16.0" top="16.0" />
@@ -87,6 +60,17 @@
                                  </image>
                               </ImageView>
                               <TextField fx:id="searchBar" promptText="Search..." />
+                              <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="530.0">
+                                 <children>
+                                    <Label fx:id="validationLabel" />
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <padding>
+                                    <Insets right="20.0" />
+                                 </padding>
+                              </HBox>
                            </children>
                         </HBox>
                         <AnchorPane prefHeight="400.0" prefWidth="750.0" styleClass="small-cards">

@@ -2,6 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 //import com.example.pupsis_main_dashboard.utility.ControllerUtils;
 import com.example.pupsis_main_dashboard.controllers.GradingModuleController;
+import com.example.pupsis_main_dashboard.utility.SessionData;
 import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
 import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
 import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
@@ -112,6 +113,7 @@ public class StudentDashboardController {
             String studentId = getStudentId(credentials[0]);
             if (studentId != null) {
                 studentIdLabel.setText(studentId);
+                SessionData.getInstance().setStudentId(studentIdLabel.getText());
             }
         }
         loadHomeContent();
