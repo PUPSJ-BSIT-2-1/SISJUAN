@@ -3,7 +3,7 @@
  * This class provides methods to load FXML files, set window sizes, and apply transitions.
  */
 
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import com.example.pupsis_main_dashboard.PUPSIS;
 import javafx.animation.FadeTransition;

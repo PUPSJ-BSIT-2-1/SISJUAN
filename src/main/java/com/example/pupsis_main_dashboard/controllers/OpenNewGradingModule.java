@@ -5,8 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import com.example.pupsis_main_dashboard.utility.Subject;
-import com.example.pupsis_main_dashboard.utility.Student;
+import com.example.pupsis_main_dashboard.utilities.Subject;
+
 import java.io.IOException;
 
 public class OpenNewGradingModule {

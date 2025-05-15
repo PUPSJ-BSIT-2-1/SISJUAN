@@ -2,9 +2,9 @@ package com.example.pupsis_main_dashboard.controllers;
 
 //import com.example.pupsis_main_dashboard.utility.ControllerUtils;
 
-import com.example.pupsis_main_dashboard.utility.DBConnection;
-import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

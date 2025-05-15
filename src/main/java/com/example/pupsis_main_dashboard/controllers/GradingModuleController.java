@@ -1,7 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.Student;
-import com.example.pupsis_main_dashboard.utility.Subject;
+import com.example.pupsis_main_dashboard.utilities.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

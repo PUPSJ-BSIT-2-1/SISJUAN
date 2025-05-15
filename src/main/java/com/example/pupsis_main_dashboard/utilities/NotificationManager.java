@@ -1,4 +1,4 @@
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;

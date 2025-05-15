@@ -1,10 +1,10 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 //import com.example.pupsis_main_dashboard.databaseOperations.PasswordHandler;
-import com.example.pupsis_main_dashboard.utility.DBConnection;
-import com.example.pupsis_main_dashboard.utility.EmailService;
-import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.EmailService;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
@@ -46,7 +46,7 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.example.pupsis_main_dashboard.utility.AuthenticationService.authenticate;
+import static com.example.pupsis_main_dashboard.utilities.AuthenticationService.authenticate;
 //import static com.example.pupsis_main_dashboard.utility.AuthenticationService.authenticate;
 
 public class StudentLoginController {

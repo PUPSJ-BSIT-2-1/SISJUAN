@@ -4,7 +4,7 @@
  * It is configured to use Gmail's SMTP server.
  */
 
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import javax.mail.*;
 import javax.mail.internet.*;

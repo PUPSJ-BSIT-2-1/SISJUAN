@@ -1,10 +1,10 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.PasswordHandler;
-import com.example.pupsis_main_dashboard.utility.DBConnection;
-import com.example.pupsis_main_dashboard.utility.AuthenticationService;
-import com.example.pupsis_main_dashboard.utility.NotificationManager;
-import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.PasswordHandler;
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.AuthenticationService;
+import com.example.pupsis_main_dashboard.utilities.NotificationManager;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;

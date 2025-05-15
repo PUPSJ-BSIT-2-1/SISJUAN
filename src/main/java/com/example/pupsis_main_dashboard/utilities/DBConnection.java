@@ -3,7 +3,7 @@
  * It uses JDBC to establish a connection with the database using the provided URL, user, and password.
  */
 
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
