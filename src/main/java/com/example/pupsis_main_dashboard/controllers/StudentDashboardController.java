@@ -102,6 +102,7 @@ public class StudentDashboardController {
         preloadFxmlContent(GRADES_FXML);
         preloadFxmlContent(CALENDAR_FXML);
         preloadFxmlContent(SETTINGS_FXML);
+        preloadFxmlContent(ENROLLMENT_FXML);
     }
     
     // Preload and cache a specific FXML file
