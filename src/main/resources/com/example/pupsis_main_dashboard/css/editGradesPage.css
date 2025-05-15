@@ -69,14 +69,26 @@
 
 }
 
-.pane-header {
-    -fx-background-color: linear-gradient(to right, #800000 20%, #D97676);
-    -fx-background-radius: 20 20 0 0; /* top-left, top-right, bottom-right, bottom-left */
-    -fx-border-radius: 20 20 0 0;
+.small-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
 }
 
-.pane-footer {
-    -fx-background-color: linear-gradient(to right, #800000 60%, #D97676);
-    -fx-background-radius: 0 0 20 20; /* top-left, top-right, bottom-right, bottom-left */
-    -fx-border-radius: 0 0 20 20;
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
 }

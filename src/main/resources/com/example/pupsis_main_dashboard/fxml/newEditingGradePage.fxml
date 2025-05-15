@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -22,7 +22,7 @@
     <children>
         <BorderPane prefHeight="1080.0" prefWidth="810.0">
             <top>
-                <Pane prefHeight="80.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
                         <Insets />
                     </BorderPane.margin>
@@ -30,106 +30,88 @@
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                     </padding>
                     <children>
-                        <HBox prefHeight="80.0" prefWidth="810.0" spacing="20.0" styleClass="pane-header">
+                        <HBox alignment="CENTER_LEFT" prefHeight="99.0" prefWidth="810.0" spacing="20.0" styleClass="pane-header">
                             <children>
                                 <Label contentDisplay="CENTER" prefHeight="50.0" prefWidth="173.0" text="Grades" textFill="WHITE">
                                     <font>
                                         <Font size="30.0" />
                                     </font>
                                 </Label>
-                                <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0">
-                                    <children>
-                                        <Label fx:id="facultyName" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="18.0" prefWidth="128.0" text="Elias, Austria A." textAlignment="RIGHT" textFill="WHITE">
-                                            <padding>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </padding>
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="facultyPosition" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="183.0" text="Information Technology Instructor" textAlignment="RIGHT" textFill="WHITE">
-                                            <padding>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </padding>
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="facultyID" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="63.0" text="FAC002" textAlignment="RIGHT" textFill="WHITE">
-                                            <padding>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </padding>
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                        </Label>
-                                    </children>
-                                </VBox>
+                                <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0" />
                             </children>
                             <padding>
                                 <Insets bottom="16.0" left="30.0" right="16.0" top="16.0" />
                             </padding>
                         </HBox>
                     </children>
+               <styleClass>
+                  <String fx:value="cards" />
+                  <String fx:value="red-card" />
+               </styleClass>
                 </Pane>
             </top>
             <center>
                 <Pane prefHeight="640.0" prefWidth="710.0" BorderPane.alignment="CENTER">
                     <children>
-                        <VBox layoutX="-1.0" layoutY="14.0" prefHeight="870.0" prefWidth="710.0" spacing="5.0">
+                        <VBox layoutX="-1.0" layoutY="14.0" prefHeight="870.0" prefWidth="710.0" spacing="20.0">
                             <children>
-                                <Pane prefHeight="62.0" prefWidth="710.0">
-                                    <children>
-                                        <TextField fx:id="searchBar" layoutX="40.0" layoutY="9.0" promptText="Search..." />
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" smooth="false">
+                        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
+                           <children>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" smooth="false">
                                             <image>
                                                 <Image url="@../Images/Rectangle.jpg" />
                                             </image>
                                         </ImageView>
-                                        <MenuButton fx:id="yrSecCombBox" layoutX="225.0" layoutY="9.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Year &amp; Section">
-                                            <items>
-                                            </items>
-                                 <effect>
-                                    <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
-                                       <color>
-                                          <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
-                                       </color>
-                                    </DropShadow>
-                                 </effect>
-                                        </MenuButton>
-                              <Label layoutX="517.0" layoutY="9.0" text="Subject Description: " textFill="#5d5d5d">
-                                 <font>
-                                    <Font size="9.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="subjDescLbl" alignment="CENTER" layoutX="516.0" layoutY="18.0" prefHeight="28.0" prefWidth="179.0" text="Object Oriented Programming" textAlignment="CENTER" wrapText="true" />
-                              <MenuButton fx:id="subjCodeCombBox" layoutX="374.0" layoutY="10.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="COMP001">
-                                 <items>
-                                    <MenuItem mnemonicParsing="false" text="Action 1" />
-                                    <MenuItem mnemonicParsing="false" text="Action 2" />
-                                 </items>
-                                 <effect>
-                                    <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
-                                       <color>
-                                          <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
-                                       </color>
-                                    </DropShadow>
-                                 </effect>
-                              </MenuButton>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                    </padding>
-                                </Pane>
+                                        <TextField fx:id="searchBar" promptText="Search..." />
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="518.0" spacing="20.0">
+                                 <children>
+                                    <MenuButton fx:id="yrSecCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Yr &amp; Section">
+                                       <effect>
+                                          <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
+                                             <color>
+                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                    </MenuButton>
+                                    <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="COMP001">
+                                       <effect>
+                                          <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
+                                             <color>
+                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                    </MenuButton>
+                                    <VBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="217.0">
+                                       <children>
+                                          <Label text="Subject Description: " textFill="#5d5d5d">
+                                             <font>
+                                                <Font size="9.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="subjDescLbl" alignment="CENTER" prefHeight="28.0" prefWidth="206.0" text="Object Oriented Programming" textAlignment="CENTER" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets left="30.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
                                 <AnchorPane prefHeight="750.0" prefWidth="750.0">
                                     <children>
-                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="750.0" prefWidth="710.0">
+                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="750.0" prefWidth="710.0" styleClass="small-cards">
                                             <columns>
                                                 <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
                                                 <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student ID" />
-                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Student Name" />
-                                                <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" text="Subject Code" />
-                                                <TableColumn fx:id="finGradeCol" editable="true" maxWidth="50.0" minWidth="115.0" prefWidth="50.0" resizable="false" text="Final Grade" />
+                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student Name" />
+                                                <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
+                                                <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
                                     <TableColumn fx:id="gradeStatCol" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Grade Status" />
                                             </columns>
                                         </TableView>
@@ -137,7 +119,7 @@
                                 </AnchorPane>
                             </children>
                             <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="30.0" />
+                                <Insets bottom="20.0" left="20.0" right="20.0" />
                             </padding>
                         </VBox>
                     </children>

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyInput.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GradingModuleController">
+<AnchorPane prefHeight="800.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/GradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GradingModuleController">
    <children>
       <BorderPane prefHeight="800.0" prefWidth="810.0">
          <top>

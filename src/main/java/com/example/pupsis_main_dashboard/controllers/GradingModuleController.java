@@ -162,11 +162,7 @@ public class GradingModuleController implements Initializable {
                 if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
-                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-
-                return false; // Does not match
+                return subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter);// Does not match
             });
         });
 
