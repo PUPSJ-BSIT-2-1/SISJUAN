@@ -1,5 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
 import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
 import com.example.pupsis_main_dashboard.utility.SessionData;
 import com.example.pupsis_main_dashboard.utility.Subject;
@@ -36,6 +37,7 @@ public class GradingModuleController implements Initializable {
     @FXML private TableColumn<Subject, String> semCol;
     @FXML private TableColumn<Subject, String> subjCodeCol;
     @FXML private TableColumn<Subject, String> subjDescCol;
+    @FXML private Label validationLabel;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
     // Keep a reference to the original data
@@ -110,13 +112,14 @@ public class GradingModuleController implements Initializable {
     }
     private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
 
+        validationLabel.setText(studentId);
         if (studentId == null || studentId.isEmpty()) {
             throw new SQLException("Student ID not set");
         }
 
         ObservableList<Subject> tempList = FXCollections.observableArrayList();
         try (Connection conn = dbConnection2.getConnection()) {
-            String query = "SELECT year_section, semester, subject_code, subject_description" +
+            String query = "SELECT year_section, semester, subject_code, subject_description " +
                     "FROM subjects WHERE student_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, studentId);

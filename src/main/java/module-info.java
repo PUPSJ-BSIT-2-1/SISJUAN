@@ -9,6 +9,7 @@ module com.example.pupsis_main_dashboard {
     requires java.mail;
     requires org.slf4j;
     requires com.fasterxml.jackson.databind;
+    requires org.postgresql.jdbc;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml, javafx.graphics;
     exports com.example.pupsis_main_dashboard;
