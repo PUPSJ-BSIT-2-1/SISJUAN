@@ -51,9 +51,9 @@
                 </Pane>
             </top>
             <center>
-                <Pane prefHeight="640.0" prefWidth="710.0" BorderPane.alignment="CENTER">
+                <Pane prefHeight="640.0" prefWidth="750.0" BorderPane.alignment="CENTER">
                     <children>
-                        <VBox layoutX="-1.0" layoutY="14.0" prefHeight="870.0" prefWidth="710.0" spacing="20.0">
+                        <VBox alignment="TOP_CENTER" layoutX="-1.0" layoutY="14.0" prefHeight="870.0" prefWidth="750.0" spacing="10.0">
                             <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
                            <children>
@@ -103,24 +103,21 @@
                               <Insets />
                            </VBox.margin>
                         </HBox>
-                                <AnchorPane prefHeight="750.0" prefWidth="750.0">
-                                    <children>
-                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="750.0" prefWidth="710.0" styleClass="small-cards">
+                        <HBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="750.0">
+                           <children>
+                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0" styleClass="small-cards">
                                             <columns>
                                                 <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
                                                 <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student ID" />
-                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student Name" />
+                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" resizable="false" text="Student Name" />
                                                 <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
                                                 <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
                                     <TableColumn fx:id="gradeStatCol" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Grade Status" />
                                             </columns>
                                         </TableView>
-                                    </children>
-                                </AnchorPane>
+                           </children>
+                        </HBox>
                             </children>
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" />
-                            </padding>
                         </VBox>
                     </children>
                 </Pane>

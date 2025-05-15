@@ -50,7 +50,7 @@
          <center>
             <Pane prefHeight="650.0" prefWidth="750.0" BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefHeight="650.0" prefWidth="750.0" spacing="20.0">
+                  <VBox prefHeight="650.0" prefWidth="750.0" spacing="10.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="10.0" styleClass="small-cards">
                            <children>
@@ -73,21 +73,21 @@
                               </HBox>
                            </children>
                         </HBox>
-                        <AnchorPane prefHeight="400.0" prefWidth="750.0" styleClass="small-cards">
+                        <HBox prefHeight="500.0" prefWidth="750.0" styleClass="small-cards">
                            <children>
-                              <TableView id="mainGradingTable" fx:id="subjectsTable" layoutX="22.0" layoutY="18.0" prefHeight="460.0" prefWidth="710.0">
+                              <TableView id="mainGradingTable" fx:id="subjectsTable" prefWidth="750.0">
                                 <columns>
                                   <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" text="Year &amp; Section" />
                                   <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" text="Semester" />
                                     <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" text="Subject Code" />
-                                    <TableColumn fx:id="subjDescCol" editable="false" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" text="Subject Description" />
+                                    <TableColumn fx:id="subjDescCol" editable="false" maxWidth="320.0" minWidth="320.0" prefWidth="320.0" text="Subject Description" />
                                 </columns>
                               </TableView>
                            </children>
-                        </AnchorPane>
+                        </HBox>
                      </children>
                      <padding>
-                        <Insets top="20.0" />
+                        <Insets top="10.0" />
                      </padding>
                   </VBox>
                </children>
