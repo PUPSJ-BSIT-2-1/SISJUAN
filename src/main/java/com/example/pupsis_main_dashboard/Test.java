@@ -6,7 +6,7 @@
 
 package com.example.pupsis_main_dashboard;
 
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.slf4j.Logger;

@@ -18,7 +18,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/editGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.GradingModule.EditPageController">
+<AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/editGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EditPageController">
     <children>
         <BorderPane prefHeight="1080.0" prefWidth="810.0">
             <top>

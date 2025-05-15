@@ -1,6 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utility.Student;
+import com.example.pupsis_main_dashboard.utilities.Student;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
@@ -10,7 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.converter.DefaultStringConverter;
 import java.net.URL;
 import java.util.ResourceBundle;
-import com.example.pupsis_main_dashboard.utility.dbConnection2;
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -48,7 +48,7 @@ public class EditPageController implements Initializable {
 
     private ObservableList<Student> studentsList = FXCollections.observableArrayList();
 
-    dbConnection2 dbConn = new dbConnection2();
+    DBConnection dbConn = new DBConnection();
     String url = dbConn.URL;
     String user = dbConn.USER;
     String password = dbConn.PASSWORD;

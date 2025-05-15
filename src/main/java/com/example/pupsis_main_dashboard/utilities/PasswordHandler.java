@@ -4,7 +4,7 @@
  * generate secure random salts, and verify hashed passwords.
  */
 
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;

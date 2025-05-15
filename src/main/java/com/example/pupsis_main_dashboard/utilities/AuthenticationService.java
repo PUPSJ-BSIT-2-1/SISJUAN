@@ -3,7 +3,7 @@
  * It checks if the provided email or student ID and password match the records in the database.
  */
 
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
