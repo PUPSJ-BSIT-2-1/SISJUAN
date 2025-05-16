@@ -1,0 +1,55 @@
+.root {
+    -fx-background-color: radial-gradient(focus-angle 45deg, focus-distance 10%, 
+                                        center 50% 50%, radius 0%, 
+                                        rgb(255, 255, 255), rgb(0, 0, 0));
+	-fx-background-radius: 10; /* Rounded corners */
+	-fx-border-radius: 5;
+	
+}
+
+.text-please {
+    -fx-font-size: 15px;
+    -fx-text-fill: #333333;
+    -fx-line-spacing: 5px;
+    -fx-wrap-text: true;
+}
+
+.formal-label {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 25px;
+    -fx-text-fill: rgb(0, 0, 0);
+    -fx-font-weight: bold;
+}
+
+.role-button {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-padding: 14px 28px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    -fx-border-width: 2px;
+    -fx-text-fill: #FFFFFF; 
+    -fx-background-color: #800000;
+    
+}
+
+.role-button:hover {
+	-fx-background-color: #450000;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.3, 0, 5);
+
+}
+.role-button:pressed{
+	 -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+    
+.back-button:hover{
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand; 
+}
+
