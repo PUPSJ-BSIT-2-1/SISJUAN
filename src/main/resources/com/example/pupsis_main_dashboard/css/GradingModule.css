@@ -4,7 +4,27 @@
     -fx-background-color: white; /* or your desired background color */
     -fx-border-radius: 20;
 }
+#gradesHeaderLbl {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
 
+#gradesHeaderLbl:focused {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+}
+
+.red-card .label {
+    -fx-font-size: 30px !important;
+    -fx-min-height: 50 !important;
+    -fx-max-height: 50 !important;
+    -fx-pref-height: 50 !important;
+}
 .label {
     -fx-font-family: 'Inter';
 }
