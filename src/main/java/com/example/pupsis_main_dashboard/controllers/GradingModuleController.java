@@ -132,13 +132,15 @@ public class GradingModuleController implements Initializable {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     Subject selectedSubject = row.getItem();
                     String subjectCode = selectedSubject.getSubjectCode();
+                    String subjectDesc = selectedSubject.getSubjectDescription();
                     EditGradesPageController editPage = new EditGradesPageController();
                     editPage.setSubjectCode(subjectCode);
+                    editPage.setSubjectDesc(subjectDesc);
                     try {
                         ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
                         if (contentPane != null) {
                             Parent newContent = FXMLLoader.load(Objects.requireNonNull(
-                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
+                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/EditGradesPage.fxml")
                             ));
                             contentPane.setContent(newContent);
                         }
