@@ -119,3 +119,11 @@
     -fx-max-height: 50 !important;
     -fx-pref-height: 50 !important;
 }
+#subDesclbl {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+}
+#subDesclbl:focused {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+}

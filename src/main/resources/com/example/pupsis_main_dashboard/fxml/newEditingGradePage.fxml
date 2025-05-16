@@ -32,7 +32,7 @@
                     <children>
                         <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
                             <children>
-                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" minHeight="50.0" maxHeight="50.0" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
                                     <font>
                                         <Font size="30.0" />
                                     </font>
@@ -85,7 +85,7 @@
                                     </MenuButton>
                                     <VBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="217.0">
                                        <children>
-                                          <Label text="Subject Description: " textFill="#5d5d5d">
+                                          <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
                                              <font>
                                                 <Font size="9.0" />
                                              </font>
