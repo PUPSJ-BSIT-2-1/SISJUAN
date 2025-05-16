@@ -532,3 +532,31 @@
     -fx-border-color: #555555;
     -fx-border-width: 2;
 }
+
+/* SVG Icon Container style */
+.svg-icon-container {
+    -fx-min-height: 40px;
+    -fx-min-width: 40px;
+    -fx-max-height: 40px;
+    -fx-max-width: 40px;
+    -fx-background-color: maroon;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+    -fx-alignment: center;
+}
+
+/* SVG Icon style */
+.svg-icon {
+    -fx-fill: white;
+    -fx-stroke-width: 0;
+    -fx-alignment: center;
+}
+
+/* Dark theme SVG icons */
+.dark-theme .svg-icon-container {
+    -fx-background-color: #424242;
+}
+
+.dark-theme .svg-icon {
+    -fx-fill: #e0e0e0;
+}
