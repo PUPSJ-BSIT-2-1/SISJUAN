@@ -62,6 +62,8 @@ public class GradingModuleController implements Initializable {
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
 
+        validationLabel.setText(facultyId);
+
         // Try to get student ID with a small delay to ensure SessionData is populated
         Platform.runLater(() -> {
             facultyId = SessionData.getInstance().getStudentId();
@@ -150,7 +152,6 @@ public class GradingModuleController implements Initializable {
     }
     private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
 
-        validationLabel.setText(facultyId);
         if (facultyId == null || facultyId.isEmpty()) {
             throw new SQLException("Student ID not set");
         }
@@ -203,7 +204,7 @@ public class GradingModuleController implements Initializable {
                 if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
-                return subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter);// Does not match
+                return subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter);// Does not match
             });
         });
 

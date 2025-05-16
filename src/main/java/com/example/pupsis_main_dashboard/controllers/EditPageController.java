@@ -1,12 +1,11 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utilities.StudentCache;
-import com.example.pupsis_main_dashboard.utilities.DBConnection;
-import com.example.pupsis_main_dashboard.utilities.Student;
-import com.example.pupsis_main_dashboard.utilities.SessionData;
+import com.example.pupsis_main_dashboard.utilities.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,6 +26,7 @@ import java.io.IOException;
 
 public class EditPageController implements Initializable {
 
+    @FXML private TextField searchBar;
     @FXML private Label gradesHeaderlbl;
     @FXML private Label subDesclbl;
     @FXML private Label subjDescLbl;
@@ -58,6 +58,7 @@ public class EditPageController implements Initializable {
         // Initialize the columns with the correct property names
         noStudCol.setCellValueFactory(new PropertyValueFactory<>("studentNo"));
         studIDCol.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        studNameCol.setCellValueFactory(new PropertyValueFactory<>("studentNa"));
         subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjCode"));
         finGradeCol.setCellValueFactory(new PropertyValueFactory<>("finalGrade"));
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
@@ -267,11 +268,11 @@ public class EditPageController implements Initializable {
 
                 try (Connection conn = DBConnection.getConnection()) {
                     String query = """
-                    SELECT ss."id", ss."student_id", ss."subject_code",
-                           ss."final_grade", ss."gradestat"
-                    FROM grade ss
-                    WHERE ss."subject_code" = ?
-                    ORDER BY CAST(ss."id" AS INTEGER)""";
+                    SELECT g."id", g."student_id", g."subject_code", g."final_grade", 
+                           g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
+                    FROM grade g, students s
+                    WHERE g."student_id" = s."student_id" and g.subject_code = ?
+                    ORDER BY CAST(g."id" AS INTEGER)""";
 
                     try (PreparedStatement pstmt = conn.prepareStatement(query,
                             ResultSet.TYPE_FORWARD_ONLY,
@@ -287,6 +288,7 @@ public class EditPageController implements Initializable {
                                 Student student = new Student(
                                         rs.getString("id"),
                                         rs.getString("student_id"),
+                                        rs.getString("Student Name"),
                                         rs.getString("subject_code"),
                                         rs.getString("final_grade"),
                                         rs.getString("gradestat")
@@ -304,6 +306,7 @@ public class EditPageController implements Initializable {
             ObservableList<Student> result = loadTask.getValue();
             studentCache.put(subjectCode, result);
             updateTableView(result);
+            setupSearch();
         });
 
         loadTask.setOnFailed(e -> {
@@ -352,6 +355,44 @@ public class EditPageController implements Initializable {
             subjCodeCombBox.setText(subjectCode);
             loadStudentsBySubjectCode(subjectCode);
         }
+    }
+
+    private void setupSearch() {
+        // Create a filtered list wrapping the original list
+        FilteredList<Student> filteredData = new FilteredList<>(studentsList, p -> true);
+
+        // Add listener to searchBar text property
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(subject -> {
+                // If search text is empty, display all subjects
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Convert search text to lower case
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                // Match against all fields
+                if (subject.getStudentId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                if (subject.getStudentNa().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return subject.getSubjCode().toLowerCase().contains(lowerCaseFilter);// Does not match
+            });
+        });
+
+        // Wrap the FilteredList in a SortedList
+        SortedList<Student> sortedData = new SortedList<>(filteredData);
+
+        // Bind the SortedList comparator to the TableView comparator
+        sortedData.comparatorProperty().bind(studentsTable.comparatorProperty());
+
+        // Add sorted (and filtered) data to the table
+        studentsTable.setItems(sortedData);
+
+        studentsTable.getColumns().forEach(column -> column.setReorderable(false));
     }
 
     public void setSubjectDesc(String subjectDesc) {
