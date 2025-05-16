@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="rootVBox" maxWidth="810.0" minWidth="810.0" prefHeight="866.0" prefWidth="810.0" spacing="10.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyHomeContentController">
+   <padding>
+      <Insets bottom="20.0" left="0.0" right="0.0" top="0.0" />
+   </padding>
+   <!-- Welcome Header -->
+   <FlowPane styleClass="welcome-flow-pane">
+      <children>
+         <HBox alignment="CENTER_LEFT" spacing="15" styleClass="welcome-header-hbox">
+            <ImageView fitHeight="50" fitWidth="50" styleClass="welcome-logo">
+               <image>
+                  <Image url="@../images/puplogo.png" />
+               </image>
+            </ImageView>
+            <VBox styleClass="welcome-info-container">
+               <Label styleClass="welcome-text" text="Welcome back," />
+               <Label fx:id="facultyNameLabel" styleClass="faculty-name" text="Faculty Name" />
+               <HBox alignment="CENTER_LEFT" spacing="5.0">
+                  <children>
+                     <Label styleClass="department-label" text="Department:" />
+                     <Label fx:id="departmentLabel" styleClass="department-value" text="Department Name" />
+                  </children>
+               </HBox>
+               <Label fx:id="dateLabel" styleClass="date-label" text="May 16, 2025" />
+            </VBox>
+         </HBox>
+      </children>
+      <styleClass>
+         <String fx:value="cards" />
+         <String fx:value="red-card" />
+      </styleClass>
+   </FlowPane>
+   
+         <!-- Teaching Statistics -->
+   <HBox spacing="10.0" styleClass="stats-container">
+      <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
+         <ImageView fitHeight="30.0" fitWidth="30.0" styleClass="stat-icon">
+            <Image url="@../images/classes_icon.png" />
+         </ImageView>
+         <Label fx:id="totalClassesLabel" styleClass="stat-value" text="0" />
+         <Label styleClass="stat-label" text="Total Classes" />
+      </VBox>
+      <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
+         <ImageView fitHeight="30.0" fitWidth="30.0" styleClass="stat-icon">
+            <Image url="@../images/students_icon.png" />
+         </ImageView>
+         <Label fx:id="totalStudentsLabel" styleClass="stat-value" text="0" />
+         <Label styleClass="stat-label" text="Total Students" />
+      </VBox>
+      <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
+         <ImageView fitHeight="30.0" fitWidth="30.0" styleClass="stat-icon">
+            <Image url="@../images/calendar_icon.png" />
+         </ImageView>
+         <Label styleClass="stat-value" text="7" />
+         <Label styleClass="stat-label" text="Scheduled Classes Today" />
+      </VBox>
+   </HBox>
+   
+         <!-- Schedule and Distribution -->
+   <HBox spacing="10.0" styleClass="content-row">
+      <VBox styleClass="schedule-container">
+         <Label styleClass="section-header" text="Today's Schedule">
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin>
+         </Label>
+         <VBox fx:id="todayScheduleVBox" spacing="10.0" styleClass="schedule-list">
+            <!-- Schedule items will be added here dynamically -->
+            <Label styleClass="loading-label" text="Loading schedule..." />
+         </VBox>
+      </VBox>
+      
+            <VBox alignment="TOP_CENTER" styleClass="chart-container">
+         <Label styleClass="section-header" text="Class Distribution" />
+         <PieChart fx:id="classDistributionChart" labelLineLength="20.0" labelsVisible="false" legendSide="RIGHT" styleClass="distribution-chart" />
+      </VBox>
+   </HBox>
+   
+         <!-- Quick Actions and Events -->
+   <HBox spacing="10.0" styleClass="content-row">
+      <VBox prefHeight="254.0" prefWidth="613.0" styleClass="events-container" HBox.hgrow="ALWAYS">
+         <Label styleClass="section-header" text="Upcoming Events">
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin>
+         </Label>
+         <VBox fx:id="eventsVBox" spacing="10.0" styleClass="events-list">
+            <!-- Events will be added here dynamically -->
+            <Label styleClass="loading-label" text="Loading events..." />
+         </VBox>
+      </VBox>
+      
+            <VBox alignment="TOP_CENTER" prefHeight="254.0" prefWidth="150.0" spacing="10" styleClass="quick-actions-container">
+         <Label styleClass="section-header" text="Quick Actions" />
+         <Button minWidth="190.0" styleClass="action-button" text="Input Grades">
+            <VBox.margin>
+               <Insets left="30.0" right="30.0" />
+            </VBox.margin>
+         </Button>
+         <Button styleClass="action-button" text="View Class Lists" />
+         <Button styleClass="action-button" text="Record Attendance" />
+         <Button styleClass="action-button" text="Submit Requirements" />
+      </VBox>
+   </HBox>
+</VBox>

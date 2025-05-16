@@ -11,6 +11,34 @@
     -fx-text-fill: white;
 }
 
+/* Faculty name style */
+.faculty-name {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+
+/* Department label style */
+.department-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+/* Department value style */
+.department-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Date label style */
+.date-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+    -fx-opacity: 0.8;
+}
+
 /* Card style */
 .cards {
     -fx-background-color: #f8fcfc;
@@ -39,6 +67,111 @@
     -fx-font-size: 18px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
+}
+
+/* Schedule box style */
+.schedule-box {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+/* Subject label style */
+.subject-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343a40;
+}
+
+/* Time label style */
+.time-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #5a6268;
+}
+
+/* Location label style */
+.location-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+/* Event box style */
+.event-box {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+/* Event name label style */
+.event-name, .event-name-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343a40;
+}
+
+/* Event date label style */
+.event-date, .event-date-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #5a6268;
+}
+
+/* Event location label style */
+.event-location, .event-location-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: bold;
+}
+
+/* Event description label style */
+.event-description, .event-desc-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+/* No data label style */
+.no-data-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+    -fx-alignment: center;
+}
+
+/* Loading label style */
+.loading-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+}
+
+/* Error label style */
+.error-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+
+/* Main content scroll style */
+.main-content-scroll {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.main-content-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Welcome header style */
+.welcome-header {
+    -fx-min-width: 810;
+    -fx-max-width: 810;
 }
 
 /* Announcement list style */
@@ -83,6 +216,7 @@
     -fx-font-weight: bold;
     -fx-padding: 10 15;
     -fx-background-radius: 5;
+    -fx-pref-width: 190;
 }
 
 /* Action button hover effect */
@@ -99,6 +233,7 @@
 /* Font style */
 .font {
     -fx-font-family: "Inter 18pt Medium";
+    -fx-background-color: #f2f2f2;
 }
 
 /* Red card style */
@@ -112,6 +247,7 @@
 .dark-theme .cards {
     -fx-background-color: #3a3a3a;
     -fx-border-color: #555555;
+    -fx-border-width: 2;
 }
 
 /* Dark theme red card style */
@@ -134,6 +270,103 @@
 .dark-theme .section-header {
     -fx-text-fill: #e0e0e0;
 }
+
+/* Dark theme schedule box style */
+.dark-theme .schedule-box {
+    -fx-background-color: #444444;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme subject label style */
+.dark-theme .subject-label {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme time label style */
+.dark-theme .time-label {
+    -fx-text-fill: #b0b0b0;
+}
+
+/* Dark theme location label style */
+.dark-theme .location-label {
+    -fx-text-fill: #a0a0a0;
+}
+
+/* Dark theme event box style */
+.dark-theme .event-box {
+    -fx-background-color: #444444;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme event name label style */
+.dark-theme .event-name, .dark-theme .event-name-label {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme event date label style */
+.dark-theme .event-date, .dark-theme .event-date-label {
+    -fx-text-fill: #b0b0b0;
+}
+
+/* Dark theme event location label style */
+.dark-theme .event-location, .dark-theme .event-location-label {
+    -fx-text-fill: #b0b0b0;
+}
+
+/* Dark theme event description label style */
+.dark-theme .event-description, .dark-theme .event-desc-label {
+    -fx-text-fill: #a0a0a0;
+}
+
+/* Dark theme no data label style */
+.dark-theme .no-data-label {
+    -fx-text-fill: #888888;
+}
+
+/* Dark theme loading label style */
+.dark-theme .loading-label {
+    -fx-text-fill: #888888;
+}
+
+/* Dark theme error label style */
+.dark-theme .error-label {
+    -fx-text-fill: #ff6b6b;
+}
+
+/* Dark theme for pie chart */
+.dark-theme .chart {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+}
+
+.dark-theme .chart-title {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .chart-legend {
+    -fx-background-color: transparent;
+}
+
+.dark-theme .chart-legend-item {
+    -fx-text-fill: #c5c5c5;
+}
+
+.dark-theme .chart-pie-label {
+    -fx-fill: #c5c5c5;
+}
+
+.dark-theme .chart-pie-label-line {
+    -fx-stroke: #888888;
+}
+
+.dark-theme .default-color0.chart-pie { -fx-pie-color: #ff7043; }
+.dark-theme .default-color1.chart-pie { -fx-pie-color: #29b6f6; }
+.dark-theme .default-color2.chart-pie { -fx-pie-color: #66bb6a; }
+.dark-theme .default-color3.chart-pie { -fx-pie-color: #9575cd; }
+.dark-theme .default-color4.chart-pie { -fx-pie-color: #f06292; }
+.dark-theme .default-color5.chart-pie { -fx-pie-color: #ffb74d; }
+.dark-theme .default-color6.chart-pie { -fx-pie-color: #4fc3f7; }
+.dark-theme .default-color7.chart-pie { -fx-pie-color: #aed581; }
 
 /* Dark theme list cell style */
 .dark-theme .announcement-list .list-cell {
@@ -161,4 +394,141 @@
 /* Dark theme statistic icon style */
 .dark-theme .stat-icon {
     -fx-fill: #e57373;
+}
+
+/* Dark theme scroll pane style */
+.dark-theme .main-content-scroll > .viewport {
+    -fx-background-color: transparent; 
+}
+
+.dark-theme .main-content-scroll {
+    -fx-background-color: transparent;
+}
+
+/* Dark theme separator style */
+.dark-theme .separator *.line {
+    -fx-border-color: #555555;
+}
+
+/* Welcome flow pane style */
+.welcome-flow-pane {
+    -fx-min-width: 810;
+    -fx-max-width: 810;
+}
+
+/* Welcome header HBox style */
+.welcome-header-hbox {
+    -fx-padding: 15 20;
+}
+
+/* Welcome information container */
+.welcome-info-container {
+    -fx-spacing: 2;
+}
+
+/* Stats container */
+.stats-container {
+    -fx-pref-height: 132;
+    -fx-pref-width: 810;
+}
+
+/* Stat box style */
+.stat-box {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+    -fx-pref-width: 200;
+    -fx-alignment: center;
+    -fx-spacing: 5;
+}
+
+/* Content row style */
+.content-row {
+    -fx-pref-width: 810;
+    -fx-spacing: 10;
+}
+
+/* Schedule container */
+.schedule-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+    -fx-pref-width: 400;
+    -fx-spacing: 5;
+}
+
+/* Schedule list style */
+.schedule-list {
+    -fx-spacing: 10;
+}
+
+/* Chart container */
+.chart-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+    -fx-pref-height: 300;
+    -fx-alignment: top-center;
+    -fx-spacing: 5;
+}
+
+/* Distribution chart style */
+.distribution-chart {
+    -fx-pref-height: 230;
+    -fx-pref-width: 350;
+}
+
+/* Events container */
+.events-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+    -fx-pref-width: 400;
+    -fx-spacing: 5;
+}
+
+/* Events list style */
+.events-list {
+    -fx-spacing: 10;
+}
+
+/* Quick actions container */
+.quick-actions-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+    -fx-alignment: top-center;
+    -fx-spacing: 10;
+}
+
+/* Footer space style */
+.footer-space {
+    -fx-pref-height: 20;
+    -fx-pref-width: 810;
+}
+
+/* Dark theme styles for the new components */
+.dark-theme .stat-box,
+.dark-theme .schedule-container,
+.dark-theme .chart-container,
+.dark-theme .events-container,
+.dark-theme .quick-actions-container {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 2;
 }
