@@ -20,10 +20,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -295,26 +295,95 @@ public class FacultyLoginController {
     }
 
     // Animation method to animate the blur effect of a pane
-    private void animateBlur(Pane pane, boolean enableBlur) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), pane);
-        GaussianBlur blur = new GaussianBlur(0);
-        pane.setEffect(blur);
-
+    private void animateBlur(Pane targetPane, boolean enableBlur) {
         if (enableBlur) {
-            fadeTransition.setFromValue(1.0);
-            fadeTransition.setToValue(0.6);
+            // Get the scene to check for dark mode
+            Scene scene = targetPane.getScene();
+            boolean isDarkMode = scene != null && scene.getRoot().getStyleClass().contains("dark-theme");
 
-            fadeTransition.setOnFinished(event -> {
-                FadeTransition blurTransition = new FadeTransition(Duration.millis(300), pane);
-                blur.setRadius(5);
-            });
+            // Create the blur effect
+            GaussianBlur blur = new GaussianBlur(10);
+            
+            // First, capture any children of the target pane that need the blur effect
+            for (Node child : targetPane.getChildren()) {
+                // Skip blurring the schoolImage
+                if (child instanceof Pane && ((Pane) child).getChildren().stream()
+                        .anyMatch(n -> n instanceof ImageView && "schoolImage".equals(n.getId()))) {
+                    continue;
+                }
+                // Apply the same blur to all other children
+                child.setEffect(blur);
+            }
+            
+            // Get the exact border radius from CSS (20px from .border-pane class)
+            double cornerRadius = 20.0;
+            
+            // Store original styles for later restoration
+            targetPane.getProperties().put("originalStyle", targetPane.getStyle());
+            targetPane.getProperties().put("originalClip", targetPane.getClip());
+            
+            // Apply a clip that exactly matches the CSS border radius
+            Rectangle clip = new Rectangle(
+                0,
+                0,
+                targetPane.getWidth(),
+                targetPane.getHeight()
+            );
+            
+            // Set the clip's arc width/height to match the border-radius
+            // For JavaFX Rectangle, arcWidth and arcHeight need to be double the CSS border-radius
+            clip.setArcWidth(cornerRadius * 2);
+            clip.setArcHeight(cornerRadius * 2);
+            
+            // Ensure clip resizes with pane
+            clip.widthProperty().bind(targetPane.widthProperty());
+            clip.heightProperty().bind(targetPane.heightProperty());
+            
+            // Add a solid background color to match the CSS
+            if (isDarkMode) {
+                // For dark mode, use solid color with exact radius from CSS
+                targetPane.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: " + cornerRadius + ";");
+            } else {
+                // For light mode
+                targetPane.setStyle("-fx-background-color: #e6e6e6; -fx-background-radius: " + cornerRadius + ";");
+            }
+            
+            // Set the clip to create rounded corners
+            targetPane.setClip(clip);
+            
+            // Mark that this pane has blur applied
+            targetPane.getProperties().put("blurApplied", true);
         } else {
-            fadeTransition.setFromValue(0.6);
-            fadeTransition.setToValue(1.0);
-            blur.setRadius(0);
+            // Remove blur effect from all children
+            for (Node child : targetPane.getChildren()) {
+                child.setEffect(null);
+            }
+            
+            // Restore original style if it was saved
+            if (targetPane.getProperties().containsKey("originalStyle")) {
+                String originalStyle = (String) targetPane.getProperties().get("originalStyle");
+                targetPane.setStyle(originalStyle != null ? originalStyle : "");
+                targetPane.getProperties().remove("originalStyle");
+            } else {
+                targetPane.setStyle("");
+            }
+            
+            // Restore original clip if it was saved
+            if (targetPane.getProperties().containsKey("originalClip")) {
+                Object originalClip = targetPane.getProperties().get("originalClip");
+                if (originalClip instanceof javafx.scene.shape.Shape) {
+                    targetPane.setClip((javafx.scene.shape.Shape) originalClip);
+                } else {
+                    targetPane.setClip(null);
+                }
+                targetPane.getProperties().remove("originalClip");
+            } else {
+                targetPane.setClip(null);
+            }
+            
+            // Remove the marker
+            targetPane.getProperties().remove("blurApplied");
         }
-
-        fadeTransition.play();
     }
     
     // Shows an alert dialog with the specified properties

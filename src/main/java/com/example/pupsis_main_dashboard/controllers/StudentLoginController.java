@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
@@ -671,42 +672,92 @@ public class StudentLoginController {
         animation.play();
     }
 
-    public static void animateBlur(Pane pane, boolean enableBlur) {
+    public static void animateBlur(Pane targetPane, boolean enableBlur) {
         if (enableBlur) {
-            // Add GaussianBlur effect
+            // Get the scene to check for dark mode
+            Scene scene = targetPane.getScene();
+            boolean isDarkMode = scene != null && scene.getRoot().getStyleClass().contains("dark-theme");
+
+            // Create the blur effect
             GaussianBlur blur = new GaussianBlur(10);
-            pane.setEffect(blur);
             
-            // Add blurred-pane style class
-            if (!pane.getStyleClass().contains("blurred-pane")) {
-                pane.getStyleClass().add("blurred-pane");
+            // First, capture any children of the target pane that need the blur effect
+            for (Node child : targetPane.getChildren()) {
+                // Apply the same blur to all children
+                child.setEffect(blur);
             }
             
-            // Apply rounded corners to match parent container
-            // Using 20.0 to match the border-pane's -fx-background-radius in CSS
-            double cornerRadius = 20.0;
+            // Use slightly larger radius to ensure coverage
+            double cornerRadius = 20.0;  // Default from CSS
+            
+            // Add padding to radius to ensure complete coverage of corners
+            double clipRadius = cornerRadius + 1.5;  // Slightly larger for clipping
+            double cssRadius = cornerRadius + 1.0;   // Slightly larger for CSS
+            
+            // Add a solid background color to the target pane to prevent white edges
+            if (isDarkMode) {
+                // For dark mode, use solid color with appropriate radius
+                targetPane.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: " + cssRadius + ";");
+            } else {
+                // For light mode
+                targetPane.setStyle("-fx-background-color: #e6e6e6; -fx-background-radius: " + cssRadius + ";");
+            }
+            
+            // Apply rounded corners with slight padding to ensure coverage
             Rectangle clip = new Rectangle(
-                0, 
-                0, 
-                pane.getWidth(), 
-                pane.getHeight()
+                -1,  // Slight negative offset
+                -1,  // Slight negative offset
+                targetPane.getWidth() + 2,  // Slightly wider
+                targetPane.getHeight() + 2  // Slightly taller
             );
-            clip.setArcWidth(cornerRadius * 2);
-            clip.setArcHeight(cornerRadius * 2);
+            
+            // The clip arc needs to be exactly double the CSS corner radius
+            clip.setArcWidth(clipRadius * 2);
+            clip.setArcHeight(clipRadius * 2);
             
             // Ensure clip resizes with pane
-            clip.widthProperty().bind(pane.widthProperty());
-            clip.heightProperty().bind(pane.heightProperty());
+            clip.widthProperty().bind(targetPane.widthProperty().add(2));
+            clip.heightProperty().bind(targetPane.heightProperty().add(2));
             
             // Set the clip to create rounded corners
-            pane.setClip(clip);
+            targetPane.setClip(clip);
+            
+            // Store original styles for later restoration
+            targetPane.getProperties().put("originalStyle", targetPane.getStyle());
+            targetPane.getProperties().put("originalClip", targetPane.getClip());
+            
+            // Mark that this pane has blur applied
+            targetPane.getProperties().put("blurApplied", true);
         } else {
-            pane.setEffect(null);
+            // Remove blur effect from all children
+            for (Node child : targetPane.getChildren()) {
+                child.setEffect(null);
+            }
             
-            // Remove blurred-pane style class
-            pane.getStyleClass().remove("blurred-pane");
+            // Restore original style if it was saved
+            if (targetPane.getProperties().containsKey("originalStyle")) {
+                String originalStyle = (String) targetPane.getProperties().get("originalStyle");
+                targetPane.setStyle(originalStyle != null ? originalStyle : "");
+                targetPane.getProperties().remove("originalStyle");
+            } else {
+                targetPane.setStyle("");
+            }
             
-            // Keep the clip for consistent appearance
+            // Restore original clip if it was saved
+            if (targetPane.getProperties().containsKey("originalClip")) {
+                Object originalClip = targetPane.getProperties().get("originalClip");
+                if (originalClip instanceof javafx.scene.shape.Shape) {
+                    targetPane.setClip((javafx.scene.shape.Shape) originalClip);
+                } else {
+                    targetPane.setClip(null);
+                }
+                targetPane.getProperties().remove("originalClip");
+            } else {
+                targetPane.setClip(null);
+            }
+            
+            // Remove the marker
+            targetPane.getProperties().remove("blurApplied");
         }
     }
 

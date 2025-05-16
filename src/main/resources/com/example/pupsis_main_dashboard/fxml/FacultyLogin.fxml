@@ -13,7 +13,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -120,9 +119,9 @@
              </VBox>
         </left>
         <right>
-            <Pane>
-               <children>
-                  <ImageView fitHeight="700" fitWidth="840.0">
+         <VBox>
+            <children>
+                  <ImageView fx:id="schoolImage" fitHeight="700" fitWidth="840.0">
                      <clip>
                         <Rectangle arcHeight="30" arcWidth="30" height="700" width="840" />
                      </clip>
@@ -130,8 +129,11 @@
                         <Image url="@../Images/PUPSJ.png" />
                      </image>
                   </ImageView>
-               </children>
-            </Pane>
+            </children>
+            <padding>
+               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+         </VBox>
         </right>
       <styleClass>
          <String fx:value="font" />
@@ -142,5 +144,8 @@
       <left>
          <VBox fx:id="leftSide" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
       </left>
+      <padding>
+         <Insets top="10.0" />
+      </padding>
    </BorderPane>
 </StackPane>

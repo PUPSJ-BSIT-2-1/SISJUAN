@@ -153,3 +153,6 @@
     -fx-pref-width: 0;
     -fx-padding: 0;
 }
+.root{
+    -fx-background-radius: 22;
+}
