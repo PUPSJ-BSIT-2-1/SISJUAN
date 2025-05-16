@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+
+<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" styleClass="font" stylesheets="@../css/EnrollmentContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EnrollmentController">
+   <padding>
+      <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+   </padding>
+   <children>
+      <!-- Header Section -->
+      <HBox alignment="CENTER_LEFT" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" styleClass="red-card">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+         <children>
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-text-fill: white;" styleClass="header-title" text="Subject Enrollment" />
+                  <Label style="-fx-text-fill: lightgrey;" styleClass="header-subtitle" text="Select your preferred schedules for the subjects below" />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+               <children>
+                  <Label style="-fx-text-fill: white;" styleClass="academic-year" text="Academic Year 2024-2025" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      
+      <!-- Semester Selection -->
+      <HBox alignment="CENTER_LEFT" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="15" styleClass="cards">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+         <children>
+            <Label styleClass="semester-label" text="Current Semester:" />
+            <Label styleClass="value-label" text="1st Semester" />
+            <Label styleClass="semester-label" text="Year Level:">
+               <HBox.margin>
+                  <Insets left="30.0" />
+               </HBox.margin>
+            </Label>
+            <Label styleClass="value-label" text="2nd Year" />
+         </children>
+      </HBox>
+      
+      <!-- Subject List Section -->
+      <VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10" styleClass="cards">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+         <children>
+            <Label styleClass="subjects-header" text="Available Subjects" HBox.hgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="0.0" right="0.0" top="0.0" />
+               </VBox.margin>
+            </Label>
+            
+            <!-- Column Headers -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+               <padding>
+                  <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+               </padding>
+               <children>
+                  <!-- Checkbox spacer (40px) -->
+                  <Label prefWidth="40.0">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <!-- Subject Code header (200px) -->
+                  <Label styleClass="section-header" text="Subject Code" prefWidth="200.0">
+                     <HBox.margin>
+                        <Insets left="0.0" />
+                     </HBox.margin>
+                  </Label>
+                  <!-- Description header (300px) -->
+                  <Label styleClass="section-header" text="Description" prefWidth="300.0">
+                     <HBox.margin>
+                        <Insets left="0.0" />
+                     </HBox.margin>
+                  </Label>
+                  <!-- Schedule header (200px) -->
+                  <Label styleClass="section-header" text="Schedule" prefWidth="200.0">
+                     <HBox.margin>
+                        <Insets left="0.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            
+            <Separator />
+            
+            <!-- Subject List Container -->
+            <VBox fx:id="subjectListContainer" maxHeight="300.0" spacing="5">
+               <!-- Example subject row -->
+               <HBox alignment="CENTER_LEFT" spacing="10" styleClass="subject-row">
+                  <padding>
+                     <Insets bottom="5.0" left="0.0" right="0.0" top="5.0" />
+                  </padding>
+                  <children>
+                     <CheckBox styleClass="custom-checkbox">
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </CheckBox>
+                     <Label prefWidth="200.0" styleClass="subject-code" text="CS101" />
+                     <Label prefWidth="300.0" styleClass="subject-description" text="Introduction to Computer Science" wrapText="true" />
+                     <ComboBox prefHeight="30.0" prefWidth="180.0" promptText="Select Schedule" styleClass="modern-combo">
+                        <items>
+                           <javafx.collections.FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Mon/Wed 9:00-10:30 AM" />
+                              <String fx:value="Tue/Thu 1:00-2:30 PM" />
+                              <String fx:value="Fri 9:00-12:00 PM" />
+                           </javafx.collections.FXCollections>
+                        </items>
+                     </ComboBox>
+                  </children>
+               </HBox>
+            </VBox>
+         </children>
+      </VBox>
+      
+      <!-- Action Buttons -->
+      <HBox alignment="CENTER" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+         <children>
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#handleSelectAll" styleClass="secondary-button" text="Select All">
+                     <padding>
+                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <Button mnemonicParsing="false" styleClass="secondary-button" text="Cancel">
+               <padding>
+                  <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" styleClass="action-button" text="Enroll in Selected Subjects">
+               <padding>
+                  <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+               </padding>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>
