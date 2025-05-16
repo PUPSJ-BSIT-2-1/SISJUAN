@@ -6,10 +6,17 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +35,7 @@ public class AboutContentController {
     @FXML private Label name;
     @FXML private Label role;
     @FXML private Label description;
+    @FXML private StackPane stackPane;
 
     private List<Developer> developers;
     private List<Developer> filteredDevelopers = new ArrayList<>();
@@ -150,15 +158,41 @@ public class AboutContentController {
             role.setText(dev.getDevRole());
             description.setText(dev.getDevDesc());
             try {
-                Image devImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/pupsis_main_dashboard/" + dev.getDevImage())));
-                image.setPreserveRatio(false);
+                Image devImage = new Image(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/com/example/pupsis_main_dashboard/" + dev.getDevImage())
+                ));
+                image.setImage(devImage);
                 image.setFitWidth(200);
                 image.setFitHeight(200);
-                image.setImage(devImage);
+                image.setPreserveRatio(false);
+
+                stackPane.getChildren().setAll(image);
+                stackPane.setPrefSize(200, 200);
+
+                Rectangle clip = new Rectangle(200, 200);
+                clip.setArcWidth(30);  // Rounded corner X radius
+                clip.setArcHeight(30); // Rounded corner Y radius
+                image.setClip(clip);
+
             } catch (NullPointerException e) {
                 System.err.println("Failed to load image resources: " + e.getMessage());
             }
         }
+    }
+
+    private Rectangle getRectangle() {
+        Rectangle gradientBackground = new Rectangle(200, 200);
+        LinearGradient gradient = new LinearGradient(
+                0, 1, 0, 0, // startX, startY, endX, endY (vertical)
+                true,
+                CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.RED),
+                new Stop(1.0, Color.TRANSPARENT)
+        );
+        gradientBackground.setFill(gradient);
+        gradientBackground.setArcWidth(20);  // optional: rounded corners
+        gradientBackground.setArcHeight(20);
+        return gradientBackground;
     }
 
     // Populates the module picker with available modules.

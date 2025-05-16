@@ -8,7 +8,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+
 
 <VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1500.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AboutContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AboutContentController">
    <children>
@@ -45,11 +47,15 @@
             </HBox>
             <BorderPane prefHeight="287.0" prefWidth="734.0" styleClass="dev-containers">
                <left>
-                  <ImageView fx:id="image" fitHeight="235.0" fitWidth="201.0" pickOnBounds="true" preserveRatio="true" styleClass="image" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@../Images/pupsj-logo.png" />
-                     </image>
-                  </ImageView>
+                  <StackPane fx:id="stackPane" prefHeight="221.0" prefWidth="210.0" styleClass="image" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fx:id="image" fitHeight="235.0" fitWidth="201.0" pickOnBounds="true" preserveRatio="true" styleClass="image">
+                           <image>
+                              <Image url="@../Images/pupsj-logo.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </StackPane>
                </left>
                <right>
                   <VBox prefHeight="238.0" prefWidth="500.0" BorderPane.alignment="CENTER">
@@ -79,6 +85,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </BorderPane>
-         </children></VBox>
+         </children>
+      </VBox>
    </children>
 </VBox>
