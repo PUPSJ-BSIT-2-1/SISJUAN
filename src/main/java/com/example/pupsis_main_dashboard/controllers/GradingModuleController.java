@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import javafx.scene.Node;
+import javafx.application.Platform;
 
 public class GradingModuleController implements Initializable {
     @FXML private TextField searchBar; // Add this field
@@ -47,15 +48,6 @@ public class GradingModuleController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        studentId = SessionData.getInstance().getStudentId();
-
-        // Add debug logging
-        if (studentId == null || studentId.isEmpty()) {
-            System.err.println("Warning: Student ID is not set during GradingModuleController initialization");
-            // Optional: Add a retry mechanism
-            studentId = attemptToRetrieveStudentId();
-        }
-
         // Initialize UI components first
         yearSecCol.setCellValueFactory(new PropertyValueFactory<>("yearSection"));
         semCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
@@ -70,9 +62,17 @@ public class GradingModuleController implements Initializable {
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
 
-        // Load data asynchronously
-        Task<ObservableList<Subject>> loadTask = getObservableListTask();
-        new Thread(loadTask).start();
+        // Try to get student ID with a small delay to ensure SessionData is populated
+        Platform.runLater(() -> {
+            studentId = SessionData.getInstance().getStudentId();
+            if (studentId != null && !studentId.isEmpty()) {
+                // Load data asynchronously
+                Task<ObservableList<Subject>> loadTask = getObservableListTask();
+                new Thread(loadTask).start();
+            } else {
+                subjectsTable.setPlaceholder(new Label("No faculty ID available"));
+            }
+        });
     }
 
     private String attemptToRetrieveStudentId() {

@@ -3,6 +3,7 @@ package com.example.pupsis_main_dashboard.controllers;
 //import com.example.pupsis_main_dashboard.utility.ControllerUtils;
 
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
@@ -234,24 +235,25 @@ public class FacultyDashboardController {
         };
     }
 
-    // Load content into the ScrollPane based on the provided FXML path
-    private void loadContent(String fxmlPath) {
-        try {
-            Parent content = contentCache.get(fxmlPath);
-            if (content == null) {
-                content = FXMLLoader.load(
-                        Objects.requireNonNull(getClass().getResource(fxmlPath))
-                );
-                contentCache.put(fxmlPath, content);
-                addLayoutChangeListener(content);
-            }
-            contentPane.setContent(content);
-            resetScrollPosition();
-        } catch (IOException e) {
-            // Handle error loading content
-            contentPane.setContent(new Label("Error loading content"));
+private void loadContent(String fxmlPath) {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        Parent content = loader.load();
+        
+        // Set faculty ID in SessionData when loading grading module
+        if (fxmlPath.equals(GRADES_FXML)) {
+            String facultyId = studentIdLabel.getText();
+            SessionData.getInstance().setStudentId(facultyId);
         }
+        
+        contentPane.setContent(content);
+        contentCache.put(fxmlPath, content);
+        addLayoutChangeListener(content);
+        resetScrollPosition();
+    } catch (IOException e) {
+        contentPane.setContent(new Label("Error loading content"));
     }
+}
     
     // Add layout change listener to content
     private void addLayoutChangeListener(Parent content) {
