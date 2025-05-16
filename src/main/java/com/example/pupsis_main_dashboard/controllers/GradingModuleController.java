@@ -132,7 +132,7 @@ public class GradingModuleController implements Initializable {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     Subject selectedSubject = row.getItem();
                     String subjectCode = selectedSubject.getSubjectCode();
-                    EditPageController editPage = new EditPageController();
+                    EditGradesPageController editPage = new EditGradesPageController();
                     editPage.setSubjectCode(subjectCode);
                     try {
                         ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
@@ -202,6 +202,10 @@ public class GradingModuleController implements Initializable {
                     return true;
                 }
                 if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+
+                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)){
                     return true;
                 }
                 return subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter);// Does not match

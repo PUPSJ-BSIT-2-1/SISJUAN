@@ -2,7 +2,7 @@
     -fx-font-family: "Inter";
     -fx-background-radius: 20;
     -fx-background-color: white; /* or your desired background color */
-    -fx-border-radius: 20;
+    -fx-border-radius: 10;
 }
 
 .label {
@@ -73,6 +73,15 @@
 /* Make sure text inside cells changes color */
 .table-row-cell:hover .text {
     -fx-fill: white;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
 }
 
 .small-cards {

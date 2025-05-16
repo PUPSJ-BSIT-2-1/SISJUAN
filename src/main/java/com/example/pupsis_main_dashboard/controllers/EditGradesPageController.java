@@ -12,19 +12,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.converter.DefaultStringConverter;
+
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 import java.util.Objects;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 
-public class EditPageController implements Initializable {
+public class EditGradesPageController implements Initializable {
 
     @FXML private TextField searchBar;
     @FXML private Label gradesHeaderlbl;
@@ -51,6 +48,8 @@ public class EditPageController implements Initializable {
             System.err.println("Error: studentsTable is null. Check FXML file for proper fx:id.");
             return;
         }
+
+        setupRowHoverEffect();
 
         // Make table editable
         studentsTable.setEditable(true);
@@ -159,30 +158,35 @@ public class EditPageController implements Initializable {
         }
     }
 
-    private void setupRowClickHandler() {
+    private void setupRowHoverEffect() {
         studentsTable.setRowFactory(tv -> {
-            TableRow<Student> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    try {
-                        // Get the parent ScrollPane (contentPane)
-                        ScrollPane contentPane = (ScrollPane) studentsTable.getScene().lookup("#contentPane");
-
-                        if (contentPane != null) {
-                            // Load the editing grade page
-                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
-                                    getClass().getResource("/com/example/GradingModule/fxml/newEditingGradePage.fxml")
-                            ));
-                            contentPane.setContent(newContent);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            TableRow<Student> row = new TableRow<Student>() {
+                @Override
+                protected void updateItem(Student item, boolean empty) {
+                    super.updateItem(item, empty);
+                    // Reset style for empty rows
+                    if (empty || item == null) {
+                        getStyleClass().add("empty-row"); // Reset style for empty rows
+                    } else {
+                        getStyleClass().remove("empty-row"); // Reset style for non-empty rows
                     }
                 }
+            };
+
+            // Add mouse hover effect
+            row.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+                if (isNowHovered && !row.isEmpty()) {
+                    row.setStyle("table-row-cell:hover"); // Set your desired hover color
+                } else {
+                    row.setStyle(""); // Reset style when not hovered
+                }
             });
+
             return row;
         });
     }
+
+
 
     private boolean isValidGrade(String grade) {
         try {
@@ -358,6 +362,7 @@ public class EditPageController implements Initializable {
     }
 
     private void setupSearch() {
+
         // Create a filtered list wrapping the original list
         FilteredList<Student> filteredData = new FilteredList<>(studentsList, p -> true);
 
