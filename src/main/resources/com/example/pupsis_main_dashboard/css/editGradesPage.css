@@ -127,3 +127,7 @@
     -fx-font-size: 9px;
     -fx-text-fill: #6c757d;
 }
+#subjDescLbl{
+    -fx-font-size: 14px;
+    -fx-text-fill: #000000;
+}
