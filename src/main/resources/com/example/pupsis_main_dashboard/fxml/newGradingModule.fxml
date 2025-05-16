@@ -29,7 +29,7 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
                      <children>
-                        <Label contentDisplay="CENTER" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
+                        <Label fx:id="gradesHederLbl" contentDisplay="CENTER" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
                            <font>
                               <Font size="30.0" />
                            </font>
@@ -77,10 +77,10 @@
                            <children>
                               <TableView id="mainGradingTable" fx:id="subjectsTable" prefWidth="750.0">
                                 <columns>
-                                  <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" text="Year &amp; Section" />
-                                  <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" text="Semester" />
-                                    <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" text="Subject Code" />
-                                    <TableColumn fx:id="subjDescCol" editable="false" maxWidth="320.0" minWidth="320.0" prefWidth="320.0" text="Subject Description" />
+                                  <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" resizable="false" text="Year &amp; Section" />
+                                  <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Semester" />
+                                    <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" resizable="false" text="Subject Code" />
+                                    <TableColumn fx:id="subjDescCol" editable="false" maxWidth="320.0" minWidth="320.0" prefWidth="320.0" resizable="false" text="Subject Description" />
                                 </columns>
                               </TableView>
                            </children>

@@ -38,7 +38,6 @@
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
     -fx-font-style: italic;
-    -fx-font-weight: medium;
     -fx-padding: 15px, 10px, 0px, 10px;
 }
 
@@ -56,15 +55,24 @@
     -fx-border-width: 0 0 1 0;
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
+    -fx-padding: 10px;
 }
 
-/* Selection color */
+/* Selection color (update to maroon scheme) */
 .table-view:focused .table-row-cell:filled:focused:selected {
-    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-color: #800000; /* Maroon background */
+    -fx-text-fill: white;           /* White text */
     -fx-table-cell-border-color: rgba(0, 0, 0, 0.25);
     -fx-font-family: 'Inter';
-    -fx-color-label-visible:  #000000;
-
+}
+/* Hover effect for table rows */
+.table-row-cell:hover {
+    -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
+    -fx-text-fill: white;           /* White text */
+}
+/* Make sure text inside cells changes color */
+.table-row-cell:hover .text {
+    -fx-fill: white;
 }
 
 .small-cards {
