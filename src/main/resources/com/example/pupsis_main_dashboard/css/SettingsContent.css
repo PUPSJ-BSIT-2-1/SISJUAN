@@ -108,6 +108,10 @@
     -fx-text-fill: #6c757d; /* Match .settings-label */
 }
 
+.check-box:hover {
+    -fx-cursor: hand;
+}
+
 .check-box .box {
     -fx-background-color: #ffffff;
     -fx-border-color: #ced4da;
@@ -171,6 +175,10 @@
     -fx-focus-color: transparent; /* Remove focus ring */
     -fx-faint-focus-color: transparent; /* Remove faint focus ring */
     -fx-transition: -fx-background-color 0.2s ease-in-out; /* Animate track color change */
+}
+
+.modern-toggle-switch:hover {
+    -fx-cursor: hand;
 }
 
 .modern-toggle-switch:selected {

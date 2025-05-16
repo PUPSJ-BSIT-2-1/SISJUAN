@@ -1,13 +1,21 @@
-package com.example.pupsis_main_dashboard.databaseOperations;
+/**
+ * This class handles the connection to the PostgreSQL database.
+ * It uses JDBC to establish a connection with the database using the provided URL, user, and password.
+ */
+
+package com.example.pupsis_main_dashboard.utilities;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-public class dbConnection2 {
-    public static final String USER = "postgres.autqwzshfjaqbkxpiqxm";
-    public static final String URL = "jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:6543/postgres?";
-    public static final String PASSWORD = "pupSISProject2025";
 
+public class DBConnection {
+    // Original credentials that were previously working
+    public static final String URL = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres";
+    public static final String USER = "postgres.odyfrnuddvhbedvjfnhw";
+    public static final String PASSWORD = "HelloWorld123!";
+
+    @SuppressWarnings("Java9ReflectionClassVisibility")
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
@@ -22,5 +30,3 @@ public class dbConnection2 {
         }
     }
 }
-
-

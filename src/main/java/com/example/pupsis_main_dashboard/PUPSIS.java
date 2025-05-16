@@ -5,11 +5,9 @@
 
 package com.example.pupsis_main_dashboard;
 
-import com.example.pupsis_main_dashboard.controllers.SettingsController; 
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.controllers.SettingsController;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window; 
@@ -26,7 +24,7 @@ public class PUPSIS extends Application {
     private static final String DARK_THEME_CLASS = "dark-theme";
     private static final String LIGHT_THEME_CLASS = "light-theme";
 
-    private static void applyThemeToSingleScene(Scene scene, boolean darkModeEnabled) {
+    public static void applyThemeToSingleScene(Scene scene, boolean darkModeEnabled) {
         if (scene == null) {
             return;
         }

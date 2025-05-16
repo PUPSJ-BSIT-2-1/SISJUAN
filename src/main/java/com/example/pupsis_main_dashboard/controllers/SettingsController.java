@@ -1,18 +1,17 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.auth.PasswordHandler;
-import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
-import com.example.pupsis_main_dashboard.utility.NotificationManager;
-import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.PasswordHandler;
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.AuthenticationService;
+import com.example.pupsis_main_dashboard.utilities.NotificationManager;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.prefs.Preferences;
 
 public class SettingsController {
@@ -215,7 +214,7 @@ public class SettingsController {
         // 1. Verify the current password using AuthenticationService
         boolean isCurrentPasswordCorrect;
         try {
-            isCurrentPasswordCorrect = com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate(currentUserIdentifier, currentPass);
+            isCurrentPasswordCorrect = AuthenticationService.authenticate(currentUserIdentifier, currentPass);
         } catch (Exception e) {
             System.err.println("Error during authentication check: " + e.getMessage());
             e.printStackTrace();

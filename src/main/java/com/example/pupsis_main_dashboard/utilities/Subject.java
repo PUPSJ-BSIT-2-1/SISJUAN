@@ -1,4 +1,4 @@
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 public class Subject {
     private String yearSection;

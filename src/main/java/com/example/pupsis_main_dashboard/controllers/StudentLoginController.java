@@ -1,10 +1,9 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-//import com.example.pupsis_main_dashboard.databaseOperations.PasswordHandler;
-import com.example.pupsis_main_dashboard.databaseOperations.DBConnection;
-import com.example.pupsis_main_dashboard.utility.EmailService;
-import com.example.pupsis_main_dashboard.utility.RememberMeHandler;
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.EmailService;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
@@ -14,7 +13,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -30,7 +28,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -45,12 +43,11 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.example.pupsis_main_dashboard.auth.AuthenticationService.authenticate;
+import static com.example.pupsis_main_dashboard.utilities.AuthenticationService.authenticate;
 //import static com.example.pupsis_main_dashboard.utility.AuthenticationService.authenticate;
 
 public class StudentLoginController {
@@ -492,7 +489,7 @@ public class StudentLoginController {
             String studentId = String.format("%04d-%06d-SJ-01", currentYear, randomNum);
 
             // Insert the student data into the database
-            String query = "INSERT INTO students (student_id, firstName, middleName, lastName, email, password, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO students (student_id, firstname, middlename, lastname, email, password, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             try (Connection connection = DBConnection.getConnection();
                  PreparedStatement statement = connection.prepareStatement(query)) {
@@ -675,40 +672,93 @@ public class StudentLoginController {
         animation.play();
     }
 
-    public static void animateBlur(Pane pane, boolean enableBlur) {
+    public static void animateBlur(Pane targetPane, boolean enableBlur) {
         if (enableBlur) {
+            // Get the scene to check for dark mode
+            Scene scene = targetPane.getScene();
+            boolean isDarkMode = scene != null && scene.getRoot().getStyleClass().contains("dark-theme");
+
+            // Create the blur effect
             GaussianBlur blur = new GaussianBlur(10);
-            pane.setEffect(blur);
-        } else {
-            pane.setEffect(null);
-        }
-    }
-
-    public static String getStudentFullName(String identifier, boolean isEmail) {
-        if (identifier == null || identifier.isEmpty()) return "";
-
-        String query = isEmail
-            ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
-            : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, identifier);
-            ResultSet result = statement.executeQuery();
-
-            if (result.next()) {
-                String firstName = result.getString("firstName");
-                String middleName = result.getString("middleName");
-                String lastName = result.getString("lastName");
-                String middleInitial = middleName != null && !middleName.isEmpty()
-                    ? middleName.charAt(0) + "."
-                    : "";
-                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim();
+            
+            // First, capture any children of the target pane that need the blur effect
+            for (Node child : targetPane.getChildren()) {
+                // Apply the same blur to all children
+                child.setEffect(blur);
             }
-        } catch (SQLException e) {
-            logger.error("Error getting student full name", e);
+            
+            // Use slightly larger radius to ensure coverage
+            double cornerRadius = 20.0;  // Default from CSS
+            
+            // Add padding to radius to ensure complete coverage of corners
+            double clipRadius = cornerRadius + 1.5;  // Slightly larger for clipping
+            double cssRadius = cornerRadius + 1.0;   // Slightly larger for CSS
+            
+            // Add a solid background color to the target pane to prevent white edges
+            if (isDarkMode) {
+                // For dark mode, use solid color with appropriate radius
+                targetPane.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: " + cssRadius + ";");
+            } else {
+                // For light mode
+                targetPane.setStyle("-fx-background-color: #e6e6e6; -fx-background-radius: " + cssRadius + ";");
+            }
+            
+            // Apply rounded corners with slight padding to ensure coverage
+            Rectangle clip = new Rectangle(
+                -1,  // Slight negative offset
+                -1,  // Slight negative offset
+                targetPane.getWidth() + 2,  // Slightly wider
+                targetPane.getHeight() + 2  // Slightly taller
+            );
+            
+            // The clip arc needs to be exactly double the CSS corner radius
+            clip.setArcWidth(clipRadius * 2);
+            clip.setArcHeight(clipRadius * 2);
+            
+            // Ensure clip resizes with pane
+            clip.widthProperty().bind(targetPane.widthProperty().add(2));
+            clip.heightProperty().bind(targetPane.heightProperty().add(2));
+            
+            // Set the clip to create rounded corners
+            targetPane.setClip(clip);
+            
+            // Store original styles for later restoration
+            targetPane.getProperties().put("originalStyle", targetPane.getStyle());
+            targetPane.getProperties().put("originalClip", targetPane.getClip());
+            
+            // Mark that this pane has blur applied
+            targetPane.getProperties().put("blurApplied", true);
+        } else {
+            // Remove blur effect from all children
+            for (Node child : targetPane.getChildren()) {
+                child.setEffect(null);
+            }
+            
+            // Restore original style if it was saved
+            if (targetPane.getProperties().containsKey("originalStyle")) {
+                String originalStyle = (String) targetPane.getProperties().get("originalStyle");
+                targetPane.setStyle(originalStyle != null ? originalStyle : "");
+                targetPane.getProperties().remove("originalStyle");
+            } else {
+                targetPane.setStyle("");
+            }
+            
+            // Restore original clip if it was saved
+            if (targetPane.getProperties().containsKey("originalClip")) {
+                Object originalClip = targetPane.getProperties().get("originalClip");
+                if (originalClip instanceof javafx.scene.shape.Shape) {
+                    targetPane.setClip((javafx.scene.shape.Shape) originalClip);
+                } else {
+                    targetPane.setClip(null);
+                }
+                targetPane.getProperties().remove("originalClip");
+            } else {
+                targetPane.setClip(null);
+            }
+            
+            // Remove the marker
+            targetPane.getProperties().remove("blurApplied");
         }
-        return "";
     }
 
     // From StageAndSceneUtils (integrated version for alerts only)
@@ -728,5 +778,37 @@ public class StudentLoginController {
         }
 
         alert.showAndWait();
+    }
+
+    public static String getStudentFullName(String identifier, boolean isEmail) {
+        if (identifier == null || identifier.isEmpty()) return "";
+
+        String query;
+        
+        if (isEmail) {
+            // Case-insensitive email comparison
+            query = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            query = "SELECT firstname, middlename, lastname FROM students WHERE student_id = ?";
+        }
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, identifier);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                String firstName = result.getString("firstname");
+                String middleName = result.getString("middlename");
+                String lastName = result.getString("lastname");
+                String middleInitial = middleName != null && !middleName.isEmpty()
+                    ? middleName.charAt(0) + "."
+                    : "";
+                return String.format("%s, %s %s", lastName, firstName, middleInitial).trim();
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting student full name", e);
+        }
+        return "";
     }
 }

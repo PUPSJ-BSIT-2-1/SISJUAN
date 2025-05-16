@@ -3,7 +3,7 @@
  * This class provides methods to save, load, and clear user credentials.
  */
 
-package com.example.pupsis_main_dashboard.utility;
+package com.example.pupsis_main_dashboard.utilities;
 
 import java.util.prefs.Preferences;
 
