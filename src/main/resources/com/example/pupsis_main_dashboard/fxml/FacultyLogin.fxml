@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--suppress ALL -->
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@../css/FacultyLogin.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyLoginController">
+    <BorderPane fx:id="mainLoginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/FacultyLogin.css">
+        <left>
+             <VBox prefHeight="720.0" prefWidth="416.0">
+                <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="358.0">
+                    <ImageView fitHeight="51.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                        <!--suppress JavaFxDefaultTag -->
+                        <image>
+                            <Image url="@../Images/PUP Logo.png" />
+                        </image>
+                    </ImageView>
+                    <VBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="355.0">
+                        <HBox.margin>
+                            <Insets left="10.0" />
+                        </HBox.margin>
+                        <Label styleClass="pup-sanjuan-label" text="PUP">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="pup-sanjuan-label" text="San Juan Campus">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                     <VBox.margin>
+                        <Insets top="-12.0" />
+                     </VBox.margin>
+                        </Label>
+                    </VBox>
+                    <ImageView fx:id="closeButton" fitHeight="51.0" fitWidth="41.0" onMouseClicked="#backToFrontPage" pickOnBounds="true" preserveRatio="true" styleClass="back-button">
+                        <image>
+                            <Image url="@../Images/Back Icon.png" />
+                        </image>
+                        <HBox.margin>
+                            <Insets right="-15.0" />
+                        </HBox.margin>
+                    </ImageView>
+               <VBox.margin>
+                  <Insets bottom="80.0" />
+               </VBox.margin>
+                </HBox>
+                 <Label styleClass="big-text" text="Faculty Login">
+                     <font>
+                         <Font name="Poppins Bold" size="24.0" />
+                     </font>
+                 </Label>
+                 <Label prefWidth="125.0" text="Enter your Faculty ID">
+                     <padding>
+                         <Insets bottom="30.0" top="-5.0" />
+                     </padding>
+                 </Label>
+                 <Label fx:id="errorLabel" styleClass="error-message">
+                     <VBox.margin>
+                         <Insets bottom="10.0" />
+                     </VBox.margin>
+                 </Label>
+                 <TextField fx:id="facultyIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="254.0" promptText="Faculty ID/Email" styleClass="fields">
+                     <padding>
+                         <Insets left="15.0" />
+                     </padding>
+                     <VBox.margin>
+                         <Insets bottom="10.0" />
+                     </VBox.margin>
+                 </TextField>
+                 <PasswordField fx:id="passwordField" promptText="Password" styleClass="fields">
+                     <padding>
+                         <Insets left="15.0" />
+                     </padding>
+                     <VBox.margin>
+                         <Insets bottom="20.0" />
+                     </VBox.margin>
+                 </PasswordField>
+                <HBox alignment="CENTER_LEFT">
+                   <VBox.margin>
+                      <Insets bottom="50.0" />
+                   </VBox.margin>
+                   <children>
+                      <ToggleButton fx:id="rememberMeCheckBox" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" styleClass="switch-toggle-button" stylesheets="@../css/ToggleSwitch.css" text="ToggleButton">
+                          <graphic>
+                              <Region styleClass="thumb" />
+                          </graphic>
+                      </ToggleButton>
+                      <Label prefHeight="23.0" prefWidth="139.0" styleClass="font" text="Remember me">
+                         <HBox.margin>
+                            <Insets left="10.0" />
+                         </HBox.margin>
+                      </Label>
+                   </children>
+                </HBox>
+                 <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="408.0" styleClass="buttons" text="Login">
+                     <VBox.margin>
+                         <Insets bottom="10.0" />
+                     </VBox.margin>
+                 </Button>
+                 <padding>
+                     <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                 </padding>
+             </VBox>
+        </left>
+        <right>
+            <Pane>
+               <children>
+                  <ImageView fitHeight="700" fitWidth="840.0">
+                     <clip>
+                        <Rectangle arcHeight="30" arcWidth="30" height="700" width="840" />
+                     </clip>
+                     <image>
+                        <Image url="@../Images/PUPSJ.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+        </right>
+      <styleClass>
+         <String fx:value="font" />
+         <String fx:value="border-pane" />
+      </styleClass>
+    </BorderPane>
+    <BorderPane mouseTransparent="true" prefHeight="200.0" prefWidth="200.0">
+      <left>
+         <VBox fx:id="leftSide" alignment="CENTER" prefHeight="720.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
+      </left>
+   </BorderPane>
+</StackPane>

@@ -27,6 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -672,11 +673,60 @@ public class StudentLoginController {
 
     public static void animateBlur(Pane pane, boolean enableBlur) {
         if (enableBlur) {
+            // Add GaussianBlur effect
             GaussianBlur blur = new GaussianBlur(10);
             pane.setEffect(blur);
+            
+            // Add blurred-pane style class
+            if (!pane.getStyleClass().contains("blurred-pane")) {
+                pane.getStyleClass().add("blurred-pane");
+            }
+            
+            // Apply rounded corners to match parent container
+            // Using 20.0 to match the border-pane's -fx-background-radius in CSS
+            double cornerRadius = 20.0;
+            Rectangle clip = new Rectangle(
+                0, 
+                0, 
+                pane.getWidth(), 
+                pane.getHeight()
+            );
+            clip.setArcWidth(cornerRadius * 2);
+            clip.setArcHeight(cornerRadius * 2);
+            
+            // Ensure clip resizes with pane
+            clip.widthProperty().bind(pane.widthProperty());
+            clip.heightProperty().bind(pane.heightProperty());
+            
+            // Set the clip to create rounded corners
+            pane.setClip(clip);
         } else {
             pane.setEffect(null);
+            
+            // Remove blurred-pane style class
+            pane.getStyleClass().remove("blurred-pane");
+            
+            // Keep the clip for consistent appearance
         }
+    }
+
+    // From StageAndSceneUtils (integrated version for alerts only)
+    public static void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        // Check if the scene has dark theme applied and style the alert accordingly
+        Scene currentScene = new Scene(new VBox()); // Creating a temporary scene to get access to stylesheets
+        // Get the active scene
+        if (currentScene != null && currentScene.getRoot().getStyleClass().contains("dark-theme")) {
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStyleClass().add("dark-theme");
+            // Add any additional dark theme styling if needed
+        }
+
+        alert.showAndWait();
     }
 
     public static String getStudentFullName(String identifier, boolean isEmail) {
@@ -709,24 +759,5 @@ public class StudentLoginController {
             logger.error("Error getting student full name", e);
         }
         return "";
-    }
-
-    // From StageAndSceneUtils (integrated version for alerts only)
-    public static void showAlert(Alert.AlertType type, String title, String header, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-
-        // Check if the scene has dark theme applied and style the alert accordingly
-        Scene currentScene = new Scene(new VBox()); // Creating a temporary scene to get access to stylesheets
-        // Get the active scene
-        if (currentScene != null && currentScene.getRoot().getStyleClass().contains("dark-theme")) {
-            DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStyleClass().add("dark-theme");
-            // Add any additional dark theme styling if needed
-        }
-
-        alert.showAndWait();
     }
 }

@@ -8,27 +8,6 @@
     -fx-prompt-text-fill: #a0a0a0; 
 }
 
-/* Style for birthday input field with white background and rounded corners */
-.birthday-field {
-    -fx-background-color: white;
-    -fx-pref-height: 30;
-    -fx-text-fill: black;
-    -fx-background-radius: 8;
-}
-
-/* Adds a hand cursor when hovering over the birthday field */
-.birthday-field:hover {
-    -fx-cursor: hand;
-}
-
-/* Adds a maroon border when the birthday field is focused */
-.birthday-field:focused {
-    -fx-border-color: maroon;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-border-width: 2;
-}
-
 /* Style for buttons with maroon background, white text, and rounded corners */
 .buttons {
     -fx-background-color: #800000;
@@ -76,12 +55,7 @@
 
 /* Style for error messages with red text color */
 .error-message {
-    -fx-text-fill: red;
-}
-
-/* Style for root element with rounded corners */
-.root {
-    -fx-background-radius: 23;
+    -fx-text-fill: #ff0000;
 }
 
 /* Style for border pane with light gray background and rounded corners */
@@ -90,13 +64,7 @@
     -fx-background-radius: 20;
 }
 
-/* Style for blurred pane with same styling as border pane */
-.blurred-pane {
-    -fx-background-color: #e6e6e6;
-    -fx-background-radius: 25;
-}
-
-/* ============== DARK THEME STYLES for StudentLogin.css ============== */
+/* ============== DARK THEME STYLES for FacultyLogin.css ============== */
 
 /* Placeholder for dark theme root styles */
 .dark-theme {
@@ -140,41 +108,9 @@
     -fx-background-color: #333333;
 }
 
-/* Style for birthday field in dark theme with dark background and light text */
-.dark-theme .birthday-field {
-    -fx-background-color: #2b2b2b;
-    -fx-text-fill: #e0e0e0;
-    -fx-border-color: #555555;
-    -fx-border-width: 1px;
-    -fx-border-radius: 8;
-}
-
-/* Style for dropdown arrow in birthday field in dark theme */
-.dark-theme .birthday-field .arrow {
-    -fx-background-color: #b0b0b0; 
-}
-
-/* Style for list cells in birthday field dropdown in dark theme */
-.dark-theme .birthday-field .list-cell {
-    -fx-background-color: #2b2b2b;
-    -fx-text-fill: #e0e0e0;
-}
-
-/* Style for hovered or selected list cells in birthday field dropdown in dark theme */
-.dark-theme .birthday-field .list-view .list-cell:filled:hover,
-.dark-theme .birthday-field .list-view .list-cell:filled:selected {
-    -fx-background-color: #800000; 
-    -fx-text-fill: white;
-}
-
-/* Style for focused birthday field in dark theme with red border */
-.dark-theme .birthday-field:focused {
-    -fx-border-color: #e57373;
-}
-
 /* Style for buttons in dark theme with red background and white text */
 .dark-theme .buttons {
-    -fx-background-color: #b22222; 
+    -fx-background-color: #800000; 
     -fx-text-fill: #ffffff;
 }
 
@@ -193,15 +129,27 @@
     -fx-text-fill: #ff6b6b; 
 }
 
-/* Style for blurred pane in dark theme */
-.dark-theme .blurred-pane {
-    -fx-background-color: #1e1e1e;
-    -fx-background-radius: 25;
-}
-
 /* Adds a drop shadow effect for back button in dark theme on hover */
 .dark-theme .back-button:hover {
     -fx-effect: dropshadow(gaussian, #606060, 20, 0.5, 0, 0); 
 }
 
-/* Hide scrollbars in ComboBox popups */
+/* Hide scrollbars in ComboBox popups for both light and dark themes */
+.combo-box-popup .list-view .scroll-bar:vertical,
+.combo-box-popup .list-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+    -fx-padding: 0;
+}
+
+.combo-box-popup .list-view .scroll-bar .increment-button,
+.combo-box-popup .list-view .scroll-bar .decrement-button,
+.combo-box-popup .list-view .scroll-bar .thumb {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+    -fx-pref-width: 0;
+    -fx-padding: 0;
+}
