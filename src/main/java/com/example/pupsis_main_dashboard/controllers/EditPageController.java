@@ -26,6 +26,7 @@ import java.io.IOException;
 
 public class EditPageController implements Initializable {
 
+    @FXML private Label gradesHeaderlbl;
     @FXML private Label subjDescLbl;
     @FXML private MenuButton subjCodeCombBox;
     @FXML private MenuButton yrSecCombBox;

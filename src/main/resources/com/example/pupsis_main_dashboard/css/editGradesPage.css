@@ -98,3 +98,24 @@
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
+#gradesHeaderLbl {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
+
+#gradesHeaderLbl:focused {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+}
+
+.red-card .label {
+    -fx-font-size: 30px !important;
+    -fx-min-height: 50 !important;
+    -fx-max-height: 50 !important;
+    -fx-pref-height: 50 !important;
+}

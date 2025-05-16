@@ -30,9 +30,9 @@
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                     </padding>
                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="99.0" prefWidth="810.0" spacing="20.0" styleClass="pane-header">
+                        <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
                             <children>
-                                <Label contentDisplay="CENTER" prefHeight="50.0" prefWidth="173.0" text="Grades" textFill="WHITE">
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" minHeight="50.0" maxHeight="50.0" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
                                     <font>
                                         <Font size="30.0" />
                                     </font>
