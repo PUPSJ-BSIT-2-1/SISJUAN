@@ -24,7 +24,7 @@ public class PUPSIS extends Application {
     private static final String DARK_THEME_CLASS = "dark-theme";
     private static final String LIGHT_THEME_CLASS = "light-theme";
 
-    private static void applyThemeToSingleScene(Scene scene, boolean darkModeEnabled) {
+    public static void applyThemeToSingleScene(Scene scene, boolean darkModeEnabled) {
         if (scene == null) {
             return;
         }

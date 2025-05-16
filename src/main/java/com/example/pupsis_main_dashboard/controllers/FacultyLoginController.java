@@ -253,18 +253,30 @@ public class FacultyLoginController {
 
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        Preferences prefs = Preferences.userNodeForPackage(getClass());
-        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+        // Use the same preference node as the global theme system
+        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
 
-        if (isDarkMode) {
-            proceedWithThemeApplication();
+        // Use the PUPSIS global theme mechanism instead of managing styles manually
+        Scene scene = mainLoginPane.getScene();
+        if (scene != null) {
+            com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
+        } else {
+            // If scene isn't available yet, try again after a delay
+            Platform.runLater(() -> {
+                Scene delayedScene = mainLoginPane.getScene();
+                if (delayedScene != null) {
+                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(delayedScene, isDarkMode);
+                }
+            });
         }
     }
 
-    // Applies the theme to the main login pane based on user preferences
+    // Proceed with theme application
     private void proceedWithThemeApplication() {
         Scene scene = mainLoginPane.getScene();
         if (scene != null) {
+            scene.getRoot().getStyleClass().removeAll("light-theme");
             scene.getRoot().getStyleClass().add("dark-theme");
         }
     }
@@ -393,9 +405,9 @@ public class FacultyLoginController {
         alert.setHeaderText(header);
         alert.setContentText(content);
         
-        // Apply theme to the alert dialog
-        Preferences prefs = Preferences.userNodeForPackage(getClass());
-        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+        // Apply theme to the alert dialog using the global theme preference
+        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
         if (isDarkMode && alert.getDialogPane().getScene() != null) {
             alert.getDialogPane().getScene().getRoot().getStyleClass().add("dark-theme");
         }

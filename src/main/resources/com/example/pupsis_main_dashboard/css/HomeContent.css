@@ -8,6 +8,10 @@
 .student-name {
     -fx-font-size: 24px;
     -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #343a40;
+}
+
+.dark-theme .student-name {
     -fx-text-fill: white;
 }
 
@@ -39,21 +43,15 @@
     -fx-opacity: 0.8;
 }
 
-/* Card style */
-.cards {
-    -fx-background-color: #f8fcfc;
-    -fx-background-radius: 10;
-    -fx-border-color: #e3e5e6;
-    -fx-border-width: 2;
-    -fx-border-radius: 10;
-    -fx-padding: 20;
-}
-
 /* Statistic value style */
 .stat-value {
     -fx-font-size: 24px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
+}
+
+.dark-theme .stat-value {
+    -fx-text-fill: #e0e0e0;
 }
 
 /* Statistic label style */
@@ -62,11 +60,19 @@
     -fx-text-fill: #6c757d;
 }
 
+.dark-theme .stat-label {
+    -fx-text-fill: #a0a0a0;
+}
+
 /* Section header style */
 .section-header {
     -fx-font-size: 18px;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-text-fill: #343a40;
+}
+
+.dark-theme .section-header {
+    -fx-text-fill: #e0e0e0;
 }
 
 /* Schedule box style */
@@ -79,11 +85,20 @@
     -fx-padding: 10;
 }
 
+.dark-theme .schedule-box {
+    -fx-background-color: #333333;
+    -fx-border-color: #555555;
+}
+
 /* Subject label style */
 .subject-label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #343a40;
+}
+
+.dark-theme .subject-label {
+    -fx-text-fill: #e0e0e0;
 }
 
 /* Time label style */
@@ -92,10 +107,18 @@
     -fx-text-fill: #5a6268;
 }
 
+.dark-theme .time-label {
+    -fx-text-fill: #b0b0b0;
+}
+
 /* Location label style */
 .location-label {
     -fx-font-size: 12px;
     -fx-text-fill: #6c757d;
+}
+
+.dark-theme .location-label {
+    -fx-text-fill: #a0a0a0;
 }
 
 /* Event box style */
@@ -108,6 +131,11 @@
     -fx-padding: 10;
 }
 
+.dark-theme .event-box {
+    -fx-background-color: #333333;
+    -fx-border-color: #555555;
+}
+
 /* Event name label style */
 .event-name, .event-name-label {
     -fx-font-size: 14px;
@@ -115,10 +143,18 @@
     -fx-text-fill: #343a40;
 }
 
+.dark-theme .event-name, .dark-theme .event-name-label {
+    -fx-text-fill: #e0e0e0;
+}
+
 /* Event date label style */
 .event-date, .event-date-label {
     -fx-font-size: 13px;
     -fx-text-fill: #5a6268;
+}
+
+.dark-theme .event-date, .dark-theme .event-date-label {
+    -fx-text-fill: #b0b0b0;
 }
 
 /* Event location label style */
@@ -128,10 +164,18 @@
     -fx-font-weight: bold;
 }
 
+.dark-theme .event-location, .dark-theme .event-location-label {
+    -fx-text-fill: #b0b0b0;
+}
+
 /* Event description label style */
 .event-description, .event-desc-label {
     -fx-font-size: 12px;
     -fx-text-fill: #6c757d;
+}
+
+.dark-theme .event-description, .dark-theme .event-desc-label {
+    -fx-text-fill: #a0a0a0;
 }
 
 /* No data label style */
@@ -142,6 +186,10 @@
     -fx-alignment: center;
 }
 
+.dark-theme .no-data-label {
+    -fx-text-fill: #888888;
+}
+
 /* Loading label style */
 .loading-label {
     -fx-font-size: 14px;
@@ -149,11 +197,19 @@
     -fx-font-style: italic;
 }
 
+.dark-theme .loading-label {
+    -fx-text-fill: #888888;
+}
+
 /* Error label style */
 .error-label {
     -fx-font-size: 14px;
     -fx-text-fill: #dc3545;
     -fx-font-weight: bold;
+}
+
+.dark-theme .error-label {
+    -fx-text-fill: #ff6b6b;
 }
 
 /* Main content scroll style */
@@ -197,6 +253,11 @@
     -fx-border-width: 0;
 }
 
+.dark-theme .announcement-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #c5c5c5;
+}
+
 /* Empty list cell style */
 .announcement-list .list-cell:empty {
     -fx-background-color: transparent;
@@ -209,6 +270,11 @@
     -fx-text-fill: #343a40;
 }
 
+.dark-theme .announcement-list .list-cell:selected {
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
 /* Action button style */
 .action-button {
     -fx-background-color: #800000;
@@ -219,10 +285,19 @@
     -fx-pref-width: 190;
 }
 
+.dark-theme .action-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: #ffffff;
+}
+
 /* Action button hover effect */
 .action-button:hover {
     -fx-background-color: #5e0000;
     -fx-cursor: hand;
+}
+
+.dark-theme .action-button:hover {
+    -fx-background-color: #e57373;
 }
 
 /* Statistic icon style */
@@ -230,107 +305,14 @@
     -fx-fill: #800000;
 }
 
+.dark-theme .stat-icon {
+    -fx-fill: #e57373;
+}
+
 /* Font style */
 .font {
     -fx-font-family: "Inter 18pt Medium";
     -fx-background-color: #f2f2f2;
-}
-
-/* Red card style */
-.red-card {
-    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
-    -fx-background-radius: 10;
-    -fx-border-color: transparent;
-}
-
-/* Dark theme card style */
-.dark-theme .cards {
-    -fx-background-color: #3a3a3a;
-    -fx-border-color: #555555;
-    -fx-border-width: 2;
-}
-
-/* Dark theme red card style */
-.dark-theme .red-card {
-    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
-    -fx-border-width: 0;
-}
-
-/* Dark theme statistic value style */
-.dark-theme .stat-value {
-    -fx-text-fill: #e0e0e0;
-}
-
-/* Dark theme statistic label style */
-.dark-theme .stat-label {
-    -fx-text-fill: #b0b0b0;
-}
-
-/* Dark theme section header style */
-.dark-theme .section-header {
-    -fx-text-fill: #e0e0e0;
-}
-
-/* Dark theme schedule box style */
-.dark-theme .schedule-box {
-    -fx-background-color: #444444;
-    -fx-border-color: #555555;
-}
-
-/* Dark theme subject label style */
-.dark-theme .subject-label {
-    -fx-text-fill: #e0e0e0;
-}
-
-/* Dark theme time label style */
-.dark-theme .time-label {
-    -fx-text-fill: #b0b0b0;
-}
-
-/* Dark theme location label style */
-.dark-theme .location-label {
-    -fx-text-fill: #a0a0a0;
-}
-
-/* Dark theme event box style */
-.dark-theme .event-box {
-    -fx-background-color: #444444;
-    -fx-border-color: #555555;
-}
-
-/* Dark theme event name label style */
-.dark-theme .event-name, .dark-theme .event-name-label {
-    -fx-text-fill: #e0e0e0;
-}
-
-/* Dark theme event date label style */
-.dark-theme .event-date, .dark-theme .event-date-label {
-    -fx-text-fill: #b0b0b0;
-}
-
-/* Dark theme event location label style */
-.dark-theme .event-location, .dark-theme .event-location-label {
-    -fx-text-fill: #b0b0b0;
-}
-
-/* Dark theme event description label style */
-.dark-theme .event-description, .dark-theme .event-desc-label {
-    -fx-text-fill: #a0a0a0;
-}
-
-/* Dark theme no data label style */
-.dark-theme .no-data-label {
-    -fx-text-fill: #888888;
-}
-
-/* Dark theme loading label style */
-.dark-theme .loading-label {
-    -fx-text-fill: #888888;
-}
-
-/* Dark theme error label style */
-.dark-theme .error-label {
-    -fx-text-fill: #ff6b6b;
 }
 
 /* Dark theme for pie chart */
@@ -445,6 +427,11 @@
     -fx-spacing: 5;
 }
 
+.dark-theme .stat-box {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
 /* Content row style */
 .content-row {
     -fx-pref-width: 810;
@@ -458,9 +445,12 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
-    -fx-pref-width: 400;
-    -fx-spacing: 5;
+    -fx-padding: 15;
+}
+
+.dark-theme .schedule-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
 }
 
 /* Schedule list style */
@@ -481,6 +471,11 @@
     -fx-spacing: 5;
 }
 
+.dark-theme .chart-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
 /* Distribution chart style */
 .distribution-chart {
     -fx-pref-height: 230;
@@ -497,6 +492,11 @@
     -fx-padding: 20;
     -fx-pref-width: 400;
     -fx-spacing: 5;
+}
+
+.dark-theme .events-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
 }
 
 /* Events list style */
@@ -516,21 +516,15 @@
     -fx-spacing: 10;
 }
 
+.dark-theme .quick-actions-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
 /* Footer space style */
 .footer-space {
     -fx-pref-height: 20;
     -fx-pref-width: 810;
-}
-
-/* Dark theme styles for the new components */
-.dark-theme .stat-box,
-.dark-theme .schedule-container,
-.dark-theme .chart-container,
-.dark-theme .events-container,
-.dark-theme .quick-actions-container {
-    -fx-background-color: #3a3a3a;
-    -fx-border-color: #555555;
-    -fx-border-width: 2;
 }
 
 /* SVG Icon Container style */
@@ -545,6 +539,10 @@
     -fx-alignment: center;
 }
 
+.dark-theme .svg-icon-container {
+    -fx-background-color: #424242;
+}
+
 /* SVG Icon style */
 .svg-icon {
     -fx-fill: white;
@@ -552,11 +550,36 @@
     -fx-alignment: center;
 }
 
-/* Dark theme SVG icons */
-.dark-theme .svg-icon-container {
-    -fx-background-color: #424242;
-}
-
 .dark-theme .svg-icon {
     -fx-fill: #e0e0e0;
+}
+
+/* Card style */
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+.dark-theme .cards {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
+/* Red card style - Make sure this comes AFTER the cards style to override it */
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%) !important;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+/* Dark theme red card style - increased specificity */
+.dark-theme .red-card, .dark-theme .cards.red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.5) 100%) !important;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
