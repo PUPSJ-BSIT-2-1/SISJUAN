@@ -112,18 +112,24 @@ public class GradingModuleController implements Initializable {
             TableRow<Subject> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
+                    Subject selectedSubject = row.getItem();
                     try {
-                        // Get the parent ScrollPane (contentPane)
                         ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
-
                         if (contentPane != null) {
-                            // Load the editing grade page
-                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
-                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
-                            ));
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                                "/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml"));
+                            Parent newContent = loader.load();
+                        
+                        // Get the controller to pass data if needed
+                        // NewEditingGradePageController controller = loader.getController();
+                        // controller.initData(selectedSubject);
+                        
                             contentPane.setContent(newContent);
+                        } else {
+                            System.err.println("Error: Could not find contentPane");
                         }
                     } catch (IOException e) {
+                        System.err.println("Error loading newEditingGradePage.fxml: " + e.getMessage());
                         e.printStackTrace();
                     }
                 }
