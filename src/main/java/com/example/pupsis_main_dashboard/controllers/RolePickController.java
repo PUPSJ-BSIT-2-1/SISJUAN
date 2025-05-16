@@ -2,8 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import java.io.IOException;
 
-import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-import com.example.pupsis_main_dashboard.utility.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -42,7 +41,8 @@ public class RolePickController {
     {	
     	closeButton.setOnMouseClicked(_ -> handleCloseButton());
     	studentButton.setOnAction(_ -> handleStudentButton());
-    
+    	facultyButton.setOnAction(_ -> handleFacultyButton());
+    	adminButton.setOnAction(_ -> handleAdminButton());
     }
     
     public void setCloseHandler(Stage stage) {
@@ -84,13 +84,13 @@ public class RolePickController {
     @FXML
     private void handleFacultyButton()
     {
-    	
+    	transitionStage(facultyButton, previousStage, "fxml/FacultyLogin.fxml");
     }
     
     @FXML
     private void handleAdminButton()
 	{
-		
+		transitionStage(adminButton, previousStage, "fxml/AdminLogin.fxml");
 	}
     
     private void transitionStage(Button button, Stage stage, String fxmlPath) {
