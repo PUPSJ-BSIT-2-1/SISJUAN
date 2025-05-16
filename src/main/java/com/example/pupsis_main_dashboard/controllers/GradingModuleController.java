@@ -44,7 +44,7 @@ public class GradingModuleController implements Initializable {
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
     // Keep a reference to the original data
     private final ObservableList<Subject> originalSubjectsList = FXCollections.observableArrayList();
-    private String studentId;
+    private String facultyId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,8 +64,8 @@ public class GradingModuleController implements Initializable {
 
         // Try to get student ID with a small delay to ensure SessionData is populated
         Platform.runLater(() -> {
-            studentId = SessionData.getInstance().getStudentId();
-            if (studentId != null && !studentId.isEmpty()) {
+            facultyId = SessionData.getInstance().getStudentId();
+            if (facultyId != null && !facultyId.isEmpty()) {
                 // Load data asynchronously
                 Task<ObservableList<Subject>> loadTask = getObservableListTask();
                 new Thread(loadTask).start();
@@ -128,6 +128,10 @@ public class GradingModuleController implements Initializable {
 
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
+                    Subject selectedSubject = row.getItem();
+                    String subjectCode = selectedSubject.getSubjectCode();
+                    EditPageController editPage = new EditPageController();
+                    editPage.setSubjectCode(subjectCode);
                     try {
                         ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
                         if (contentPane != null) {
@@ -146,17 +150,17 @@ public class GradingModuleController implements Initializable {
     }
     private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
 
-        validationLabel.setText(studentId);
-        if (studentId == null || studentId.isEmpty()) {
+        validationLabel.setText(facultyId);
+        if (facultyId == null || facultyId.isEmpty()) {
             throw new SQLException("Student ID not set");
         }
 
         ObservableList<Subject> tempList = FXCollections.observableArrayList();
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT year_section, semester, subject_code, subject_description " +
-                    "FROM subjects WHERE student_id = ?";
+            String query = "SELECT year_section, subject_code, description, semester " +
+                    "FROM faculty_load WHERE faculty_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, studentId);
+                pstmt.setString(1, facultyId);
                 pstmt.setFetchSize(50);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
@@ -165,7 +169,7 @@ public class GradingModuleController implements Initializable {
                                 rs.getString("year_section"),
                                 rs.getString("semester"),
                                 rs.getString("subject_code"),
-                                rs.getString("subject_description")
+                                rs.getString("description")
                         ));
                     }
                 }

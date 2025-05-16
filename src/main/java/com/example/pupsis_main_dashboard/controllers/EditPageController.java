@@ -58,7 +58,6 @@ public class EditPageController implements Initializable {
         // Initialize the columns with the correct property names
         noStudCol.setCellValueFactory(new PropertyValueFactory<>("studentNo"));
         studIDCol.setCellValueFactory(new PropertyValueFactory<>("studentId"));
-        studNameCol.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjCode"));
         finGradeCol.setCellValueFactory(new PropertyValueFactory<>("finalGrade"));
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
@@ -150,7 +149,7 @@ public class EditPageController implements Initializable {
         populateSubjectCodes();
 
         // Set default text for the MenuButton
-        subjCodeCombBox.setText("Select Subject Code");
+        //subjCodeCombBox.setText(selectedSubjectCode);
 
         // If a subject code was set before initialization, load it now
         if (selectedSubjectCode != null) {
@@ -200,8 +199,8 @@ public class EditPageController implements Initializable {
     private void updateGradeInDatabase(Student student) {
         try (Connection conn = DBConnection.getConnection()) {
             // Update both final grade and grade status
-            String query = "UPDATE students_subj SET \"finalGrade\" = ?, \"gradeStat\" = ? " +
-                    "WHERE \"student_ID\" = ? AND \"subj_Code\" = ?";
+            String query = "UPDATE grade SET \"final_grade\" = ?, \"gradestat\" = ? " +
+                    "WHERE \"student_id\" = ? AND \"subject_code\" = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 String newGrade = student.getFinalGrade();
@@ -268,11 +267,11 @@ public class EditPageController implements Initializable {
 
                 try (Connection conn = DBConnection.getConnection()) {
                     String query = """
-                    SELECT ss."No.", ss."student_ID", ss."student_name", 
-                           ss."subj_Code", ss."finalGrade", ss."gradeStat"
-                    FROM students_subj ss
-                    WHERE ss."subj_Code" = ?
-                    ORDER BY CAST(ss."No." AS INTEGER)""";
+                    SELECT ss."id", ss."student_id", ss."subject_code",
+                           ss."final_grade", ss."gradestat"
+                    FROM grade ss
+                    WHERE ss."subject_code" = ?
+                    ORDER BY CAST(ss."id" AS INTEGER)""";
 
                     try (PreparedStatement pstmt = conn.prepareStatement(query,
                             ResultSet.TYPE_FORWARD_ONLY,
@@ -286,12 +285,11 @@ public class EditPageController implements Initializable {
                                 if (isCancelled()) break;
 
                                 Student student = new Student(
-                                        rs.getString("No."),
-                                        rs.getString("student_ID"),
-                                        rs.getString("student_name"),
-                                        rs.getString("subj_Code"),
-                                        rs.getString("finalGrade"),
-                                        rs.getString("gradeStat")
+                                        rs.getString("id"),
+                                        rs.getString("student_id"),
+                                        rs.getString("subject_code"),
+                                        rs.getString("final_grade"),
+                                        rs.getString("gradestat")
                                 );
                                 tempList.add(student);
                             }
@@ -319,7 +317,7 @@ public class EditPageController implements Initializable {
 
     private void populateSubjectCodes() {
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT DISTINCT \"subject_code\" FROM subjects2";
+            String query = "SELECT DISTINCT \"subject_code\" FROM grade";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 ResultSet rs = pstmt.executeQuery();
 
