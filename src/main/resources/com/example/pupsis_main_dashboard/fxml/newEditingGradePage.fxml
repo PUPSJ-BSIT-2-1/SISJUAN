@@ -32,7 +32,7 @@
                     <children>
                         <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
                             <children>
-                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" minHeight="50.0" maxHeight="50.0" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
                                     <font>
                                         <Font size="30.0" />
                                     </font>
@@ -44,10 +44,10 @@
                             </padding>
                         </HBox>
                     </children>
-               <styleClass>
-                  <String fx:value="cards" />
-                  <String fx:value="red-card" />
-               </styleClass>
+                    <styleClass>
+                        <String fx:value="cards" />
+                        <String fx:value="red-card" />
+                    </styleClass>
                 </Pane>
             </top>
             <center>
@@ -55,56 +55,56 @@
                     <children>
                         <VBox alignment="TOP_CENTER" layoutX="-1.0" layoutY="14.0" prefHeight="870.0" prefWidth="750.0" spacing="10.0">
                             <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
-                           <children>
+                                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
+                                    <children>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" smooth="false">
                                             <image>
                                                 <Image url="@../Images/Rectangle.jpg" />
                                             </image>
                                         </ImageView>
                                         <TextField fx:id="searchBar" promptText="Search..." />
-                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="518.0" spacing="20.0">
-                                 <children>
-                                    <MenuButton fx:id="yrSecCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Yr &amp; Section">
-                                       <effect>
-                                          <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
-                                             <color>
-                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
-                                             </color>
-                                          </DropShadow>
-                                       </effect>
-                                    </MenuButton>
-                                    <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="COMP001">
-                                       <effect>
-                                          <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
-                                             <color>
-                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
-                                             </color>
-                                          </DropShadow>
-                                       </effect>
-                                    </MenuButton>
-                                    <VBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="217.0">
-                                       <children>
-                                          <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
-                                             <font>
-                                                <Font size="9.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="subjDescLbl" alignment="CENTER" prefHeight="28.0" prefWidth="206.0" text="Object Oriented Programming" textAlignment="CENTER" wrapText="true" />
-                                       </children>
-                                    </VBox>
-                                 </children>
-                                 <padding>
-                                    <Insets left="30.0" />
-                                 </padding>
-                              </HBox>
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </HBox>
-                        <HBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="750.0">
-                           <children>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="518.0" spacing="20.0">
+                                            <children>
+                                                <MenuButton fx:id="yrSecCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Yr &amp; Section">
+                                                    <effect>
+                                                        <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
+                                                            <color>
+                                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
+                                                            </color>
+                                                        </DropShadow>
+                                                    </effect>
+                                                </MenuButton>
+                                                <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="COMP001">
+                                                    <effect>
+                                                        <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
+                                                            <color>
+                                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
+                                                            </color>
+                                                        </DropShadow>
+                                                    </effect>
+                                                </MenuButton>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="217.0">
+                                                    <children>
+                                                        <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
+                                                            <font>
+                                                                <Font size="9.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <Label fx:id="subjDescLbl" alignment="CENTER" prefHeight="28.0" prefWidth="206.0" text="Object Oriented Programming" textAlignment="CENTER" wrapText="true" />
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                            <padding>
+                                                <Insets left="30.0" />
+                                            </padding>
+                                        </HBox>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                </HBox>
+                                <HBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="750.0">
+                                    <children>
                                         <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0" styleClass="small-cards">
                                             <columns>
                                                 <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
@@ -112,11 +112,11 @@
                                                 <TableColumn fx:id="studNameCol" editable="false" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" resizable="false" text="Student Name" />
                                                 <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
                                                 <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
-                                    <TableColumn fx:id="gradeStatCol" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Grade Status" />
+                                                <TableColumn fx:id="gradeStatCol" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Grade Status" />
                                             </columns>
                                         </TableView>
-                           </children>
-                        </HBox>
+                                    </children>
+                                </HBox>
                             </children>
                         </VBox>
                     </children>
@@ -128,14 +128,15 @@
             <right>
                 <Pane prefHeight="200.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
             </right>
-         <bottom>
+            <bottom>
                 <Pane prefHeight="80.0" prefWidth="200.0" styleClass="pane-footer" BorderPane.alignment="CENTER">
                     <padding>
-      
+
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                     </padding>
                 </Pane>
-         </bottom>
+            </bottom>
         </BorderPane>
     </children>
 </AnchorPane>
+

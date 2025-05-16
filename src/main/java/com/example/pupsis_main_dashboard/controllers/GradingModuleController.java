@@ -1,8 +1,12 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.utilities.DBConnection;
+//import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -19,93 +23,145 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableRow;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
+import java.io.IOException;
+import java.util.Objects;
+
+import javafx.scene.Node;
 
 public class GradingModuleController implements Initializable {
-    @FXML
-    private TextField searchBar; // Add this field
-
-    @FXML
-    private Label facultyName;
-
-    @FXML
-    private Label facultyID;
-
-    @FXML
-    private TableView<Subject> subjectsTable;
-
-    @FXML
-    private TableColumn<Subject, String> editBtnCol;
-
-    @FXML
-    private TableColumn<Subject, String> yearSecCol;
-
-    @FXML
-    private TableColumn<Subject, String> semCol;
-
-    @FXML
-    private TableColumn<Subject, String> subjCodeCol;
-
-    @FXML
-    private TableColumn<Subject, String> subjDescCol;
+    @FXML private TextField searchBar; // Add this field
+    @FXML private TableView<Subject> subjectsTable;
+    @FXML private TableColumn<Subject, String> yearSecCol;
+    @FXML private TableColumn<Subject, String> semCol;
+    @FXML private TableColumn<Subject, String> subjCodeCol;
+    @FXML private TableColumn<Subject, String> subjDescCol;
+    @FXML private Label validationLabel;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
-
     // Keep a reference to the original data
     private final ObservableList<Subject> originalSubjectsList = FXCollections.observableArrayList();
-
-    // Database connection constants
-    private static final String URL = "jdbc:postgresql://db.autqwzshfjaqbkxpiqxm.supabase.co:5432/postgres";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "pupSISProject2025";
+    private String studentId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Verify that FXML injection worked
-        if (subjectsTable == null) {
-            System.err.println("Error: subjectsTable is null. Check FXML file for proper fx:id.");
-            return;
+        studentId = SessionData.getInstance().getStudentId();
+
+        // Add debug logging
+        if (studentId == null || studentId.isEmpty()) {
+            System.err.println("Warning: Student ID is not set during GradingModuleController initialization");
+            // Optional: Add a retry mechanism
+            studentId = attemptToRetrieveStudentId();
         }
 
-        // Initialize the columns
+        // Initialize UI components first
         yearSecCol.setCellValueFactory(new PropertyValueFactory<>("yearSection"));
         semCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
         subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjectCode"));
         subjDescCol.setCellValueFactory(new PropertyValueFactory<>("subjectDescription"));
 
-        // Load data from database (only call once)
-        loadSubjectsData();
+        yearSecCol.setReorderable(false);
+        semCol.setReorderable(false);
+        subjCodeCol.setReorderable(false);
+        subjDescCol.setReorderable(false);
 
-        // Store in original list
-        originalSubjectsList.addAll(subjectsList);
+        // Show loading indicator
+        subjectsTable.setPlaceholder(new Label("Loading data..."));
 
-        // Setup the search functionality
-        setupSearch();
-
-        // Add this line to setup the row click handler
-        setupRowClickHandler();
+        // Load data asynchronously
+        Task<ObservableList<Subject>> loadTask = getObservableListTask();
+        new Thread(loadTask).start();
     }
 
+    private String attemptToRetrieveStudentId() {
+        // Try to get student ID from label if available
+        Node studentIdLabel = subjectsTable.getScene() != null ?
+                subjectsTable.getScene().lookup("#studentIdLabel") : null;
+
+        if (studentIdLabel instanceof Label) {
+            String id = ((Label) studentIdLabel).getText();
+            if (id != null && !id.isEmpty()) {
+                SessionData.getInstance().setStudentId(id);
+                return id;
+            }
+        }
+        return null;
+    }
+
+    private Task<ObservableList<Subject>> getObservableListTask() {
+        Task<ObservableList<Subject>> loadTask = new Task<>() {
+            @Override
+            protected ObservableList<Subject> call() throws Exception {
+                return loadSubjectsDataAsync();
+            }
+        };
+
+        loadTask.setOnSucceeded(e -> {
+            subjectsList.setAll(loadTask.getValue());
+            originalSubjectsList.setAll(subjectsList);
+            setupSearch();
+            setupRowClickHandler();
+        });
+
+        loadTask.setOnFailed(e -> {
+            subjectsTable.setPlaceholder(new Label("Error loading data"));
+            loadTask.getException().printStackTrace();
+        });
+        return loadTask;
+    }
     private void setupRowClickHandler() {
         subjectsTable.setRowFactory(tv -> {
-            TableRow<Subject> row = new TableRow<>();
+            TableRow<Subject> row = new TableRow<>() {
+                @Override
+                protected void updateItem(Subject item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        // Remove hover styles for empty rows
+                        getStyleClass().add("empty-row");
+                    } else {
+                        getStyleClass().remove("empty-row");
+                    }
+                }
+            };
+
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
-                    OpenNewGradingModule newModule = new OpenNewGradingModule(subjectsTable);
-                    newModule.open();
+                    try {
+                        ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
+                        if (contentPane != null) {
+                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
+                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
+                            ));
+                            contentPane.setContent(newContent);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             return row;
         });
     }
-    private void loadSubjectsData() {
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String query = "SELECT * FROM subjects WHERE faculty_id = ?";
+    private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
+
+        validationLabel.setText(studentId);
+        if (studentId == null || studentId.isEmpty()) {
+            throw new SQLException("Student ID not set");
+        }
+
+        ObservableList<Subject> tempList = FXCollections.observableArrayList();
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT year_section, semester, subject_code, subject_description " +
+                    "FROM subjects WHERE student_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, facultyID.getText());
+                pstmt.setString(1, studentId);
+                pstmt.setFetchSize(50);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        subjectsList.add(new Subject(
+                        tempList.add(new Subject(
                                 rs.getString("year_section"),
                                 rs.getString("semester"),
                                 rs.getString("subject_code"),
@@ -114,10 +170,8 @@ public class GradingModuleController implements Initializable {
                     }
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-            e.printStackTrace();
         }
+        return tempList; // Make sure this is always returned
     }
 
     private void setupSearch() {
@@ -145,11 +199,7 @@ public class GradingModuleController implements Initializable {
                 if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
-                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-
-                return false; // Does not match
+                return subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter);// Does not match
             });
         });
 
@@ -170,7 +220,27 @@ public class GradingModuleController implements Initializable {
     public void refreshTable() {
         subjectsList.clear();
         originalSubjectsList.clear();
-        loadSubjectsData();
-        originalSubjectsList.addAll(subjectsList);
+        subjectsTable.setPlaceholder(new Label("Loading data...")); // Reset placeholder
+
+        Task<ObservableList<Subject>> refreshTask = new Task<>() {
+            @Override
+            protected ObservableList<Subject> call() throws Exception {
+                return loadSubjectsDataAsync();
+            }
+        };
+
+        refreshTask.setOnSucceeded(e -> {
+            ObservableList<Subject> newData = refreshTask.getValue();
+            subjectsList.setAll(newData);
+            originalSubjectsList.setAll(newData);
+            // The table will automatically update its display
+        });
+
+        refreshTask.setOnFailed(e -> {
+            subjectsTable.setPlaceholder(new Label("Error refreshing data"));
+            refreshTask.getException().printStackTrace();
+        });
+
+        new Thread(refreshTask).start();
     }
 }

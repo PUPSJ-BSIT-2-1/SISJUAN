@@ -76,12 +76,12 @@
                         <HBox prefHeight="500.0" prefWidth="750.0" styleClass="small-cards">
                            <children>
                               <TableView id="mainGradingTable" fx:id="subjectsTable" prefWidth="750.0">
-                                <columns>
-                                  <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" resizable="false" text="Year &amp; Section" />
-                                  <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Semester" />
+                                 <columns>
+                                    <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" resizable="false" text="Year &amp; Section" />
+                                    <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Semester" />
                                     <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" resizable="false" text="Subject Code" />
                                     <TableColumn fx:id="subjDescCol" editable="false" maxWidth="320.0" minWidth="320.0" prefWidth="320.0" resizable="false" text="Subject Description" />
-                                </columns>
+                                 </columns>
                               </TableView>
                            </children>
                         </HBox>
@@ -114,3 +114,4 @@
       </BorderPane>
    </children>
 </AnchorPane>
+
