@@ -148,12 +148,10 @@ public class EditGradesPageController implements Initializable {
         // Populate the subject codes dropdown
         populateSubjectCodes();
 
-        // Set default text for the MenuButton
-        //subjCodeCombBox.setText(selectedSubjectCode);
-
         // If a subject code was set before initialization, load it now
-        if (selectedSubjectCode != null) {
+        if (selectedSubjectCode != null && selectedSubjectDesc != null) {
             subjCodeCombBox.setText(selectedSubjectCode);
+            subDesclbl.setText(selectedSubjectDesc);
             loadStudentsBySubjectCode(selectedSubjectCode);
         }
     }
@@ -275,7 +273,7 @@ public class EditGradesPageController implements Initializable {
                     SELECT g."id", g."student_id", g."subject_code", g."final_grade", 
                            g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
                     FROM grade g, students s
-                    WHERE g."student_id" = s."student_id" and g.subject_code = ?
+                    WHERE g."student_id" = s."student_id" and g.subject_code = ? and g.faculty_id = ?
                     ORDER BY CAST(g."id" AS INTEGER)""";
 
                     try (PreparedStatement pstmt = conn.prepareStatement(query,
@@ -284,6 +282,7 @@ public class EditGradesPageController implements Initializable {
 
                         pstmt.setFetchSize(100);
                         pstmt.setString(1, subjectCode);
+                        pstmt.setString(2, SessionData.getInstance().getStudentId());
 
                         try (ResultSet rs = pstmt.executeQuery()) {
                             while (rs.next()) {
@@ -324,8 +323,10 @@ public class EditGradesPageController implements Initializable {
 
     private void populateSubjectCodes() {
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT DISTINCT \"subject_code\" FROM grade";
+            String query = """
+                SELECT DISTINCT subject_code FROM grade WHERE faculty_id = ?;""";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, SessionData.getInstance().getStudentId());
                 ResultSet rs = pstmt.executeQuery();
 
                 while (rs.next()) {

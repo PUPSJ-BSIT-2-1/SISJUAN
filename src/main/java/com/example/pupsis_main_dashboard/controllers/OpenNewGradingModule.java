@@ -18,10 +18,10 @@ public class OpenNewGradingModule {
 
     public void open() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/newEditingGradePage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EditGradesPage.fxml"));
             Parent root = loader.load();
 
-            EditPageController controller = loader.getController();
+            EditGradesPageController controller = loader.getController();
             controller.initialize(null, null);
 
             Stage stage = new Stage();
