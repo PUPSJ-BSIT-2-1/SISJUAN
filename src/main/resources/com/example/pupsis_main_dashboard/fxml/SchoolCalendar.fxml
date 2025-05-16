@@ -52,7 +52,7 @@
       </AnchorPane>
       <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" styleClass="sub-root" stylesheets="@../css/SchoolCalendar.css">
          <children>
-            <HBox alignment="CENTER" prefHeight="83.0" prefWidth="810.0" styleClass="header-container">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="810.0" styleClass="header-container">
                <children>
                   <VBox fx:id="leftButton" alignment="CENTER">
                      <children>
@@ -78,7 +78,7 @@
                </padding>
             </HBox>
             <Region prefHeight="20.0" prefWidth="810.0" />
-            <GridPane alignment="CENTER" style="-fx-alignment: center;" styleClass="days-container">
+            <GridPane alignment="CENTER" prefHeight="45.0" prefWidth="810.0" style="-fx-alignment: center;" styleClass="days-container">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />

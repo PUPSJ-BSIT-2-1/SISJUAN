@@ -33,6 +33,7 @@ public class AboutContentController {
     private List<Developer> filteredDevelopers = new ArrayList<>();
     private int currentIndex = 0;
 
+    // Class to represent developer information
     public static class Developer {
         private String devName;
         private String devRole;
@@ -72,8 +73,8 @@ public class AboutContentController {
         }
     }
 
-    @FXML
-    private void initialize() {
+    // Initializes the controller by populating the module picker and loading developer content.
+    @FXML private void initialize() {
         populateModule();
         loadDevelopersContent();
         if (!modulePicker.getItems().isEmpty()) {
@@ -100,6 +101,7 @@ public class AboutContentController {
         });
     }
 
+    // Loads developer information from a JSON file.
     private void loadDevelopersContent() {
         final String devPath = "/com/example/pupsis_main_dashboard/json/DevelopersTeam.json";
         try (InputStream inputStream = getClass().getResourceAsStream(devPath)) {
@@ -111,6 +113,7 @@ public class AboutContentController {
         }
     }
 
+    // Handles the selection of modules from the combo box.
     private void handleModuleSelection() {
         modulePicker.setOnAction(_ -> {
             currentIndex = 0;
@@ -122,6 +125,7 @@ public class AboutContentController {
         });
     }
 
+    // Handles the next and previous buttons for navigating through developers.
     private void handleButtons() {
         next.setOnMouseClicked(_ -> {
             if (!filteredDevelopers.isEmpty()) {
@@ -138,6 +142,7 @@ public class AboutContentController {
         });
     }
 
+    // Displays the details of the developer at the specified index.
     private void showDeveloperDetails(int index) {
         if (index >= 0 && index < filteredDevelopers.size()) {
             Developer dev = filteredDevelopers.get(index);
@@ -146,6 +151,9 @@ public class AboutContentController {
             description.setText(dev.getDevDesc());
             try {
                 Image devImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/pupsis_main_dashboard/" + dev.getDevImage())));
+                image.setPreserveRatio(false);
+                image.setFitWidth(200);
+                image.setFitHeight(200);
                 image.setImage(devImage);
             } catch (NullPointerException e) {
                 System.err.println("Failed to load image resources: " + e.getMessage());
@@ -153,19 +161,21 @@ public class AboutContentController {
         }
     }
 
+    // Populates the module picker with available modules.
     private void populateModule() {
         String[] modules = {
                 "Main Dashboard",
                 "Registration",
-                "Payment Information",
+                "Payment",
                 "Room Assignment",
-                "Grading System",
+                "Grading",
                 "Class Schedule",
                 "Faculty"
         };
         modulePicker.getItems().addAll(modules);
     }
 
+    // Updates the icons based on the current theme (dark or light).
     private void updateIconsBasedOnTheme() {
         // Get the root of the scene which should have the theme class
         Parent sceneRoot = root.getScene() != null ? root.getScene().getRoot() : null;

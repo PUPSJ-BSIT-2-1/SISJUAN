@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
-   <FlowPane>
+   <FlowPane prefHeight="100.0" prefWidth="810.0">
       <children>
       
                                      <HBox alignment="CENTER_LEFT" spacing="15">
