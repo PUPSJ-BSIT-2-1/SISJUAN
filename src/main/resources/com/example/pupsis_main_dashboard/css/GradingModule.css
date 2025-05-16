@@ -118,3 +118,52 @@
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: #a03030;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:filled:hover .text {
+    -fx-fill: white;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0;
+}
+
+/* Empty row styles */
+.table-row-cell.empty-row {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell.empty-row:hover {
+    -fx-background-color: transparent;
+    -fx-cursor: default;
+}
+
+/* Non-empty row styles */
+.table-row-cell:filled:hover {
+    -fx-background-color: #a03030;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.table-row-cell:filled:hover .text {
+    -fx-fill: white;
+}
+
+/* Ensure empty cells have no border */
+.table-row-cell.empty-row .table-cell {
+    -fx-border-width: 0;
+}

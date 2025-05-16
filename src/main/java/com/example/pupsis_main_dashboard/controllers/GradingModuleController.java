@@ -107,29 +107,39 @@ public class GradingModuleController implements Initializable {
         return loadTask;
     }
 
-    private void setupRowClickHandler() {
-        subjectsTable.setRowFactory(tv -> {
-            TableRow<Subject> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    try {
-                        // Get the parent ScrollPane (contentPane)
-                        ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
-
-                        if (contentPane != null) {
-                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
-                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
-                            ));
-                            contentPane.setContent(newContent);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+private void setupRowClickHandler() {
+    subjectsTable.setRowFactory(tv -> {
+        TableRow<Subject> row = new TableRow<>() {
+            @Override
+            protected void updateItem(Subject item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    // Remove hover styles for empty rows
+                    getStyleClass().add("empty-row");
+                } else {
+                    getStyleClass().remove("empty-row");
                 }
-            });
-            return row;
+            }
+        };
+        
+        row.setOnMouseClicked(event -> {
+            if (!row.isEmpty() && event.getClickCount() == 2) {
+                try {
+                    ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
+                    if (contentPane != null) {
+                        Parent newContent = FXMLLoader.load(Objects.requireNonNull(
+                                getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
+                        ));
+                        contentPane.setContent(newContent);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
-    }
+        return row;
+    });
+}
     private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
 
         validationLabel.setText(studentId);
