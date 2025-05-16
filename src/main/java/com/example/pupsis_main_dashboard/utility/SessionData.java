@@ -1,12 +1,15 @@
 package com.example.pupsis_main_dashboard.utility;
 
 public class SessionData {
-    private static final SessionData instance = new SessionData();
+    private static SessionData instance;
     private String studentId;
 
     private SessionData() {}
 
-    public static SessionData getInstance() {
+    public static synchronized SessionData getInstance() {
+        if (instance == null) {
+            instance = new SessionData();
+        }
         return instance;
     }
 
@@ -15,7 +18,13 @@ public class SessionData {
     }
 
     public void setStudentId(String studentId) {
-        this.studentId = studentId;
+        if (studentId == null || studentId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Student ID cannot be null or empty");
+        }
+        this.studentId = studentId.trim();
+    }
+
+    public void clear() {
+        studentId = null;
     }
 }
-

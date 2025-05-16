@@ -29,6 +29,7 @@ import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 import java.util.Objects;
 
+import javafx.scene.Node;
 
 public class GradingModuleController implements Initializable {
     @FXML private TextField searchBar; // Add this field
@@ -46,8 +47,14 @@ public class GradingModuleController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         studentId = SessionData.getInstance().getStudentId();
+
+        // Add debug logging
+        if (studentId == null || studentId.isEmpty()) {
+            System.err.println("Warning: Student ID is not set during GradingModuleController initialization");
+            // Optional: Add a retry mechanism
+            studentId = attemptToRetrieveStudentId();
+        }
 
         // Initialize UI components first
         yearSecCol.setCellValueFactory(new PropertyValueFactory<>("yearSection"));
@@ -60,8 +67,22 @@ public class GradingModuleController implements Initializable {
 
         // Load data asynchronously
         Task<ObservableList<Subject>> loadTask = getObservableListTask();
-
         new Thread(loadTask).start();
+    }
+
+    private String attemptToRetrieveStudentId() {
+        // Try to get student ID from label if available
+        Node studentIdLabel = subjectsTable.getScene() != null ?
+                subjectsTable.getScene().lookup("#studentIdLabel") : null;
+
+        if (studentIdLabel instanceof Label) {
+            String id = ((Label) studentIdLabel).getText();
+            if (id != null && !id.isEmpty()) {
+                SessionData.getInstance().setStudentId(id);
+                return id;
+            }
+        }
+        return null;
     }
 
     private Task<ObservableList<Subject>> getObservableListTask() {
@@ -98,7 +119,7 @@ public class GradingModuleController implements Initializable {
                         if (contentPane != null) {
                             // Load the editing grade page
                             Parent newContent = FXMLLoader.load(Objects.requireNonNull(
-                                getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
+                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newEditingGradePage.fxml")
                             ));
                             contentPane.setContent(newContent);
                         }

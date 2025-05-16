@@ -62,53 +62,53 @@ public class StudentDashboardController {
             // Get student full name from database
             String identifier = credentials[0];
             boolean isEmail = identifier.contains("@");
-            
+
             // Get the name parts
             String firstName = null;
             String middleName = null;
             String lastName = null;
-            
-            String query = isEmail 
-                ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
-                : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
-                
+
+            String query = isEmail
+                    ? "SELECT firstName, middleName, lastName FROM students WHERE email = ?"
+                    : "SELECT firstName, middleName, lastName FROM students WHERE student_id = ?";
+
             try (Connection connection = DBConnection.getConnection();
                  PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, identifier);
                 ResultSet result = statement.executeQuery();
-                
+
                 if (result.next()) {
                     firstName = result.getString("firstName");
                     middleName = result.getString("middleName");
                     lastName = result.getString("lastName");
-                    
+
                     // Format as "LastName, FirstName MiddleInitial."
                     StringBuilder formattedName = new StringBuilder();
-                    
+
                     // Add last name
                     if (lastName != null && !lastName.trim().isEmpty()) {
                         formattedName.append(lastName.trim());
                         formattedName.append(", ");
                     }
-                    
+
                     // Add first name
                     if (firstName != null && !firstName.trim().isEmpty()) {
                         formattedName.append(firstName.trim());
                         formattedName.append(" ");
                     }
-                    
+
                     // Add middle initial with period
                     if (middleName != null && !middleName.trim().isEmpty()) {
                         formattedName.append(middleName.trim().charAt(0));
                         formattedName.append(".");
                     }
-                    
+
                     studentNameLabel.setText(formattedName.toString().trim());
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            
+
             // Get and display student ID
             String studentId = getStudentId(credentials[0]);
             if (studentId != null) {
@@ -120,13 +120,13 @@ public class StudentDashboardController {
 
         // Initialize fade1 as fully transparent
         fade1.setOpacity(0);
-        
+
         contentPane.vvalueProperty().addListener((_, _, newVal) -> {
             double vvalue = newVal.doubleValue();
-            
+
             // Show/hide top fade based on scroll position
             fade1.setOpacity(vvalue > 0.05 ? 1 : 0);
-            
+
             // Show/hide bottom fade: visible on scroll, hidden if scrolled to the very bottom
             if (Math.abs(vvalue - 1.0) < 0.001) { // Check if vvalue is at the bottom
                 fade2.setOpacity(0);
@@ -138,15 +138,15 @@ public class StudentDashboardController {
 
     // Get the student ID from the database based on the provided identifier (email or student ID)
     private String getStudentId(String identifier) {
-        String query = "SELECT student_id FROM students WHERE " + 
-                      (identifier.contains("@") ? "email" : "student_id") + " = ?";
-        
+        String query = "SELECT student_id FROM students WHERE " +
+                (identifier.contains("@") ? "email" : "student_id") + " = ?";
+
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            
+
             stmt.setString(1, identifier);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 String id = rs.getString("student_id");
                 // Format as 2025-000000-SJ-01 if it's a numeric ID
@@ -187,8 +187,14 @@ public class StudentDashboardController {
                         // Add subject content loading here
                         break;
                     case "gradesHBox":
-                        // Add grades content loading here
-                        content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newGradingModule.fxml")));
+                        String currentStudentId = SessionData.getInstance().getStudentId();
+                        if (currentStudentId == null || currentStudentId.isEmpty()) {
+                            // Re-set the student ID if it's not in SessionData
+                            SessionData.getInstance().setStudentId(studentIdLabel.getText());
+                        }
+                        content = FXMLLoader.load(Objects.requireNonNull(
+                                getClass().getResource("/com/example/pupsis_main_dashboard/fxml/newGradingModule.fxml")
+                        ));
                         break;
                     case "scheduleHBox":
                         // Add schedule content loading here
