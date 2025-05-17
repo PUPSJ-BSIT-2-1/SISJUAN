@@ -7,7 +7,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,7 +14,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/EditGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EditGradesPageController">
@@ -65,24 +63,8 @@
                                         <TextField fx:id="searchBar" promptText="Search..." />
                                         <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="518.0" spacing="20.0">
                                             <children>
-                                                <MenuButton fx:id="yrSecCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Yr &amp; Section" textFill="WHITE">
-                                                    <effect>
-                                                        <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
-                                                            <color>
-                                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
-                                                            </color>
-                                                        </DropShadow>
-                                                    </effect>
-                                                </MenuButton>
-                                                <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="COMP001" textFill="WHITE">
-                                                    <effect>
-                                                        <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
-                                                            <color>
-                                                                <Color red="0.8736842274665833" green="0.8736842274665833" blue="0.8736842274665833" />
-                                                            </color>
-                                                        </DropShadow>
-                                                    </effect>
-                                                </MenuButton>
+                                                <MenuButton fx:id="yrSecCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Yr &amp; Section" textFill="WHITE" />
+                                                <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Subject Code" textFill="WHITE" />
                                                 <VBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="217.0">
                                                     <children>
                                                         <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
@@ -103,7 +85,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </HBox>
-                                <HBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="750.0">
+                                <HBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="740.0">
                                     <children>
                                         <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0" styleClass="small-cards">
                                             <columns>
