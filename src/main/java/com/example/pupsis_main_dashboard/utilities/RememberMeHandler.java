@@ -24,7 +24,7 @@ public class RememberMeHandler {
         }
     }
 
-    public String[] loadCredentials() {
+    public static String[] loadCredentials() {
         if (preferences.getBoolean(KEY_REMEMBER_ME, false)) {
             String username = preferences.get(KEY_USERNAME, "");
             String password = decrypt(preferences.get(KEY_PASSWORD, ""));
@@ -43,7 +43,7 @@ public class RememberMeHandler {
         return data;
     }
 
-    private String decrypt(String data) {
+    private static String decrypt(String data) {
         return data;
     }
 }
