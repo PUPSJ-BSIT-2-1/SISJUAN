@@ -3,10 +3,6 @@
     -fx-background-color: white;
 }
 
-.backgrounds{
-    -fx-background-color: transparent;
-}
-
 /* Sub container style */
 .sub-root {
     -fx-background-color: white
@@ -14,10 +10,20 @@
 
 /* Header section containing month/year selector */
 .header-container {
-    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-background-color: maroon;
     -fx-background-radius: 10;
     -fx-border-color: transparent;
+}
+
+/* Container for weekday labels (Mon, Tue, etc) */
+.days-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+    -fx-padding: 5;
 }
 
 /* Individual weekday label styling */
@@ -26,7 +32,7 @@
     -fx-font-weight: bold;
     -fx-font-family: "Inter 18pt Medium";
     -fx-text-fill: #343a40;
-    -fx-alignment: center;
+    fx-alignment: center;
 }
 
 /* Main calendar grid container */
@@ -198,10 +204,6 @@
     -fx-border-radius: 10;
 }
 
-.day-number {
-    -fx-padding: 5px;
-}
-
 /* --- DARK THEME STYLES for School Calendar --- */
 
 /* Dark theme main container */
@@ -220,8 +222,7 @@
 
 /* Dark theme header */
 .dark-theme .header-container {
-    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-background-color: #b22222;
 }
 
 /* Dark theme calendar containers */
@@ -348,40 +349,40 @@
 .administrative {
     -fx-background-color: #4A90E2; /* Soft Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #4A90E2; /* Soft Blue border */
 }
 
 .holiday {
     -fx-background-color: #E94E77; /* Bright Pink/Red */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #E94E77; /* Bright Pink/Red border */
 }
 
 .registration {
     -fx-background-color: #50E3C2; /* Teal / Mint */
     -fx-text-fill: black;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #50E3C2; /* Teal / Mint border */
 }
 
 .academic {
     -fx-background-color: #F5A623; /* Amber / Orange */
     -fx-text-fill: black;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #F5A623; /* Amber / Orange border */
 }
 
 .meeting {
     -fx-background-color: #7B61FF; /* Soft Purple */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #7B61FF; /* Soft Purple border */
 }
 
@@ -390,39 +391,39 @@
 .dark-theme .administrative {
     -fx-background-color: #2F80ED; /* Bright blue on dark */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #2F80ED; /* Bright blue border */
 }
 
 .dark-theme .holiday {
     -fx-background-color: #D64550; /* Soft red on dark */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #D64550; /* Soft red border */
 }
 
 .dark-theme .registration {
     -fx-background-color: #43B29D; /* Deep teal */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #43B29D; /* Deep teal border */
 }
 
 .dark-theme .academic {
     -fx-background-color: #E67E22; /* Burnt orange */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #E67E22; /* Burnt orange border */
 }
 
 .dark-theme .meeting {
     -fx-background-color: #9B59B6; /* Muted purple */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-background-radius: 10px; /* Background rounded corners */
+    -fx-border-radius: 10px; /* Border rounded corners */
     -fx-border-color: #9B59B6; /* Muted purple border */
 }

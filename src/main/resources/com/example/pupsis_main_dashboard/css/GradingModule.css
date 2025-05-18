@@ -1,0 +1,169 @@
+.root {
+    -fx-font-family: "Inter";
+    -fx-background-radius: 20;
+    -fx-background-color: white; /* or your desired background color */
+    -fx-border-radius: 10;
+}
+#gradesHeaderLbl {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
+
+#gradesHeaderLbl:focused {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+}
+
+.red-card .label {
+    -fx-font-size: 30px !important;
+    -fx-min-height: 50 !important;
+    -fx-max-height: 50 !important;
+    -fx-pref-height: 50 !important;
+}
+.label {
+    -fx-font-family: 'Inter';
+}
+
+.rounded-border-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+/* Apply to all text elements in TableView */
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Column headers */
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-font-size: 12px; /* Ensures header text is 12px */
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 15px, 10px, 0px, 10px;
+}
+
+/* Table cells */
+.table-view .table-cell {
+    -fx-border-width: 0 0 1 0;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-padding: 10px;
+}
+
+/* Selection color (update to maroon scheme) */
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #800000; /* Maroon background */
+    -fx-text-fill: white;           /* White text */
+    -fx-table-cell-border-color: rgba(0, 0, 0, 0.25);
+    -fx-font-family: 'Inter';
+}
+/* Hover effect for table rows */
+.table-row-cell:hover {
+    -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
+    -fx-text-fill: white;           /* White text */
+}
+/* Make sure text inside cells changes color */
+.table-row-cell:hover .text {
+    -fx-fill: white;
+}
+
+.small-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: #a03030;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:filled:hover .text {
+    -fx-fill: white;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0;
+}
+
+/* Empty row styles */
+.table-row-cell.empty-row {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell.empty-row:hover {
+    -fx-background-color: transparent;
+    -fx-cursor: default;
+}
+
+/* Non-empty row styles */
+.table-row-cell:filled:hover {
+    -fx-background-color: #a03030;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.table-row-cell:filled:hover .text {
+    -fx-fill: white;
+}
+
+/* Ensure empty cells have no border */
+.table-row-cell.empty-row .table-cell {
+    -fx-border-width: 0;
+}

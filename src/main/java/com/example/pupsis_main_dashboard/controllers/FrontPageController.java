@@ -2,16 +2,24 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.Parent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.prefs.Preferences;
 
 public class FrontPageController {
     @FXML private ImageView background;
@@ -21,7 +29,7 @@ public class FrontPageController {
     @FXML private Button aboutButton;
     @FXML private Button othersButton;
     @FXML private Button getStartedButton;
-
+    
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
 
     @FXML
@@ -83,7 +91,29 @@ public class FrontPageController {
     @FXML private void handleGetStartedButton() throws IOException {
         if (getStartedButton.getScene() != null && getStartedButton.getScene().getWindow() != null) {
             Stage currentStage = (Stage) getStartedButton.getScene().getWindow();
-            stageUtils.loadStage(currentStage, "fxml/StudentLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            
+            // Load the RolePick FXML file
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/RolePick.fxml"));
+            Parent root = fxmlLoader.load();
+            
+            // Get the controller and set the previous stage
+            RolePickController controller = fxmlLoader.getController();
+            controller.setPreviousStage(currentStage);
+            
+            // Create a new stage for the role picker
+            Stage rolePickStage = new Stage();
+            rolePickStage.initStyle(StageStyle.TRANSPARENT);
+            
+            Scene scene = new Scene(root, 400, 400);
+            scene.setFill(Color.TRANSPARENT);
+            rolePickStage.setScene(scene);
+
+            rolePickStage.show();
+            // Setup close handler
+            controller.setCloseHandler(rolePickStage);
+            
+            // Apply blur effect to the current stage
+            currentStage.getScene().getRoot().setEffect(new GaussianBlur(10));
         }
     }
 
@@ -95,4 +125,8 @@ public class FrontPageController {
             System.err.println("Failed to open URL: " + e.getMessage());
         }
     }
+    
+
+
+
 }

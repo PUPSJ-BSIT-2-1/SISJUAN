@@ -68,7 +68,7 @@
                          <Font name="Poppins Bold" size="24.0" />
                      </font>
                  </Label>
-                 <Label prefWidth="125.0" text="Enter your Student ID">
+                 <Label prefWidth="125.0" styleClass="small-text" text="Enter your Student ID">
                      <padding>
                          <Insets bottom="30.0" top="-5.0" />
                      </padding>
