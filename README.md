@@ -63,7 +63,7 @@ The system supports multiple user roles with role-specific functionalities:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/pupsj-student-portal.git
+   git clone https://github.com/PUPSJ-BSIT-2-1/PUPSISMainDashboard.git
 2. Open the project in your IDE. 
 3. Configure the database connection in the appropriate config file or controller.
 4. Add JavaFX libraries to your project setup.
