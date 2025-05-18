@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@../css/PickRole.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.RolePickController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" styleClass="root" stylesheets="@../css/PickRole.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.RolePickController">
    <children>
-      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+      <HBox fx:id="mainHBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
          <children>
             <Label prefHeight="12.0" prefWidth="20.0" />
             <ImageView fx:id="closeButton" fitHeight="37.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true" styleClass="back-button">

@@ -119,6 +119,10 @@
     -fx-text-fill: #e0e0e0; 
 }
 
+.dark-theme .small-text {
+    -fx-text-fill: #e0e0e0; 
+}
+
 /* Style for PUP San Juan label in dark theme with medium gray text color */
 .dark-theme .pup-sanjuan-label {
     -fx-text-fill: #b0b0b0; 

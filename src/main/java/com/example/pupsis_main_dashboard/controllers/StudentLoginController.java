@@ -564,24 +564,53 @@ public class StudentLoginController {
         return isStrongPassword(password);
     }
 
+//    // Applies the initial theme based on user preferences
+//    private void applyInitialTheme() {
+//        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+//        boolean darkModeEnabled = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+//
+//        if (darkModeEnabled) {
+//            proceedWithThemeApplication();
+//        }
+//    }
+//
+//    // Applies the theme to the main login pane based on user preferences
+//    private void proceedWithThemeApplication() {
+//        Scene scene = mainLoginPane.getScene();
+//        if (scene != null) {
+//            scene.getRoot().getStyleClass().add("dark-theme");
+//        }
+//    }
+    
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        Preferences prefs = Preferences.userNodeForPackage(getClass());
-        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+        // Use the same preference node as the global theme system
+        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
 
-        if (isDarkMode) {
-            proceedWithThemeApplication();
+        // Use the PUPSIS global theme mechanism instead of managing styles manually
+        Scene scene = mainLoginPane.getScene();
+        if (scene != null) {
+            com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
+        } else {
+            // If scene isn't available yet, try again after a delay
+            Platform.runLater(() -> {
+                Scene delayedScene = mainLoginPane.getScene();
+                if (delayedScene != null) {
+                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(delayedScene, isDarkMode);
+                }
+            });
         }
     }
 
-    // Applies the theme to the main login pane based on user preferences
+    // Proceed with theme application
     private void proceedWithThemeApplication() {
         Scene scene = mainLoginPane.getScene();
         if (scene != null) {
+            scene.getRoot().getStyleClass().removeAll("light-theme");
             scene.getRoot().getStyleClass().add("dark-theme");
         }
     }
-
     // Integrated utility methods from other classes
 
     // From LoadingAnimation
