@@ -16,7 +16,7 @@
    <children>
       <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
          <children>
-            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="237.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
+            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="256.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
@@ -32,7 +32,7 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </GridPane>
-            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="330.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="year-picker">
+            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="341.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="year-picker">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
@@ -52,7 +52,7 @@
       </AnchorPane>
       <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" styleClass="sub-root" stylesheets="@../css/SchoolCalendar.css">
          <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="810.0" styleClass="header-container">
+            <HBox alignment="CENTER" prefHeight="106.0" prefWidth="810.0" styleClass="header-container">
                <children>
                   <VBox fx:id="leftButton" alignment="CENTER">
                      <children>
