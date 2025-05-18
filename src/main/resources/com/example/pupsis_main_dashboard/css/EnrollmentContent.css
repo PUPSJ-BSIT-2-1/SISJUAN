@@ -147,6 +147,7 @@
 /* Dark theme red card style */
 .dark-theme .red-card {
     -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
     -fx-border-width: 0;
 }
 
@@ -324,6 +325,10 @@
 }
 
 .dark-theme .subject-code {
+    -fx-text-fill: #e57373;
+}
+
+.dark-theme .value-label {
     -fx-text-fill: #e57373;
 }
 

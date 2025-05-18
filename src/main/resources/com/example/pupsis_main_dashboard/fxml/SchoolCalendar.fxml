@@ -16,7 +16,7 @@
    <children>
       <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
          <children>
-            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="246.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
+            <GridPane fx:id="monthPicker" alignment="CENTER" layoutX="237.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="month-picker">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
@@ -32,7 +32,7 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </GridPane>
-            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="343.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="year-picker">
+            <GridPane fx:id="yearPicker" alignment="CENTER" layoutX="330.0" layoutY="60.0" prefHeight="190.0" prefWidth="230.0" styleClass="year-picker">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="136.0" minWidth="10.0" prefWidth="30.0" />
@@ -59,14 +59,14 @@
                         <SVGPath content="M12.727 3.687  a1 1 0 1 0 -1.454-1.374  l-8.5 9  a1 1 0 0 0 0 1.374  l8.5 9.001  a1 1 0 1 0 1.454-1.373  L4.875 12  z" styleClass="icons" />
                      </children>
                   </VBox>
-                  <Region prefHeight="42.0" prefWidth="103.0" HBox.hgrow="ALWAYS" />
+                  <Region prefHeight="54.0" prefWidth="221.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER" prefHeight="42.0" prefWidth="186.0" spacing="15.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="monthButton" alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="151.0" styleClass="combo-box" text="MAY" />
                         <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" prefHeight="35.0" prefWidth="64.0" styleClass="combo-box" text="2025" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
-                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Region prefHeight="58.0" prefWidth="254.0" HBox.hgrow="ALWAYS" />
                   <VBox fx:id="rightButton" alignment="CENTER">
                      <children>
                         <SVGPath content="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12z" styleClass="icons" />
@@ -77,35 +77,33 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
             </HBox>
-            <Region prefHeight="20.0" prefWidth="810.0" />
-            <GridPane alignment="CENTER" prefHeight="45.0" prefWidth="810.0" style="-fx-alignment: center;" styleClass="days-container">
+            <GridPane alignment="CENTER" prefHeight="46.0" prefWidth="802.0" style="-fx-alignment: center;">
                <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="122.19998168945312" minWidth="10.0" prefWidth="117.6000244140625" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="188.0" minWidth="10.0" prefWidth="107.19997558593751" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="190.39998779296877" minWidth="10.0" prefWidth="110.40000000000003" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="190.39999999999998" minWidth="10.0" prefWidth="112.800048828125" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="113.60000000000002" minWidth="10.0" prefWidth="113.60000000000002" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="118.4000244140625" minWidth="10.0" prefWidth="112.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="124.7999267578125" minWidth="10.0" prefWidth="120.7999267578125" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label prefHeight="26.0" prefWidth="50.0" styleClass="days" text="Sunday" GridPane.halignment="CENTER" />
-                  <Label prefHeight="20.0" prefWidth="54.0" styleClass="days" text="Monday" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                  <Label prefHeight="23.0" prefWidth="58.0" styleClass="days" text="Tuesday" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-                  <Label prefHeight="20.0" prefWidth="82.0" styleClass="days" text="Wednesday" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
-                  <Label prefHeight="18.0" prefWidth="66.0" styleClass="days" text="Thursday" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
-                  <Label prefHeight="20.0" prefWidth="44.0" styleClass="days" text="Friday" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
-                  <Label prefHeight="20.0" prefWidth="62.0" styleClass="days" text="Saturday" GridPane.columnIndex="6" GridPane.halignment="CENTER" />
+                  <Label prefHeight="26.0" prefWidth="50.0" styleClass="days" text="Sun" textAlignment="CENTER" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="54.0" styleClass="days" text="Mon" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                  <Label prefHeight="23.0" prefWidth="58.0" styleClass="days" text="Tue" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="82.0" styleClass="days" text="Wed" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
+                  <Label prefHeight="18.0" prefWidth="66.0" styleClass="days" text="Thu" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="44.0" styleClass="days" text="Fri" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
+                  <Label prefHeight="20.0" prefWidth="65.0" styleClass="days" text="Sat" GridPane.columnIndex="6" GridPane.halignment="CENTER" />
                </children>
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Region layoutX="10.0" layoutY="137.0" prefHeight="20.0" prefWidth="810.0" />
-            <GridPane fx:id="calendarGrid" alignment="CENTER" gridLinesVisible="true" hgap="3.0" prefHeight="420.0" prefWidth="810.0" styleClass="calendar" vgap="3.0">
+            <GridPane fx:id="calendarGrid" alignment="CENTER" gridLinesVisible="true" hgap="3.0" prefHeight="478.0" prefWidth="810.0" styleClass="calendar" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
