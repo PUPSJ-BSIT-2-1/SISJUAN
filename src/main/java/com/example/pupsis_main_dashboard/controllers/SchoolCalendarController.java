@@ -264,6 +264,7 @@ public class SchoolCalendarController {
 
     private VBox getVBox(int day) {
         Label dayNumber = new Label(String.valueOf(day));
+        dayNumber.getStyleClass().add("day-number");
         VBox dayButton = new VBox(dayNumber);
 
         LocalDate date = LocalDate.of(currentYear, currentMonth, day);

@@ -6,15 +6,15 @@ import javafx.beans.property.StringProperty;
 public class Student {
     private final StringProperty studentNo;
     private final StringProperty studentId;
-    private final StringProperty studentNa;
+    private final StringProperty studentName;
     private final StringProperty subjCode;
     private final StringProperty finalGrade;
     private final StringProperty gradeStatus;
 
-    public Student(String no, String id, String studentNa, String code, String grade, String status) {
+    public Student(String no, String id, String name, String code, String grade, String status) {
         this.studentNo = new SimpleStringProperty(no);
         this.studentId = new SimpleStringProperty(id);
-        this.studentNa = new SimpleStringProperty(studentNa);
+        this.studentName = new SimpleStringProperty(name);
         this.subjCode = new SimpleStringProperty(code);
         this.finalGrade = new SimpleStringProperty(grade);
         this.gradeStatus = new SimpleStringProperty(status);
@@ -45,16 +45,16 @@ public class Student {
         this.studentId.set(id);
     }
 
-    public String getStudentNa() {
-        return studentNa.get();
+    public String getStudentName() {
+        return studentName.get();
     }
 
-    public StringProperty studentNaProperty() {
-        return studentNa;
+    public StringProperty studentNameProperty() {
+        return studentName;
     }
 
-    public void setStudentNa(String studentNa) {
-        this.studentNa.set(studentNa);
+    public void setStudentName(String name) {
+        this.studentName.set(name);
     }
 
     public String getSubjCode() {

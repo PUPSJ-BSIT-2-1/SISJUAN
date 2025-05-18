@@ -2,14 +2,22 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.animation.FadeTransition;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +36,7 @@ public class AboutContentController {
     @FXML private Label name;
     @FXML private Label role;
     @FXML private Label description;
+    @FXML private StackPane stackPane;
 
     private List<Developer> developers;
     private List<Developer> filteredDevelopers = new ArrayList<>();
@@ -72,12 +81,11 @@ public class AboutContentController {
         }
     }
 
-    @FXML
-    private void initialize() {
+    @FXML private void initialize() {
         populateModule();
         loadDevelopersContent();
         if (!modulePicker.getItems().isEmpty()) {
-            modulePicker.getSelectionModel().selectFirst();  // Select the first module initially
+            modulePicker.getSelectionModel().selectFirst();
             String selectedModule = modulePicker.getValue();
             filteredDevelopers = developers.stream()
                     .filter(dev -> dev.getDevModule().equalsIgnoreCase(selectedModule))
@@ -87,13 +95,9 @@ public class AboutContentController {
         handleModuleSelection();
         handleButtons();
 
-        // Wait until the scene is available to check the theme
         root.sceneProperty().addListener((_, _, newScene) -> {
             if (newScene != null) {
-                // Initial theme setup
                 updateIconsBasedOnTheme();
-
-                // Listen for theme changes on the scene's root
                 newScene.getRoot().getStyleClass().addListener((ListChangeListener<String>) _ ->
                         updateIconsBasedOnTheme());
             }
@@ -141,25 +145,95 @@ public class AboutContentController {
     private void showDeveloperDetails(int index) {
         if (index >= 0 && index < filteredDevelopers.size()) {
             Developer dev = filteredDevelopers.get(index);
-            name.setText(dev.getDevName());
-            role.setText(dev.getDevRole());
-            description.setText(dev.getDevDesc());
+
+            // Apply fade transition animation
+            applyFadeTransition(name, dev.getDevName());
+            applyFadeTransition(role, dev.getDevRole());
+            applyFadeTransition(description, dev.getDevDesc());
+
             try {
-                Image devImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/pupsis_main_dashboard/" + dev.getDevImage())));
+                Image devImage = new Image(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/com/example/pupsis_main_dashboard/" + dev.getDevImage())
+                ));
                 image.setImage(devImage);
+                image.setFitWidth(200);
+                image.setFitHeight(200);
+                image.setPreserveRatio(false);
+
+                stackPane.getChildren().setAll(image, getRectangle());
+                stackPane.setPrefSize(200, 200);
+
+                Rectangle clip = new Rectangle(200, 200);
+                clip.setArcWidth(30);
+                clip.setArcHeight(30);
+                image.setClip(clip);
+
+                FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(400), image);
+                fadeTransitionOut.setFromValue(1.0);
+                fadeTransitionOut.setToValue(0.0);
+                fadeTransitionOut.play();
+                fadeTransitionOut.setOnFinished(_ -> {
+                    FadeTransition fadeTransitionIn = new FadeTransition(Duration.millis(400), image);
+                    fadeTransitionIn.setFromValue(0.0);
+                    fadeTransitionIn.setToValue(1.0);
+                    fadeTransitionIn.play();
+                });
+                fadeTransitionOut.play();
+
             } catch (NullPointerException e) {
                 System.err.println("Failed to load image resources: " + e.getMessage());
             }
         }
     }
 
+    private void applyFadeTransition(Label label, String newText) {
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), label);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(_ -> {
+            label.setText(newText);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(300), label);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+            fadeIn.play();
+        });
+        fadeOut.play();
+    }
+
+    private Rectangle getRectangle() {
+        Rectangle gradientBackground = new Rectangle(200, 200);
+        LinearGradient gradient = new LinearGradient(
+                0, 1, 0, 0,
+                true,
+                CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.MAROON),
+                new Stop(0.7, Color.TRANSPARENT)
+        );
+        gradientBackground.setFill(gradient);
+        gradientBackground.setArcWidth(20);
+        gradientBackground.setArcHeight(20);
+
+        FadeTransition fadeTransitionOut = new FadeTransition(Duration.millis(400), gradientBackground);
+        fadeTransitionOut.setFromValue(1.0);
+        fadeTransitionOut.setToValue(0.0);
+        fadeTransitionOut.play();
+        fadeTransitionOut.setOnFinished(_ -> {
+            FadeTransition fadeTransitionIn = new FadeTransition(Duration.millis(400), gradientBackground);
+            fadeTransitionIn.setFromValue(0.0);
+            fadeTransitionIn.setToValue(1.0);
+            fadeTransitionIn.play();
+        });
+        fadeTransitionOut.play();
+        return gradientBackground;
+    }
+
     private void populateModule() {
         String[] modules = {
                 "Main Dashboard",
                 "Registration",
-                "Payment Information",
+                "Payment",
                 "Room Assignment",
-                "Grading System",
+                "Grading",
                 "Class Schedule",
                 "Faculty"
         };
@@ -167,7 +241,6 @@ public class AboutContentController {
     }
 
     private void updateIconsBasedOnTheme() {
-        // Get the root of the scene which should have the theme class
         Parent sceneRoot = root.getScene() != null ? root.getScene().getRoot() : null;
         if (sceneRoot == null) return;
 
@@ -184,8 +257,6 @@ public class AboutContentController {
         try {
             Image prevImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(prevImagePath)));
             Image nextImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(nextImagePath)));
-
-
 
             previous.setImage(prevImage);
             next.setImage(nextImage);

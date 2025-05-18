@@ -1,24 +1,38 @@
 [
   {
     "devModule": "Main Dashboard",
-    "devName": "Cedrick Reyes",
-    "devRole": "UI/UX Designer",
-    "devImage": "Images/PUPSJ.png",
-    "devDesc": "Responsible for designing the user interface and improving user experience."
+    "devName": "Cedrick Joseph H. Mariano",
+    "devRole": "Frontend Developer",
+    "devImage": "Images/devs/MARIANO.jpg",
+    "devDesc": "As the frontend developer of the PUPSJ SIS project, Cedrick is responsible for designing and implementing user interfaces that are both intuitive and responsive. He works closely with the backend and database teams to ensure a seamless user experience across various modules, including the Dashboard, About section, School Calendar, and Profile."
   },
   {
     "devModule": "Main Dashboard",
-    "devName": "Andrea Lee",
+    "devName": "Borgy Misael K. Palermo",
+    "devRole": "Database Designer",
+    "devImage": "Images/PUPSJ.png",
+    "devDesc": "Handles server-side logic and integration with databases."
+  },
+  {
+    "devModule": "Main Dashboard",
+    "devName": "Rj Jack A. Florida",
+    "devRole": "Quality Assurance",
+    "devImage": "Images/PUPSJ.png",
+    "devDesc": "Handles server-side logic and integration with databases."
+  },
+  {
+    "devModule": "Main Dashboard",
+    "devName": "Harold Prince E. dela Pena",
     "devRole": "Backend Developer",
     "devImage": "Images/PUPSJ.png",
     "devDesc": "Handles server-side logic and integration with databases."
   },
   {
     "devModule": "Grading",
-    "devName": "Mark Santos",
-    "devRole": "Full Stack Developer",
-    "devImage": "Images/PUPSJ Logo.png",
-    "devDesc": "Develops both frontend and backend features for the grading system."
+    "devName": "Micah Athena D. Bugayong",
+    "devRole": "Moral Support",
+    "devImage": "Images/devs/BUGAYONG.jpg",
+    "devDesc": "She supports the moral development of the team members and contributes to their personal growth and development."
   },
   {
     "devModule": "Registration",

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
+<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
    <FlowPane>
       <children>
       
@@ -42,7 +42,7 @@
             <Label styleClass="stat-label" text="Second Semester" />
         </VBox>
         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
-            <Label style="-fx-background-color: transparent;" text="1.25">
+            <Label text="1.25">
             <styleClass>
                <String fx:value="stat-value" />
                <String fx:value="font" />
@@ -59,7 +59,7 @@
       <children>
          <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <children>
-               <Label style="-fx-background-color: transparent;" text="Enrolled">
+               <Label text="Enrolled">
                   <styleClass>
                      <String fx:value="stat-value" />
                      <String fx:value="font" />
@@ -70,7 +70,7 @@
          </VBox>
          <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <children>
-               <Label style="-fx-background-color: transparent;" text="8">
+               <Label text="8">
                   <styleClass>
                      <String fx:value="stat-value" />
                      <String fx:value="font" />

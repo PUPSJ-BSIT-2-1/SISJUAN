@@ -1,12 +1,8 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utilities.DBConnection;
-//import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
-import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -23,162 +19,105 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableRow;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.ScrollPane;
-import java.io.IOException;
-import java.util.Objects;
-
-import javafx.scene.Node;
-import javafx.application.Platform;
 
 public class GradingModuleController implements Initializable {
-    @FXML private TextField searchBar; // Add this field
-    @FXML private TableView<Subject> subjectsTable;
-    @FXML private TableColumn<Subject, String> yearSecCol;
-    @FXML private TableColumn<Subject, String> semCol;
-    @FXML private TableColumn<Subject, String> subjCodeCol;
-    @FXML private TableColumn<Subject, String> subjDescCol;
-    @FXML private Label validationLabel;
+    @FXML
+    private TextField searchBar; // Add this field
+
+    @FXML
+    private Label facultyName;
+
+    @FXML
+    private Label facultyID;
+
+    @FXML
+    private TableView<Subject> subjectsTable;
+
+    @FXML
+    private TableColumn<Subject, String> editBtnCol;
+
+    @FXML
+    private TableColumn<Subject, String> yearSecCol;
+
+    @FXML
+    private TableColumn<Subject, String> semCol;
+
+    @FXML
+    private TableColumn<Subject, String> subjCodeCol;
+
+    @FXML
+    private TableColumn<Subject, String> subjDescCol;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
+
     // Keep a reference to the original data
     private final ObservableList<Subject> originalSubjectsList = FXCollections.observableArrayList();
-    private String facultyId;
+
+    // Database connection constants
+    private static final String URL = "jdbc:postgresql://db.autqwzshfjaqbkxpiqxm.supabase.co:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "pupSISProject2025";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Initialize UI components first
+        // Verify that FXML injection worked
+        if (subjectsTable == null) {
+            System.err.println("Error: subjectsTable is null. Check FXML file for proper fx:id.");
+            return;
+        }
+
+        // Initialize the columns
         yearSecCol.setCellValueFactory(new PropertyValueFactory<>("yearSection"));
         semCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
         subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjectCode"));
         subjDescCol.setCellValueFactory(new PropertyValueFactory<>("subjectDescription"));
 
-        yearSecCol.setReorderable(false);
-        semCol.setReorderable(false);
-        subjCodeCol.setReorderable(false);
-        subjDescCol.setReorderable(false);
+        // Load data from database (only call once)
+        loadSubjectsData();
 
-        // Show loading indicator
-        subjectsTable.setPlaceholder(new Label("Loading data..."));
+        // Store in original list
+        originalSubjectsList.addAll(subjectsList);
 
-        validationLabel.setText(facultyId);
+        // Setup the search functionality
+        setupSearch();
 
-        // Try to get student ID with a small delay to ensure SessionData is populated
-        Platform.runLater(() -> {
-            facultyId = SessionData.getInstance().getStudentId();
-            if (facultyId != null && !facultyId.isEmpty()) {
-                // Load data asynchronously
-                Task<ObservableList<Subject>> loadTask = getObservableListTask();
-                new Thread(loadTask).start();
-            } else {
-                subjectsTable.setPlaceholder(new Label("No faculty ID available"));
-            }
-        });
+        // Add this line to setup the row click handler
+        setupRowClickHandler();
     }
 
-    private String attemptToRetrieveStudentId() {
-        // Try to get student ID from label if available
-        Node studentIdLabel = subjectsTable.getScene() != null ?
-                subjectsTable.getScene().lookup("#studentIdLabel") : null;
-
-        if (studentIdLabel instanceof Label) {
-            String id = ((Label) studentIdLabel).getText();
-            if (id != null && !id.isEmpty()) {
-                SessionData.getInstance().setStudentId(id);
-                return id;
-            }
-        }
-        return null;
-    }
-
-    private Task<ObservableList<Subject>> getObservableListTask() {
-        Task<ObservableList<Subject>> loadTask = new Task<>() {
-            @Override
-            protected ObservableList<Subject> call() throws Exception {
-                return loadSubjectsDataAsync();
-            }
-        };
-
-        loadTask.setOnSucceeded(e -> {
-            subjectsList.setAll(loadTask.getValue());
-            originalSubjectsList.setAll(subjectsList);
-            setupSearch();
-            setupRowClickHandler();
-        });
-
-        loadTask.setOnFailed(e -> {
-            subjectsTable.setPlaceholder(new Label("Error loading data"));
-            loadTask.getException().printStackTrace();
-        });
-        return loadTask;
-    }
     private void setupRowClickHandler() {
         subjectsTable.setRowFactory(tv -> {
-            TableRow<Subject> row = new TableRow<>() {
-                @Override
-                protected void updateItem(Subject item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        // Remove hover styles for empty rows
-                        getStyleClass().add("empty-row");
-                    } else {
-                        getStyleClass().remove("empty-row");
-                    }
-                }
-            };
-
+            TableRow<Subject> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
-                    Subject selectedSubject = row.getItem();
-                    String subjectCode = selectedSubject.getSubjectCode();
-                    String subjectDesc = selectedSubject.getSubjectDescription();
-                    EditGradesPageController editPage = new EditGradesPageController();
-                    editPage.setSubjectCode(subjectCode);
-                    editPage.setSubjectDesc(subjectDesc);
-                    try {
-                        ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
-                        if (contentPane != null) {
-                            Parent newContent = FXMLLoader.load(Objects.requireNonNull(
-                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/EditGradesPage.fxml")
-                            ));
-                            contentPane.setContent(newContent);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    OpenNewGradingModule newModule = new OpenNewGradingModule(subjectsTable);
+                    newModule.open();
                 }
             });
             return row;
         });
     }
-    private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
-
-        if (facultyId == null || facultyId.isEmpty()) {
-            throw new SQLException("Student ID not set");
-        }
-
-        ObservableList<Subject> tempList = FXCollections.observableArrayList();
-        try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT year_section, subject_code, description, semester " +
-                    "FROM faculty_load WHERE faculty_id = ?";
+    private void loadSubjectsData() {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query = "SELECT * FROM subjects WHERE faculty_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, facultyId);
-                pstmt.setFetchSize(50);
+                pstmt.setString(1, facultyID.getText());
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        tempList.add(new Subject(
+                        subjectsList.add(new Subject(
                                 rs.getString("year_section"),
                                 rs.getString("semester"),
                                 rs.getString("subject_code"),
-                                rs.getString("description")
+                                rs.getString("subject_description")
                         ));
                     }
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+            e.printStackTrace();
         }
-        return tempList; // Make sure this is always returned
     }
 
     private void setupSearch() {
@@ -206,11 +145,11 @@ public class GradingModuleController implements Initializable {
                 if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
-
-                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)){
+                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
-                return subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter);// Does not match
+
+                return false; // Does not match
             });
         });
 
@@ -231,27 +170,7 @@ public class GradingModuleController implements Initializable {
     public void refreshTable() {
         subjectsList.clear();
         originalSubjectsList.clear();
-        subjectsTable.setPlaceholder(new Label("Loading data...")); // Reset placeholder
-
-        Task<ObservableList<Subject>> refreshTask = new Task<>() {
-            @Override
-            protected ObservableList<Subject> call() throws Exception {
-                return loadSubjectsDataAsync();
-            }
-        };
-
-        refreshTask.setOnSucceeded(e -> {
-            ObservableList<Subject> newData = refreshTask.getValue();
-            subjectsList.setAll(newData);
-            originalSubjectsList.setAll(newData);
-            // The table will automatically update its display
-        });
-
-        refreshTask.setOnFailed(e -> {
-            subjectsTable.setPlaceholder(new Label("Error refreshing data"));
-            refreshTask.getException().printStackTrace();
-        });
-
-        new Thread(refreshTask).start();
+        loadSubjectsData();
+        originalSubjectsList.addAll(subjectsList);
     }
 }
