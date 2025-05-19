@@ -8,7 +8,7 @@
 .student-name {
     -fx-font-size: 24px;
     -fx-font-family: "Inter 18pt SemiBold";
-    -fx-text-fill: #343a40;
+    -fx-text-fill: white;
 }
 
 .dark-theme .student-name {
