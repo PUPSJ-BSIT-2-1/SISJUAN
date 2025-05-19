@@ -93,7 +93,7 @@ public class EnrollmentController implements Initializable {
             connection.setAutoCommit(false); // Start transaction
 
             // Get student ID from the email address
-            String studentEmail = RememberMeHandler.loadCredentials()[0];
+            String studentEmail = RememberMeHandler.getCurrentUserEmail();
 
             // Query to get student id using case-insensitive email comparison
             String studentId = executeQuery(connection,
@@ -177,12 +177,18 @@ public class EnrollmentController implements Initializable {
 
         try (Connection connection = DBConnection.getConnection()) {
             // Get the student's ID from the email
-            String studentEmail = RememberMeHandler.loadCredentials()[0];
-            String studentId = executeQuery(connection,
-                    "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)",
-                    stmt -> stmt.setString(1, studentEmail),
-                    rs -> rs.next() ? rs.getString("student_id") : null
-            );
+            String studentEmail = RememberMeHandler.getCurrentUserEmail();
+            
+            // Check if we have a logged in user
+            if (studentEmail == null || studentEmail.isEmpty()) {
+                throw new Exception("No user is currently logged in. Please log in again.");
+            }
+            
+            String studentId = executeQuery(connection, 
+                "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)",
+                stmt -> stmt.setString(1, studentEmail),
+                rs -> rs.next() ? rs.getString("student_id") : null
+
 
             if (studentId == null) {
                 System.err.println("Student not found with email: " + studentEmail);

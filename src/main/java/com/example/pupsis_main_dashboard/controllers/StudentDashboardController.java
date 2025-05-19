@@ -68,13 +68,16 @@ public class StudentDashboardController {
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
         
-        // Load student info from credentials
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials != null && credentials.length == 2) {
+        // Load student info using getCurrentUserEmail
+        String identifier = RememberMeHandler.getCurrentUserEmail();
+        if (identifier != null && !identifier.isEmpty()) {
             // Get student info from a database
-            String identifier = credentials[0];
             loadStudentInfo(identifier);
+        } else {
+            logger.error("No user is currently logged in");
+            // Set default or error values
+            studentNameLabel.setText("User not logged in");
+            studentIdLabel.setText("");
         }
     }
     

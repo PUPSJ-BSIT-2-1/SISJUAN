@@ -54,12 +54,15 @@ public class FacultyDashboardController {
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = RememberMeHandler.loadCredentials();
-        if (credentials != null && credentials.length == 2) {
+        String identifier = RememberMeHandler.getCurrentUserEmail();
+        if (identifier != null && !identifier.isEmpty()) {
             // Get faculty info from the database
-            String identifier = credentials[0];
             loadFacultyInfo(identifier);
+        } else {
+            // Handle case when no user is logged in
+            studentNameLabel.setText("User not logged in");
+            studentIdLabel.setText("");
+            departmentLabel.setText("");
         }
         
         // Initialize fade1 as fully transparent
