@@ -187,7 +187,7 @@ public class EnrollmentController implements Initializable {
             String studentId = executeQuery(connection, 
                 "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)",
                 stmt -> stmt.setString(1, studentEmail),
-                rs -> rs.next() ? rs.getString("student_id") : null
+                rs -> rs.next() ? rs.getString("student_id") : null);
 
 
             if (studentId == null) {

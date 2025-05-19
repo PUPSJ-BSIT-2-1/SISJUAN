@@ -74,7 +74,7 @@
                                                         </DropShadow>
                                                     </effect>
                                                 </MenuButton>
-                                                <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="COMP001" textFill="WHITE">
+                                                <MenuButton fx:id="subjCodeCombBox" mnemonicParsing="false" prefHeight="23.0" prefWidth="116.0" text="Subjects" textAlignment="CENTER" textFill="WHITE">
                                                     <effect>
                                                         <DropShadow blurType="ONE_PASS_BOX" height="49.1" offsetY="3.0" radius="11.775" width="0.0">
                                                             <color>
@@ -90,7 +90,7 @@
                                                                 <Font size="9.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="subjDescLbl" alignment="CENTER" prefHeight="28.0" prefWidth="206.0" text="Object Oriented Programming" textAlignment="CENTER" wrapText="true" />
+                                                        <Label fx:id="subjDescLbl" alignment="CENTER" prefHeight="28.0" prefWidth="206.0" textAlignment="CENTER" wrapText="true" />
                                                     </children>
                                                 </VBox>
                                             </children>
