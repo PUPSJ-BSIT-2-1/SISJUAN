@@ -3,7 +3,7 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 //import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
-import com.example.pupsis_main_dashboard.utilities.Subject;
+import com.example.pupsis_main_dashboard.models.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;

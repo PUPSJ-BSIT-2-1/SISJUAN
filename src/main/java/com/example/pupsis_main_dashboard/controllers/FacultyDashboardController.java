@@ -126,7 +126,7 @@ public class FacultyDashboardController {
         boolean isEmail = identifier.contains("@");
         
         try (Connection connection = DBConnection.getConnection()) {
-            // First try by ID if the identifier is not an email
+            // First, try by ID if the identifier is not an email
             if (!isEmail) {
                 String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
                 try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -185,7 +185,7 @@ public class FacultyDashboardController {
         });
     }
     
-    // Format faculty name as "LastName, FirstName"
+    // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
         

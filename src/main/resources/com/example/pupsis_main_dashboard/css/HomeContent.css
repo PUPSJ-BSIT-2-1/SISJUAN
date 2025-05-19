@@ -380,7 +380,7 @@
 
 /* Dark theme scroll pane style */
 .dark-theme .main-content-scroll > .viewport {
-    -fx-background-color: transparent; 
+    -fx-background-color: transparent;
 }
 
 .dark-theme .main-content-scroll {
@@ -577,8 +577,9 @@
 }
 
 /* Dark theme red card style - increased specificity */
-.dark-theme .red-card, .dark-theme .cards.red-card {
-    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.5) 100%) !important;
+.dark-theme .red-card, .dark-theme .cards .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3)) !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
     -fx-background-radius: 10;
     -fx-border-color: transparent;
     -fx-border-width: 0;

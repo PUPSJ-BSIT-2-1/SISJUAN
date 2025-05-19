@@ -1,4 +1,4 @@
-package com.example.pupsis_main_dashboard.utilities;
+package com.example.pupsis_main_dashboard.models;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

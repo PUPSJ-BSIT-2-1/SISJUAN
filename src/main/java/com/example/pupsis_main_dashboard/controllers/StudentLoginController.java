@@ -15,7 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
@@ -509,7 +508,7 @@ public class StudentLoginController {
                             "Your account has been created",
                             "Your student ID is: " + studentId + "\nPlease use this ID or your email to log in.");
 
-                    // Clear the registration form and go back to login
+                    // Clear the registration form and go back to log in
                     this.firstName.clear();
                     this.middleName.clear();
                     this.lastName.clear();
@@ -520,7 +519,7 @@ public class StudentLoginController {
                     dayComboBox.getSelectionModel().clearSelection();
                     yearComboBox.getSelectionModel().clearSelection();
 
-                    // Navigate back to login page
+                    // Navigate back to the login page
                     animateVBox(centerVBox, 0);
 
                     // Pre-fill login fields with the new email
@@ -565,24 +564,53 @@ public class StudentLoginController {
         return isStrongPassword(password);
     }
 
+//    // Applies the initial theme based on user preferences
+//    private void applyInitialTheme() {
+//        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+//        boolean darkModeEnabled = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+//
+//        if (darkModeEnabled) {
+//            proceedWithThemeApplication();
+//        }
+//    }
+//
+//    // Applies the theme to the main login pane based on user preferences
+//    private void proceedWithThemeApplication() {
+//        Scene scene = mainLoginPane.getScene();
+//        if (scene != null) {
+//            scene.getRoot().getStyleClass().add("dark-theme");
+//        }
+//    }
+    
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        Preferences prefs = Preferences.userNodeForPackage(getClass());
-        boolean isDarkMode = prefs.getBoolean("darkMode", false);
+        // Use the same preference node as the global theme system
+        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
 
-        if (isDarkMode) {
-            proceedWithThemeApplication();
+        // Use the PUPSIS global theme mechanism instead of managing styles manually
+        Scene scene = mainLoginPane.getScene();
+        if (scene != null) {
+            com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
+        } else {
+            // If a scene isn't available yet, try again after a delay
+            Platform.runLater(() -> {
+                Scene delayedScene = mainLoginPane.getScene();
+                if (delayedScene != null) {
+                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(delayedScene, isDarkMode);
+                }
+            });
         }
     }
 
-    // Applies the theme to the main login pane based on user preferences
+    // Proceed with the theme application
     private void proceedWithThemeApplication() {
         Scene scene = mainLoginPane.getScene();
         if (scene != null) {
+            scene.getRoot().getStyleClass().removeAll("light-theme");
             scene.getRoot().getStyleClass().add("dark-theme");
         }
     }
-
     // Integrated utility methods from other classes
 
     // From LoadingAnimation
@@ -688,7 +716,7 @@ public class StudentLoginController {
                 child.setEffect(blur);
             }
             
-            // Use slightly larger radius to ensure coverage
+            // Use a slightly larger radius to ensure coverage
             double cornerRadius = 20.0;  // Default from CSS
             
             // Add padding to radius to ensure complete coverage of corners
@@ -697,7 +725,7 @@ public class StudentLoginController {
             
             // Add a solid background color to the target pane to prevent white edges
             if (isDarkMode) {
-                // For dark mode, use solid color with appropriate radius
+                // For dark mode, use solid color with the appropriate radius
                 targetPane.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: " + cssRadius + ";");
             } else {
                 // For light mode
@@ -716,7 +744,7 @@ public class StudentLoginController {
             clip.setArcWidth(clipRadius * 2);
             clip.setArcHeight(clipRadius * 2);
             
-            // Ensure clip resizes with pane
+            // Ensure the clip resizes with pane
             clip.widthProperty().bind(targetPane.widthProperty().add(2));
             clip.heightProperty().bind(targetPane.heightProperty().add(2));
             
@@ -730,12 +758,12 @@ public class StudentLoginController {
             // Mark that this pane has blur applied
             targetPane.getProperties().put("blurApplied", true);
         } else {
-            // Remove blur effect from all children
+            // Remove the blur effect from all children
             for (Node child : targetPane.getChildren()) {
                 child.setEffect(null);
             }
             
-            // Restore original style if it was saved
+            // Restore the original style if it was saved
             if (targetPane.getProperties().containsKey("originalStyle")) {
                 String originalStyle = (String) targetPane.getProperties().get("originalStyle");
                 targetPane.setStyle(originalStyle != null ? originalStyle : "");
@@ -744,7 +772,7 @@ public class StudentLoginController {
                 targetPane.setStyle("");
             }
             
-            // Restore original clip if it was saved
+            // Restore the original clip if it was saved
             if (targetPane.getProperties().containsKey("originalClip")) {
                 Object originalClip = targetPane.getProperties().get("originalClip");
                 if (originalClip instanceof javafx.scene.shape.Shape) {
@@ -769,10 +797,10 @@ public class StudentLoginController {
         alert.setHeaderText(header);
         alert.setContentText(content);
 
-        // Check if the scene has dark theme applied and style the alert accordingly
+        // Check if the scene has a dark theme applied and style the alert accordingly
         Scene currentScene = new Scene(new VBox()); // Creating a temporary scene to get access to stylesheets
         // Get the active scene
-        if (currentScene != null && currentScene.getRoot().getStyleClass().contains("dark-theme")) {
+        if (currentScene.getRoot().getStyleClass().contains("dark-theme")) {
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStyleClass().add("dark-theme");
             // Add any additional dark theme styling if needed

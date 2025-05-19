@@ -17,7 +17,7 @@
    </padding>
    <children>
       <!-- Header Section -->
-      <HBox alignment="CENTER_LEFT" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" styleClass="red-card">
+      <HBox alignment="CENTER_LEFT" maxWidth="810.0" minWidth="810.0" prefHeight="100.0" prefWidth="810.0" styleClass="red-card">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>

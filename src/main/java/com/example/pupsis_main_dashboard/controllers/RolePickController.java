@@ -1,15 +1,19 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -22,7 +26,8 @@ public class RolePickController {
     @FXML private Button facultyButton;
     @FXML private Button adminButton;
     @FXML private ImageView closeButton;
-    
+  
+    @FXML private HBox mainHBox;
     private Label labelHeader;
     private Stage previousStage;
     
@@ -40,8 +45,10 @@ public class RolePickController {
     	studentButton.setOnAction(_ -> handleStudentButton());
     	facultyButton.setOnAction(_ -> handleFacultyButton());
     	adminButton.setOnAction(_ -> handleAdminButton());
+        Platform.runLater(this::applyInitialTheme);
     }
-    
+
+    // Sets the handler for the close button
     public void setCloseHandler(Stage stage) {
         // Handle window close request (Alt+F4 or X button)
         stage.setOnCloseRequest(event -> {
@@ -50,7 +57,7 @@ public class RolePickController {
         });
     }
     
-    
+    // Sets the handler for the close button
     @FXML
     private void handleCloseButton()
     {	
@@ -89,7 +96,8 @@ public class RolePickController {
 	{
 		transitionStage(adminButton, previousStage, "fxml/AdminLogin.fxml");
 	}
-    
+
+    // Transitions to the next stage with a fade effect
     private void transitionStage(Button button, Stage stage, String fxmlPath) {
       	//Fade out the current stage
     	 final int TRANSITION_DURATION = 300;
@@ -118,27 +126,18 @@ public class RolePickController {
         	});
 
     }
-    
-    private void transition2(Button button, Stage stage, String fxmlPath) {
-    	StageAndSceneUtils stageUtils = new StageAndSceneUtils();
-       	Stage currentStage = (Stage) button.getScene().getWindow();
-        FadeTransition fadeTransition2 = new FadeTransition(Duration.millis(700), stage.getScene().getRoot());
-        fadeTransition2.setFromValue(1.0);
-        fadeTransition2.setToValue(0.0);  
-        fadeTransition2.setInterpolator(Interpolator.EASE_BOTH);
-        fadeTransition2.play();
 
-    		fadeTransition2.setOnFinished(event -> 
-			{
-				// Load Next window
-				try {
-					stageUtils.loadStage(stage, fxmlPath, StageAndSceneUtils.WindowSize.MEDIUM, StageAndSceneUtils.TransitionType.ZOOM_IN);
-				} catch (IOException e) {
-	    			// Handle the exception (e.g., show an error message)
-	    			e.printStackTrace();
-	    			logger.error("Error loading Student Login window", e);
-	    			stageUtils.showAlert("Error", "Failed to load Student Login window");
-				}
-			});
+    // Applies the initial theme based on user preferences
+    private void applyInitialTheme() {
+    	Scene scene = mainHBox.getScene();
+        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean darkModeEnabled = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+        
+        if (darkModeEnabled) {
+            if (scene != null) {
+                scene.getRoot().getStyleClass().add("dark-theme");
+            }
+        }
     }
+    
 }

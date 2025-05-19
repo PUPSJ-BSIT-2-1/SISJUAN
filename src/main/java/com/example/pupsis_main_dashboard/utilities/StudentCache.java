@@ -1,6 +1,6 @@
 package com.example.pupsis_main_dashboard.utilities;
 
-import com.example.pupsis_main_dashboard.utilities.Student;
+import com.example.pupsis_main_dashboard.models.Student;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.LinkedHashMap;

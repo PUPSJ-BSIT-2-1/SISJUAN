@@ -49,10 +49,11 @@ public class StudentDashboardController {
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradesNew.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/EnrollmentContent.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -107,6 +108,7 @@ public class StudentDashboardController {
         preloadFxmlContent(CALENDAR_FXML);
         preloadFxmlContent(SETTINGS_FXML);
         preloadFxmlContent(ENROLLMENT_FXML);
+        preloadFxmlContent(ABOUT_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -166,17 +168,9 @@ public class StudentDashboardController {
                 // Update UI on JavaFX Application Thread
                 String nameToDisplay = finalName;
                 Platform.runLater(() -> {
-                    if (nameToDisplay != null) {
-                        studentNameLabel.setText(nameToDisplay);
-                    } else {
-                        studentNameLabel.setText("Name not found");
-                    }
-                    
-                    if (finalStudentId != null) {
-                        studentIdLabel.setText(finalStudentId);
-                    } else {
-                        studentIdLabel.setText("ID not found");
-                    }
+                    studentNameLabel.setText(Objects.requireNonNullElse(nameToDisplay, "Name not found"));
+
+                    studentIdLabel.setText(Objects.requireNonNullElse(finalStudentId, "ID not found"));
                 });
                 
             } catch (SQLException e) {
@@ -275,13 +269,13 @@ public class StudentDashboardController {
     // Get FXML path based on clicked HBox
     private String getFxmlPathFromHBox(HBox clickedHBox) throws IOException {
         return switch (clickedHBox.getId()) {
-            case "registrationHBox" ->ENROLLMENT_FXML;
+            case "registrationHBox" -> ENROLLMENT_FXML;
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" ->null;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
-            case "aboutHBox" ->null;
+            case "aboutHBox" -> ABOUT_FXML;
             default -> HOME_FXML;
         };
     }
