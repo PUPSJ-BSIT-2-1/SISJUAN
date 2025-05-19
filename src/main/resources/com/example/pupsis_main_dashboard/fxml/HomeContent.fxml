@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
+<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10.0" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.HomeContentController">
    <FlowPane prefHeight="100.0" prefWidth="810.0">
       <children>
       
@@ -42,11 +42,7 @@
             <Label styleClass="stat-label" text="Second Semester" />
         </VBox>
         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
-            <Label text="1.25">
-            <styleClass>
-               <String fx:value="stat-value" />
-               <String fx:value="font" />
-            </styleClass></Label>
+            <Label styleClass="stat-value" text="1.25" />
             <Label styleClass="stat-label" text="Current GWA" />
         </VBox>
    
@@ -59,23 +55,13 @@
       <children>
          <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <children>
-               <Label text="Enrolled">
-                  <styleClass>
-                     <String fx:value="stat-value" />
-                     <String fx:value="font" />
-                  </styleClass>
-               </Label>
+               <Label styleClass="stat-value" text="Enrolled" />
                <Label styleClass="stat-label" text="Status" />
             </children>
          </VBox>
          <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <children>
-               <Label text="8">
-                  <styleClass>
-                     <String fx:value="stat-value" />
-                     <String fx:value="font" />
-                  </styleClass>
-               </Label>
+               <Label styleClass="stat-value" text="8" />
                <Label styleClass="stat-label" text="Graded Subjects " />
             </children>
          </VBox>
