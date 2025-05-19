@@ -1,5 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.models.Developer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.FadeTransition;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class AboutContentController {
+public class AboutContentController extends Developer {
 
     @FXML private VBox root;
     @FXML private ComboBox<String> modulePicker;
@@ -42,45 +43,11 @@ public class AboutContentController {
     private List<Developer> filteredDevelopers = new ArrayList<>();
     private int currentIndex = 0;
 
-    public static class Developer {
-        private String devName;
-        private String devRole;
-        private String devDesc;
-        private String devImage;
-        private String devModule;
-
-        @SuppressWarnings("unused")
-        public Developer(String devName, String devRole, String devDesc, String devImage, String devModule) {
-            this.devName = devName;
-            this.devRole = devRole;
-            this.devDesc = devDesc;
-            this.devImage = devImage;
-            this.devModule = devModule;
-        }
-
-        public Developer() {}
-
-        public String getDevName() {
-            return devName;
-        }
-
-        public String getDevRole() {
-            return devRole;
-        }
-
-        public String getDevDesc() {
-            return devDesc;
-        }
-
-        public String getDevImage() {
-            return devImage;
-        }
-
-        public String getDevModule() {
-            return devModule;
-        }
-    }
-
+    /**
+     * Initializes the controller by populating the module picker, loading developer content,
+     * and setting up the initial UI state. It selects the first module by default and filters
+     * the developers based on the selected module.
+     */
     @FXML private void initialize() {
         populateModule();
         loadDevelopersContent();
@@ -104,6 +71,7 @@ public class AboutContentController {
         });
     }
 
+    // Loads the developer content from a JSON file
     private void loadDevelopersContent() {
         final String devPath = "/com/example/pupsis_main_dashboard/json/DevelopersTeam.json";
         try (InputStream inputStream = getClass().getResourceAsStream(devPath)) {
@@ -115,6 +83,7 @@ public class AboutContentController {
         }
     }
 
+    // Populates the module picker with unique module names
     private void handleModuleSelection() {
         modulePicker.setOnAction(_ -> {
             currentIndex = 0;
@@ -126,6 +95,7 @@ public class AboutContentController {
         });
     }
 
+    // Handles the next and previous buttons
     private void handleButtons() {
         next.setOnMouseClicked(_ -> {
             if (!filteredDevelopers.isEmpty()) {
@@ -142,6 +112,7 @@ public class AboutContentController {
         });
     }
 
+    // Shows the details of the developer at the specified index
     private void showDeveloperDetails(int index) {
         if (index >= 0 && index < filteredDevelopers.size()) {
             Developer dev = filteredDevelopers.get(index);
@@ -186,6 +157,7 @@ public class AboutContentController {
         }
     }
 
+    // Applies a fade transition animation to a label
     private void applyFadeTransition(Label label, String newText) {
         FadeTransition fadeOut = new FadeTransition(Duration.millis(300), label);
         fadeOut.setFromValue(1.0);
@@ -200,6 +172,7 @@ public class AboutContentController {
         fadeOut.play();
     }
 
+    // Creates a gradient background for the image
     private Rectangle getRectangle() {
         Rectangle gradientBackground = new Rectangle(200, 200);
         LinearGradient gradient = new LinearGradient(
@@ -227,6 +200,7 @@ public class AboutContentController {
         return gradientBackground;
     }
 
+    // Populates the module picker with unique module names
     private void populateModule() {
         String[] modules = {
                 "Main Dashboard",
@@ -240,6 +214,7 @@ public class AboutContentController {
         modulePicker.getItems().addAll(modules);
     }
 
+    // Updates the icons based on the current theme
     private void updateIconsBasedOnTheme() {
         Parent sceneRoot = root.getScene() != null ? root.getScene().getRoot() : null;
         if (sceneRoot == null) return;

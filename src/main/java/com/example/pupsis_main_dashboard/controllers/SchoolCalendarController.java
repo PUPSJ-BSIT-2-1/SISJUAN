@@ -11,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.concurrent.Task;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,6 +43,8 @@ public class SchoolCalendarController {
     protected double yOffset = 0;
 
     private final String stylesheetPath = Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm();
+
+    private static final Logger logger = LoggerFactory.getLogger(SchoolCalendarController.class);
 
     @FXML private void initialize() {
         // Load events asynchronously
@@ -84,7 +88,7 @@ public class SchoolCalendarController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error loading school events", e);
         }
     }
 
@@ -204,7 +208,7 @@ public class SchoolCalendarController {
 
         preloadEventsTask.setOnFailed(_ -> {
             System.err.println("Failed to load events.");
-            preloadEventsTask.getException().printStackTrace();
+            logger.error("Failed to load events.");  // Log the error();
         });
 
         // Start the task in a new thread

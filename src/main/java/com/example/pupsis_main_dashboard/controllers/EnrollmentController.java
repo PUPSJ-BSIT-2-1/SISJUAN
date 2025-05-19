@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class EnrollmentController implements Initializable {
@@ -25,9 +24,9 @@ public class EnrollmentController implements Initializable {
     @FXML private Button enrollButton;
     @FXML private VBox subjectListContainer;
 
-    private List<CheckBox> subjectCheckboxes = new ArrayList<>();
-    private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
-    private Map<CheckBox, ComboBox<String>> checkboxScheduleMap = new HashMap<>();
+    private final List<CheckBox> subjectCheckboxes = new ArrayList<>();
+    private final Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
+    private final Map<CheckBox, ComboBox<String>> checkboxScheduleMap = new HashMap<>();
     
     // Common time slots for scheduling
     private static final String[] TIME_SLOTS = {
@@ -40,14 +39,16 @@ public class EnrollmentController implements Initializable {
         loadSubjects();
         enrollButton.setOnAction(this::handleEnrollment);
     }
-    
+
+    // Event handler for the "Select All" button
     @FXML
     private void handleSelectAll(ActionEvent event) {
         boolean allSelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
         subjectCheckboxes.forEach(checkbox -> checkbox.setSelected(!allSelected));
         updateSelectAllButtonText(!allSelected);
     }
-    
+
+    // Event handler for the "Enroll" button
     @FXML
     private void handleEnrollment(ActionEvent event) {
         List<EnrollmentData> selectedSubjects = new ArrayList<>();
@@ -73,7 +74,7 @@ public class EnrollmentController implements Initializable {
             return;
         }
         
-        // Start background task to save enrollments
+        // Start a background task to save enrollments
         runBackgroundTask(
             "Enrolling in subjects...", 
             () -> enrollInSubjects(selectedSubjects),
@@ -88,12 +89,13 @@ public class EnrollmentController implements Initializable {
         );
     }
 
+    // Method to enroll in selected subjects
     private Object enrollInSubjects(List<EnrollmentData> selectedSubjects) throws Exception {
         try (Connection connection = DBConnection.getConnection()) {
             connection.setAutoCommit(false); // Start transaction
             
             // Get student ID from the email address
-            String studentEmail = RememberMeHandler.loadCredentials()[0];
+            String studentEmail = Objects.requireNonNull(RememberMeHandler.loadCredentials())[0];
             
             // Query to get student id using case-insensitive email comparison
             String studentId = executeQuery(connection, 
@@ -112,7 +114,7 @@ public class EnrollmentController implements Initializable {
             // Get or create an enrollment header
             Integer enrollmentId = getOrCreateEnrollmentHeader(connection, studentId, currentSemester);
             
-            // Insert each subject enrollment into student_load table
+            // Insert each subject enrollment into the student_load table
             try (PreparedStatement stmt = connection.prepareStatement(
                 "INSERT INTO student_load (enrollment_id, subject_code, schedule, student_id) " +
                 "VALUES (?, ?, ?, ?) ON CONFLICT (enrollment_id, subject_code) DO NOTHING")) {
@@ -130,18 +132,19 @@ public class EnrollmentController implements Initializable {
             connection.commit();
             return "Enrolled in " + selectedSubjects.size() + " subjects successfully!";
             
-        } catch (Exception e) {
-            throw e;
+        } catch (SQLException e) {
+            throw new Exception("Error enrolling in subjects: " + e.getMessage());
         }
     }
-    
-    private String getCurrentSemester(Connection connection) throws SQLException {
+
+    // Method to get the current semester
+    private String getCurrentSemester(Connection connection) {
         String defaultSemester = "1st Semester 2025-2026";
         
         try {
             return executeQuery(connection, 
                 "SELECT semester FROM payment ORDER BY semester DESC LIMIT 1",
-                stmt -> {},
+                    _ -> {},
                 rs -> rs.next() && rs.getString("semester") != null ? rs.getString("semester") : defaultSemester
             );
         } catch (SQLException e) {
@@ -149,11 +152,13 @@ public class EnrollmentController implements Initializable {
             return defaultSemester;
         }
     }
-    
+
+    // Method to update the "Select All" button text
     private void updateSelectAllButtonText(boolean allSelected) {
         selectAllButton.setText(allSelected ? "Deselect All" : "Select All");
     }
 
+    // Method to load available subjects
     private void loadSubjects() {
         runBackgroundTask(
             "Loading subjects...",
@@ -171,13 +176,14 @@ public class EnrollmentController implements Initializable {
             }
         );
     }
-    
+
+    // Method to fetch available subjects
     private List<SubjectData> fetchAvailableSubjects() throws Exception {
         List<SubjectData> subjectDataList = new ArrayList<>();
         
         try (Connection connection = DBConnection.getConnection()) {
             // Get the student's ID from the email
-            String studentEmail = RememberMeHandler.loadCredentials()[0];
+            String studentEmail = Objects.requireNonNull(RememberMeHandler.loadCredentials())[0];
             String studentId = executeQuery(connection, 
                 "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)",
                 stmt -> stmt.setString(1, studentEmail),
@@ -216,7 +222,7 @@ public class EnrollmentController implements Initializable {
                 "f.firstname || ' ' || f.lastname AS professor_name " +
                 "FROM subjects s " +
                 "LEFT JOIN faculty f ON s.professor = f.faculty_id",
-                stmt -> {},
+                _ -> {},
                 rs -> {
                     List<SubjectData> subjects = new ArrayList<>();
                     while (rs.next()) {
@@ -237,6 +243,7 @@ public class EnrollmentController implements Initializable {
         }
     }
 
+    // Method to add a row for a subject
     private void addSubjectRow(SubjectData subject) {
         // Create a row for the subject
         HBox row = new HBox();
@@ -260,12 +267,12 @@ public class EnrollmentController implements Initializable {
         scheduleCombo.getStyleClass().addAll("modern-combo", "no-gray-disabled");
         scheduleCombo.setDisable(true);
         
-        // Store data with checkbox
+        // Store data with a checkbox
         checkboxSubjectMap.put(checkbox, subject);
         checkboxScheduleMap.put(checkbox, scheduleCombo);
         
-        // Enable/disable schedule combo box based on checkbox state
-        checkbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        // Enable/disable schedule combo box based on the checkbox state
+        checkbox.selectedProperty().addListener((_, _, newValue) -> {
             scheduleCombo.setDisable(!newValue);
             boolean allSelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
             updateSelectAllButtonText(allSelected);
@@ -290,6 +297,7 @@ public class EnrollmentController implements Initializable {
         subjectListContainer.getChildren().addAll(row, new Separator());
     }
 
+    // Method to show an alert dialog with the given title and message
     private void showAlert(String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -300,9 +308,10 @@ public class EnrollmentController implements Initializable {
         });
     }
 
+    // Method to get or create an enrollment header
     private Integer getOrCreateEnrollmentHeader(Connection connection, String studentId, String semester) 
             throws SQLException {
-        // First try to get existing header
+        // First try to get the existing header
         Integer headerID = executeQuery(connection,
             "SELECT enrollment_id FROM enrollment_headers WHERE student_id = ? AND semester = ?",
             stmt -> {
@@ -334,40 +343,41 @@ public class EnrollmentController implements Initializable {
             subjectListContainer.getChildren().clear();
             VBox loadingBox = new VBox(10, 
                 createProgressIndicator(), 
-                createStyledLabel(loadingMessage, "loading-text"));
+                createStyledLabel(loadingMessage));
             loadingBox.setAlignment(Pos.CENTER);
             loadingBox.setPadding(new Insets(20));
             subjectListContainer.getChildren().add(loadingBox);
         });
-        
+
+        Task<T> task = getTTask(taskSupplier, onSuccess);
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private <T> Task<T> getTTask(TaskSupplier<T> taskSupplier, Consumer<T> onSuccess) {
         Task<T> task = new Task<>() {
             @Override
             protected T call() throws Exception {
                 return taskSupplier.get();
             }
         };
-        
-        task.setOnSucceeded(event -> {
-            Platform.runLater(() -> {
-                subjectListContainer.getChildren().clear();
-                if (onSuccess != null) onSuccess.accept(task.getValue());
-            });
-        });
-        
-        task.setOnFailed(event -> {
-            Platform.runLater(() -> {
-                subjectListContainer.getChildren().clear();
-                Throwable exception = task.getException();
-                exception.printStackTrace();
-                showAlert("Error", "An error occurred: " + exception.getMessage());
-            });
-        });
-        
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+
+        task.setOnSucceeded(_ -> Platform.runLater(() -> {
+            subjectListContainer.getChildren().clear();
+            if (onSuccess != null) onSuccess.accept(task.getValue());
+        }));
+
+        task.setOnFailed(_ -> Platform.runLater(() -> {
+            subjectListContainer.getChildren().clear();
+            Throwable exception = task.getException();
+            exception.printStackTrace();
+            showAlert("Error", "An error occurred: " + exception.getMessage());
+        }));
+        return task;
     }
-    
+
     // Helper method to create a progress indicator
     private ProgressIndicator createProgressIndicator() {
         ProgressIndicator indicator = new ProgressIndicator();
@@ -376,9 +386,9 @@ public class EnrollmentController implements Initializable {
     }
     
     // Helper method to create a styled label
-    private Label createStyledLabel(String text, String styleClass) {
+    private Label createStyledLabel(String text) {
         Label label = new Label(text);
-        label.getStyleClass().add(styleClass);
+        label.getStyleClass().add("loading-text");
         return label;
     }
     

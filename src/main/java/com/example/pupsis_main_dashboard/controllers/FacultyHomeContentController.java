@@ -6,12 +6,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.chart.PieChart;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart.Data;
 import javafx.scene.Node;
 
 import java.sql.Connection;
@@ -62,9 +59,7 @@ public class FacultyHomeContentController {
         if (credentials != null && credentials.length > 0) {
             String savedEmail = credentials[0]; // Get the username/email
             if (savedEmail != null && !savedEmail.isEmpty()) {
-                CompletableFuture.runAsync(() -> {
-                    loadFacultyData(savedEmail);
-                });
+                CompletableFuture.runAsync(() -> loadFacultyData(savedEmail));
             }
         }
     }
@@ -75,13 +70,13 @@ public class FacultyHomeContentController {
     private void applyTheme() {
         boolean isDarkMode = false;
         try {
-            // First check user preferences from SettingsController
+            // First, check user preferences from the SettingsController
             Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
             isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
-        } catch (Exception e) {
+        } catch (Exception _) {
         }
         
-        // Apply theme class to the scene
+        // Apply a theme class to the scene
         boolean finalIsDarkMode = isDarkMode;
         Platform.runLater(() -> {
             if (finalIsDarkMode) {
@@ -118,10 +113,10 @@ public class FacultyHomeContentController {
             // Load upcoming events
             loadUpcomingEvents();
             
-            // Create class distribution chart
+            // Create a class distribution chart
             createClassDistributionChart();
             
-        } catch (Exception e) {
+        } catch (Exception _) {
         }
     }
     
@@ -169,7 +164,7 @@ public class FacultyHomeContentController {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException _) {
         }
         
         // Set default values if faculty not found
@@ -244,7 +239,7 @@ public class FacultyHomeContentController {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException _) {
         }
     }
     
@@ -285,7 +280,7 @@ public class FacultyHomeContentController {
                         // Format location with room if available
                         String location = room != null ? room : "TBA";
                         
-                        // Create schedule box with available information
+                        // Create a schedule box with available information
                         VBox scheduleBox = createScheduleBox(
                             subjectCode, 
                             description, 
@@ -351,7 +346,7 @@ public class FacultyHomeContentController {
      */
     private String formatTime(String time) {
         try {
-            // Parse time in 24-hour format
+            // Parse time in a 24-hour format
             LocalTime localTime = LocalTime.parse(time);
             // Format to 12-hour AM/PM format
             return localTime.format(DateTimeFormatter.ofPattern("h:mm a"));
@@ -365,7 +360,7 @@ public class FacultyHomeContentController {
      */
     private void loadUpcomingEvents() {
         try (Connection conn = DBConnection.getConnection()) {
-            // First check if the calendar_events table exists
+            // First, check if the calendar_events table exists
             boolean tableExists = false;
             try {
                 // Query the information schema to see if the table exists
@@ -377,11 +372,11 @@ public class FacultyHomeContentController {
                         tableExists = checkRs.getBoolean(1);
                     }
                 }
-            } catch (SQLException e) {
+            } catch (SQLException _) {
             }
             
             if (!tableExists) {
-                // Table doesn't exist, just display a message
+                // Table doesn't exist, display a message
                 Platform.runLater(() -> {
                     eventsVBox.getChildren().clear();
                     Label noEventsLabel = new Label("No upcoming events");

@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import com.example.pupsis_main_dashboard.utilities.Subject;
+import com.example.pupsis_main_dashboard.models.Subject;
 
 import java.io.IOException;
 

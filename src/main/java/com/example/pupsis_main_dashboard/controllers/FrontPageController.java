@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -19,7 +18,6 @@ import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.prefs.Preferences;
 
 public class FrontPageController {
     @FXML private ImageView background;
@@ -125,7 +123,7 @@ public class FrontPageController {
             System.err.println("Failed to open URL: " + e.getMessage());
         }
     }
-    
+
 
 
 

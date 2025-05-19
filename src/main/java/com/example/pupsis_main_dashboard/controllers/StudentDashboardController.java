@@ -165,17 +165,9 @@ public class StudentDashboardController {
                 // Update UI on JavaFX Application Thread
                 String nameToDisplay = finalName;
                 Platform.runLater(() -> {
-                    if (nameToDisplay != null) {
-                        studentNameLabel.setText(nameToDisplay);
-                    } else {
-                        studentNameLabel.setText("Name not found");
-                    }
-                    
-                    if (finalStudentId != null) {
-                        studentIdLabel.setText(finalStudentId);
-                    } else {
-                        studentIdLabel.setText("ID not found");
-                    }
+                    studentNameLabel.setText(Objects.requireNonNullElse(nameToDisplay, "Name not found"));
+
+                    studentIdLabel.setText(Objects.requireNonNullElse(finalStudentId, "ID not found"));
                 });
                 
             } catch (SQLException e) {

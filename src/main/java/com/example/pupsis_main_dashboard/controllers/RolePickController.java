@@ -47,7 +47,8 @@ public class RolePickController {
     	adminButton.setOnAction(_ -> handleAdminButton());
         Platform.runLater(this::applyInitialTheme);
     }
-    
+
+    // Sets the handler for the close button
     public void setCloseHandler(Stage stage) {
         // Handle window close request (Alt+F4 or X button)
         stage.setOnCloseRequest(event -> {
@@ -56,7 +57,7 @@ public class RolePickController {
         });
     }
     
-    
+    // Sets the handler for the close button
     @FXML
     private void handleCloseButton()
     {	
@@ -95,7 +96,8 @@ public class RolePickController {
 	{
 		transitionStage(adminButton, previousStage, "fxml/AdminLogin.fxml");
 	}
-    
+
+    // Transitions to the next stage with a fade effect
     private void transitionStage(Button button, Stage stage, String fxmlPath) {
       	//Fade out the current stage
     	 final int TRANSITION_DURATION = 300;
@@ -124,6 +126,8 @@ public class RolePickController {
         	});
 
     }
+
+    // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
     	Scene scene = mainHBox.getScene();
         Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
