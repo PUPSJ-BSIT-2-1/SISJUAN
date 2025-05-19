@@ -96,8 +96,7 @@ public class StudentLoginController {
     
     // Sets up the initial state of the UI components, including loading saved credentials,
     private void setupInitialState() {
-        RememberMeHandler rememberMeHandler = new RememberMeHandler(); 
-        String[] credentials = rememberMeHandler.loadCredentials();
+        String[] credentials = RememberMeHandler.loadCredentials();
         if (credentials != null) {
             studentIdField.setText(credentials[0]);
             passwordField.setText(credentials[1]);
@@ -346,6 +345,8 @@ public class StudentLoginController {
 
                     if (isAuthenticated) {
                         RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
+                        // Ensure the current user email is always set, even if remember me is not selected
+                        RememberMeHandler.setCurrentUserEmail(identifier);
                         getStudentFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();

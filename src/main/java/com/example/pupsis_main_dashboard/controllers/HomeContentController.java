@@ -22,11 +22,10 @@ public class HomeContentController {
         // Create a background task to load student info
         Thread thread = new Thread(() -> {
             try {
-                RememberMeHandler rememberMeHandler = new RememberMeHandler();
-                String[] credentials = rememberMeHandler.loadCredentials();
+                String identifier = RememberMeHandler.getCurrentUserEmail();
                 
-                if (credentials != null && credentials.length > 0) {
-                    String fullName = StudentLoginController.getStudentFullName(credentials[0], credentials[0].contains("@"));
+                if (identifier != null && !identifier.isEmpty()) {
+                    String fullName = StudentLoginController.getStudentFullName(identifier, identifier.contains("@"));
                     
                     // Update UI on JavaFX Application Thread
                     Platform.runLater(() -> {
@@ -40,7 +39,7 @@ public class HomeContentController {
                             
                             // Log the student name in home content
                             logger.info("Home content loaded for student: {} (identifier: {})", 
-                                       fullName, credentials[0]);
+                                       fullName, identifier);
                         } else {
                             studentNameLabel.setText("Student");
                             logger.warn("Could not parse student name from: {}", fullName);

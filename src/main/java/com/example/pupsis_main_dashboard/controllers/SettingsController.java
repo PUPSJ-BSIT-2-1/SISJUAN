@@ -64,14 +64,10 @@ public class SettingsController {
 
     // Load user settings from preferences and set them in the UI components
     private void loadUserSettings() {
-        // Get user identifier using RememberMeHandler
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        String currentUserIdentifier = null;
+        // Try to get user email - first try getCurrentUserEmail which works regardless of remember me status
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
 
-        if (credentials != null && credentials.length > 0) {
-            currentUserIdentifier = credentials[0];
-        } else {
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
             System.err.println("Could not retrieve user identifier from RememberMeHandler in loadUserSettings.");
             // Set default/empty values if user identifier is not available
             emailField.setText("Error loading email");
@@ -184,13 +180,9 @@ public class SettingsController {
         String confirmPass = confirmNewPasswordField.getText();
 
         // Get user identifier using RememberMeHandler
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        String currentUserIdentifier = null;
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
 
-        if (credentials != null && credentials.length > 0) {
-            currentUserIdentifier = credentials[0];
-        } else {
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
             // Handle case where credentials couldn't be loaded (e.g., user not logged in or 'Remember Me' was off)
             System.err.println("Could not retrieve user identifier from RememberMeHandler.");
             showAlert("Error", "Unable to identify current user. Please log in again.", Alert.AlertType.ERROR);
@@ -274,10 +266,22 @@ public class SettingsController {
 
     @FXML
     private void handleSaveProfile() {
-        String email = emailField.getText(); // Keep getting text in case needed for logging/validation later
+        if (emailField.getText().isEmpty()) {
+            showAlert("Error", "Email cannot be empty.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Get user identifier using RememberMeHandler
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
+
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
+            // Handle case where no user is currently logged in
+            showAlert("Error", "No user is currently logged in. Please log in again.", Alert.AlertType.ERROR);
+            return;
+        }
+
         String phone = phoneField.getText();
         // TODO: Add validation for phone formats if needed
-        // Removed saving email to prefs: prefs.put(EMAIL_FIELD_PREF, email);
         prefs.put(PHONE_FIELD_PREF, phone); // Keep saving phone to prefs
         System.out.println("Profile settings saved (Phone number updated in prefs). Email field is display-only from DB.");
         showAlert("Profile Saved", "Your phone number preference has been updated.", Alert.AlertType.INFORMATION); // Updated message

@@ -56,16 +56,18 @@ public class FacultyHomeContentController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
         dateLabel.setText(now.format(formatter));
         
-        // Load faculty data from saved preferences
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials != null && credentials.length > 0) {
-            String savedEmail = credentials[0]; // Get the username/email
-            if (savedEmail != null && !savedEmail.isEmpty()) {
-                CompletableFuture.runAsync(() -> {
-                    loadFacultyData(savedEmail);
-                });
-            }
+        // Load faculty data using getCurrentUserEmail
+        String identifier = RememberMeHandler.getCurrentUserEmail();
+        if (identifier != null && !identifier.isEmpty()) {
+            CompletableFuture.runAsync(() -> {
+                loadFacultyData(identifier);
+            });
+        } else {
+            // Handle case when no user email is available
+            facultyNameLabel.setText("User not logged in");
+            totalClassesLabel.setText("0");
+            totalStudentsLabel.setText("0");
+            scheduledClassesTodayLabel.setText("0");
         }
     }
     
