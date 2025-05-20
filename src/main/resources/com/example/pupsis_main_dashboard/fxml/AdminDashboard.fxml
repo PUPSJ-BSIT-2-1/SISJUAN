@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="main-container" stylesheets="@../css/StudentDashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminDashboardController">
+   <left>
+      <VBox prefHeight="700.0" prefWidth="350.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Pane maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" prefHeight="60.0" prefWidth="50.0" styleClass="profile-picture" />
+                  <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                     <children>
+                        <Label fx:id="studentNameLabel" text="John Doe">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <styleClass>
+                              <String fx:value="medium-text" />
+                              <String fx:value="profile-name" />
+                           </styleClass>
+                        </Label>
+                        <Label fx:id="departmentLabel" layoutX="10.0" layoutY="10.0" style="-fx-font-size: 14; -fx-text-fill: #acacac;" styleClass="small-text" text="Information Technology" textFill="#acacac">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="studentIdLabel" layoutX="10.0" layoutY="38.0" style="-fx-font-size: 14; -fx-text-fill: #acacac;" styleClass="small-text" text="2023-000385-SJ-01" textFill="#acacac">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </HBox>
+            <Line endX="226.58578491210938" startX="-100.0" stroke="#e3e5e6" strokeWidth="2.0">
+               <VBox.margin>
+                  <Insets bottom="25.0" />
+               </VBox.margin>
+            </Line>
+            <Label layoutX="20.0" layoutY="20.0" text="Management" textFill="#999999">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+               <styleClass>
+                  <String fx:value="medium-text" />
+                  <String fx:value="groups" />
+               </styleClass>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <HBox fx:id="homeHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M7,0H4A4,4,0,0,0,0,4V7a4,4,0,0,0,4,4H7a4,4,0,0,0,4-4V4A4,4,0,0,0,7,0ZM9,7A2,2,0,0,1,7,9H4A2,2,0,0,1,2,7V4A2,2,0,0,1,4,2H7A2,2,0,0,1,9,4Z M7,13H4a4,4,0,0,0-4,4v3a4,4,0,0,0,4,4H7a4,4,0,0,0,4-4V17A4,4,0,0,0,7,13Zm2,7a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V17a2,2,0,0,1,2-2H7a2,2,0,0,1,2,2Z M20,13H17a4,4,0,0,0-4,4v3a4,4,0,0,0,4,4h3a4,4,0,0,0,4-4V17A4,4,0,0,0,20,13Zm2,7a2,2,0,0,1-2,2H17a2,2,0,0,1-2-2V17a2,2,0,0,1,2-2h3a2,2,0,0,1,2,2Z M14,7h8a1,1,0,0,0,0-2H14a1,1,0,0,0,0,2Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin></SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Home" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding></HBox>
+            <HBox fx:id="usersHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M12,12A6,6,0,1,0,6,6,6,6,0,0,0,12,12ZM12,2A4,4,0,1,1,8,6,4,4,0,0,1,12,2ZM22,24H2a2,2,0,0,1-2-2,8,8,0,0,1,8-8h8a8,8,0,0,1,8,8A2,2,0,0,1,22,24ZM8.13,16a6,6,0,0,0-6.11,6H22a6,6,0,0,0-6.12-6Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Users Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="facultyHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M20,2H8a2,2,0,0,0-2,2V18a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V4A2,2,0,0,0,20,2Zm0,16H8V4H20ZM4,8H2V20a2,2,0,0,0,2,2H16V20H4ZM14,8a2,2,0,1,1-2-2A2,2,0,0,1,14,8Zm-4,8a4,4,0,0,1,8,0v2H10Zm1.46-3.12a3,3,0,0,0,5.08,0,2,2,0,0,1-2.54-1.17,2,2,0,0,1-2.54,1.17Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Faculty Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="subjectsHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M21,5H3A1,1,0,0,0,2,6v9a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V6A1,1,0,0,0,21,5ZM20,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V7H20ZM10,13h4a1,1,0,0,0,0-2H10a1,1,0,0,0,0,2Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Subject Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="scheduleHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M21,2H18V1a1,1,0,0,0-2,0V2H8V1A1,1,0,0,0,6,1V2H3A1,1,0,0,0,2,3V21a1,1,0,0,0,1,1H21a1,1,0,0,0,1-1V3A1,1,0,0,0,21,2ZM20,20H4V10H20Zm0-12H4V4H20ZM8,14h8a1,1,0,0,0,0-2H8a1,1,0,0,0,0,2Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Schedule Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="calendarHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M19,4H17V3a1,1,0,0,0-2,0V4H9V3A1,1,0,0,0,7,3V4H5A3,3,0,0,0,2,7V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4Zm1,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V12H20Zm0-9H4V7A1,1,0,0,1,5,6H7V7A1,1,0,0,0,9,7V6h6V7a1,1,0,0,0,2,0V6h2a1,1,0,0,1,1,1Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Calendar" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" bottom="5.0" />
+               </VBox.margin>
+            </HBox>
+            <Label layoutX="40.0" layoutY="166.0" text="General" textFill="#999999">
+               <styleClass>
+                  <String fx:value="medium-text" />
+                  <String fx:value="groups" />
+               </styleClass>
+               <VBox.margin>
+                  <Insets bottom="10.0" top="30.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <HBox fx:id="settingsHBox" alignment="CENTER_LEFT" layoutX="40.0" layoutY="476.0" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M1,4.75H3.736a3.728,3.728,0,0,0,7.195,0H23a1,1,0,0,0,0-2H10.931a3.728,3.728,0,0,0-7.195,0H1a1,1,0,0,0,0,2ZM7.333,2a1.75,1.75,0,1,1-1.75,1.75A1.752,1.752,0,0,1,7.333,2Z M23,11H20.264a3.727,3.727,0,0,0-7.194,0H1a1,1,0,0,0,0,2H13.07a3.727,3.727,0,0,0,7.194,0H23a1,1,0,0,0,0-2Zm-6.333,2.75A1.75,1.75,0,1,1,18.417,12,1.752,1.752,0,0,1,16.667,13.75Z M23,19.25H10.931a3.728,3.728,0,0,0-7.195,0H1a1,1,0,0,0,0,2H3.736a3.728,3.728,0,0,0,7.195,0H23a1,1,0,0,0,0-2ZM7.333,22a1.75,1.75,0,1,1,1.75-1.75A1.753,1.753,0,0,1,7.333,22Z" fill="black" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Settings" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="aboutHBox" alignment="CENTER_LEFT" layoutX="40.0" layoutY="537.0" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10.011,10.011,0,0,1,12,22Z M12,10H11a1,1,0,0,0,0,2h1v6a1,1,0,0,0,2,0V12A2,2,0,0,0,12,10Z M13.5,6.5a1.5,1.5 0 1,1 -3,0a1.5,1.5 0 0,1 3,0Z" fill="black" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="About" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="logoutHBox" alignment="CENTER_LEFT" layoutX="20.0" layoutY="181.0" onMouseClicked="#handleLogoutButton" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M22.829,9.172,18.95,5.293a1,1,0,0,0-1.414,1.414l3.879,3.879a2.057,2.057,0,0,1,.3.39c-.015,0-.027-.008-.042-.008h0L5.989,11a1,1,0,0,0,0,2h0l15.678-.032c.028,0,.051-.014.078-.016a2,2,0,0,1-.334.462l-3.879,3.879a1,1,0,1,0,1.414,1.414l3.879-3.879a4,4,0,0,0,0-5.656Z M7,22H5a3,3,0,0,1-3-3V5A3,3,0,0,1,5,2H7A1,1,0,0,0,7,0H5A5.006,5.006,0,0,0,0,5V19a5.006,5.006,0,0,0,5,5H7a1,1,0,0,0,0-2Z" fill="gray" scaleX="0.8" scaleY="0.8" scaleZ="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin></SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Logout" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+      </VBox>
+   </left>
+   <center>
+      <StackPane>
+         <children>
+            <ScrollPane fx:id="contentPane" hbarPolicy="NEVER" prefHeight="700.0">
+               <styleClass>
+                  <String fx:value="content-container" />
+                  <String fx:value="scroll-bar" />
+               </styleClass>
+               <padding>
+                  <Insets bottom="30.0" left="30.0" top="30.0" />
+               </padding>
+            </ScrollPane>
+            <Region fx:id="fade1" mouseTransparent="true" prefHeight="639.0" prefWidth="861.0" styleClass="fade-top">
+               <StackPane.margin>
+                  <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
+               </StackPane.margin>
+            </Region>
+            <Region fx:id="fade2" mouseTransparent="true" prefHeight="822.0" prefWidth="861.0" styleClass="fade-bottom">
+               <StackPane.margin>
+                  <Insets bottom="30.0" left="5.0" right="5.0" top="30.0" />
+               </StackPane.margin>
+            </Region>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

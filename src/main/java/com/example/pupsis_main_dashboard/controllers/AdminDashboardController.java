@@ -3,8 +3,8 @@ package com.example.pupsis_main_dashboard.controllers;
 //import com.example.pupsis_main_dashboard.utility.ControllerUtils;
 
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
-import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,16 +24,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class FacultyDashboardController {
+public class AdminDashboardController {
 
     @FXML private HBox homeHBox;
-    @FXML private HBox registrationHBox;
-    @FXML private HBox subjectsHBox;
-    @FXML private HBox gradesHBox;
-    @FXML private HBox schoolCalendarHBox;
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox usersHBox;
+    @FXML private HBox facultyHBox;
+    @FXML private HBox subjectsHBox;
+    @FXML private HBox scheduleHBox;
+    @FXML private HBox calendarHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private Label departmentLabel;
@@ -45,9 +46,12 @@ public class FacultyDashboardController {
     private final Map<String, Parent> contentCache = new HashMap<>();
     
     // FXML paths as constants
-    private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyHomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
-    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
+    private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
+    private static final String USERS_FXML = null;
+    private static final String FACULTY_FXML = null;
+    private static final String SUBJECTS_FXML = null;
+    private static final String SCHEDULE_FXML = null;
+    private static final String CALENDAR_FXML = null;
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
 
@@ -99,13 +103,10 @@ public class FacultyDashboardController {
     // Preload and cache all FXML content
     private void preloadAllContent() {
         // Load and cache Home content first (already shown)
-        loadHomeContent();
+        loadContent(HOME_FXML);
         
         // Preload and cache other content
-        preloadFxmlContent(GRADES_FXML);
-        preloadFxmlContent(CALENDAR_FXML);
         preloadFxmlContent(SETTINGS_FXML);
-        preloadFxmlContent(ABOUT_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -216,8 +217,8 @@ public class FacultyDashboardController {
 
         if (clickedHBox == settingsHBox) {
             loadContent(SETTINGS_FXML);
-        } else if (clickedHBox == homeHBox) {
-            loadContent(HOME_FXML);
+//        } else if (clickedHBox == homeHBox) {
+//            loadContent(HOME_FXML);
         } else {
             contentPane.setContent(null);
             String fxmlPath = getFxmlPathFromHBox(clickedHBox);
@@ -235,33 +236,37 @@ public class FacultyDashboardController {
                     null;
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
-            case "gradesHBox" -> GRADES_FXML;
+            case "gradesHBox" -> null;
             case "scheduleHBox" -> null;
-            case "schoolCalendarHBox" -> CALENDAR_FXML;
-            case "aboutHBox" -> ABOUT_FXML;
+            case "schoolCalendarHBox" -> null;
+            case "aboutHBox" ->null;
+            case "usersHBox" -> USERS_FXML;
+            case "facultyHBox" -> FACULTY_FXML;
+            case "calendarHBox" -> CALENDAR_FXML;
             default -> HOME_FXML;
         };
     }
 
-private void loadContent(String fxmlPath) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent content = loader.load();
-        
-        // Set faculty ID in SessionData when loading grading module
-        if (fxmlPath.equals(GRADES_FXML)) {
-            String facultyId = studentIdLabel.getText();
-            SessionData.getInstance().setStudentId(facultyId);
+    private void loadContent(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent content = loader.load();
+            
+            // Set faculty ID in SessionData when loading grading module
+            if (fxmlPath.equals(null)) {
+                String facultyId = studentIdLabel.getText();
+                SessionData.getInstance().setStudentId(facultyId);
+            }
+            
+            contentPane.setContent(content);
+            contentCache.put(fxmlPath, content);
+            addLayoutChangeListener(content);
+            resetScrollPosition();
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading content"));
+            e.printStackTrace();
         }
-        
-        contentPane.setContent(content);
-        contentCache.put(fxmlPath, content);
-        addLayoutChangeListener(content);
-        resetScrollPosition();
-    } catch (IOException e) {
-        contentPane.setContent(new Label("Error loading content"));
     }
-}
     
     // Add layout change listener to content
     private void addLayoutChangeListener(Parent content) {
@@ -289,9 +294,6 @@ private void loadContent(String fxmlPath) {
     }
 
     // Load the home content into the ScrollPane
-    private void loadHomeContent() {
-        loadContent(HOME_FXML);
-    }
 
     // Handle the logout button click event
     @FXML public void handleLogoutButton(MouseEvent ignoredEvent) throws IOException {
@@ -306,12 +308,13 @@ private void loadContent(String fxmlPath) {
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
-        registrationHBox.getStyleClass().remove("selected");
-        subjectsHBox.getStyleClass().remove("selected");
-        gradesHBox.getStyleClass().remove("selected");
-        schoolCalendarHBox.getStyleClass().remove("selected");
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
+        usersHBox.getStyleClass().remove("selected");
+        facultyHBox.getStyleClass().remove("selected");
+        subjectsHBox.getStyleClass().remove("selected");
+        scheduleHBox.getStyleClass().remove("selected");
+        calendarHBox.getStyleClass().remove("selected");
     }
 }

@@ -301,7 +301,7 @@
 /* --- ScrollBar Dark Theme (within .content-container or globally if needed) --- */
 
 /* ============== DARK THEME STYLES from HomeContent.css ============== */
-/* Specific styles for HomeContent.fxml when in dark mode */
+/* Specific styles for StudentHomeContent.fxml when in dark mode */
 
 .dark-theme .home-content-pane {
     -fx-background-color: transparent; /* Let the parent dark theme background show */
