@@ -584,3 +584,110 @@
     -fx-border-color: transparent;
     -fx-border-width: 0;
 }
+
+/* Progress Bar Styling for Program Completion */
+.prog-bar {
+    -fx-accent: #800000;
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-control-inner-background: #f0f0f0;
+}
+
+.dark-theme .prog-bar {
+    -fx-accent: #b30000;
+    -fx-background-color: #36393f;
+    -fx-control-inner-background: #36393f;
+}
+
+.prog-bar .bar {
+    -fx-background-radius: 8px;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.prog-bar .track {
+    -fx-background-radius: 8px;
+    -fx-background-insets: 0;
+}
+
+.prog-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #800000;
+}
+
+.dark-theme .prog-label {
+    -fx-text-fill: #b30000;
+}
+
+.prog-value {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5a5c69;
+}
+
+.dark-theme .prog-value {
+    -fx-text-fill: #d1d3e2;
+}
+
+.completion-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-padding: 15px;
+}
+
+.dark-theme .completion-container {
+    -fx-background-color: #2f3136;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+/* System Activity Dashboard Styles */
+.system-activity-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-padding: 15px;
+    -fx-spacing: 15px;
+}
+
+.dark-theme .system-activity-container {
+    -fx-background-color: #2f3136;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+.activity-item {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8px;
+    -fx-padding: 15px;
+    -fx-alignment: center-left;
+    -fx-border-width: 0 0 0 4px;
+    -fx-border-color: #800000;
+}
+
+.dark-theme .activity-item {
+    -fx-background-color: #36393f;
+    -fx-border-color: #b30000;
+}
+
+.activity-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #800000;
+}
+
+.dark-theme .activity-value {
+    -fx-text-fill: #b30000;
+}
+
+.activity-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #5a5c69;
+}
+
+.dark-theme .activity-label {
+    -fx-text-fill: #d1d3e2;
+}
