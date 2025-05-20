@@ -72,34 +72,27 @@ public class SettingsController {
         // Try to get user email - first try getCurrentUserEmail which works regardless of remember me status
         String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
 
-
-        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
-            System.err.println("Could not retrieve user identifier from RememberMeHandler in loadUserSettings.");
-            // Set default/empty values if the user identifier is not available
-            emailField.setText("Error loading email");
-            phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Load phone from prefs anyway
-            // Load other prefs with defaults
-            themeToggle.setSelected(prefs.getBoolean(THEME_PREF, false));
-            emailNotificationsCheckbox.setSelected(prefs.getBoolean(EMAIL_NOTIF_PREF, true));
-            newGradeNotificationsCheckbox.setSelected(prefs.getBoolean(GRADE_NOTIF_PREF, true));
-            announcementNotificationsCheckbox.setSelected(prefs.getBoolean(ANNOUNCEMENT_NOTIF_PREF, false));
-            return; // Stop loading if the user cannot be identified
-        }
-
-        // Load email from DB
-        String emailFromDB = getUserEmailFromDB(currentUserIdentifier);
-        emailField.setText(emailFromDB != null ? emailFromDB : "Not found");
-
-        // Load phone from Preferences
-        phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Provide an empty default if not set
-
-        // Load other settings from Preferences
-        boolean isDarkMode = prefs.getBoolean(THEME_PREF, false);
-        themeToggle.setSelected(isDarkMode);
-
+        // Load non-database dependent settings immediately
+        phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Load phone from prefs 
+        themeToggle.setSelected(prefs.getBoolean(THEME_PREF, false));
         emailNotificationsCheckbox.setSelected(prefs.getBoolean(EMAIL_NOTIF_PREF, true));
         newGradeNotificationsCheckbox.setSelected(prefs.getBoolean(GRADE_NOTIF_PREF, true));
         announcementNotificationsCheckbox.setSelected(prefs.getBoolean(ANNOUNCEMENT_NOTIF_PREF, false));
+
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
+            System.err.println("Could not retrieve user identifier from RememberMeHandler in loadUserSettings.");
+            emailField.setText("Error loading email");
+            return; // Stop loading if the user cannot be identified
+        }
+
+        // Move database operation to background thread
+        new Thread(() -> {
+            String emailFromDB = getUserEmailFromDB(currentUserIdentifier);
+            // Update UI components on the JavaFX Application Thread
+            javafx.application.Platform.runLater(() -> {
+                emailField.setText(emailFromDB != null ? emailFromDB : "Not found");
+            });
+        }).start();
     }
 
     // Method to get email from DB (Added)
