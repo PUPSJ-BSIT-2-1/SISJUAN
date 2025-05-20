@@ -49,6 +49,7 @@ public class FacultyDashboardController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -101,6 +102,7 @@ public class FacultyDashboardController {
         preloadFxmlContent(GRADES_FXML);
         preloadFxmlContent(CALENDAR_FXML);
         preloadFxmlContent(SETTINGS_FXML);
+        preloadFxmlContent(ABOUT_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -231,9 +233,9 @@ public class FacultyDashboardController {
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
-            case "scheduleHBox" ->null;
+            case "scheduleHBox" -> null;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
-            case "aboutHBox" ->null;
+            case "aboutHBox" -> ABOUT_FXML;
             default -> HOME_FXML;
         };
     }

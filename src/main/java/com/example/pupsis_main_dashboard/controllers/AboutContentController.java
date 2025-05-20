@@ -222,11 +222,11 @@ public class AboutContentController extends Developer {
         boolean isDark = sceneRoot.getStyleClass().contains("dark-theme");
 
         String prevImagePath = isDark
-                ? "/com/example/pupsis_main_dashboard/Images/previous-white.png"
+                ? "/com/example/pupsis_main_dashboard/Images/previous-black.png"
                 : "/com/example/pupsis_main_dashboard/Images/previous.png";
 
         String nextImagePath = isDark
-                ? "/com/example/pupsis_main_dashboard/Images/next-white.png"
+                ? "/com/example/pupsis_main_dashboard/Images/next-black.png"
                 : "/com/example/pupsis_main_dashboard/Images/next.png";
 
         try {

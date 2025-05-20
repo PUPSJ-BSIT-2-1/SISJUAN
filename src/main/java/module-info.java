@@ -14,6 +14,7 @@ module com.example.pupsis_main_dashboard {
     requires javafx.media;
     requires java.mail;
     requires java.prefs;
+    requires mysql.connector.j;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml;
     exports com.example.pupsis_main_dashboard;

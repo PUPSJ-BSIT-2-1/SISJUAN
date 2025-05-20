@@ -221,7 +221,7 @@ public class EnrollmentController implements Initializable {
                     "SELECT s.subject_code, s.description, " +
                             "f.firstname || ' ' || f.lastname AS professor_name " +
                             "FROM subjects s " +
-                            "LEFT JOIN faculty f ON s.professor = f.faculty_id",
+                            "LEFT JOIN faculty f ON s.faculty_id = f.faculty_id",
                     stmt -> {},
                     rs -> {
                         List<SubjectData> subjects = new ArrayList<>();
