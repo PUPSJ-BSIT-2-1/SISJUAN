@@ -65,8 +65,9 @@ public class FacultyDashboardController {
             departmentLabel.setText("");
         }
         
-        // Initialize fade1 as fully transparent
+        // Initialize fade1 as fully transparent and fade2 as visible
         fade1.setOpacity(0);
+        fade2.setOpacity(1);
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
@@ -81,13 +82,15 @@ public class FacultyDashboardController {
             double vvalue = newVal.doubleValue();
             
             // Show/hide top fade based on scroll position
-            fade1.setOpacity(vvalue > 0.05 ? 1 : 0);
+            // If scroll value is not 0, show fade1
+            fade1.setOpacity(vvalue > 0 ? 1 : 0);
             
-            // Show/hide bottom fade: visible on scroll, hidden if scrolled to the very bottom
+            // Show/hide bottom fade based on scroll position
+            // If at bottom, hide fade2, otherwise show as long as we've scrolled
             if (Math.abs(vvalue - 1.0) < 0.001) { // Check if vvalue is at the bottom
                 fade2.setOpacity(0);
             } else {
-                fade2.setOpacity(vvalue > 0.05 ? 1 : 0); // Visible if scrolled down, but not at the bottom
+                fade2.setOpacity(1); // Always visible unless at the very bottom
             }
         });
     }

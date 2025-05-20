@@ -30,6 +30,11 @@ public class AdminDashboardController {
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox usersHBox;
+    @FXML private HBox facultyHBox;
+    @FXML private HBox subjectsHBox;
+    @FXML private HBox scheduleHBox;
+    @FXML private HBox calendarHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private Label departmentLabel;
@@ -41,10 +46,14 @@ public class AdminDashboardController {
     private final Map<String, Parent> contentCache = new HashMap<>();
     
     // FXML paths as constants
-    private static final String HOME_FXML = null;
-    private static final String GRADES_FXML = null;
+    private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
+    private static final String USERS_FXML = null;
+    private static final String FACULTY_FXML = null;
+    private static final String SUBJECTS_FXML = null;
+    private static final String SCHEDULE_FXML = null;
     private static final String CALENDAR_FXML = null;
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -61,8 +70,9 @@ public class AdminDashboardController {
             departmentLabel.setText("");
         }
         
-        // Initialize fade1 as fully transparent
+        // Initialize fade1 as fully transparent and fade2 as visible
         fade1.setOpacity(0);
+        fade2.setOpacity(1);
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
@@ -77,13 +87,15 @@ public class AdminDashboardController {
             double vvalue = newVal.doubleValue();
             
             // Show/hide top fade based on scroll position
-            fade1.setOpacity(vvalue > 0.05 ? 1 : 0);
+            // If scroll value is not 0, show fade1
+            fade1.setOpacity(vvalue > 0 ? 1 : 0);
             
-            // Show/hide bottom fade: visible on scroll, hidden if scrolled to the very bottom
+            // Show/hide bottom fade based on scroll position
+            // If at bottom, hide fade2, otherwise show as long as we've scrolled
             if (Math.abs(vvalue - 1.0) < 0.001) { // Check if vvalue is at the bottom
                 fade2.setOpacity(0);
             } else {
-                fade2.setOpacity(vvalue > 0.05 ? 1 : 0); // Visible if scrolled down, but not at the bottom
+                fade2.setOpacity(1); // Always visible unless at the very bottom
             }
         });
     }
@@ -91,7 +103,7 @@ public class AdminDashboardController {
     // Preload and cache all FXML content
     private void preloadAllContent() {
         // Load and cache Home content first (already shown)
-//        loadHomeContent();
+        loadContent(HOME_FXML);
         
         // Preload and cache other content
         preloadFxmlContent(SETTINGS_FXML);
@@ -224,33 +236,37 @@ public class AdminDashboardController {
                     null;
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
-            case "gradesHBox" -> GRADES_FXML;
-            case "scheduleHBox" ->null;
-            case "schoolCalendarHBox" -> CALENDAR_FXML;
+            case "gradesHBox" -> null;
+            case "scheduleHBox" -> null;
+            case "schoolCalendarHBox" -> null;
             case "aboutHBox" ->null;
+            case "usersHBox" -> USERS_FXML;
+            case "facultyHBox" -> FACULTY_FXML;
+            case "calendarHBox" -> CALENDAR_FXML;
             default -> HOME_FXML;
         };
     }
 
-private void loadContent(String fxmlPath) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent content = loader.load();
-        
-        // Set faculty ID in SessionData when loading grading module
-        if (fxmlPath.equals(GRADES_FXML)) {
-            String facultyId = studentIdLabel.getText();
-            SessionData.getInstance().setStudentId(facultyId);
+    private void loadContent(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent content = loader.load();
+            
+            // Set faculty ID in SessionData when loading grading module
+            if (fxmlPath.equals(null)) {
+                String facultyId = studentIdLabel.getText();
+                SessionData.getInstance().setStudentId(facultyId);
+            }
+            
+            contentPane.setContent(content);
+            contentCache.put(fxmlPath, content);
+            addLayoutChangeListener(content);
+            resetScrollPosition();
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading content"));
+            e.printStackTrace();
         }
-        
-        contentPane.setContent(content);
-        contentCache.put(fxmlPath, content);
-        addLayoutChangeListener(content);
-        resetScrollPosition();
-    } catch (IOException e) {
-        contentPane.setContent(new Label("Error loading content"));
     }
-}
     
     // Add layout change listener to content
     private void addLayoutChangeListener(Parent content) {
@@ -278,9 +294,6 @@ private void loadContent(String fxmlPath) {
     }
 
     // Load the home content into the ScrollPane
-    private void loadHomeContent() {
-        loadContent(HOME_FXML);
-    }
 
     // Handle the logout button click event
     @FXML public void handleLogoutButton(MouseEvent ignoredEvent) throws IOException {
@@ -298,5 +311,10 @@ private void loadContent(String fxmlPath) {
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
+        usersHBox.getStyleClass().remove("selected");
+        facultyHBox.getStyleClass().remove("selected");
+        subjectsHBox.getStyleClass().remove("selected");
+        scheduleHBox.getStyleClass().remove("selected");
+        calendarHBox.getStyleClass().remove("selected");
     }
 }

@@ -82,7 +82,6 @@
     -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
     -fx-border-radius: 8;
-    -fx-padding: 10;
 }
 
 .dark-theme .schedule-box {
@@ -128,7 +127,6 @@
     -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
     -fx-border-radius: 8;
-    -fx-padding: 10;
 }
 
 .dark-theme .event-box {
@@ -216,7 +214,6 @@
 .main-content-scroll {
     -fx-background: transparent;
     -fx-background-color: transparent;
-    -fx-padding: 0;
     -fx-border-width: 0;
 }
 
@@ -243,7 +240,6 @@
 /* List view style inside announcement list */
 .announcement-list .list-view {
     -fx-background-insets: 0;
-    -fx-padding: 0;
     -fx-border-width: 0;
 }
 
@@ -280,7 +276,6 @@
     -fx-background-color: #800000;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-padding: 10 15;
     -fx-background-radius: 5;
     -fx-pref-width: 190;
 }
@@ -421,10 +416,9 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
     -fx-pref-width: 200;
-    -fx-alignment: center;
     -fx-spacing: 5;
+    -fx-alignment: center;
 }
 
 .dark-theme .stat-box {
@@ -465,7 +459,6 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
     -fx-pref-height: 300;
     -fx-alignment: top-center;
     -fx-spacing: 5;
@@ -489,7 +482,6 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
     -fx-pref-width: 400;
     -fx-spacing: 5;
 }
@@ -511,7 +503,6 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
     -fx-alignment: top-center;
     -fx-spacing: 10;
 }
@@ -561,7 +552,6 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-padding: 20;
 }
 
 .dark-theme .cards {
@@ -592,7 +582,6 @@
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
     -fx-background-insets: 0;
-    -fx-padding: 0;
     -fx-control-inner-background: #f0f0f0;
 }
 
@@ -605,12 +594,12 @@
 .prog-bar .bar {
     -fx-background-radius: 8px;
     -fx-background-insets: 0;
-    -fx-padding: 0;
 }
 
 .prog-bar .track {
     -fx-background-radius: 8px;
     -fx-background-insets: 0;
+    -fx-background-color: transparent;
 }
 
 .prog-label {
@@ -636,40 +625,36 @@
 .completion-container {
     -fx-background-color: white;
     -fx-background-radius: 10px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
-    -fx-padding: 15px;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);*/
 }
 
 .dark-theme .completion-container {
-    -fx-background-color: #2f3136;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+    -fx-background-color: transparent;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);*/
 }
 
 /* System Activity Dashboard Styles */
 .system-activity-container {
     -fx-background-color: white;
     -fx-background-radius: 10px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
-    -fx-padding: 15px;
-    -fx-spacing: 15px;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);*/
 }
 
 .dark-theme .system-activity-container {
-    -fx-background-color: #2f3136;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+    -fx-background-color: transparent;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);*/
 }
 
 .activity-item {
     -fx-background-color: #f8f9fa;
     -fx-background-radius: 8px;
-    -fx-padding: 15px;
-    -fx-alignment: center-left;
     -fx-border-width: 0 0 0 4px;
     -fx-border-color: #800000;
+    -fx-alignment: center-left;
 }
 
 .dark-theme .activity-item {
-    -fx-background-color: #36393f;
+    -fx-background-color:   #424242;
     -fx-border-color: #b30000;
 }
 
@@ -690,4 +675,13 @@
 
 .dark-theme .activity-label {
     -fx-text-fill: #d1d3e2;
+}
+
+.stat-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
 }

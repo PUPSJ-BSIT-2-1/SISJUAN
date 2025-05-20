@@ -24,7 +24,7 @@ public class Test extends Application {
 
         try {
             Stage initializedStage = utility.loadStage(
-                    "fxml/AdminDashboard.fxml",
+                    "fxml/FacultyDashboard.fxml",
                     "PUPSIS",
                     Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/PUPSJ Logo.png")).toExternalForm(),
                     StageAndSceneUtils.WindowSize.MEDIUM

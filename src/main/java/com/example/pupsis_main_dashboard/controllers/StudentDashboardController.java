@@ -48,8 +48,8 @@ public class StudentDashboardController {
     private final Map<String, Parent> contentCache = new HashMap<>();
     
     // FXML paths as constants
-    private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/HomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradesNew.fxml";
+    private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/EnrollmentContent.fxml";
@@ -59,8 +59,9 @@ public class StudentDashboardController {
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        // Initialize fade1 as fully transparent
+        // Initialize fade1 as fully transparent and fade2 as visible
         fade1.setOpacity(0);
+        fade2.setOpacity(1);
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
@@ -87,13 +88,15 @@ public class StudentDashboardController {
             double vvalue = newVal.doubleValue();
             
             // Show/hide top fade based on scroll position
-            fade1.setOpacity(vvalue > 0.05 ? 1 : 0);
+            // If scroll value is not 0, show fade1
+            fade1.setOpacity(vvalue > 0 ? 1 : 0);
             
-            // Show/hide bottom fade: visible on scroll, hidden if scrolled to the very bottom
+            // Show/hide bottom fade based on scroll position
+            // If at bottom, hide fade2, otherwise show as long as we've scrolled
             if (Math.abs(vvalue - 1.0) < 0.001) { // Check if vvalue is at the bottom
                 fade2.setOpacity(0);
             } else {
-                fade2.setOpacity(vvalue > 0.05 ? 1 : 0); // Visible if scrolled down, but not at the bottom
+                fade2.setOpacity(1); // Always visible unless at the very bottom
             }
         });
     }
@@ -114,9 +117,15 @@ public class StudentDashboardController {
     // Preload and cache a specific FXML file
     private void preloadFxmlContent(String fxmlPath) {
         try {
-            if (!contentCache.containsKey(fxmlPath)) {
-                Parent content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
-                contentCache.put(fxmlPath, content);
+            if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) {
+                // Check if resource exists before trying to load it
+                var resource = getClass().getResource(fxmlPath);
+                if (resource != null) {
+                    Parent content = FXMLLoader.load(resource);
+                    contentCache.put(fxmlPath, content);
+                } else {
+                    logger.warn("Resource not found: {}", fxmlPath);
+                }
             }
         } catch (IOException e) {
             logger.error("Error preloading content: {}", fxmlPath, e);

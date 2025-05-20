@@ -80,6 +80,86 @@
                <padding>
                   <Insets left="10.0" />
                </padding></HBox>
+            <HBox fx:id="usersHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M12,12A6,6,0,1,0,6,6,6,6,0,0,0,12,12ZM12,2A4,4,0,1,1,8,6,4,4,0,0,1,12,2ZM22,24H2a2,2,0,0,1-2-2,8,8,0,0,1,8-8h8a8,8,0,0,1,8,8A2,2,0,0,1,22,24ZM8.13,16a6,6,0,0,0-6.11,6H22a6,6,0,0,0-6.12-6Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Users Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="facultyHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M20,2H8a2,2,0,0,0-2,2V18a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V4A2,2,0,0,0,20,2Zm0,16H8V4H20ZM4,8H2V20a2,2,0,0,0,2,2H16V20H4ZM14,8a2,2,0,1,1-2-2A2,2,0,0,1,14,8Zm-4,8a4,4,0,0,1,8,0v2H10Zm1.46-3.12a3,3,0,0,0,5.08,0,2,2,0,0,1-2.54-1.17,2,2,0,0,1-2.54,1.17Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Faculty Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="subjectsHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M21,5H3A1,1,0,0,0,2,6v9a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V6A1,1,0,0,0,21,5ZM20,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V7H20ZM10,13h4a1,1,0,0,0,0-2H10a1,1,0,0,0,0,2Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Subject Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="scheduleHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M21,2H18V1a1,1,0,0,0-2,0V2H8V1A1,1,0,0,0,6,1V2H3A1,1,0,0,0,2,3V21a1,1,0,0,0,1,1H21a1,1,0,0,0,1-1V3A1,1,0,0,0,21,2ZM20,20H4V10H20Zm0-12H4V4H20ZM8,14h8a1,1,0,0,0,0-2H8a1,1,0,0,0,0,2Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Schedule Management" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="calendarHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M19,4H17V3a1,1,0,0,0-2,0V4H9V3A1,1,0,0,0,7,3V4H5A3,3,0,0,0,2,7V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4Zm1,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V12H20Zm0-9H4V7A1,1,0,0,1,5,6H7V7A1,1,0,0,0,9,7V6h6V7a1,1,0,0,0,2,0V6h2a1,1,0,0,1,1,1Z" fill="gray" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Calendar" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="5.0" bottom="5.0" />
+               </VBox.margin>
+            </HBox>
             <Label layoutX="40.0" layoutY="166.0" text="General" textFill="#999999">
                <styleClass>
                   <String fx:value="medium-text" />
