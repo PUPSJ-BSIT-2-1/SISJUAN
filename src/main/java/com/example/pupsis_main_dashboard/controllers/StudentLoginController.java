@@ -61,14 +61,13 @@ public class StudentLoginController {
     @FXML private TextField middleName;
     @FXML private TextField lastName;
     @FXML private TextField email;
-    @FXML private PasswordField reType;
+    @FXML private TextField address; 
     @FXML private VBox centerVBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private ComboBox<Integer> dayComboBox;
     @FXML private ComboBox<Integer> yearComboBox;
     @FXML private TextField studentIdField;
     @FXML private PasswordField passwordField;
-    @FXML private PasswordField password;
     @FXML private Label errorLabel;
     @FXML private ToggleButton rememberMeCheckBox;
     @FXML private BorderPane mainLoginPane;
@@ -90,7 +89,15 @@ public class StudentLoginController {
         loginButton.setOnAction(_ -> handleLogin(leftSide, false));
         setupInitialState();
         requestInitialFocus();
-        Platform.runLater(this::applyInitialTheme);
+        Platform.runLater(() -> {
+            if (mainLoginPane.getScene() != null) {
+                com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(
+                    mainLoginPane.getScene(), 
+                    Preferences.userNodeForPackage(SettingsController.class).getBoolean(
+                        "darkMode", false)
+                );
+            }
+        });
     }
     
     // Sets up the initial state of the UI components, including loading saved credentials,
@@ -388,8 +395,7 @@ public class StudentLoginController {
         String middleNameInput = middleName.getText().trim();
         String lastNameInput = lastName.getText().trim();
         String emailInput = email.getText().trim();
-        String passwordInput = password.getText().trim();
-        String reTypeInput = reType.getText().trim();
+        String addressInput = address.getText().trim(); 
 
         // Get the selected month from the combo box
         String month = monthComboBox.getValue();
@@ -397,7 +403,7 @@ public class StudentLoginController {
         Integer year = yearComboBox.getValue();
 
         if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty()
-                || passwordInput.isEmpty() || reTypeInput.isEmpty() || month == null || day == null || year == null) {
+                || addressInput.isEmpty() || month == null || day == null || year == null) {
             errorLabel.setText("Please fill in all fields");
             return;
         }
@@ -407,20 +413,8 @@ public class StudentLoginController {
             return;
         }
 
-        if (!passwordInput.equals(reTypeInput)) {
-            errorLabel.setText("Passwords do not match");
-            return;
-        }
-
         if (containsNumbers(firstNameInput) || containsNumbers(middleNameInput) || containsNumbers(lastNameInput)) {
             errorLabel.setText("Names should not contain numbers");
-            return;
-        }
-
-        if (!validatePasswordStrength(passwordInput)) {
-            showAlert(Alert.AlertType.WARNING, "Weak Password",
-                    "Your password is not strong enough",
-                    "Passwords must be at least 8 characters long and include both letters and numbers.");
             return;
         }
 
@@ -450,7 +444,7 @@ public class StudentLoginController {
                 if (result.equals(verificationCode)) {
                     completeRegistration(
                             firstNameInput, middleNameInput, lastNameInput,
-                            emailInput, passwordInput, month, day, year);
+                            emailInput, addressInput, month, day, year);
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Verification Failed",
                             "Incorrect verification code",
@@ -473,11 +467,8 @@ public class StudentLoginController {
 
     // Completes the registration process by inserting the user data into the database
     private void completeRegistration(String firstName, String middleName, String lastName, String email,
-                                     String passwordInput, String month, Integer day, Integer year) {
+                                     String address, String month, Integer day, Integer year) {
         try {
-            // Hash the password for secure storage
-//            String hashedPassword = PasswordHandler.hashPassword(passwordInput);
-
             // Create the birthday string in the format yyyy-MM-dd
             String birthday = String.format("%04d-%02d-%02d", year, getMonthNumber(month), day);
 
@@ -489,7 +480,7 @@ public class StudentLoginController {
             String studentId = String.format("%04d-%06d-SJ-01", currentYear, randomNum);
 
             // Insert the student data into the database
-            String query = "INSERT INTO students (student_id, firstname, middlename, lastname, email, password, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO students (student_id, firstname, middlename, lastname, email, address, birthday, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (Connection connection = DBConnection.getConnection();
                  PreparedStatement statement = connection.prepareStatement(query)) {
@@ -498,23 +489,23 @@ public class StudentLoginController {
                 statement.setString(3, middleName.isEmpty() ? null : middleName);
                 statement.setString(4, lastName);
                 statement.setString(5, email);
-//                statement.setString(6, hashedPassword);
+                statement.setString(6, address);
                 statement.setString(7, birthday);
+                statement.setString(8, "Pending"); 
 
                 int rowsAffected = statement.executeUpdate();
 
                 if (rowsAffected > 0) {
                     showAlert(Alert.AlertType.INFORMATION, "Registration Successful",
                             "Your account has been created",
-                            "Your student ID is: " + studentId + "\nPlease use this ID or your email to log in.");
+                            "Your student ID is: " + studentId + "\nPlease wait for admin approval before logging in.");
 
                     // Clear the registration form and go back to log in
                     this.firstName.clear();
                     this.middleName.clear();
                     this.lastName.clear();
                     this.email.clear();
-                    this.password.clear();
-                    this.reType.clear();
+                    this.address.clear();
                     monthComboBox.getSelectionModel().clearSelection();
                     dayComboBox.getSelectionModel().clearSelection();
                     yearComboBox.getSelectionModel().clearSelection();
@@ -558,60 +549,6 @@ public class StudentLoginController {
         int code = 100000 + random.nextInt(900000); // 6-digit number
         return String.valueOf(code);
     }
-
-    // Validates the password strength
-    private boolean validatePasswordStrength(String password) {
-        return isStrongPassword(password);
-    }
-
-//    // Applies the initial theme based on user preferences
-//    private void applyInitialTheme() {
-//        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-//        boolean darkModeEnabled = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
-//
-//        if (darkModeEnabled) {
-//            proceedWithThemeApplication();
-//        }
-//    }
-//
-//    // Applies the theme to the main login pane based on user preferences
-//    private void proceedWithThemeApplication() {
-//        Scene scene = mainLoginPane.getScene();
-//        if (scene != null) {
-//            scene.getRoot().getStyleClass().add("dark-theme");
-//        }
-//    }
-    
-    // Applies the initial theme based on user preferences
-    private void applyInitialTheme() {
-        // Use the same preference node as the global theme system
-        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
-
-        // Use the PUPSIS global theme mechanism instead of managing styles manually
-        Scene scene = mainLoginPane.getScene();
-        if (scene != null) {
-            com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
-        } else {
-            // If a scene isn't available yet, try again after a delay
-            Platform.runLater(() -> {
-                Scene delayedScene = mainLoginPane.getScene();
-                if (delayedScene != null) {
-                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(delayedScene, isDarkMode);
-                }
-            });
-        }
-    }
-
-    // Proceed with the theme application
-    private void proceedWithThemeApplication() {
-        Scene scene = mainLoginPane.getScene();
-        if (scene != null) {
-            scene.getRoot().getStyleClass().removeAll("light-theme");
-            scene.getRoot().getStyleClass().add("dark-theme");
-        }
-    }
-    // Integrated utility methods from other classes
 
     // From LoadingAnimation
     public Node createPulsingDotsLoader(int dotCount, double dotRadius, Color color, double spacing, double animationDurationSeconds) {

@@ -8,7 +8,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -201,22 +200,14 @@
                              <Insets bottom="10.0" />
                          </VBox.margin>
                      </TextField>
-                     <PasswordField fx:id="password" prefHeight="30.0" prefWidth="218.0" promptText="Password" styleClass="fields">
-                         <padding>
-                             <Insets left="15.0" />
-                         </padding>
-                         <VBox.margin>
-                             <Insets bottom="10.0" />
-                         </VBox.margin>
-                     </PasswordField>
-                     <PasswordField fx:id="reType" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password" styleClass="fields">
+                     <TextField fx:id="address" prefHeight="30.0" prefWidth="218.0" promptText="Address" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
                          <VBox.margin>
                              <Insets bottom="20.0" />
                          </VBox.margin>
-                     </PasswordField>
+                     </TextField>
                      <Label styleClass="font" text="Birthday">
                          <VBox.margin>
                              <Insets bottom="10.0" left="10.0" top="10.0" />

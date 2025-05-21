@@ -6,6 +6,7 @@
 
 package com.example.pupsis_main_dashboard;
 
+import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -24,12 +25,15 @@ public class Test extends Application {
 
         try {
             Stage initializedStage = utility.loadStage(
-                    "fxml/FacultyDashboard.fxml",
+                    "fxml/AdminDashboard.fxml",
                     "PUPSIS",
                     Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/PUPSJ Logo.png")).toExternalForm(),
                     StageAndSceneUtils.WindowSize.MEDIUM
             );
 
+            // Apply theme to the scene
+            PUPSIS.applyGlobalTheme(initializedStage.getScene());
+            
             initializedStage.show();
         } catch (IOException e) {
             logger.error("Error initializing stage", e);

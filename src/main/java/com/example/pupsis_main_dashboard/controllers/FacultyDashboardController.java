@@ -112,11 +112,17 @@ public class FacultyDashboardController {
     private void preloadFxmlContent(String fxmlPath) {
         try {
             if (!contentCache.containsKey(fxmlPath)) {
-                Parent content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
-                contentCache.put(fxmlPath, content);
+                var resource = getClass().getResource(fxmlPath);
+                if (resource != null) {
+                    Parent content = FXMLLoader.load(resource);
+                    contentCache.put(fxmlPath, content);
+                } else {
+                    System.err.println("Resource not found: " + fxmlPath);
+                }
             }
         } catch (IOException e) {
-            // Silently handle the exception, content will be loaded on-demand if needed
+            System.err.println("Error preloading content: " + fxmlPath);
+            e.printStackTrace();
         }
     }
     
@@ -239,6 +245,7 @@ public class FacultyDashboardController {
             case "scheduleHBox" -> null;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
             case "aboutHBox" -> ABOUT_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
             default -> HOME_FXML;
         };
     }

@@ -167,3 +167,169 @@
 .table-row-cell.empty-row .table-cell {
     -fx-border-width: 0;
 }
+
+/* =============== DARK THEME STYLES =============== */
+
+/* Root background for dark theme */
+.dark-theme {
+    -fx-background-color: #1e1e1e;
+}
+
+/* Table view dark theme styling */
+.dark-theme .table-view {
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(255, 255, 255, 0.25);
+}
+
+.dark-theme .table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.25);
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-text-fill: #d0d0d0;
+}
+
+/* Table cells in dark theme */
+.dark-theme .table-view .table-cell {
+    -fx-text-fill: #c5c5c5;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Rows in dark theme */
+.dark-theme .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Selection color in dark theme */
+.dark-theme .table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #b22222; /* Darker red for selection in dark mode */
+    -fx-text-fill: white;
+    -fx-table-cell-border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Hover effect for table rows in dark theme */
+.dark-theme .table-row-cell:hover {
+    -fx-background-color: #b22222; /* Consistent with other dark theme hover colors */
+    -fx-text-fill: white;
+}
+
+/* Make sure text inside cells changes color in dark theme */
+.dark-theme .table-row-cell:hover .text {
+    -fx-fill: white;
+}
+
+/* Cards styling for dark theme */
+.dark-theme .small-cards {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
+/* Search bar styling for dark theme */
+.dark-theme .search-bar {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #888888;
+}
+
+.dark-theme .search-bar:focused {
+    -fx-border-color: #b22222;
+}
+
+/* Labels in dark theme */
+.dark-theme .label {
+    -fx-text-fill: #c5c5c5;
+}
+
+.dark-theme #gradesHeaderLbl {
+    -fx-text-fill: white;
+}
+
+/* Center panel in dark theme */
+.dark-theme .center-panel {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
+.search-bar {
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 1;
+}
+
+.search-bar:focused {
+    -fx-border-color: #800000;
+}
+
+.cards {
+    -fx-background-color: linear-gradient(to right, #800000, #FF0000);
+    -fx-background-radius: 10;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, #800000, #FF0000);
+}
+
+/* SVG Search Icon styling */
+.search-icon {
+    -fx-fill: #6e6e6e;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}
+
+/* Dark theme SVG icon styling */
+.dark-theme .search-icon {
+    -fx-fill: #b0b0b0;
+}
+
+/* Search icon container for larger clickable area */
+.search-icon-container {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-background-radius: 15px;
+}
+
+/* Hover effects for the container */
+.search-icon-container:hover {
+    -fx-background-color: rgba(128, 0, 0, 0.1);
+}
+
+.dark-theme .search-icon-container:hover {
+    -fx-background-color: rgba(178, 34, 34, 0.2);
+}
+
+/* When container is hovered, style the icon */
+.search-icon-container:hover .search-icon {
+    -fx-fill: #800000;
+}
+
+.dark-theme .search-icon-container:hover .search-icon {
+    -fx-fill: #b22222;
+}
+
+/* Active/pressed state for the container */
+.search-icon-container:pressed {
+    -fx-background-color: rgba(128, 0, 0, 0.2);
+}
+
+.dark-theme .search-icon-container:pressed {
+    -fx-background-color: rgba(178, 34, 34, 0.3);
+}
+
+/* Hover effect for search icon */
+.search-icon:hover {
+    -fx-fill: #800000;
+    -fx-cursor: hand;
+}
+
+.dark-theme .search-icon:hover {
+    -fx-fill: #b22222;
+    -fx-cursor: hand;
+}

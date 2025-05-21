@@ -37,29 +37,30 @@ public class PUPSIS extends Application {
         try {
             darkThemeCssUrl = Objects.requireNonNull(PUPSIS.class.getResource(DARK_MODE_CSS_PATH)).toExternalForm();
         } catch (NullPointerException e) {
-            // Cannot load dark theme CSS
+            logger.error("Could not load dark theme CSS", e);
         }
 
         if (darkModeEnabled) {
+            // Apply dark theme CSS stylesheet if not already added
             if (darkThemeCssUrl != null && !scene.getStylesheets().contains(darkThemeCssUrl)) {
                 scene.getStylesheets().add(darkThemeCssUrl);
             }
-            if (sceneRoot != null) {
-                if (!sceneRoot.getStyleClass().contains(DARK_THEME_CLASS)) {
-                    sceneRoot.getStyleClass().add(DARK_THEME_CLASS);
-                }
-                sceneRoot.getStyleClass().remove(LIGHT_THEME_CLASS);
+            
+            // Apply dark theme class to root
+            if (!sceneRoot.getStyleClass().contains(DARK_THEME_CLASS)) {
+                sceneRoot.getStyleClass().add(DARK_THEME_CLASS);
             }
+            sceneRoot.getStyleClass().remove(LIGHT_THEME_CLASS);
         } else {
             if (darkThemeCssUrl != null && scene.getStylesheets().contains(darkThemeCssUrl)) {
                 scene.getStylesheets().remove(darkThemeCssUrl);
             }
-            if (sceneRoot != null) {
-                if (!sceneRoot.getStyleClass().contains(LIGHT_THEME_CLASS)) {
-                    sceneRoot.getStyleClass().add(LIGHT_THEME_CLASS);
-                }
-                sceneRoot.getStyleClass().remove(DARK_THEME_CLASS);
+            
+            // Apply light theme class to root
+            if (!sceneRoot.getStyleClass().contains(LIGHT_THEME_CLASS)) {
+                sceneRoot.getStyleClass().add(LIGHT_THEME_CLASS);
             }
+            sceneRoot.getStyleClass().remove(DARK_THEME_CLASS);
         }
     }
 
