@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Region?>
+
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<VBox fx:id="rootVBox" prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@../css/StudentManagement.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentManagementController">
+    <children>
+        <BorderPane prefHeight="80.0" prefWidth="1280.0" styleClass="header-panel">
+            <center>
+                <Label styleClass="title-label" text="Student Management" BorderPane.alignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                </Label>
+            </center>
+        </BorderPane>
+        
+        <TabPane prefHeight="640.0" prefWidth="1280.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab styleClass="tab" text="Enrolled Students">
+                    <content>
+                        <VBox spacing="15.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                            <children>
+                                <!-- Search and Filter Section -->
+                                <VBox styleClass="chart-container" spacing="15.0">
+                                    <padding>
+                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                    </padding>
+                                    <children>
+                                        <Label styleClass="section-label" text="Search and Filter">
+                                            <font>
+                                                <Font name="System Bold" size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <Separator />
+                                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                            <children>
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Search" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <TextField fx:id="searchField" prefHeight="35.0" promptText="Student ID or Name" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="searchButton" mnemonicParsing="false" styleClass="action-button">
+                                                                    <graphic>
+                                                                        <HBox alignment="CENTER" spacing="5.0">
+                                                                            <children>
+                                                                                <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="WHITE" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                    </graphic>
+                                                                    <HBox.margin>
+                                                                        <Insets />
+                                                                    </HBox.margin>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                                                                    </padding>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                            <children>
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Program" />
+                                                        <ComboBox fx:id="programFilterComboBox" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="All Programs" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <FXCollections fx:factory="observableArrayList">
+                                                                    <String fx:value="All Programs" />
+                                                                    <String fx:value="BSIT" />
+                                                                    <String fx:value="BSCS" />
+                                                                    <String fx:value="BSCE" />
+                                                                    <String fx:value="BSME" />
+                                                                </FXCollections>
+                                                            </items>
+                                                        </ComboBox>
+                                                    </children>
+                                                </VBox>
+                                                
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Year Level" />
+                                                        <ComboBox fx:id="yearLevelComboBox" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="All Years" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <FXCollections fx:factory="observableArrayList">
+                                                                    <String fx:value="All Years" />
+                                                                    <String fx:value="1st Year" />
+                                                                    <String fx:value="2nd Year" />
+                                                                    <String fx:value="3rd Year" />
+                                                                    <String fx:value="4th Year" />
+                                                                </FXCollections>
+                                                            </items>
+                                                        </ComboBox>
+                                                    </children>
+                                                </VBox>
+                                                
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Status" />
+                                                        <ComboBox fx:id="statusFilterComboBox" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="All Statuses" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <FXCollections fx:factory="observableArrayList">
+                                                                    <String fx:value="All Statuses" />
+                                                                    <String fx:value="Enrolled" />
+                                                                    <String fx:value="Not Enrolled" />
+                                                                    <String fx:value="Leave of Absence" />
+                                                                    <String fx:value="Graduated" />
+                                                                </FXCollections>
+                                                            </items>
+                                                        </ComboBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                
+                                <!-- Students Data Section -->
+                                <VBox styleClass="chart-container" VBox.vgrow="ALWAYS">
+                                    <padding>
+                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                    </padding>
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label styleClass="section-label" text="Student Records">
+                                                    <font>
+                                                        <Font name="System Bold" size="16.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="studentCountLabel" styleClass="count-label" text="(0 students)" />
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="addStudentButton" mnemonicParsing="false" styleClass="action-button">
+                                                    <graphic>
+                                                        <HBox alignment="CENTER" spacing="5.0">
+                                                            <children>
+                                                                <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="WHITE" />
+                                                            </children>
+                                                        </HBox>
+                                                    </graphic>
+                                                    <padding>
+                                                        <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                                                    </padding>
+                                                </Button>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets bottom="10.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                        
+                                        <Separator />
+                                        
+                                        <!-- Students Table -->
+                                        <TableView fx:id="studentsTableView" prefHeight="400.0" styleClass="data-table" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="studentIdColumn" prefWidth="100.0" text="Student ID" />
+                                                <TableColumn fx:id="firstNameColumn" prefWidth="120.0" text="First Name" />
+                                                <TableColumn fx:id="lastNameColumn" prefWidth="120.0" text="Last Name" />
+                                                <TableColumn fx:id="programColumn" prefWidth="100.0" text="Program" />
+                                                <TableColumn fx:id="yearLevelColumn" prefWidth="100.0" text="Year Level" />
+                                                <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
+                                                <TableColumn fx:id="actionsColumn" prefWidth="120.0" text="Actions" />
+                                            </columns>
+                                        </TableView>
+                                        
+                                        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                                            <children>
+                                                <Label text="Export as:" />
+                                                <Button fx:id="exportPdfButton" mnemonicParsing="false" styleClass="action-button">
+                                                    <graphic>
+                                                        <HBox alignment="CENTER" spacing="5.0">
+                                                            <children>
+                                                                <SVGPath content="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z" fill="WHITE" />
+                                                            </children>
+                                                        </HBox>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="exportButton" mnemonicParsing="false" styleClass="action-button">
+                                                    <graphic>
+                                                        <HBox alignment="CENTER" spacing="5.0">
+                                                            <children>
+                                                                <SVGPath content="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" fill="WHITE" />
+                                                            </children>
+                                                        </HBox>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets top="15.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                
+                <Tab styleClass="tab" text="Section Management">
+                    <content>
+                        <VBox spacing="15.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                            <children>
+                                <!-- Section placeholder content -->
+                                <Label text="Section Management Content" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                
+                <Tab styleClass="tab" text="Student Records">
+                    <content>
+                        <VBox spacing="15.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                            <children>
+                                <!-- Records placeholder content -->
+                                <Label text="Student Records Content" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                
+                <Tab styleClass="tab" text="Batch Operations">
+                    <content>
+                        <VBox spacing="15.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                            <children>
+                                <!-- Batch operations placeholder content -->
+                                <Label text="Batch Operations Content" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                
+                <Tab styleClass="tab" text="Pending Registrations">
+                    <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="tab-content">
+                            <top>
+                                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="10.0" styleClass="filter-box" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Label styleClass="section-label" text="Pending Student Registrations">
+                                            <font>
+                                                <Font name="System Bold" size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="pendingCountLabel" styleClass="count-label" text="(0 pending registrations)" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="refreshPendingButton" mnemonicParsing="false" styleClass="action-button" text="Refresh" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </HBox>
+                            </top>
+                            <center>
+                                <TableView fx:id="pendingRegistrationsTable" prefHeight="200.0" prefWidth="200.0" styleClass="data-table" BorderPane.alignment="CENTER">
+                                    <columns>
+                                        <TableColumn fx:id="pendingStudentIdColumn" prefWidth="120.0" text="Student ID" />
+                                        <TableColumn fx:id="pendingFirstNameColumn" prefWidth="120.0" text="First Name" />
+                                        <TableColumn fx:id="pendingLastNameColumn" prefWidth="120.0" text="Last Name" />
+                                        <TableColumn fx:id="pendingEmailColumn" prefWidth="180.0" text="Email" />
+                                        <TableColumn fx:id="pendingBirthdayColumn" prefWidth="100.0" text="Birthday" />
+                                        <TableColumn fx:id="pendingAddressColumn" prefWidth="200.0" text="Address" />
+                                        <TableColumn fx:id="pendingStatusColumn" prefWidth="80.0" text="Status" />
+                                        <TableColumn fx:id="pendingActionsColumn" prefWidth="150.0" text="Actions" />
+                                    </columns>
+                                </TableView>
+                            </center>
+                        </BorderPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

@@ -35,6 +35,7 @@ public class AdminDashboardController {
     @FXML private HBox subjectsHBox;
     @FXML private HBox scheduleHBox;
     @FXML private HBox calendarHBox;
+    @FXML private HBox studentsHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private Label departmentLabel;
@@ -51,10 +52,10 @@ public class AdminDashboardController {
     private static final String FACULTY_FXML = null;
     private static final String SUBJECTS_FXML = null;
     private static final String SCHEDULE_FXML = null;
-    private static final String CALENDAR_FXML = null;
+    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
-
+    private static final String STUDENTS_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentManagement.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -77,8 +78,33 @@ public class AdminDashboardController {
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
         
+        // Setup click handlers for all menu items
+        setupClickHandlers();
+        
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
+    }
+    
+    // Set up click handlers for all sidebar menu items
+    private void setupClickHandlers() {
+        // For each HBox in the sidebar, set up the click handler
+        homeHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        settingsHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        aboutHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        usersHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        facultyHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        subjectsHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        scheduleHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        calendarHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        studentsHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        // Logout has a separate handler
+        logoutHBox.setOnMouseClicked(event -> {
+            try {
+                handleLogoutButton(event);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
     
     // Set up scroll pane fade effects based on scroll position
@@ -107,6 +133,9 @@ public class AdminDashboardController {
         
         // Preload and cache other content
         preloadFxmlContent(SETTINGS_FXML);
+        preloadFxmlContent(CALENDAR_FXML);
+        preloadFxmlContent(STUDENTS_FXML);
+        preloadFxmlContent(ABOUT_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -239,10 +268,13 @@ public class AdminDashboardController {
             case "gradesHBox" -> null;
             case "scheduleHBox" -> null;
             case "schoolCalendarHBox" -> null;
-            case "aboutHBox" ->null;
+            case "aboutHBox" -> ABOUT_FXML;
             case "usersHBox" -> USERS_FXML;
             case "facultyHBox" -> FACULTY_FXML;
             case "calendarHBox" -> CALENDAR_FXML;
+            case "studentsHBox" -> STUDENTS_FXML;
+            case "homeHBox" -> HOME_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
             default -> HOME_FXML;
         };
     }
@@ -293,8 +325,6 @@ public class AdminDashboardController {
         });
     }
 
-    // Load the home content into the ScrollPane
-
     // Handle the logout button click event
     @FXML public void handleLogoutButton(MouseEvent ignoredEvent) throws IOException {
         contentCache.clear();
@@ -313,8 +343,10 @@ public class AdminDashboardController {
         logoutHBox.getStyleClass().remove("selected");
         usersHBox.getStyleClass().remove("selected");
         facultyHBox.getStyleClass().remove("selected");
+        studentsHBox.getStyleClass().remove("selected");
         subjectsHBox.getStyleClass().remove("selected");
         scheduleHBox.getStyleClass().remove("selected");
         calendarHBox.getStyleClass().remove("selected");
+        studentsHBox.getStyleClass().remove("selected");
     }
 }

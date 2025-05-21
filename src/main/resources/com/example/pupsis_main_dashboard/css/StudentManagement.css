@@ -1,0 +1,268 @@
+/* StudentManagement.css */
+
+/* Base Styles */
+.background {
+    -fx-background-color: #f4f4f4;
+}
+
+.dark-theme .background {
+    -fx-background-color: #2D3748;
+}
+
+.header-panel {
+    -fx-background-color: #800000; /* PUP Maroon */
+    -fx-padding: 15px;
+}
+
+.dark-theme .header-panel {
+    -fx-background-color: #621B21; /* Darker Maroon for Dark Mode */
+}
+
+.title-label {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* Tab Pane Styling */
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tab {
+    -fx-background-color: #dddddd;
+    -fx-padding: 8px 15px;
+}
+
+.dark-theme .tab {
+    -fx-background-color: #3D4A5C;
+}
+
+.tab:selected {
+    -fx-background-color: #800000;
+}
+
+.dark-theme .tab:selected {
+    -fx-background-color: #621B21;
+}
+
+.tab-label {
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .tab-label {
+    -fx-text-fill: #e6e6e6;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+.tab-content {
+    -fx-background-color: white;
+    -fx-padding: 10px;
+}
+
+.dark-theme .tab-content {
+    -fx-background-color: #1E293B;
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Filter Box Styling */
+.filter-box {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.dark-theme .filter-box {
+    -fx-background-color: #2D3748;
+    -fx-border-color: #4A5568;
+}
+
+/* Labels */
+.section-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .section-label {
+    -fx-text-fill: #e6e6e6;
+}
+
+.count-label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 14px;
+}
+
+.dark-theme .count-label {
+    -fx-text-fill: #a0aec0;
+}
+
+/* Buttons */
+.action-button {
+    -fx-background-color: #800000; /* PUP Maroon */
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 3, 0, 0, 1);
+}
+
+.dark-theme .action-button {
+    -fx-background-color: #621B21; /* Darker Maroon for Dark Mode */
+}
+
+.action-button:hover {
+    -fx-background-color: #a02020;
+}
+
+.dark-theme .action-button:hover {
+    -fx-background-color: #7a2a2a;
+}
+
+/* Table Styling */
+.data-table {
+    -fx-background-color: white;
+    -fx-control-inner-background: white;
+}
+
+.dark-theme .data-table {
+    -fx-background-color: #1A202C;
+    -fx-control-inner-background: #1A202C;
+    -fx-table-cell-border-color: #4A5568;
+}
+
+.data-table .column-header {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+}
+
+.dark-theme .data-table .column-header {
+    -fx-background-color: #621B21;
+}
+
+.data-table .column-header-background .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.data-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dark-theme .data-table .table-row-cell {
+    -fx-background-color: #1A202C;
+    -fx-border-color: #2D3748;
+    -fx-text-fill: #e6e6e6;
+}
+
+.data-table .table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.dark-theme .data-table .table-row-cell:odd {
+    -fx-background-color: #2D3748;
+}
+
+.data-table .table-row-cell:selected {
+    -fx-background-color: #ffe0e0;
+}
+
+.dark-theme .data-table .table-row-cell:selected {
+    -fx-background-color: #4A1F23;
+}
+
+.data-table .table-cell {
+    -fx-alignment: center-left;
+    -fx-padding: 8px;
+}
+
+.dark-theme .data-table .table-cell {
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Special Button Styling */
+.accept-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-padding: 5px 10px;
+    -fx-cursor: hand;
+    -fx-background-radius: 3px;
+}
+
+.dark-theme .accept-button {
+    -fx-background-color: #2D6A39;
+}
+
+.accept-button:hover {
+    -fx-background-color: #218838;
+}
+
+.reject-button {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-padding: 5px 10px;
+    -fx-cursor: hand;
+    -fx-background-radius: 3px;
+}
+
+.dark-theme .reject-button {
+    -fx-background-color: #A93542;
+}
+
+.reject-button:hover {
+    -fx-background-color: #c82333;
+}
+
+/* Text Fields and Combo Boxes */
+.text-field, .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 3px;
+}
+
+.dark-theme .text-field, .dark-theme .combo-box {
+    -fx-background-color: #2D3748;
+    -fx-border-color: #4A5568;
+    -fx-text-fill: #e6e6e6;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #333333;
+}
+
+.dark-theme .combo-box .list-cell {
+    -fx-text-fill: #e6e6e6;
+    -fx-background-color: #2D3748;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+}
+
+.dark-theme .combo-box-popup .list-view {
+    -fx-background-color: #1A202C;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: white;
+}
+
+.dark-theme .combo-box-popup .list-cell {
+    -fx-background-color: #2D3748;
+    -fx-text-fill: #e6e6e6;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.dark-theme .combo-box-popup .list-cell:hover {
+    -fx-background-color: #4A5568;
+}
