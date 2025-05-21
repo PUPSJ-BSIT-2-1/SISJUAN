@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 public class AdminDashboardController {
 
@@ -83,6 +84,9 @@ public class AdminDashboardController {
         
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
+        
+        // Preload frequently used interfaces in background
+        Platform.runLater(this::preloadStudentManagement);
     }
     
     // Set up click handlers for all sidebar menu items
@@ -131,22 +135,52 @@ public class AdminDashboardController {
         // Load and cache Home content first (already shown)
         loadContent(HOME_FXML);
         
-        // Preload and cache other content
-        preloadFxmlContent(SETTINGS_FXML);
-        preloadFxmlContent(CALENDAR_FXML);
-        preloadFxmlContent(STUDENTS_FXML);
-        preloadFxmlContent(ABOUT_FXML);
+        // Preload and cache other content asynchronously to avoid blocking UI
+        Platform.runLater(() -> {
+            System.out.println("Starting asynchronous preloading of interfaces...");
+            
+            // Prioritize Student Management interface
+            preloadFxmlContent(STUDENTS_FXML);
+            
+            // Then load other interfaces
+            preloadFxmlContent(SETTINGS_FXML);
+            preloadFxmlContent(CALENDAR_FXML);
+            preloadFxmlContent(ABOUT_FXML);
+            
+            System.out.println("All interfaces preloaded successfully");
+        });
     }
     
     // Preload and cache a specific FXML file
     private void preloadFxmlContent(String fxmlPath) {
         try {
-            if (!contentCache.containsKey(fxmlPath)) {
-                Parent content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
+            if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) {
+                System.out.println("Preloading interface: " + fxmlPath);
+                
+                // Create FXMLLoader 
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath)));
+                
+                // Load FXML
+                Parent content = loader.load();
+                
+                // Apply theme to this loaded content
+                Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
+                boolean darkModeEnabled = prefs.getBoolean("darkMode", false);
+                
+                if (content != null) {
+                    // Apply appropriate CSS classes based on current theme
+                    content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
+                    content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+                }
+                
+                // Cache the content for later use
                 contentCache.put(fxmlPath, content);
+                System.out.println("Successfully preloaded: " + fxmlPath);
             }
         } catch (IOException e) {
             // Silently handle the exception, content will be loaded on-demand if needed
+            System.err.println("Error preloading " + fxmlPath + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -348,5 +382,28 @@ public class AdminDashboardController {
         scheduleHBox.getStyleClass().remove("selected");
         calendarHBox.getStyleClass().remove("selected");
         studentsHBox.getStyleClass().remove("selected");
+    }
+    
+    /**
+     * Preloads the Student Management interface to improve performance when navigating to it
+     */
+    private void preloadStudentManagement() {
+        try {
+            // Only preload if not already in cache
+            if (!contentCache.containsKey(STUDENTS_FXML)) {
+                System.out.println("Preloading Student Management interface...");
+                
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(STUDENTS_FXML));
+                Parent studentManagementRoot = loader.load();
+                
+                // Store in cache
+                contentCache.put(STUDENTS_FXML, studentManagementRoot);
+                
+                System.out.println("Student Management interface preloaded successfully");
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to preload Student Management interface: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

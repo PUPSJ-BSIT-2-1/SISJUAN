@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,6 +31,7 @@ import javax.mail.internet.AddressException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Controller for the Student Management interface.
@@ -124,6 +126,11 @@ public class StudentManagementController implements Initializable {
     @FXML private Label pendingCountLabel;
 
     private boolean isDarkMode;
+    // Cache for commonly used data
+    private ObservableList<String> programsList = FXCollections.observableArrayList();
+    private ObservableList<String> yearLevelsList = FXCollections.observableArrayList();
+    private ObservableList<String> statusList = FXCollections.observableArrayList();
+    private TabPane tabPane; // Reference to parent TabPane for lazy loading
 
     /**
      * Initializes the controller class.
@@ -133,58 +140,235 @@ public class StudentManagementController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("StudentManagementController initializing...");
         
-        // First, ensure database schema is up-to-date
-        ensureStudentsTableSchema();
+        // Move database schema check to a background thread
+        CompletableFuture.runAsync(this::ensureStudentsTableSchema);
         
-        // Theme initialization
+        // Theme initialization - get current theme preference
         Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
-        isDarkMode = prefs.getBoolean("darkMode", false);
+        isDarkMode = prefs.getBoolean(SettingsController.THEME_PREF, false);
+        System.out.println("Current theme preference: " + (isDarkMode ? "Dark Mode" : "Light Mode"));
         
-        // Apply theme using the main application's theme system
+        // Apply theme immediately to avoid flicker
+        if (rootVBox != null) {
+            // Pre-apply style classes to prevent flashing
+            System.out.println("Applying " + (isDarkMode ? "dark-theme" : "light-theme") + " style class to rootVBox");
+            rootVBox.getStyleClass().removeAll("dark-theme", "light-theme"); // Remove both to be safe
+            rootVBox.getStyleClass().add(isDarkMode ? "dark-theme" : "light-theme");
+            
+            // Apply theme once scene is available
+            rootVBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null) {
+                    Platform.runLater(() -> {
+                        System.out.println("Scene is available, applying theme through PUPSIS.applyThemeToSingleScene");
+                        com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(newScene, isDarkMode);
+                        
+                        // Find parent TabPane for lazy loading tabs
+                        findParentTabPane();
+                    });
+                }
+            });
+            
+            // If scene is already set, apply theme immediately
+            if (rootVBox.getScene() != null) {
+                Platform.runLater(() -> {
+                    System.out.println("Scene is already available, applying theme immediately");
+                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(rootVBox.getScene(), isDarkMode);
+                    
+                    // Find parent TabPane for lazy loading tabs
+                    findParentTabPane();
+                });
+            }
+        }
+
+        // Preload common data in background
+        CompletableFuture.runAsync(this::preloadCommonData);
+        
+        // Only initialize the currently visible tab
+        initializeActiveTabOnly();
+    }
+    
+    /**
+     * Finds the parent TabPane to enable lazy loading of tabs
+     */
+    private void findParentTabPane() {
+        if (rootVBox != null && rootVBox.getScene() != null) {
+            Parent parent = rootVBox.getParent();
+            while (parent != null && !(parent instanceof TabPane)) {
+                parent = parent.getParent();
+            }
+            
+            if (parent instanceof TabPane) {
+                tabPane = (TabPane) parent;
+                System.out.println("Found parent TabPane for lazy loading");
+                
+                // Add listener for tab selection
+                tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+                    if (newTab != null) {
+                        loadTabContent(newTab.getText());
+                    }
+                });
+                
+                // Initialize first tab
+                Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+                if (currentTab != null) {
+                    loadTabContent(currentTab.getText());
+                }
+            }
+        }
+    }
+    
+    /**
+     * Preloads common data used across multiple tabs
+     */
+    private void preloadCommonData() {
+        try (Connection connection = DBConnection.getConnection()) {
+            // Load all programs
+            try (PreparedStatement stmt = connection.prepareStatement("SELECT DISTINCT program FROM students")) {
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    String program = rs.getString("program");
+                    if (program != null && !program.isEmpty()) {
+                        programsList.add(program);
+                    }
+                }
+            }
+            
+            // Load all year levels
+            yearLevelsList.addAll("1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year");
+            
+            // Load all statuses
+            statusList.addAll("All", "Enrolled", "Not Enrolled", "LOA", "Graduated", "Pending");
+            
+            System.out.println("Preloaded common data: " + programsList.size() + " programs");
+        } catch (SQLException e) {
+            System.out.println("Error preloading common data: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Initializes only the active tab
+     */
+    private void initializeActiveTabOnly() {
+        // If we couldn't find the TabPane yet, initialize UI components minimally
+        // This ensures the UI is not blank while waiting for the TabPane to be found
         Platform.runLater(() -> {
-            if (rootVBox != null && rootVBox.getScene() != null) {
-                com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(
-                    rootVBox.getScene(), isDarkMode
-                );
+            try {
+                // Set up minimum UI for enrolled students tab (usually the first tab)
+                if (programFilterComboBox != null) {
+                    programFilterComboBox.setItems(programsList);
+                    programFilterComboBox.getItems().add(0, "All");
+                    programFilterComboBox.getSelectionModel().selectFirst();
+                }
+                
+                if (yearLevelComboBox != null) {
+                    yearLevelComboBox.setItems(yearLevelsList);
+                    yearLevelComboBox.getItems().add(0, "All");
+                    yearLevelComboBox.getSelectionModel().selectFirst();
+                }
+                
+                if (statusFilterComboBox != null) {
+                    statusFilterComboBox.setItems(statusList);
+                    statusFilterComboBox.getSelectionModel().selectFirst();
+                }
+                
+                if (searchButton != null) {
+                    searchButton.setOnAction(e -> searchStudents());
+                }
+            } catch (Exception e) {
+                System.out.println("Error in initial UI setup: " + e.getMessage());
             }
         });
-
-        // Initialize UI components - only if they exist in the FXML
-        try {
-            initializeEnrolledStudentsTab();
-        } catch (Exception e) {
-            System.out.println("Error initializing Enrolled Students tab: " + e.getMessage());
-        }
+    }
+    
+    /**
+     * Loads tab content based on tab name
+     */
+    private void loadTabContent(String tabName) {
+        System.out.println("Loading tab content for: " + tabName);
         
-        try {
-            initializeSectionManagementTab();
-        } catch (Exception e) {
-            System.out.println("Error initializing Section Management tab: " + e.getMessage());
+        switch (tabName) {
+            case "Enrolled Students":
+                CompletableFuture.runAsync(() -> Platform.runLater(this::initializeEnrolledStudentsTab));
+                break;
+            case "Section Management":
+                CompletableFuture.runAsync(() -> Platform.runLater(this::initializeSectionManagementTab));
+                break;
+            case "Student Records":
+                CompletableFuture.runAsync(() -> Platform.runLater(this::initializeStudentRecordsTab));
+                break;
+            case "Batch Operations":
+                CompletableFuture.runAsync(() -> Platform.runLater(this::initializeBatchOperationsTab));
+                break;
+            case "Pending Registrations":
+                CompletableFuture.runAsync(() -> {
+                    Platform.runLater(this::initializePendingRegistrationsTab);
+                    Platform.runLater(this::loadPendingRegistrations);
+                });
+                break;
+            default:
+                System.out.println("Unknown tab: " + tabName);
+                break;
         }
-        
+    }
+    
+    /**
+     * Initialize all tabs in a background thread to improve performance
+     * @deprecated Use lazy loading instead
+     */
+    private void initializeTabs() {
         try {
-            initializeStudentRecordsTab();
+            long startTime = System.currentTimeMillis();
+            
+            // Initialize UI components - only if they exist in the FXML
+            Platform.runLater(() -> {
+                try {
+                    initializeEnrolledStudentsTab();
+                } catch (Exception e) {
+                    System.out.println("Error initializing Enrolled Students tab: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
+                try {
+                    initializeSectionManagementTab();
+                } catch (Exception e) {
+                    System.out.println("Error initializing Section Management tab: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
+                try {
+                    initializeStudentRecordsTab();
+                } catch (Exception e) {
+                    System.out.println("Error initializing Student Records tab: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
+                try {
+                    initializeBatchOperationsTab();
+                } catch (Exception e) {
+                    System.out.println("Error initializing Batch Operations tab: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
+                try {
+                    initializePendingRegistrationsTab();
+                } catch (Exception e) {
+                    System.out.println("Error initializing Pending Registrations tab: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
+                // Load data as needed
+                try {
+                    loadPendingRegistrations();
+                } catch (Exception e) {
+                    System.out.println("Error loading pending registrations: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
+                System.out.println("Initialization completed in " + (System.currentTimeMillis() - startTime) + "ms");
+            });
         } catch (Exception e) {
-            System.out.println("Error initializing Student Records tab: " + e.getMessage());
-        }
-        
-        try {
-            initializeBatchOperationsTab();
-        } catch (Exception e) {
-            System.out.println("Error initializing Batch Operations tab: " + e.getMessage());
-        }
-        
-        try {
-            initializePendingRegistrationsTab();
-        } catch (Exception e) {
-            System.out.println("Error initializing Pending Registrations tab: " + e.getMessage());
-        }
-        
-        // Load data as needed
-        try {
-            loadPendingRegistrations();
-        } catch (Exception e) {
-            System.out.println("Error loading pending registrations: " + e.getMessage());
+            System.out.println("Error initializing tabs: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -415,39 +599,60 @@ public class StudentManagementController implements Initializable {
      * Loads pending student registrations from the database.
      */
     private void loadPendingRegistrations() {
+        if (pendingRegistrationsTable == null) {
+            return; // Tab not loaded yet
+        }
+        
+        System.out.println("Loading pending registrations...");
+        
+        // Clear existing items
+        if (pendingRegistrationsTable.getItems() != null) {
+            pendingRegistrationsTable.getItems().clear();
+        }
+        
         ObservableList<Student> pendingStudents = FXCollections.observableArrayList();
         
-        try (Connection connection = DBConnection.getConnection()) {
-            String query = "SELECT student_id, firstname, middlename, lastname, email, birthday, address, status " +
-                           "FROM students WHERE status = 'Pending' OR status IS NULL";
-            
-            try (PreparedStatement statement = connection.prepareStatement(query);
-                 ResultSet resultSet = statement.executeQuery()) {
+        // Use a background thread for database operation
+        CompletableFuture.supplyAsync(() -> {
+            try (Connection connection = DBConnection.getConnection();
+                 PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT student_id, firstname, middlename, lastname, email, birthdate, address, status " +
+                     "FROM students WHERE LOWER(status) = 'pending' ORDER BY lastname")) {
                 
-                while (resultSet.next()) {
+                ObservableList<Student> students = FXCollections.observableArrayList();
+                ResultSet rs = stmt.executeQuery();
+                
+                while (rs.next()) {
                     Student student = new Student(
-                        resultSet.getString("student_id"),
-                        resultSet.getString("firstname"),
-                        resultSet.getString("middlename"),
-                        resultSet.getString("lastname"),
-                        resultSet.getString("email"),
-                        resultSet.getString("birthday"),
-                        resultSet.getString("address"),
-                        resultSet.getString("status") != null ? resultSet.getString("status") : "Pending"
+                        rs.getString("student_id"),
+                        rs.getString("firstname"),
+                        rs.getString("middlename"),
+                        rs.getString("lastname"),
+                        rs.getString("email"),
+                        rs.getString("birthdate"), // Changed from getDate to getString
+                        rs.getString("address"),
+                        rs.getString("status")
                     );
-                    pendingStudents.add(student);
+                    students.add(student);
                 }
+                
+                return students;
+            } catch (SQLException e) {
+                System.out.println("Error loading pending registrations: " + e.getMessage());
+                e.printStackTrace();
+                return FXCollections.observableArrayList(); // Return empty list on error
+            }
+        }).thenAcceptAsync(students -> {
+            pendingStudents.addAll((Student) students); // Removed incorrect cast to (Student)
+            pendingRegistrationsTable.setItems(pendingStudents);
+            
+            // Update count label
+            if (pendingCountLabel != null) {
+                pendingCountLabel.setText(pendingStudents.size() + " pending registrations");
             }
             
-            pendingRegistrationsTable.setItems(pendingStudents);
-            pendingCountLabel.setText("(" + pendingStudents.size() + " pending registrations)");
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Database Error", 
-                     "Error loading pending registrations", 
-                     "There was an error connecting to the database: " + e.getMessage());
-        }
+            System.out.println("Loaded " + pendingStudents.size() + " pending registrations");
+        }, Platform::runLater);
     }
 
     /**
@@ -521,8 +726,8 @@ public class StudentManagementController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error", 
-                     "Error updating student registration", 
-                     "There was an error connecting to the database: " + e.getMessage());
+                    "Error updating student registration", 
+                    "There was an error connecting to the database: " + e.getMessage());
         }
     }
 
