@@ -391,6 +391,20 @@
     -fx-border-color: #7B61FF; /* Soft Purple border */
 }
 
+.graduation {
+    -fx-background-color: #FFC080; /* Soft orange */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: #FFC080; /* Background rounded corners */
+}
+
+.default {
+    -fx-background-color: #3498DB; /* Soft blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px; /* Background rounded corners */
+    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-border-color: #3498DB; /* Soft blue border */
+}
 /* --- DARK EVENT COLOR THEME for School Calendar --- */
 
 .dark-theme .administrative {
@@ -431,4 +445,19 @@
     -fx-background-radius: 12px; /* Background rounded corners */
     -fx-border-radius: 12px; /* Border rounded corners */
     -fx-border-color: #9B59B6; /* Muted purple border */
+}
+
+.dark-theme .graduation {
+    -fx-background-color: #FFA07A; /* Soft orange on dark */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: #FFA07A; /* Bright orange on dark border */
+}
+
+.dark-theme .default {
+    -fx-background-color: #2C3E50; /* Soft blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px; /* Background rounded corners */
+    -fx-border-radius: 12px; /* Border rounded corners */
+    -fx-border-color: #2C3E50; /* Soft blue border */
 }

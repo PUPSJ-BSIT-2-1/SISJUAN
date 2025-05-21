@@ -282,20 +282,26 @@ public class SchoolCalendarController {
             Label eventIndicator = new Label(eventDetails);
 
             switch (eventType) {
-                case "Administrative":
-                    eventIndicator.getStyleClass().add("administrative");
-                    break;
-                case "Holiday":
-                    eventIndicator.getStyleClass().add("holiday");
-                    break;
-                case "Registration":
+                case "Enrollment & Registration":
                     eventIndicator.getStyleClass().add("registration");
                     break;
-                case "Academic":
+                case "Holidays & Observances":
+                    eventIndicator.getStyleClass().add("holiday");
+                    break;
+                case "Administrative Deadlines":
+                    eventIndicator.getStyleClass().add("administrative");
+                    break;
+                case "Academic Schedule":
                     eventIndicator.getStyleClass().add("academic");
                     break;
-                case "Meeting":
+                case "Institutional Meetings":
                     eventIndicator.getStyleClass().add("meeting");
+                    break;
+                case "Graduation / Commencement":
+                    eventIndicator.getStyleClass().add("graduation");
+                    break;
+                default:
+                    eventIndicator.getStyleClass().add("default");
                     break;
             }
 
