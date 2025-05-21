@@ -20,9 +20,9 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<VBox fx:id="rootVBox" prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@../css/StudentManagement.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentManagementController">
+<VBox fx:id="rootVBox" prefHeight="720.0" prefWidth="810.0" styleClass="background" stylesheets="@../css/StudentManagement.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentManagementController">
     <children>
-        <BorderPane prefHeight="80.0" prefWidth="1280.0" styleClass="header-panel">
+        <BorderPane prefHeight="80.0" prefWidth="810.0" styleClass="header-panel">
             <center>
                 <Label styleClass="title-label" text="Student Management" BorderPane.alignment="CENTER">
                     <font>
@@ -32,17 +32,17 @@
             </center>
         </BorderPane>
         
-        <TabPane prefHeight="640.0" prefWidth="1280.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <TabPane prefHeight="640.0" prefWidth="810.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
                 <Tab styleClass="tab" text="Enrolled Students">
                     <content>
-                        <VBox spacing="15.0">
+                        <VBox spacing="15.0" styleClass="tab-content">
                             <padding>
                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                             </padding>
                             <children>
                                 <!-- Search and Filter Section -->
-                                <VBox styleClass="chart-container" spacing="15.0">
+                                <VBox styleClass="chart-container, filter-section" spacing="15.0">
                                     <padding>
                                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                                     </padding>
@@ -53,12 +53,12 @@
                                             </font>
                                         </Label>
                                         <Separator />
-                                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="filter-controls">
                                             <children>
                                                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                                     <children>
                                                         <Label text="Search" />
-                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-section">
                                                             <children>
                                                                 <TextField fx:id="searchField" prefHeight="35.0" promptText="Student ID or Name" HBox.hgrow="ALWAYS" />
                                                                 <Button fx:id="searchButton" mnemonicParsing="false" styleClass="action-button">
@@ -83,7 +83,7 @@
                                             </children>
                                         </HBox>
                                         
-                                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="filter-controls">
                                             <children>
                                                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                                     <children>
@@ -179,19 +179,19 @@
                                         <Separator />
                                         
                                         <!-- Students Table -->
-                                        <TableView fx:id="studentsTableView" prefHeight="400.0" styleClass="data-table" VBox.vgrow="ALWAYS">
+                                        <TableView fx:id="studentsTableView" prefHeight="400.0" prefWidth="770.0" styleClass="data-table" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="studentIdColumn" prefWidth="100.0" text="Student ID" />
-                                                <TableColumn fx:id="firstNameColumn" prefWidth="120.0" text="First Name" />
-                                                <TableColumn fx:id="lastNameColumn" prefWidth="120.0" text="Last Name" />
-                                                <TableColumn fx:id="programColumn" prefWidth="100.0" text="Program" />
-                                                <TableColumn fx:id="yearLevelColumn" prefWidth="100.0" text="Year Level" />
-                                                <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
-                                                <TableColumn fx:id="actionsColumn" prefWidth="120.0" text="Actions" />
+                                                <TableColumn fx:id="studentIdColumn" minWidth="80.0" prefWidth="100.0" styleClass="table-column" text="Student ID" />
+                                                <TableColumn fx:id="firstNameColumn" minWidth="80.0" prefWidth="120.0" styleClass="table-column" text="First Name" />
+                                                <TableColumn fx:id="lastNameColumn" minWidth="80.0" prefWidth="120.0" styleClass="table-column" text="Last Name" />
+                                                <TableColumn fx:id="programColumn" minWidth="80.0" prefWidth="120.0" styleClass="table-column" text="Program" />
+                                                <TableColumn fx:id="yearLevelColumn" minWidth="80.0" prefWidth="100.0" styleClass="table-column" text="Year Level" />
+                                                <TableColumn fx:id="statusColumn" minWidth="80.0" prefWidth="100.0" styleClass="table-column" text="Status" />
+                                                <TableColumn fx:id="actionsColumn" minWidth="60.0" prefWidth="80.0" styleClass="action-column" text="Actions" />
                                             </columns>
                                         </TableView>
                                         
-                                        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                                        <HBox alignment="CENTER_RIGHT" spacing="15.0" styleClass="button-container" HBox.hgrow="NEVER">
                                             <children>
                                                 <Label text="Export as:" />
                                                 <Button fx:id="exportPdfButton" mnemonicParsing="false" styleClass="action-button">
@@ -224,53 +224,11 @@
                     </content>
                 </Tab>
                 
-                <Tab styleClass="tab" text="Section Management">
-                    <content>
-                        <VBox spacing="15.0">
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                            </padding>
-                            <children>
-                                <!-- Section placeholder content -->
-                                <Label text="Section Management Content" />
-                            </children>
-                        </VBox>
-                    </content>
-                </Tab>
-                
-                <Tab styleClass="tab" text="Student Records">
-                    <content>
-                        <VBox spacing="15.0">
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                            </padding>
-                            <children>
-                                <!-- Records placeholder content -->
-                                <Label text="Student Records Content" />
-                            </children>
-                        </VBox>
-                    </content>
-                </Tab>
-                
-                <Tab styleClass="tab" text="Batch Operations">
-                    <content>
-                        <VBox spacing="15.0">
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                            </padding>
-                            <children>
-                                <!-- Batch operations placeholder content -->
-                                <Label text="Batch Operations Content" />
-                            </children>
-                        </VBox>
-                    </content>
-                </Tab>
-                
                 <Tab styleClass="tab" text="Pending Registrations">
                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="tab-content">
+                        <BorderPane prefHeight="200.0" prefWidth="810.0" styleClass="tab-content">
                             <top>
-                                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="10.0" styleClass="filter-box" BorderPane.alignment="CENTER">
+                                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="810.0" spacing="10.0" styleClass="button-container" HBox.hgrow="ALWAYS" BorderPane.alignment="CENTER">
                                     <children>
                                         <Label styleClass="section-label" text="Pending Student Registrations">
                                             <font>
@@ -287,17 +245,20 @@
                                 </HBox>
                             </top>
                             <center>
-                                <TableView fx:id="pendingRegistrationsTable" prefHeight="200.0" prefWidth="200.0" styleClass="data-table" BorderPane.alignment="CENTER">
+                                <TableView fx:id="pendingRegistrationsTable" prefHeight="200.0" prefWidth="770.0" styleClass="data-table" BorderPane.alignment="CENTER">
                                     <columns>
-                                        <TableColumn fx:id="pendingStudentIdColumn" prefWidth="120.0" text="Student ID" />
-                                        <TableColumn fx:id="pendingFirstNameColumn" prefWidth="120.0" text="First Name" />
-                                        <TableColumn fx:id="pendingLastNameColumn" prefWidth="120.0" text="Last Name" />
-                                        <TableColumn fx:id="pendingEmailColumn" prefWidth="180.0" text="Email" />
-                                        <TableColumn fx:id="pendingBirthdayColumn" prefWidth="100.0" text="Birthday" />
-                                        <TableColumn fx:id="pendingAddressColumn" prefWidth="200.0" text="Address" />
-                                        <TableColumn fx:id="pendingStatusColumn" prefWidth="80.0" text="Status" />
-                                        <TableColumn fx:id="pendingActionsColumn" prefWidth="150.0" text="Actions" />
+                                        <TableColumn fx:id="pendingStudentIdColumn" minWidth="80.0" prefWidth="100.0" styleClass="table-column" text="Student ID" />
+                                        <TableColumn fx:id="pendingFirstNameColumn" minWidth="80.0" prefWidth="110.0" styleClass="table-column" text="First Name" />
+                                        <TableColumn fx:id="pendingLastNameColumn" minWidth="80.0" prefWidth="110.0" styleClass="table-column" text="Last Name" />
+                                        <TableColumn fx:id="pendingEmailColumn" minWidth="80.0" prefWidth="130.0" styleClass="table-column" text="Email" />
+                                        <TableColumn fx:id="pendingBirthdayColumn" minWidth="80.0" prefWidth="110.0" styleClass="table-column" text="Birthday" />
+                                        <TableColumn fx:id="pendingAddressColumn" minWidth="80.0" prefWidth="130.0" styleClass="table-column" text="Address" />
+                                        <TableColumn fx:id="pendingStatusColumn" minWidth="80.0" prefWidth="100.0" styleClass="table-column" text="Status" />
+                                        <TableColumn fx:id="pendingActionsColumn" minWidth="60.0" prefWidth="80.0" styleClass="action-column" text="Actions" />
                                     </columns>
+                                    <placeholder>
+                                        <Label styleClass="no-data-label" text="No pending student registrations found." />
+                                    </placeholder>
                                 </TableView>
                             </center>
                         </BorderPane>

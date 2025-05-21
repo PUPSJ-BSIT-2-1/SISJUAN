@@ -138,20 +138,16 @@ public class StudentManagementController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("StudentManagementController initializing...");
-        
         // Move database schema check to a background thread
         CompletableFuture.runAsync(this::ensureStudentsTableSchema);
         
         // Theme initialization - get current theme preference
         Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
         isDarkMode = prefs.getBoolean(SettingsController.THEME_PREF, false);
-        System.out.println("Current theme preference: " + (isDarkMode ? "Dark Mode" : "Light Mode"));
         
         // Apply theme immediately to avoid flicker
         if (rootVBox != null) {
             // Pre-apply style classes to prevent flashing
-            System.out.println("Applying " + (isDarkMode ? "dark-theme" : "light-theme") + " style class to rootVBox");
             rootVBox.getStyleClass().removeAll("dark-theme", "light-theme"); // Remove both to be safe
             rootVBox.getStyleClass().add(isDarkMode ? "dark-theme" : "light-theme");
             
@@ -159,7 +155,6 @@ public class StudentManagementController implements Initializable {
             rootVBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
                 if (newScene != null) {
                     Platform.runLater(() -> {
-                        System.out.println("Scene is available, applying theme through PUPSIS.applyThemeToSingleScene");
                         com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(newScene, isDarkMode);
                         
                         // Find parent TabPane for lazy loading tabs
@@ -171,7 +166,6 @@ public class StudentManagementController implements Initializable {
             // If scene is already set, apply theme immediately
             if (rootVBox.getScene() != null) {
                 Platform.runLater(() -> {
-                    System.out.println("Scene is already available, applying theme immediately");
                     com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(rootVBox.getScene(), isDarkMode);
                     
                     // Find parent TabPane for lazy loading tabs
@@ -199,7 +193,6 @@ public class StudentManagementController implements Initializable {
             
             if (parent instanceof TabPane) {
                 tabPane = (TabPane) parent;
-                System.out.println("Found parent TabPane for lazy loading");
                 
                 // Add listener for tab selection
                 tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
@@ -222,15 +215,23 @@ public class StudentManagementController implements Initializable {
      */
     private void preloadCommonData() {
         try (Connection connection = DBConnection.getConnection()) {
+            // Check if the program column exists
+            boolean programColumnExists = columnExists(connection, "students", "program");
+            
             // Load all programs
-            try (PreparedStatement stmt = connection.prepareStatement("SELECT DISTINCT program FROM students")) {
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    String program = rs.getString("program");
-                    if (program != null && !program.isEmpty()) {
-                        programsList.add(program);
+            if (programColumnExists) {
+                try (PreparedStatement stmt = connection.prepareStatement("SELECT DISTINCT program FROM students")) {
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        String program = rs.getString("program");
+                        if (program != null && !program.isEmpty()) {
+                            programsList.add(program);
+                        }
                     }
                 }
+            } else {
+                // Add some default programs if column doesn't exist
+                programsList.addAll("BSIT", "BSCS", "BSBA", "BSA");
             }
             
             // Load all year levels
@@ -238,10 +239,11 @@ public class StudentManagementController implements Initializable {
             
             // Load all statuses
             statusList.addAll("All", "Enrolled", "Not Enrolled", "LOA", "Graduated", "Pending");
-            
-            System.out.println("Preloaded common data: " + programsList.size() + " programs");
         } catch (SQLException e) {
-            System.out.println("Error preloading common data: " + e.getMessage());
+            // Add default programs in case of error
+            if (programsList.isEmpty()) {
+                programsList.addAll("BSIT", "BSCS", "BSBA", "BSA");
+            }
         }
     }
     
@@ -284,8 +286,6 @@ public class StudentManagementController implements Initializable {
      * Loads tab content based on tab name
      */
     private void loadTabContent(String tabName) {
-        System.out.println("Loading tab content for: " + tabName);
-        
         switch (tabName) {
             case "Enrolled Students":
                 CompletableFuture.runAsync(() -> Platform.runLater(this::initializeEnrolledStudentsTab));
@@ -602,8 +602,6 @@ public class StudentManagementController implements Initializable {
         if (pendingRegistrationsTable == null) {
             return; // Tab not loaded yet
         }
-        
-        System.out.println("Loading pending registrations...");
         
         // Clear existing items
         if (pendingRegistrationsTable.getItems() != null) {
@@ -1025,9 +1023,7 @@ public class StudentManagementController implements Initializable {
             if (!columnExists(connection, "students", "address")) {
                 // Add the address column if it doesn't exist
                 addColumn(connection, "students", "address", "VARCHAR(255)");
-                System.out.println("Address column added successfully to students table");
             } else {
-                System.out.println("Address column already exists in students table");
             }
             
             // Check and fix status column
@@ -1035,9 +1031,7 @@ public class StudentManagementController implements Initializable {
                 // Add the status column if it doesn't exist
                 addColumn(connection, "students", "status", "VARCHAR(50)");
                 updateColumn(connection, "students", "status", "'Pending'");
-                System.out.println("Status column added successfully to students table");
             } else {
-                System.out.println("Status column already exists in students table");
             }
         } catch (SQLException e) {
             e.printStackTrace();
