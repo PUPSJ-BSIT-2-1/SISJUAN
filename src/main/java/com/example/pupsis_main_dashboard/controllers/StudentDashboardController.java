@@ -49,12 +49,12 @@ public class StudentDashboardController {
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradesNew.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/EnrollmentContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
-
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminRoomAssignment.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -112,6 +112,7 @@ public class StudentDashboardController {
         preloadFxmlContent(SETTINGS_FXML);
         preloadFxmlContent(ENROLLMENT_FXML);
         preloadFxmlContent(ABOUT_FXML);
+        preloadFxmlContent(SCHEDULE_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -282,7 +283,7 @@ public class StudentDashboardController {
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
-            case "scheduleHBox" ->null;
+            case "scheduleHBox" ->SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
             case "aboutHBox" -> ABOUT_FXML;
             default -> HOME_FXML;

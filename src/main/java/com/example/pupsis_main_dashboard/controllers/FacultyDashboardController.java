@@ -50,6 +50,7 @@ public class FacultyDashboardController {
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyRoomAssignment.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -106,6 +107,7 @@ public class FacultyDashboardController {
         preloadFxmlContent(CALENDAR_FXML);
         preloadFxmlContent(SETTINGS_FXML);
         preloadFxmlContent(ABOUT_FXML);
+        preloadFxmlContent(SCHEDULE_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -149,6 +151,7 @@ public class FacultyDashboardController {
                         return;
                     }
                 }
+
             }
             
             // If not found by ID or is an email, try with email (case-insensitive)
@@ -191,6 +194,8 @@ public class FacultyDashboardController {
         
         Platform.runLater(() -> {
             studentNameLabel.setText(formattedName);
+            SessionData data = SessionData.getInstance();
+            data.setFacultyId(facultyId);
             studentIdLabel.setText(facultyId);
             departmentLabel.setText(department != null ? department : "Department not set");
         });
@@ -242,7 +247,7 @@ public class FacultyDashboardController {
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
-            case "scheduleHBox" -> null;
+            case "scheduleHBox" -> SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
             case "aboutHBox" -> ABOUT_FXML;
             case "settingsHBox" -> SETTINGS_FXML;
@@ -260,7 +265,12 @@ private void loadContent(String fxmlPath) {
             String facultyId = studentIdLabel.getText();
             SessionData.getInstance().setStudentId(facultyId);
         }
-        
+
+        if (fxmlPath.equals(SCHEDULE_FXML)) { // this is used to set faculty id for schedule
+            String facultyId = studentIdLabel.getText();
+            SessionData.getInstance().setFacultyId(facultyId);
+        }
+
         contentPane.setContent(content);
         contentCache.put(fxmlPath, content);
         addLayoutChangeListener(content);

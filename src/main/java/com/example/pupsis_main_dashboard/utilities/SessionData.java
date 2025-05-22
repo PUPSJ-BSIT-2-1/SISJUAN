@@ -3,6 +3,7 @@ package com.example.pupsis_main_dashboard.utilities;
 public class SessionData {
     private static SessionData instance = new SessionData();
     private String studentId;
+    private String facultyId;
 
     private SessionData() {}
 
@@ -11,6 +12,10 @@ public class SessionData {
             instance = new SessionData();
         }
         return instance;
+    }
+
+    public String getFacultyId() {
+        return facultyId;
     }
 
     public String getStudentId() {
@@ -24,7 +29,15 @@ public class SessionData {
         this.studentId = studentId.trim();
     }
 
+    public void setFacultyId(String facultyId) {
+        if (facultyId == null || facultyId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Faculty ID cannot be null or empty");
+        }
+        this.facultyId = facultyId.trim();
+    }
+
     public void clear() {
         studentId = null;
+        facultyId = null;
     }
 }

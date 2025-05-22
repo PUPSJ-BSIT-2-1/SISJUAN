@@ -52,7 +52,7 @@ public class AdminDashboardController {
     private static final String USERS_FXML = null;
     private static final String FACULTY_FXML = null;
     private static final String SUBJECTS_FXML = null;
-    private static final String SCHEDULE_FXML = null;
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminRoomAssignment.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
@@ -81,14 +81,14 @@ public class AdminDashboardController {
         
         // Setup click handlers for all menu items
         setupClickHandlers();
-        
+
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
-        
+
         // Preload frequently used interfaces in background
         Platform.runLater(this::preloadStudentManagement);
     }
-    
+
     // Set up click handlers for all sidebar menu items
     private void setupClickHandlers() {
         // For each HBox in the sidebar, set up the click handler
@@ -134,19 +134,21 @@ public class AdminDashboardController {
     private void preloadAllContent() {
         // Load and cache Home content first (already shown)
         loadContent(HOME_FXML);
-        
+
+
         // Preload and cache other content asynchronously to avoid blocking UI
         Platform.runLater(() -> {
             System.out.println("Starting asynchronous preloading of interfaces...");
-            
+
             // Prioritize Student Management interface
             preloadFxmlContent(STUDENTS_FXML);
-            
+            preloadFxmlContent(SCHEDULE_FXML);
+
             // Then load other interfaces
             preloadFxmlContent(SETTINGS_FXML);
             preloadFxmlContent(CALENDAR_FXML);
             preloadFxmlContent(ABOUT_FXML);
-            
+
             System.out.println("All interfaces preloaded successfully");
         });
     }
@@ -156,23 +158,23 @@ public class AdminDashboardController {
         try {
             if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) {
                 System.out.println("Preloading interface: " + fxmlPath);
-                
-                // Create FXMLLoader 
+
+                // Create FXMLLoader
                 FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath)));
-                
+
                 // Load FXML
                 Parent content = loader.load();
-                
+
                 // Apply theme to this loaded content
                 Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
                 boolean darkModeEnabled = prefs.getBoolean("darkMode", false);
-                
+
                 if (content != null) {
                     // Apply appropriate CSS classes based on current theme
                     content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
                     content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
                 }
-                
+
                 // Cache the content for later use
                 contentCache.put(fxmlPath, content);
                 System.out.println("Successfully preloaded: " + fxmlPath);
@@ -300,12 +302,11 @@ public class AdminDashboardController {
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> null;
-            case "scheduleHBox" -> null;
-            case "schoolCalendarHBox" -> null;
-            case "aboutHBox" -> ABOUT_FXML;
+            case "scheduleHBox" -> SCHEDULE_FXML;
+            case "calendarHBox" -> CALENDAR_FXML;
+            case "aboutHBox" ->ABOUT_FXML;
             case "usersHBox" -> USERS_FXML;
             case "facultyHBox" -> FACULTY_FXML;
-            case "calendarHBox" -> CALENDAR_FXML;
             case "studentsHBox" -> STUDENTS_FXML;
             case "homeHBox" -> HOME_FXML;
             case "settingsHBox" -> SETTINGS_FXML;
@@ -383,7 +384,7 @@ public class AdminDashboardController {
         calendarHBox.getStyleClass().remove("selected");
         studentsHBox.getStyleClass().remove("selected");
     }
-    
+
     /**
      * Preloads the Student Management interface to improve performance when navigating to it
      */
@@ -392,13 +393,13 @@ public class AdminDashboardController {
             // Only preload if not already in cache
             if (!contentCache.containsKey(STUDENTS_FXML)) {
                 System.out.println("Preloading Student Management interface...");
-                
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(STUDENTS_FXML));
                 Parent studentManagementRoot = loader.load();
-                
+
                 // Store in cache
                 contentCache.put(STUDENTS_FXML, studentManagementRoot);
-                
+
                 System.out.println("Student Management interface preloaded successfully");
             }
         } catch (IOException e) {
