@@ -630,7 +630,7 @@ public class StudentLoginController {
         String hashedPassword = PasswordHandler.hashPassword(plainTextPassword); // Hash it with PasswordHandler (PBKDF2)
         LocalDate birthDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase()).getValue(), Integer.parseInt(day));
         String studentNumber = generateStudentNumber(); // ADDED: Student number generation
-        String status = "PENDING"; // Default status for new registrations
+        String status = "Pending"; // Default status for new registrations
 
         String sql = "INSERT INTO students (firstname, middlename, lastname, email, password, birthday, address, status, student_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; // UPDATED SQL
 
