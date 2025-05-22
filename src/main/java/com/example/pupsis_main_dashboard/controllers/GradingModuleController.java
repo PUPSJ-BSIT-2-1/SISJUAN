@@ -171,8 +171,11 @@ public class GradingModuleController implements Initializable {
 
         ObservableList<Subject> tempList = FXCollections.observableArrayList();
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT year_section, subject_code, description, semester " +
-                    "FROM faculty_load WHERE faculty_id = ?";
+            String query = "\n" +
+                    "SELECT fl.year_section, fl.subject_code, s.description, fl.semester\n" +
+                    "FROM faculty_load fl\n" +
+                    "JOIN subjects s ON fl.subject_code = s.subject_code\n" +
+                    "WHERE fl.faculty_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, facultyId);
                 pstmt.setFetchSize(50);
