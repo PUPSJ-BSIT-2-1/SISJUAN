@@ -1,0 +1,23 @@
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%) !important;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+.table-header{
+    -fx-background-color: #f8fcfc;
+    -fx-text-fill: #000000;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 14px;
+}

@@ -1,4 +1,5 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-public class StudentManagementController {
+public class AdminStudentManagementController {
+
 }

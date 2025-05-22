@@ -56,7 +56,7 @@ public class AdminDashboardController {
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
-    private static final String STUDENTS_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentManagement.fxml";
+    private static final String STUDENT_MANAGEMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentManagement.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -85,8 +85,6 @@ public class AdminDashboardController {
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
 
-        // Preload frequently used interfaces in background
-        Platform.runLater(this::preloadStudentManagement);
     }
 
     // Set up click handlers for all sidebar menu items
@@ -141,13 +139,12 @@ public class AdminDashboardController {
             System.out.println("Starting asynchronous preloading of interfaces...");
 
             // Prioritize Student Management interface
-            preloadFxmlContent(STUDENTS_FXML);
             preloadFxmlContent(SCHEDULE_FXML);
-
             // Then load other interfaces
             preloadFxmlContent(SETTINGS_FXML);
             preloadFxmlContent(CALENDAR_FXML);
             preloadFxmlContent(ABOUT_FXML);
+            preloadFxmlContent(STUDENT_MANAGEMENT_FXML);
 
             System.out.println("All interfaces preloaded successfully");
         });
@@ -307,8 +304,8 @@ public class AdminDashboardController {
             case "aboutHBox" ->ABOUT_FXML;
             case "usersHBox" -> USERS_FXML;
             case "facultyHBox" -> FACULTY_FXML;
-            case "studentsHBox" -> STUDENTS_FXML;
             case "homeHBox" -> HOME_FXML;
+            case "studentsHBox" -> STUDENT_MANAGEMENT_FXML;
             case "settingsHBox" -> SETTINGS_FXML;
             default -> HOME_FXML;
         };
@@ -388,23 +385,4 @@ public class AdminDashboardController {
     /**
      * Preloads the Student Management interface to improve performance when navigating to it
      */
-    private void preloadStudentManagement() {
-        try {
-            // Only preload if not already in cache
-            if (!contentCache.containsKey(STUDENTS_FXML)) {
-                System.out.println("Preloading Student Management interface...");
-
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(STUDENTS_FXML));
-                Parent studentManagementRoot = loader.load();
-
-                // Store in cache
-                contentCache.put(STUDENTS_FXML, studentManagementRoot);
-
-                System.out.println("Student Management interface preloaded successfully");
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to preload Student Management interface: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 }
