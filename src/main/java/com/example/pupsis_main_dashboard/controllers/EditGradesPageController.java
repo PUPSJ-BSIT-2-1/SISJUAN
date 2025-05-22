@@ -270,11 +270,14 @@ public class EditGradesPageController implements Initializable {
 
                 try (Connection conn = DBConnection.getConnection()) {
                     String query = """
-                    SELECT g."id", g."student_id", g."subject_code", g."final_grade", 
-                           g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
-                    FROM grade g, students s
-                    WHERE g."student_id" = s."student_id" and g.subject_code = ? and g.faculty_id = ?
-                    ORDER BY CAST(g."id" AS INTEGER)""";
+                    SELECT g."grade_id" as id, g."student_id", su."subject_code", g."final_grade", g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
+                    FROM grade g, students s, subjects su, schedule sc, faculty_load f
+                    WHERE g."student_id" = s."student_number" and
+                          su.subject_id = g.subject_id and
+                          g.schedule_id = sc.schedule_id and
+                          sc.load_id = f.load_id and
+                          su.subject_code = ? and f.faculty_id = ?::smallint
+                    ORDER BY CAST(g."grade_id" AS INTEGER);""";
 
                     try (PreparedStatement pstmt = conn.prepareStatement(query,
                             ResultSet.TYPE_FORWARD_ONLY,
@@ -324,7 +327,12 @@ public class EditGradesPageController implements Initializable {
     private void populateSubjectCodes() {
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-                SELECT DISTINCT subject_code FROM grade WHERE faculty_id = ?;""";
+            SELECT DISTINCT s.subject_code\s
+            FROM grade g, subjects s, schedule sc, faculty_load f
+            WHERE s.subject_id = g.subject_id and
+                  g.schedule_id = sc.schedule_id and
+                  sc.load_id = f.load_id and
+                    f.faculty_id = ?::smallint;""";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, SessionData.getInstance().getStudentId());
                 ResultSet rs = pstmt.executeQuery();
