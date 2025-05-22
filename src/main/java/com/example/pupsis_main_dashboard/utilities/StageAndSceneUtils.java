@@ -10,6 +10,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -59,7 +60,7 @@ public class StageAndSceneUtils {
 
             applyTransition(root, transitionType);
         } catch (IOException e) {
-            showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR);
+            Platform.runLater(() -> showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR));
             throw e;
         }
     }
@@ -92,7 +93,7 @@ public class StageAndSceneUtils {
 
             return stage;
         } catch (IOException e) {
-            showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR);
+            Platform.runLater(() -> showAlert("Error", "Failed to load view: " + e.getMessage(), Alert.AlertType.ERROR));
             throw e;
         }
     }
@@ -155,17 +156,21 @@ public class StageAndSceneUtils {
     }
 
     public static void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
 
     public static void showAlert(String title, String content, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
 
     public static void clearCache() {

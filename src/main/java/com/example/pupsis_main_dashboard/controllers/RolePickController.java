@@ -120,7 +120,7 @@ public class RolePickController {
 					// Handle the exception (e.g., show an error message)
 					e.printStackTrace();
 					logger.error("Error loading Student Login window", e);
-					stageUtils.showAlert("Error", "Failed to load Student Login window");
+                    Platform.runLater(() -> stageUtils.showAlert("Error", "Failed to load Student Login window"));
 				}
 			
         	});

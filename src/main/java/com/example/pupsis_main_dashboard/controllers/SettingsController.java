@@ -100,14 +100,24 @@ public class SettingsController {
         if (identifier == null || identifier.isEmpty()) return null;
 
         boolean isEmailIdentifier = identifier.contains("@");
-        String query = isEmailIdentifier
-            ? "SELECT email FROM students WHERE LOWER(email) = LOWER(?)"
-            : "SELECT email FROM students WHERE student_id = ?";
+        String query;
+        if (isEmailIdentifier) {
+            query = "SELECT email FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            // Assumes 'identifier' is the formatted student_number
+            // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
+            query = "SELECT email FROM students WHERE student_number = ?";
+        }
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, identifier.toLowerCase()); // Use lowercase for email consistency
+            if (isEmailIdentifier) {
+                statement.setString(1, identifier.toLowerCase());
+            } else {
+                // Identifier is treated as the formatted student_number (String)
+                statement.setString(1, identifier);
+            }
             ResultSet rs = statement.executeQuery();
 
             if (rs.next()) {

@@ -18,6 +18,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class EnrollmentController implements Initializable {
 
@@ -50,104 +51,149 @@ public class EnrollmentController implements Initializable {
 
     @FXML
     private void handleEnrollment(ActionEvent event) {
-        List<EnrollmentData> selectedSubjects = new ArrayList<>();
-
-        // Collect all selected subjects and their schedules
-        for (CheckBox checkbox : subjectCheckboxes) {
-            if (checkbox.isSelected()) {
-                ComboBox<String> scheduleCombo = checkboxScheduleMap.get(checkbox);
-                String selectedSchedule = scheduleCombo.getValue();
-
-                if (selectedSchedule == null || selectedSchedule.isEmpty()) {
-                    showAlert("Missing Schedule", "Please select a schedule for all selected subjects.");
-                    return;
-                }
-
-                SubjectData subject = checkboxSubjectMap.get(checkbox);
-                selectedSubjects.add(new EnrollmentData(subject.code, selectedSchedule));
-            }
-        }
+        List<EnrollmentData> selectedSubjects = subjectCheckboxes.stream()
+                .filter(CheckBox::isSelected)
+                .map(cb -> {
+                    String subjectCode = checkboxSubjectMap.get(cb).code;
+                    ComboBox<String> scheduleComboBox = checkboxScheduleMap.get(cb);
+                    String schedule = scheduleComboBox.getValue() != null ? scheduleComboBox.getValue() : "Not Set";
+                    return new EnrollmentData(subjectCode, schedule);
+                })
+                .collect(Collectors.toList());
 
         if (selectedSubjects.isEmpty()) {
-            showAlert("No Subjects Selected", "Please select at least one subject to enroll in.");
+            showAlert("No Subjects Selected", "Please select at least one subject to enroll.");
             return;
         }
 
-        // Start background task to save enrollments
         runBackgroundTask(
                 "Enrolling in subjects...",
-                () -> enrollInSubjects(selectedSubjects),
-                result -> {
-                    if (result.toString().startsWith("Error:")) {
-                        showAlert("Enrollment Failed", result.toString());
-                    } else {
-                        showAlert("Enrollment Successful", result.toString());
+                () -> {
+                    try (Connection connection = DBConnection.getConnection()) {
+                        connection.setAutoCommit(false); // Start transaction
+
+                        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail(); // This might be an email or a student number
+                        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
+                            throw new Exception("No user is currently logged in. Please log in again.");
+                        }
+
+                        Integer studentIdInt = null;
+                        String studentYearSection = null;
+                        String query_StudentDetails;
+                        boolean isEmailIdentifier = currentUserIdentifier.contains("@");
+
+                        if (isEmailIdentifier) {
+                            query_StudentDetails = "SELECT student_id, year_section FROM students WHERE LOWER(email) = LOWER(?)";
+                        } else {
+                            // Assuming currentUserIdentifier is the student_number
+                            // USER: Confirm 'student_number' column and if 'year_section' should be fetched here.
+                            query_StudentDetails = "SELECT student_id, year_section FROM students WHERE student_number = ?";
+                        }
+
+                        try (PreparedStatement ps = connection.prepareStatement(query_StudentDetails)) {
+                            ps.setString(1, isEmailIdentifier ? currentUserIdentifier.toLowerCase() : currentUserIdentifier);
+                            try (ResultSet rs = ps.executeQuery()) {
+                                if (rs.next()) {
+                                    studentIdInt = rs.getInt("student_id");
+                                    studentYearSection = rs.getString("year_section"); // Assuming year_section is always present if student found
+                                } else {
+                                    throw new Exception("Student not found with identifier: " + currentUserIdentifier);
+                                }
+                            }
+                        }
+
+                        if (studentIdInt == null) { 
+                            throw new Exception("Student ID could not be retrieved for identifier: " + currentUserIdentifier);
+                        }
+
+                        // Fetch student's integer ID and year_section
+                        // Integer studentIdInt = null;
+                        // String studentYearSection = null;
+
+                        // try (PreparedStatement ps = connection.prepareStatement("SELECT student_id, year_section FROM students WHERE LOWER(email) = LOWER(?)")) {
+                        //     ps.setString(1, studentEmail);
+                        //     try (ResultSet rs = ps.executeQuery()) {
+                        //         if (rs.next()) {
+                        //             studentIdInt = rs.getInt("student_id");
+                        //             studentYearSection = rs.getString("year_section");
+                        //         } else {
+                        //             throw new Exception("Student not found with email: " + studentEmail);
+                        //         }
+                        //     }
+                        // }
+
+                        // if (studentIdInt == null) { // Should be caught by rs.next() check, but as a safeguard
+                        //     throw new Exception("Student ID could not be retrieved.");
+                        // }
+
+                        String currentSemester = getCurrentSemester(connection);
+                        String academicYear = null;
+                        if (currentSemester != null) {
+                            String[] parts = currentSemester.split(" ");
+                            if (parts.length > 0) {
+                                academicYear = parts[parts.length - 1]; // Assumes year is last part e.g. "1st Semester 2023-2024"
+                            }
+                        }
+                        if (academicYear == null) academicYear = "UNKNOWN"; // Fallback
+
+                        // Get the next available load_id for student_load
+                        int nextLoadId;
+                        try (PreparedStatement ps = connection.prepareStatement("SELECT COALESCE(MAX(load_id), 0) + 1 AS next_id FROM student_load");
+                             ResultSet rs = ps.executeQuery()) {
+                            if (rs.next()) {
+                                nextLoadId = rs.getInt("next_id");
+                            } else {
+                                throw new SQLException("Could not determine next load_id for student_load.");
+                            }
+                        }
+
+                        // Insert each subject enrollment into student_load table
+                        String insertSql = "INSERT INTO student_load (student_id, subject_id, semester, load_id, academic_year, year_section, schedule) " +
+                                "VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (student_id, subject_id, semester) DO NOTHING";
+
+                        try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
+                            for (EnrollmentData enrollment : selectedSubjects) {
+                                // Get subject_id (integer) from subject_code
+                                Integer subjectIdInt = null;
+                                try (PreparedStatement psSub = connection.prepareStatement("SELECT subject_id FROM subjects WHERE subject_code = ?")) {
+                                    psSub.setString(1, enrollment.subjectCode);
+                                    try (ResultSet rsSub = psSub.executeQuery()) {
+                                        if (rsSub.next()) {
+                                            subjectIdInt = rsSub.getInt("subject_id");
+                                        } else {
+                                            // Optionally, log or handle cases where subject_code is not found
+                                            System.err.println("Subject code not found: " + enrollment.subjectCode + ". Skipping this enrollment.");
+                                            continue; // Skip this subject
+                                        }
+                                    }
+                                }
+
+                                stmt.setInt(1, studentIdInt);
+                                stmt.setInt(2, subjectIdInt);
+                                stmt.setString(3, currentSemester);
+                                stmt.setInt(4, nextLoadId++); // Use current nextLoadId and then increment
+                                stmt.setString(5, academicYear);
+                                stmt.setString(6, studentYearSection);
+                                stmt.setString(7, enrollment.schedule); // Assuming 'schedule' column exists
+                                stmt.addBatch();
+                            }
+                            stmt.executeBatch();
+                        }
+
+                        connection.commit();
+                        return "Enrolled in " + selectedSubjects.size() + " subjects successfully!";
+
+                    } catch (Exception e) {
+                        // Rollback transaction in case of error
+                        // Connection will be closed by try-with-resources, which might implicitly rollback if not committed
+                        // Explicit rollback can be added if DBConnection.getConnection() doesn't handle auto-rollback on close for non-committed transactions.
+                        System.err.println("Enrollment failed: " + e.getMessage());
+                        e.printStackTrace();
+                        throw e; // Re-throw to be caught by runBackgroundTask
                     }
-                    loadSubjects(); // Refresh the subject list
-                }
+                },
+                result -> showAlert("Enrollment Status", (String) result)
         );
-    }
-
-    private Object enrollInSubjects(List<EnrollmentData> selectedSubjects) throws Exception {
-        try (Connection connection = DBConnection.getConnection()) {
-            connection.setAutoCommit(false); // Start transaction
-
-            // Get student ID from the email address
-            String studentEmail = RememberMeHandler.getCurrentUserEmail();
-
-            // Query to get student id using case-insensitive email comparison
-            String studentId = executeQuery(connection,
-                    "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)",
-                    stmt -> stmt.setString(1, studentEmail),
-                    rs -> rs.next() ? rs.getString("student_id") : null
-            );
-
-            if (studentId == null) {
-                throw new Exception("Student not found with email: " + studentEmail);
-            }
-
-            // Get current semester
-            String currentSemester = getCurrentSemester(connection);
-
-            // Get or create an enrollment header
-            Integer enrollmentId = getOrCreateEnrollmentHeader(connection, studentId, currentSemester);
-
-            // Insert each subject enrollment into student_load table
-            try (PreparedStatement stmt = connection.prepareStatement(
-                    "INSERT INTO student_load (enrollment_id, subject_code, schedule, student_id) " +
-                            "VALUES (?, ?, ?, ?) ON CONFLICT (enrollment_id, subject_code) DO NOTHING")) {
-
-                for (EnrollmentData enrollment : selectedSubjects) {
-                    stmt.setInt(1, enrollmentId);
-                    stmt.setString(2, enrollment.subjectCode);
-                    stmt.setString(3, enrollment.schedule);
-                    stmt.setString(4, studentId);
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-            }
-
-            connection.commit();
-            return "Enrolled in " + selectedSubjects.size() + " subjects successfully!";
-
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    private String getCurrentSemester(Connection connection) throws SQLException {
-        String defaultSemester = "1st Semester 2025-2026";
-
-        try {
-            return executeQuery(connection,
-                    "SELECT semester FROM payment ORDER BY semester DESC LIMIT 1",
-                    stmt -> {},
-                    rs -> rs.next() && rs.getString("semester") != null ? rs.getString("semester") : defaultSemester
-            );
-        } catch (SQLException e) {
-            System.err.println("Could not determine current semester: " + e.getMessage());
-            return defaultSemester;
-        }
     }
 
     private void updateSelectAllButtonText(boolean allSelected) {
@@ -177,22 +223,30 @@ public class EnrollmentController implements Initializable {
 
         try (Connection connection = DBConnection.getConnection()) {
             // Get the student's ID from the email
-            String studentEmail = RememberMeHandler.getCurrentUserEmail();
+            String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
             
             // Check if we have a logged in user
-            if (studentEmail == null || studentEmail.isEmpty()) {
+            if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
                 throw new Exception("No user is currently logged in. Please log in again.");
             }
             
-            String studentId = executeQuery(connection, 
-                "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)",
-                stmt -> stmt.setString(1, studentEmail),
-                rs -> rs.next() ? rs.getString("student_id") : null);
+            boolean isEmail = currentUserIdentifier.contains("@");
+            String studentIdQuery;
+            if (isEmail) {
+                studentIdQuery = "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)";
+            } else {
+                // USER: Confirm 'student_number' is the correct column name.
+                studentIdQuery = "SELECT student_id FROM students WHERE student_number = ?";
+            }
 
+            Integer studentIdInt = executeQuery(connection, 
+                studentIdQuery,
+                stmt -> stmt.setString(1, isEmail ? currentUserIdentifier.toLowerCase() : currentUserIdentifier),
+                rs -> rs.next() ? rs.getInt("student_id") : null);
 
-            if (studentId == null) {
-                System.err.println("Student not found with email: " + studentEmail);
-                return subjectDataList;
+            if (studentIdInt == null) {
+                System.err.println("Student not found with identifier: " + currentUserIdentifier);
+                return subjectDataList; // Return empty list or throw error
             }
 
             // Get current semester
@@ -201,11 +255,12 @@ public class EnrollmentController implements Initializable {
             // Get subjects already enrolled in for this semester
             Set<String> enrolledSubjects = new HashSet<>();
             executeQuery(connection,
-                    "SELECT s.subject_code FROM student_load s " +
-                            "JOIN enrollment_headers e ON s.enrollment_id = e.enrollment_id " +
-                            "WHERE e.student_id = ? AND e.semester = ?",
+                    "SELECT sub.subject_code " +
+                    "FROM student_load sl " +
+                    "JOIN subjects sub ON sl.subject_id = sub.subject_id " +
+                    "WHERE sl.student_id = ? AND sl.semester = ?",
                     stmt -> {
-                        stmt.setString(1, studentId);
+                        stmt.setInt(1, studentIdInt);
                         stmt.setString(2, currentSemester);
                     },
                     rs -> {
@@ -306,32 +361,19 @@ public class EnrollmentController implements Initializable {
         });
     }
 
-    private Integer getOrCreateEnrollmentHeader(Connection connection, String studentId, String semester)
-            throws SQLException {
-        // First try to get existing header
-        Integer headerID = executeQuery(connection,
-                "SELECT enrollment_id FROM enrollment_headers WHERE student_id = ? AND semester = ?",
-                stmt -> {
-                    stmt.setString(1, studentId);
-                    stmt.setString(2, semester);
-                },
-                rs -> rs.next() ? rs.getInt("enrollment_id") : null
-        );
+    private String getCurrentSemester(Connection connection) throws SQLException {
+        String defaultSemester = "1st Semester 2025-2026";
 
-        if (headerID != null) return headerID;
-
-        // If no header exists, create one
-        return executeQuery(connection,
-                "INSERT INTO enrollment_headers (student_id, semester) VALUES (?, ?) RETURNING enrollment_id",
-                stmt -> {
-                    stmt.setString(1, studentId);
-                    stmt.setString(2, semester);
-                },
-                rs -> {
-                    if (rs.next()) return rs.getInt("enrollment_id");
-                    throw new SQLException("Failed to create enrollment header");
-                }
-        );
+        try {
+            return executeQuery(connection,
+                    "SELECT semester FROM payment ORDER BY semester DESC LIMIT 1",
+                    stmt -> {},
+                    rs -> rs.next() && rs.getString("semester") != null ? rs.getString("semester") : defaultSemester
+            );
+        } catch (SQLException e) {
+            System.err.println("Could not determine current semester: " + e.getMessage());
+            return defaultSemester;
+        }
     }
 
     // Generic method to display a loading indicator and run a task in the background
