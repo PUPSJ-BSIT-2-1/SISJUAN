@@ -17,6 +17,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 import java.util.Objects;
+import java.text.DecimalFormat;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
 import java.io.IOException;
@@ -41,6 +42,9 @@ public class EditGradesPageController implements Initializable {
     private final StudentCache studentCache = StudentCache.getInstance();
     private String selectedSubjectCode;
     private String selectedSubjectDesc;
+
+    // Add DecimalFormat for consistent grade formatting
+    private final DecimalFormat gradeFormat = new DecimalFormat("0.00");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -74,7 +78,13 @@ public class EditGradesPageController implements Initializable {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(item);
+                    // Format the grade for display
+                    try {
+                        float gradeValue = Float.parseFloat(item);
+                        setText(gradeFormat.format(gradeValue));
+                    } catch (NumberFormatException e) {
+                        setText(item); // fallback to original if parsing fails
+                    }
                     setGraphic(null);
                 }
             }
@@ -94,21 +104,38 @@ public class EditGradesPageController implements Initializable {
             @Override
             public void cancelEdit() {
                 super.cancelEdit();
-                setText(getItem());
+                // Format the grade when canceling edit
+                try {
+                    float gradeValue = Float.parseFloat(getItem());
+                    setText(gradeFormat.format(gradeValue));
+                } catch (NumberFormatException e) {
+                    setText(getItem());
+                }
                 setGraphic(null);
             }
 
             private void createTextField() {
-                textField = new TextField(getItem());
+                // Set initial value with proper formatting
+                String initialValue = getItem();
+                try {
+                    float gradeValue = Float.parseFloat(initialValue);
+                    initialValue = gradeFormat.format(gradeValue);
+                } catch (NumberFormatException e) {
+                    // keep original value if parsing fails
+                }
+
+                textField = new TextField(initialValue);
                 textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
 
                 textField.setOnKeyPressed(e -> {
                     if (e.getCode() == KeyCode.ENTER) {
                         if (isValidGrade(textField.getText())) {
-                            commitEdit(textField.getText());
+                            // Format the input before committing
+                            String formattedGrade = formatGradeInput(textField.getText());
+                            commitEdit(formattedGrade);
                         } else {
                             cancelEdit();
-                            showError("Invalid Grade", "Please enter a valid grade between 1.0 and 5.0");
+                            showError("Invalid Grade", "Please enter a valid grade between 1.00 and 5.00");
                         }
                     } else if (e.getCode() == KeyCode.ESCAPE) {
                         cancelEdit();
@@ -118,10 +145,12 @@ public class EditGradesPageController implements Initializable {
                 textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                     if (!isNowFocused) {
                         if (isValidGrade(textField.getText())) {
-                            commitEdit(textField.getText());
+                            // Format the input before committing
+                            String formattedGrade = formatGradeInput(textField.getText());
+                            commitEdit(formattedGrade);
                         } else {
                             cancelEdit();
-                            showError("Invalid Grade", "Please enter a valid grade between 1.0 and 5.0");
+                            showError("Invalid Grade", "Please enter a valid grade between 1.00 and 5.00");
                         }
                     }
                 });
@@ -156,6 +185,16 @@ public class EditGradesPageController implements Initializable {
         }
     }
 
+    // Add method to format grade input
+    private String formatGradeInput(String input) {
+        try {
+            float gradeValue = Float.parseFloat(input);
+            return gradeFormat.format(gradeValue);
+        } catch (NumberFormatException e) {
+            return input;
+        }
+    }
+
     private void setupRowHoverEffect() {
         studentsTable.setRowFactory(tv -> {
             TableRow<Student> row = new TableRow<Student>() {
@@ -184,8 +223,6 @@ public class EditGradesPageController implements Initializable {
         });
     }
 
-
-
     private boolean isValidGrade(String grade) {
         try {
             float gradeValue = Float.parseFloat(grade);
@@ -202,8 +239,12 @@ public class EditGradesPageController implements Initializable {
     private void updateGradeInDatabase(Student student) {
         try (Connection conn = DBConnection.getConnection()) {
             // Update both final grade and grade status
-            String query = "UPDATE grade SET \"final_grade\" = ?, \"gradestat\" = ? " +
-                    "WHERE \"student_id\" = ? AND \"subject_code\" = ?";
+            String query = "UPDATE grade \n" +
+                    "SET final_grade = ?, gradestat = ? \n" +
+                    "FROM subjects \n" +
+                    "WHERE grade.student_id = ? \n" +
+                    "AND grade.subject_id = subjects.subject_id \n" +
+                    "AND subjects.subject_code = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 String newGrade = student.getFinalGrade();
@@ -239,10 +280,10 @@ public class EditGradesPageController implements Initializable {
                     // Refresh the TableView
                     studentsTable.refresh();
 
-                    // Show success message
+                    // Show success message with formatted grade
                     showSuccess("Success", String.format(
-                            "Grade successfully updated to: %.2f\nStatus: %s",
-                            gradeValue, gradeStatus));
+                            "Grade successfully updated to: %s\nStatus: %s",
+                            gradeFormat.format(gradeValue), gradeStatus));
                 }
             }
         } catch (SQLException e) {
@@ -291,12 +332,24 @@ public class EditGradesPageController implements Initializable {
                             while (rs.next()) {
                                 if (isCancelled()) break;
 
+                                // Format the final grade from database
+                                String finalGradeFromDB = rs.getString("final_grade");
+                                String formattedGrade = finalGradeFromDB;
+                                if (finalGradeFromDB != null && !finalGradeFromDB.isEmpty()) {
+                                    try {
+                                        float gradeValue = Float.parseFloat(finalGradeFromDB);
+                                        formattedGrade = gradeFormat.format(gradeValue);
+                                    } catch (NumberFormatException e) {
+                                        // Keep original value if parsing fails
+                                    }
+                                }
+
                                 Student student = new Student(
                                         rs.getString("id"),
                                         rs.getString("student_id"),
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
-                                        rs.getString("final_grade"),
+                                        formattedGrade,
                                         rs.getString("gradestat")
                                 );
                                 tempList.add(student);
