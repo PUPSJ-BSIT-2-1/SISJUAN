@@ -13,34 +13,69 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PasswordHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(PasswordHandler.class); 
     private static final int SALT_LENGTH = 16;
     private static final int HASH_LENGTH = 256;
     private static final int ITERATIONS = 10000;
 
     public static String hashPassword(String password) {
         try {
+            System.out.println("--- Hashing New Password ---"); 
+            System.out.println("Input Password to Hash: '" + password + "'"); 
+
             byte[] salt = generateSalt();
+            System.out.println("Generated Salt (Base64): '" + Base64.getEncoder().encodeToString(salt) + "'"); 
+
             byte[] hashedPassword = hashPasswordWithSalt(password, salt);
-            return Base64.getEncoder().encodeToString(salt) + ":" + Base64.getEncoder().encodeToString(hashedPassword);
+            String B64HashedPassword = Base64.getEncoder().encodeToString(hashedPassword);
+            System.out.println("Computed Hash (Base64): '" + B64HashedPassword + "'"); 
+
+            String fullStoredValue = Base64.getEncoder().encodeToString(salt) + ":" + B64HashedPassword;
+            System.out.println("Full Value to be Stored: '" + fullStoredValue + "'"); 
+            System.out.println("--- End Hashing New Password ---"); 
+            return fullStoredValue;
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            logger.error("Error while hashing password", e); 
             throw new RuntimeException("Error while hashing password", e);
         }
     }
 
     public static boolean verifyPassword(String password, String storedPassword) {
         try {
+            System.out.println("--- Verifying Password ---"); 
+            System.out.println("Input Password for Verification: '" + password + "'"); 
+            System.out.println("Stored Password (DB) for Verification: '" + storedPassword + "'"); 
+
             String[] parts = storedPassword.split(":");
             if (parts.length != 2) {
+                System.err.println("Verify Error: Invalid stored password format. Expected 'salt:hash', got: '" + storedPassword + "'"); 
                 throw new IllegalArgumentException("Invalid stored password format");
             }
             byte[] salt = Base64.getDecoder().decode(parts[0]);
             byte[] storedHash = Base64.getDecoder().decode(parts[1]);
+
+            System.out.println("Verify - Decoded Salt (Base64): '" + parts[0] + "'"); 
+            System.out.println("Verify - Decoded Stored Hash (Base64): '" + parts[1] + "'"); 
+
             byte[] hashedPassword = hashPasswordWithSalt(password, salt);
-            return slowEquals(storedHash, hashedPassword);
+            System.out.println("Verify - Newly Computed Hash (Base64 from input password + DB salt): '" + Base64.getEncoder().encodeToString(hashedPassword) + "'"); 
+            
+            boolean match = slowEquals(storedHash, hashedPassword);
+            System.out.println("Verify - Password Match Result: " + match); 
+            System.out.println("--- End Verification ---"); 
+            return match;
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            logger.error("Error while verifying password", e); 
             throw new RuntimeException("Error while verifying password", e);
+        } catch (IllegalArgumentException iae) { 
+            logger.error("Argument error during password verification: {}", iae.getMessage()); 
+            System.err.println("Verify Error - IllegalArgumentException: " + iae.getMessage());
+            throw iae; 
         }
     }
 

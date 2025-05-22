@@ -150,14 +150,21 @@ public class StudentDashboardController {
                     // Case-insensitive email comparison
                     nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
                 } else {
-                    nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_id = ?";
+                    // Assumes 'identifier' is the formatted student_number
+                    // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
+                    nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
                 }
                 
                 String finalName = null;
                 
                 try (Connection connection = DBConnection.getConnection();
                      PreparedStatement statement = connection.prepareStatement(nameQuery)) {
-                    statement.setString(1, identifier);
+                    if (isEmail) {
+                        statement.setString(1, identifier.toLowerCase()); // Ensure email is lowercased for comparison
+                    } else {
+                        // Identifier is treated as the formatted student_number (String)
+                        statement.setString(1, identifier);
+                    }
                     ResultSet result = statement.executeQuery();
                     
                     if (result.next()) {
@@ -172,15 +179,14 @@ public class StudentDashboardController {
                     }
                 }
                 
-                // Get student ID
-                String finalStudentId = getStudentId(identifier);
+                // Get student formatted number
+                String finalStudentFormattedNumber = getStudentFormattedNumber(identifier);
                 
                 // Update UI on JavaFX Application Thread
                 String nameToDisplay = finalName;
                 Platform.runLater(() -> {
                     studentNameLabel.setText(Objects.requireNonNullElse(nameToDisplay, "Name not found"));
-
-                    studentIdLabel.setText(Objects.requireNonNullElse(finalStudentId, "ID not found"));
+                    studentIdLabel.setText(Objects.requireNonNullElse(finalStudentFormattedNumber, "ID not found"));
                 });
                 
             } catch (SQLException e) {
@@ -221,35 +227,34 @@ public class StudentDashboardController {
         return formattedName.toString().trim();
     }
 
-    // Get the student ID from the database based on the provided identifier (email or student ID)
-    private String getStudentId(String identifier) {
+    // Renamed and reimplemented to get the formatted student_number
+    private String getStudentFormattedNumber(String identifier) {
         String query;
-        
-        if (identifier.contains("@")) {
-            // Case-insensitive email comparison
-            query = "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)";
+        boolean isEmail = identifier.contains("@");
+
+        if (isEmail) {
+            // Query by email to get the student_number
+            // USER: Confirm 'student_number' is the correct column name.
+            query = "SELECT student_number FROM students WHERE LOWER(email) = LOWER(?)";
         } else {
-            query = "SELECT student_id FROM students WHERE student_id = ?";
+            // Assume identifier is already a student_number, verify its existence and get it
+            // USER: Confirm 'student_number' is the correct column name.
+            query = "SELECT student_number FROM students WHERE student_number = ?";
         }
-        
+
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            
-            stmt.setString(1, identifier);
+
+            stmt.setString(1, isEmail ? identifier.toLowerCase() : identifier);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
-                String id = rs.getString("student_id");
-                // Format as 2025-000000-SJ-01 if it's a numeric ID
-                if (id.matches("\\d+")) {
-                    return String.format("2025-%06d-SJ-01", Integer.parseInt(id));
-                }
-                return id;
+                return rs.getString("student_number"); // Directly return the formatted student_number
             }
         } catch (SQLException e) {
-            logger.error("Error while formatting student ID", e);
+            logger.error("Error retrieving student formatted number", e);
         }
-        return null;
+        return null; // Return null if not found or on error
     }
 
     // Handle sidebar item clicks and load the corresponding content

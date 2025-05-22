@@ -21,14 +21,22 @@ public class AuthenticationService {
         boolean isAuthenticated = false;
         boolean isEmail = input.contains("@");
 
-        String query = isEmail 
-            ? "SELECT password FROM students WHERE LOWER(email) = LOWER(?)" 
-            : "SELECT password FROM students WHERE student_id = ?";
+        String query;
+        if (isEmail) {
+            query = "SELECT password FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            query = "SELECT password FROM students WHERE student_number = ?";
+        }
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, input.toLowerCase());
+            if (isEmail) {
+                preparedStatement.setString(1, input.toLowerCase());
+            } else {
+                preparedStatement.setString(1, input);
+            }
+            
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String storedPassword = resultSet.getString("password");

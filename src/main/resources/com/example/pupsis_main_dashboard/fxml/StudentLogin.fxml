@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -85,7 +86,7 @@
                          <Insets bottom="10.0" />
                      </VBox.margin>
                  </TextField>
-                 <PasswordField fx:id="passwordField" promptText="Password" styleClass="fields">
+                 <PasswordField fx:id="loginPasswordField" promptText="Password" styleClass="fields">
                      <padding>
                          <Insets left="15.0" />
                      </padding>

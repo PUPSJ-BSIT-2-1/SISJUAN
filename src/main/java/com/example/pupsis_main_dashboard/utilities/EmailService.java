@@ -6,8 +6,8 @@
 
 package com.example.pupsis_main_dashboard.utilities;
 
-import javax.mail.*;
-import javax.mail.internet.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 

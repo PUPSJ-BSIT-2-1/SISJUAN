@@ -86,14 +86,8 @@ public class NotificationManager {
                     notification.getMessage()
                 );
                 System.out.println("Email notification sent to: " + userEmail);
-            } catch (MessagingException e) {
-                System.err.println("Failed to send email notification: " + e.getMessage());
-                e.printStackTrace();
-                
-                // Show error popup on UI thread
-                Platform.runLater(() -> {
-                    showEmailErrorPopup(e.getMessage());
-                });
+            } catch (jakarta.mail.MessagingException e) {
+                throw new RuntimeException(e);
             }
         });
     }
