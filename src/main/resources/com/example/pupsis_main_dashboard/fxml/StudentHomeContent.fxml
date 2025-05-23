@@ -108,19 +108,19 @@
 
                                 <VBox alignment="TOP_CENTER" prefHeight="498.0" spacing="10" styleClass="cards" HBox.hgrow="ALWAYS">
             <Label styleClass="section-header" text="Quick Actions" />
-            <Button prefWidth="190.0" styleClass="action-button" text="View Grades">
+            <Button fx:id="viewGradesButton" prefWidth="190.0" styleClass="action-button" text="View Grades">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>
-            <Button prefWidth="190.0" styleClass="action-button" text="Check Schedule">
+            <Button fx:id="viewScheduleButton" prefWidth="190.0" styleClass="action-button" text="Check Schedule">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>
-            <Button prefWidth="190.0" styleClass="action-button" text="Make Payment">
+            <Button fx:id="viewPaymentButton" prefWidth="190.0" styleClass="action-button" text="Make Payment">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>
-            <Button prefWidth="190.0" styleClass="action-button" text="Request Documents">
+            <Button fx:id="requestDocumentButton" prefWidth="190.0" styleClass="action-button" text="Request Documents">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>

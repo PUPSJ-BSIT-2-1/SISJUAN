@@ -49,12 +49,12 @@ public class StudentDashboardController {
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradesNew.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/CopyGrades.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/EnrollmentContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
-    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminRoomAssignment.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -83,7 +83,7 @@ public class StudentDashboardController {
     }
     
     // Set up scroll pane fade effects based on scroll position
-    private void setupScrollPaneFadeEffects() {
+    public void setupScrollPaneFadeEffects() {
         contentPane.vvalueProperty().addListener((_, _, newVal) -> {
             double vvalue = newVal.doubleValue();
             
@@ -144,17 +144,8 @@ public class StudentDashboardController {
             try {
                 // Get student name
                 boolean isEmail = identifier.contains("@");
-                String nameQuery;
-                
-                if (isEmail) {
-                    // Case-insensitive email comparison
-                    nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
-                } else {
-                    // Assumes 'identifier' is the formatted student_number
-                    // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
-                    nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
-                }
-                
+                String nameQuery = getNameQuery(isEmail);
+
                 String finalName = null;
                 
                 try (Connection connection = DBConnection.getConnection();
@@ -201,7 +192,21 @@ public class StudentDashboardController {
         thread.setDaemon(true);
         thread.start();
     }
-    
+
+    private String getNameQuery(boolean isEmail) {
+        String nameQuery;
+
+        if (isEmail) {
+            // Case-insensitive email comparison
+            nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            // Assumes 'identifier' is the formatted student_number
+            // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
+            nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
+        }
+        return nameQuery;
+    }
+
     // Format student name as "LastName, FirstName MiddleInitial."
     private String formatStudentName(String firstName, String middleName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
@@ -296,13 +301,22 @@ public class StudentDashboardController {
     }
 
     // Load content into the ScrollPane based on the provided FXML path
-    private void loadContent(String fxmlPath) {
+    public void loadContent(String fxmlPath) {
         try {
             Parent content = contentCache.get(fxmlPath);
             if (content == null) {
-                content = FXMLLoader.load(
+                FXMLLoader loader = new FXMLLoader(
                         Objects.requireNonNull(getClass().getResource(fxmlPath))
                 );
+                content = loader.load();
+                
+                // If loading home content, pass reference to this controller
+                if (fxmlPath.equals(HOME_FXML)) {
+                    HomeContentController homeController = loader.getController();
+                    homeController.setStudentDashboardController(this);
+                    logger.info("Reference to StudentDashboardController passed to HomeContentController");
+                }
+                
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
@@ -341,6 +355,7 @@ public class StudentDashboardController {
     // Load the home content into the ScrollPane
     private void loadHomeContent() {
         loadContent(HOME_FXML);
+
     }
 
     // Handle the logout button click event

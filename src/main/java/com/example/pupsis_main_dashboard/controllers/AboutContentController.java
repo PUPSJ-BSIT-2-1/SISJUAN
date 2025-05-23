@@ -179,8 +179,8 @@ public class AboutContentController extends Developer {
                 0, 1, 0, 0,
                 true,
                 CycleMethod.NO_CYCLE,
-                new Stop(0.0, Color.MAROON),
-                new Stop(0.7, Color.TRANSPARENT)
+                new Stop(0.0, Color.rgb(128, 0, 0, 0.9)), // Faded maroon start
+                new Stop(0.6, Color.TRANSPARENT)
         );
         gradientBackground.setFill(gradient);
         gradientBackground.setArcWidth(20);

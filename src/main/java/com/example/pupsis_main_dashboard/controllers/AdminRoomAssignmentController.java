@@ -115,9 +115,9 @@ public class AdminRoomAssignmentController {
     private static final Logger logger = LoggerFactory.getLogger(AdminRoomAssignmentController.class);
 
     private final String[] iconNames = {
-            "/com/example/pupsis_main_dashboard/Images/book.png",
-            "/com/example/pupsis_main_dashboard/Images/computer.png",
-            "/com/example/pupsis_main_dashboard/Images/clock.png"
+            "M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h13.25a.75.75 0 0 0 0-1.5H6.5a1 1 0 0 1-1-1h14.25a.75.75 0 0 0 .75-.75V4.5A2.5 2.5 0 0 0 18 2H6.5ZM8 5h8a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z",
+            "M2 21q-.425 0-.713-.288T1 20q0-.425.288-.713T2 19h20q.425 0 .713.288T23 20q0 .425-.288.713T22 21H2Zm2-3q-.825 0-1.413-.588T2 16V5q0-.825.588-1.413T4 3h16q.825 0 1.413.588T22 5v11q0 .825-.588 1.413T20 18H4Z",
+            "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2zm3.5 12c-.3.5-.9.6-1.4.4l-2.6-1.5c-.3-.2-.5-.5-.5-.9V7c0-.6.4-1 1-1s1 .4 1 1v4.4l2.1 1.2c.5.3.6.9.4 1.4z"
     };
 
     @FXML
@@ -292,15 +292,18 @@ public class AdminRoomAssignmentController {
         String query = """
                 SELECT load_id ||'(' || faculty_number || ')' AS faculty
                 FROM faculty_load JOIN faculty ON faculty.faculty_id = faculty_load.faculty_id
+                WHERE semester = ?
                 """;
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, SchoolYearAndSemester.determineCurrentSemester());
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                String faculty = rs.getString("faculty");
-                facultyIDComboBox.getItems().add(faculty);
+                while (rs.next()) {
+                    String faculty = rs.getString("faculty");
+                    facultyIDComboBox.getItems().add(faculty);
+                }
             }
         } catch (SQLException e) {
             logger.error("Failed to load faculty list", e);
@@ -313,6 +316,9 @@ public class AdminRoomAssignmentController {
         for (int i = 0; i < times.length; i++) {
             times[i] = time.format(DateTimeFormatter.ofPattern("h:mm a"));
             time = time.plusMinutes(30);
+            if (time.isAfter(LocalTime.of(21, 0))) {
+                break;
+            }
         }
         startTimeComboBox.getItems().addAll(times);
         endTimeComboBox.getItems().addAll(times);
@@ -381,7 +387,7 @@ public class AdminRoomAssignmentController {
                 return;
             }
 
-            String facultyLoadID = facultySplit.split("\\(")[0];
+            int facultyLoadID = Integer.parseInt(facultySplit.split("\\(")[0]);
             String startTime = String.valueOf(startTimeComboBox.getValue());
             String endTime = String.valueOf(endTimeComboBox.getValue());
 
@@ -398,6 +404,12 @@ public class AdminRoomAssignmentController {
             int roomID = 0;
             String days = getSelectedDays();
 
+            boolean isScheduleFree = isScheduleFree(room, startTime, endTime, days, facultyLoadID);
+            if (!isScheduleFree) {
+                StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.WARNING), "Schedule is not free.");
+                return;
+            }
+
             String query = "INSERT INTO schedule (load_id, start_time, end_time, lecture_hour, laboratory_hour, days, room_id) " +
                     "VALUES (?, TO_TIMESTAMP(?, 'HH12:MI AM'), TO_TIMESTAMP(?, 'HH12:MI AM'), ?, ?, ?, ?)";
 
@@ -412,7 +424,7 @@ public class AdminRoomAssignmentController {
                     roomID = Integer.parseInt(rs.getString("room_id"));
                 }
 
-                stmt.setInt(1, Integer.parseInt(facultyLoadID));
+                stmt.setInt(1, Integer.parseInt(String.valueOf(facultyLoadID)));
                 stmt.setString(2, startTime);
                 stmt.setString(3, endTime);
                 stmt.setInt(4, lectureHour);
@@ -569,6 +581,36 @@ public class AdminRoomAssignmentController {
         } catch (SQLException e) {
             logger.error("Failed to delete schedule", e);
             StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.ERROR), "Failed to delete schedule.");
+        }
+    }
+
+    private boolean isScheduleFree(String room, String proposedStart, String proposedEnd, String proposedDays, int facultyId) {
+        String query = """
+        SELECT 1
+        FROM schedule s
+        JOIN room r ON s.room_id = r.room_id
+        JOIN faculty_load f ON s.load_id = f.load_id
+        WHERE (s.days ~* '[' || ? || ']')
+          AND (TO_TIMESTAMP(?, 'HH12:MI AM') < s.end_time
+               AND TO_TIMESTAMP(?, 'HH12:MI AM') > s.start_time)
+          AND (r.room_name = ? OR f.faculty_id = ?)
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, proposedDays);   // e.g., "MWF"
+            stmt.setString(2, proposedEnd);    // end of proposed class
+            stmt.setString(3, proposedStart);  // start of proposed class
+            stmt.setString(4, room);           // check room conflict
+            stmt.setInt(5, facultyId);         // check faculty conflict
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return !rs.next(); // if no conflict found, schedule is free
+            }
+        } catch (SQLException e) {
+            logger.error("Failed to check schedule conflict", e);
+            return false;
         }
     }
     

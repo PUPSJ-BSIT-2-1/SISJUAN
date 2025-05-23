@@ -262,14 +262,15 @@ private void loadContent(String fxmlPath) {
         
         // Set faculty ID in SessionData when loading grading module
         if (fxmlPath.equals(GRADES_FXML)) {
-            String facultyId = studentIdLabel.getText();
-            SessionData.getInstance().setStudentId(facultyId);
+            String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
+            SessionData.getInstance().setStudentId(facultyId); // if needed
         }
 
-        if (fxmlPath.equals(SCHEDULE_FXML)) { // this is used to set faculty id for schedule
-            String facultyId = studentIdLabel.getText();
-            SessionData.getInstance().setFacultyId(facultyId);
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            String facultyId = SessionData.getInstance().getFacultyId();
+            SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
         }
+
 
         contentPane.setContent(content);
         contentCache.put(fxmlPath, content);
