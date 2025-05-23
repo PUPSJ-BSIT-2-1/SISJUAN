@@ -116,7 +116,7 @@ public class SchoolCalendarController {
 
         Dialog<Void> dialog = new Dialog<>();
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.getDialogPane().setPrefSize(270, 270);
+        dialog.getDialogPane().setPrefSize(370, 320);  // Increased size
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
 
@@ -151,9 +151,10 @@ public class SchoolCalendarController {
         for (String event : eventDetails) {
             String[] elements = event.split(",");
             String eventDescription = elements[2];
+            String eventDescWithBullets = "• " + eventDescription;
 
             // Event Description Label
-            Label eventDescLabel = new Label(eventDescription);
+            Label eventDescLabel = new Label(eventDescWithBullets);
             eventDescLabel.getStyleClass().add("custom-dialog-description");
             eventDescLabel.setWrapText(true);
 

@@ -2,50 +2,50 @@
   {
     "devModule": "Main Dashboard",
     "devName": "Cedrick Joseph H. Mariano",
-    "devRole": "Frontend Developer",
+    "devRole": "Full Stack Developer",
     "devImage": "Images/devs/MARIANO.jpg",
     "devDesc": "As the frontend developer of the PUPSJ SIS project, Cedrick is responsible for designing and implementing user interfaces that are both intuitive and responsive. He works closely with the backend and database teams to ensure a seamless user experience across various modules, including the Dashboard, About section, School Calendar, and Profile."
   },
   {
     "devModule": "Main Dashboard",
     "devName": "Borgy Misael K. Palermo",
-    "devRole": "Database Designer",
+    "devRole": "Database Administrator (DBA)",
     "devImage": "Images/PUPSJ.png",
     "devDesc": "Handles server-side logic and integration with databases."
   },
   {
     "devModule": "Main Dashboard",
     "devName": "Rj Jack A. Florida",
-    "devRole": "Quality Assurance",
+    "devRole": "Project Manager",
     "devImage": "Images/PUPSJ.png",
     "devDesc": "Handles server-side logic and integration with databases."
   },
   {
     "devModule": "Main Dashboard",
     "devName": "Harold Prince E. dela Pena",
-    "devRole": "Backend Developer",
+    "devRole": "Full Stack Developer",
     "devImage": "Images/PUPSJ.png",
     "devDesc": "Handles server-side logic and integration with databases."
   },
   {
     "devModule": "Grading",
     "devName": "Micah Athena D. Bugayong",
-    "devRole": "Moral Support",
+    "devRole": "Quality Assurance (QA)",
     "devImage": "Images/devs/BUGAYONG.jpg",
-    "devDesc": "She supports the moral development of the team members and contributes to their personal growth and development."
+    "devDesc": "She assisted in developing the Student View Module by designing and coding intuitive, responsive front-end components to improve the student experience when accessing academic records and grades. She also ensured a smooth interface and reliable functionality through thorough testing and bug fixing to meet quality standards."
   },
   {
     "devModule": "Registration",
-    "devName": "Nina Gomez",
-    "devRole": "Frontend Developer",
+    "devName": "Tyronne Jake S. Medina",
+    "devRole": "Backend Developer",
     "devImage": "Images/PUP Logo.png",
-    "devDesc": "Creates the registration module interface and ensures responsiveness."
+    "devDesc": "As the backend developer for the PUPSJ SIS project, Tyronne is responsible for building and maintaining the server-side logic of the registration module. He ensures that data is securely processed, stored, and retrieved while integrating seamlessly with the database. Tyronne works closely with both the frontend and database teams to guarantee reliable performance and smooth functionality throughout the registration process."
   },
   {
-    "devModule": "Payment",
-    "devName": "Joshua Tan",
+    "devModule": "Registration",
+    "devName": "Jim Russell C. Tejoso",
     "devRole": "Database Admin",
-    "devImage": "Images/PUP Logo.png",
+    "devImage": "Images/devs/TEJOSO.jpg",
     "devDesc": "Manages the payment database and ensures data integrity."
   },
   {
@@ -56,24 +56,24 @@
     "devDesc": "Develops backend APIs and payment processing logic."
   },
   {
-    "devModule": "Class Schedule",
-    "devName": "Ella Navarro",
+    "devModule": "Grading",
+    "devName": "Sandra Marie O. Francisco",
     "devRole": "Backend Developer",
-    "devImage": "Images/PUP Logo.png",
-    "devDesc": "Works on backend services related to class scheduling."
+    "devImage": "Images/devs/Francisco.jpg",
+    "devDesc": "She handles most of the programming side for the Grades module. She makes sure student grades are stored, calculated, and retrieved correctly. She works with the team to keep everything secure and running smoothly."
+  },
+  {
+    "devModule": "Grading",
+    "devName": "Rizza Mae Y. Gonzales",
+    "devRole": "Frontend Developer",
+    "devImage": "Images/devs/GONZALES.jpg",
+    "devDesc": "She also designs the part of the Grades module that users see. She makes sure the grades are easy to view and the page works well on all devices. She works along the backend team to keep the information up to date."
   },
   {
     "devModule": "Room Assignment",
-    "devName": "Kevin Lim",
-    "devRole": "System Analyst",
-    "devImage": "Images/PUPSJ Logo.png",
-    "devDesc": "Analyzes system requirements and coordinates room assignment logic."
-  },
-  {
-    "devModule": "Faculty",
-    "devName": "Sophia Villanueva",
-    "devRole": "Full Stack Developer",
-    "devImage": "Images/PUPSJ Logo.png",
-    "devDesc": "Develops frontend and backend functionalities for the faculty module."
+    "devName": "Vann Augustine J. Sajulan",
+    "devRole": "Frontend Developer",
+    "devImage": "Images/devs/SAJULAN.jpg",
+    "devDesc": "I worked as the frontend developer for the Room Assignment module of our system. I focused on the design and layout, choosing the right colors, fonts, and overall look to make the system clear and easy to use. I made sure the interface is user-friendly and works well for anyone using it. I also worked with the system’s data and functions."
   }
 ]

@@ -7,6 +7,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.SVGPath;
 
 import java.util.Objects;
 
@@ -45,20 +46,23 @@ public class Schedule {
         this.laboratoryHour = new SimpleIntegerProperty(laboratoryHour);
         this.editButton = editButton;
 
-        ImageView lectureIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconNames[0]))));
-        ImageView laboratoryIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconNames[1]))));
-        ImageView timeIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconNames[2]))));
-        lectureIcon.setFitWidth(16);
-        lectureIcon.setFitHeight(16);
-        laboratoryIcon.setFitWidth(16);
-        laboratoryIcon.setFitHeight(16);
-        timeIcon.setFitWidth(16);
-        timeIcon.setFitHeight(16);
+        SVGPath lectureIcon = new SVGPath();
+        SVGPath laboratoryIcon = new SVGPath();
+        SVGPath timeIcon = new SVGPath();
 
-        String hourText = lectureIcon.getImage().getUrl() + lectureHour + laboratoryIcon.getImage().getUrl() + laboratoryHour;
+        lectureIcon.getStyleClass().add("icon");
+        laboratoryIcon.getStyleClass().add("icon");
+        timeIcon.getStyleClass().add("icon");
+
+        // Set SVG path content using icon names
+        lectureIcon.setContent(iconNames[0]);
+        laboratoryIcon.setContent(iconNames[1]);
+        timeIcon.setContent(iconNames[2]);
+
+        String hourText = lectureIcon.getContent() + lectureHour + laboratoryIcon.getContent() + laboratoryHour;
         this.hoursWithIcon = new SimpleStringProperty(hourText);
 
-        String unitsText = timeIcon.getImage().getUrl() + units;
+        String unitsText = timeIcon.getContent() + units;
         this.unitsWithIcon = new SimpleStringProperty(unitsText);
 
         String scheduleText = yearSection + " " + days + " " + startTime + " - " + endTime;
