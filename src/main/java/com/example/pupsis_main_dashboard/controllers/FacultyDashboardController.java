@@ -255,11 +255,16 @@ public class FacultyDashboardController {
         };
     }
 
-private void loadContent(String fxmlPath) {
+public void loadContent(String fxmlPath) {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent content = loader.load();
-        
+
+        if (fxmlPath.equals(HOME_FXML)) {
+            FacultyHomeContentController facultyHomeContentController = loader.getController();
+            facultyHomeContentController.setFacultyDashboardController(this);
+        }
+
         // Set faculty ID in SessionData when loading grading module
         if (fxmlPath.equals(GRADES_FXML)) {
             String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
@@ -270,7 +275,6 @@ private void loadContent(String fxmlPath) {
             String facultyId = SessionData.getInstance().getFacultyId();
             SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
         }
-
 
         contentPane.setContent(content);
         contentCache.put(fxmlPath, content);

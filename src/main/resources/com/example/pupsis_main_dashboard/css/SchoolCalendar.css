@@ -352,112 +352,115 @@
 /* --- EVENT COLOR THEME for School Calendar --- */
 
 .administrative {
-    -fx-background-color: #4A90E2; /* Soft Blue */
+    -fx-background-color: #245A94; /* Dark Navy Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #4A90E2; /* Soft Blue border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #245A94;
 }
 
 .holiday {
-    -fx-background-color: #E94E77; /* Bright Pink/Red */
+    -fx-background-color: #B03040; /* Deep Crimson */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #E94E77; /* Bright Pink/Red border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #B03040;
 }
 
 .registration {
-    -fx-background-color: #50E3C2; /* Teal / Mint */
-    -fx-text-fill: black;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #50E3C2; /* Teal / Mint border */
+    -fx-background-color: #2F6F61; /* Dark Forest Teal */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #2F6F61;
 }
 
 .academic {
-    -fx-background-color: #F5A623; /* Amber / Orange */
-    -fx-text-fill: black;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #F5A623; /* Amber / Orange border */
+    -fx-background-color: #C05A0E; /* Deep Burnt Orange */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #C05A0E;
 }
 
 .meeting {
-    -fx-background-color: #7B61FF; /* Soft Purple */
+    -fx-background-color: #4C3EC5; /* Indigo */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #7B61FF; /* Soft Purple border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #4C3EC5;
 }
 
 .graduation {
-    -fx-background-color: #FFC080; /* Soft orange */
+    -fx-background-color: #CC704B; /* Deep Coral */
     -fx-text-fill: white;
     -fx-background-radius: 12px;
-    -fx-border-color: #FFC080; /* Background rounded corners */
+    -fx-border-radius: 12px;
+    -fx-border-color: #CC704B;
 }
 
 .default {
-    -fx-background-color: #3498DB; /* Soft blue */
+    -fx-background-color: #1C5B89; /* Navy Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #3498DB; /* Soft blue border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #1C5B89;
 }
+
 /* --- DARK EVENT COLOR THEME for School Calendar --- */
 
 .dark-theme .administrative {
-    -fx-background-color: #2F80ED; /* Bright blue on dark */
+    -fx-background-color: #3A8DFF; /* Vivid Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #2F80ED; /* Bright blue border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #3A8DFF;
 }
 
 .dark-theme .holiday {
-    -fx-background-color: #D64550; /* Soft red on dark */
+    -fx-background-color: #FF5E6E; /* Bright Rose Red */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #D64550; /* Soft red border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FF5E6E;
 }
 
 .dark-theme .registration {
-    -fx-background-color: #43B29D; /* Deep teal */
-    -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #43B29D; /* Deep teal border */
+    -fx-background-color: #5CD6BE; /* Mint Green */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #5CD6BE;
 }
 
 .dark-theme .academic {
-    -fx-background-color: #E67E22; /* Burnt orange */
-    -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #E67E22; /* Burnt orange border */
+    -fx-background-color: #FFA348; /* Lighter Orange */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FFA348;
 }
 
 .dark-theme .meeting {
-    -fx-background-color: #9B59B6; /* Muted purple */
-    -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #9B59B6; /* Muted purple border */
+    -fx-background-color: #B47CFF; /* Soft Lavender */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #B47CFF;
 }
 
 .dark-theme .graduation {
-    -fx-background-color: #FFA07A; /* Soft orange on dark */
-    -fx-text-fill: white;
+    -fx-background-color: #FFB48E; /* Light Coral */
+    -fx-text-fill: black;
     -fx-background-radius: 12px;
-    -fx-border-color: #FFA07A; /* Bright orange on dark border */
+    -fx-border-radius: 12px;
+    -fx-border-color: #FFB48E;
 }
 
 .dark-theme .default {
-    -fx-background-color: #2C3E50; /* Soft blue */
+    -fx-background-color: #4A90E2; /* Soft Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 12px; /* Background rounded corners */
-    -fx-border-radius: 12px; /* Border rounded corners */
-    -fx-border-color: #2C3E50; /* Soft blue border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #4A90E2;
 }

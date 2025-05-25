@@ -155,7 +155,7 @@
             <VBox alignment="TOP_CENTER" prefHeight="254.0" prefWidth="150.0" styleClass="quick-actions-container">
                <children>
                   <Label styleClass="section-header" text="Quick Actions" />
-                  <Button minWidth="190.0" styleClass="action-button" text="Input Grades">
+                  <Button fx:id="inputGradesButton" minWidth="190.0" styleClass="action-button" text="Input Grades">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" top="5.0" />
                      </VBox.margin>

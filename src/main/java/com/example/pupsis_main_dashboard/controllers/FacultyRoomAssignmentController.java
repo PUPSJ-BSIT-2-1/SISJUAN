@@ -50,22 +50,15 @@ public class FacultyRoomAssignmentController {
     private static final Logger logger = LoggerFactory.getLogger(FacultyRoomAssignmentController.class);
     private String sessionFacultyID;
 
-    private final String[] iconNames = {
-            "/com/example/pupsis_main_dashboard/Images/book.png",
-            "/com/example/pupsis_main_dashboard/Images/computer.png",
-            "/com/example/pupsis_main_dashboard/Images/clock.png"
-    };
-
     @FXML private void initialize() {
         schedules.clear();
         scheduleTable.setEditable(false);
         sessionFacultyID = SessionData.getInstance().getFacultyId();
-        System.out.println(sessionFacultyID);
 
         var task = new Task<Void>() {
             @Override
             protected Void call() {
-                loadSchedules(iconNames, sessionFacultyID);
+                loadSchedules(sessionFacultyID);
                 return null;
             }
         };
@@ -147,17 +140,17 @@ public class FacultyRoomAssignmentController {
         });
     }
 
-    private void loadSchedules(String[] iconNames, String sessionFacultyID) {
+    private void loadSchedules(String sessionFacultyID) {
         String query = """
-                    SELECT fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, sub.subject_code, sub.description,
+                    SELECT CONCAT(faculty_number, ' - ', description, ' (', year_section, ')') AS faculty, fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number, fl.load_id, sub.subject_id, sub.subject_code, sub.description,
                            fl.year_section, sch.days, TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
                            TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time, r.room_name AS room, sub.units, sch.lecture_hour, sch.laboratory_hour
                     FROM schedule sch
-                    JOIN faculty_load fl ON sch.load_id = fl.load_id
+                    JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id
                     JOIN faculty fac ON fl.faculty_id = fac.faculty_id
                     JOIN subjects sub ON fl.subject_id = sub.subject_id
                     JOIN room r ON sch.room_id = r.room_id
-                    WHERE fac.faculty_id = ?;
+                    WHERE fac.faculty_id = ? AND fl.semester = ?;
                 """;
 
         try (Connection conn = DBConnection.getConnection();
@@ -169,11 +162,16 @@ public class FacultyRoomAssignmentController {
             }
 
             stmt.setInt(1, Integer.parseInt(sessionFacultyID));
+            stmt.setString(2, SchoolYearAndSemester.determineCurrentSemester());
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Button editBtn = new Button("Edit");
                     editBtn.getStyleClass().add("edit-button");
                     // Get values first
+                    int loadID = rs.getInt("load_id");
+                    String faculty = rs.getString("faculty");
+                    String subjectID = rs.getString("subject_id");
+                    String facultyNumber = rs.getString("faculty_number");
                     String subCode = rs.getString("subject_code");
                     String description = rs.getString("description");
                     String facultyName = rs.getString("faculty_name");
@@ -188,8 +186,8 @@ public class FacultyRoomAssignmentController {
                     int labHour = rs.getInt("laboratory_hour");
 
                     Schedule schedule = new Schedule(
-                            subCode, description, facultyName, facultyID, yearSection, days,
-                            startTime, endTime, room, units, lectureHour, labHour, editBtn, iconNames
+                            loadID, faculty, subjectID, facultyNumber, subCode, description, facultyName, facultyID, yearSection, days,
+                            startTime, endTime, room, units, lectureHour, labHour, editBtn
                     );
 
                     schedules.add(schedule);

@@ -35,6 +35,27 @@
     "devDesc": "She assisted in developing the Student View Module by designing and coding intuitive, responsive front-end components to improve the student experience when accessing academic records and grades. She also ensured a smooth interface and reliable functionality through thorough testing and bug fixing to meet quality standards."
   },
   {
+    "devModule": "Grading",
+    "devName": "Sandra Marie O. Francisco",
+    "devRole": "Backend Developer",
+    "devImage": "Images/devs/FRANCISCO.jpg",
+    "devDesc": "She handles most of the programming side for the Grades module. She makes sure student grades are stored, calculated, and retrieved correctly. She works with the team to keep everything secure and running smoothly."
+  },
+  {
+    "devModule": "Grading",
+    "devName": "Rizza Mae Y. Gonzales",
+    "devRole": "Frontend Developer",
+    "devImage": "Images/devs/GONZALES.jpg",
+    "devDesc": "She also designs the part of the Grades module that users see. She makes sure the grades are easy to view and the page works well on all devices. She works along the backend team to keep the information up to date."
+  },
+  {
+    "devModule": "Grading",
+    "devName": "Cydoel Tomas",
+    "devRole": "Frontend Developer",
+    "devImage": "Images/devs/GONZALES.jpg",
+    "devDesc": ""
+  },
+  {
     "devModule": "Registration",
     "devName": "Tyronne Jake S. Medina",
     "devRole": "Backend Developer",
@@ -56,23 +77,23 @@
     "devDesc": "Develops backend APIs and payment processing logic."
   },
   {
-    "devModule": "Grading",
-    "devName": "Sandra Marie O. Francisco",
-    "devRole": "Backend Developer",
-    "devImage": "Images/devs/Francisco.jpg",
-    "devDesc": "She handles most of the programming side for the Grades module. She makes sure student grades are stored, calculated, and retrieved correctly. She works with the team to keep everything secure and running smoothly."
-  },
-  {
-    "devModule": "Grading",
-    "devName": "Rizza Mae Y. Gonzales",
-    "devRole": "Frontend Developer",
-    "devImage": "Images/devs/GONZALES.jpg",
-    "devDesc": "She also designs the part of the Grades module that users see. She makes sure the grades are easy to view and the page works well on all devices. She works along the backend team to keep the information up to date."
-  },
-  {
     "devModule": "Room Assignment",
     "devName": "Vann Augustine J. Sajulan",
     "devRole": "Frontend Developer",
+    "devImage": "Images/devs/SAJULAN.jpg",
+    "devDesc": "I worked as the frontend developer for the Room Assignment module of our system. I focused on the design and layout, choosing the right colors, fonts, and overall look to make the system clear and easy to use. I made sure the interface is user-friendly and works well for anyone using it. I also worked with the system’s data and functions."
+  },
+  {
+    "devModule": "Room Assignment",
+    "devName": "Eunice Marie S. Marquez",
+    "devRole": "UI/UX Designer",
+    "devImage": "Images/devs/SAJULAN.jpg",
+    "devDesc": "I worked as the frontend developer for the Room Assignment module of our system. I focused on the design and layout, choosing the right colors, fonts, and overall look to make the system clear and easy to use. I made sure the interface is user-friendly and works well for anyone using it. I also worked with the system’s data and functions."
+  },
+  {
+    "devModule": "Room Assignment",
+    "devName": "Jesalyn Anne S. Segotier",
+    "devRole": "Documentation Analyst",
     "devImage": "Images/devs/SAJULAN.jpg",
     "devDesc": "I worked as the frontend developer for the Room Assignment module of our system. I focused on the design and layout, choosing the right colors, fonts, and overall look to make the system clear and easy to use. I made sure the interface is user-friendly and works well for anyone using it. I also worked with the system’s data and functions."
   }
