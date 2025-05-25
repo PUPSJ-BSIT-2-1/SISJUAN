@@ -4,6 +4,7 @@ import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.chart.PieChart;
@@ -11,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
+import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,9 +40,20 @@ public class FacultyHomeContentController {
     @FXML private PieChart classDistributionChart;
     @FXML private VBox rootVBox;
     @FXML private VBox eventsVBox;
+    @FXML private Button inputGradesButton;
     
     private String facultyId;
-    
+
+    private FacultyDashboardController facultyDashboardController;
+
+    public void setFacultyDashboardController(FacultyDashboardController controller) {
+        this.facultyDashboardController = controller;
+
+        if (inputGradesButton != null) {
+            inputGradesButton.setOnAction(this::inputGradesButtonClick);
+        }
+    }
+
     /**
      * Initializes the controller. This method is automatically called after the FXML file has been loaded.
      */
@@ -66,6 +79,13 @@ public class FacultyHomeContentController {
             totalClassesLabel.setText("0");
             totalStudentsLabel.setText("0");
             scheduledClassesTodayLabel.setText("0");
+        }
+    }
+
+    private void inputGradesButtonClick(javafx.event.ActionEvent actionEvent) {
+        if (facultyDashboardController != null) {
+            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
+            facultyDashboardController.loadContent(GRADES_FXML);
         }
     }
     

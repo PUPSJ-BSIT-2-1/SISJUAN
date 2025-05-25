@@ -474,7 +474,7 @@
 }
 
 .dark-theme .cancel-button:hover {
-    -fx-background-color: #e57373;
+    -fx-background-color: #3e8e3e;
     -fx-cursor: hand;
 }
 

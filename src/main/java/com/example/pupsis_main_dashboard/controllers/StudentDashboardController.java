@@ -1,6 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 //import com.example.pupsis_main_dashboard.utility.ControllerUtils;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
@@ -46,6 +47,7 @@ public class StudentDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
+    private final String identifier = RememberMeHandler.getCurrentUserEmail();
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
@@ -164,7 +166,7 @@ public class StudentDashboardController {
                         String lastName = result.getString("lastname");
                         
                         finalName = formatStudentName(firstName, middleName, lastName);
-                        
+
                         // Log the student name
                         logger.info("Student logged in: {} (identifier: {})", finalName, identifier);
                     }
@@ -172,7 +174,7 @@ public class StudentDashboardController {
                 
                 // Get student formatted number
                 String finalStudentFormattedNumber = getStudentFormattedNumber(identifier);
-                
+
                 // Update UI on JavaFX Application Thread
                 String nameToDisplay = finalName;
                 Platform.runLater(() -> {
@@ -315,8 +317,12 @@ public class StudentDashboardController {
                     HomeContentController homeController = loader.getController();
                     homeController.setStudentDashboardController(this);
                     logger.info("Reference to StudentDashboardController passed to HomeContentController");
+                    assert identifier != null;
+                    String studentNumber = getStudentFormattedNumber(identifier);
+                    SessionData.getInstance().setStudentNumber(studentNumber);
+                    System.out.println("Student Number: " + studentNumber);
                 }
-                
+
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
@@ -332,7 +338,7 @@ public class StudentDashboardController {
         content.layoutBoundsProperty().addListener((_, _, newVal) -> {
             if (newVal.getHeight() > 0) {
                 Platform.runLater(() -> {
-                    contentPane.setVvalue(0);
+                    contentPane.setVvalue(0.0);
                     contentPane.layout();
                 });
             }
