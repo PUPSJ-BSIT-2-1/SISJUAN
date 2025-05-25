@@ -219,7 +219,6 @@ public class RoomAssignmentController {
             logger.error("Error loading school events", ex);
         }
     }
-
 }
 
 

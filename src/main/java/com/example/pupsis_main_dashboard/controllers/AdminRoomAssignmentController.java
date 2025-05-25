@@ -190,7 +190,7 @@ public class AdminRoomAssignmentController {
                            fl.year_section, sch.days, TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
                            TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time, r.room_name AS room, sub.units, sch.lecture_hour, sch.laboratory_hour
                     FROM schedule sch
-                    JOIN faculty_load fl ON sch.load_id = fl.load_id
+                    JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id
                     JOIN faculty fac ON fl.faculty_id = fac.faculty_id
                     JOIN subjects sub ON fl.subject_id = sub.subject_id
                     JOIN room r ON sch.room_id = r.room_id;
@@ -293,7 +293,7 @@ public class AdminRoomAssignmentController {
                 JOIN faculty ON faculty.faculty_id = faculty_load.faculty_id
                 JOIN subjects ON subjects.subject_id = faculty_load.subject_id
                 WHERE faculty_load.semester = ?
-                AND faculty_load.load_id NOT IN (SELECT load_id FROM schedule)
+                AND faculty_load.load_id NOT IN (SELECT faculty_load_id FROM schedule)
                 ORDER BY faculty_number
                 """;
 
@@ -411,7 +411,7 @@ public class AdminRoomAssignmentController {
                 return;
             }
 
-            String query = "INSERT INTO schedule (load_id, start_time, end_time, lecture_hour, laboratory_hour, days, room_id) " +
+            String query = "INSERT INTO schedule (faculty_load_id, start_time, end_time, lecture_hour, laboratory_hour, days, room_id) " +
                     "VALUES (?, TO_TIMESTAMP(?, 'HH12:MI AM'), TO_TIMESTAMP(?, 'HH12:MI AM'), ?, ?, ?, ?)";
 
             String getRoomID = "SELECT room_id FROM room WHERE room_name = ?";
@@ -548,7 +548,7 @@ public class AdminRoomAssignmentController {
             schedule.setDays(updatedDays);
 
             // Update the database
-            String updateQuery = "UPDATE schedule SET start_time = TO_TIMESTAMP(?, 'HH12:MI AM'), end_time = TO_TIMESTAMP(?, 'HH12:MI AM'), lecture_hour = ?, laboratory_hour = ?, days = ?, room_id = ? WHERE load_id = ?";
+            String updateQuery = "UPDATE schedule SET start_time = TO_TIMESTAMP(?, 'HH12:MI AM'), end_time = TO_TIMESTAMP(?, 'HH12:MI AM'), lecture_hour = ?, laboratory_hour = ?, days = ?, room_id = ? WHERE faculty_load_id = ?";
 
             String getRoomID = "SELECT room_id FROM room WHERE room_name = ?";
             int roomID = 0;
@@ -578,6 +578,7 @@ public class AdminRoomAssignmentController {
             // Refresh the table view or perform additional actions as needed
             scheduleTable.refresh();
             handleCancelSchedule(); // Return to the previous view
+            reloadFXML();
         });
         deleteButton.setOnAction(_ -> handleDeleteSchedule(schedule));
     }
@@ -586,7 +587,7 @@ public class AdminRoomAssignmentController {
         int facultyLoadID = schedule.getLoadID();
 
         try {
-            String deleteQuery = "DELETE FROM schedule WHERE load_id = ?";
+            String deleteQuery = "DELETE FROM schedule WHERE faculty_load_id = ?";
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
                 stmt.setInt(1, facultyLoadID);
@@ -627,8 +628,8 @@ public class AdminRoomAssignmentController {
         WHERE (
             TO_TIMESTAMP(?, 'HH12:MI AM')::time < s.end_time
             AND TO_TIMESTAMP(?, 'HH12:MI AM')::time > s.start_time
-            AND (r.room_name = ? OR s.load_id = ?)
-            AND s.load_id != ?
+            AND (r.room_name = ? OR s.faculty_load_id = ?)
+            AND s.faculty_load_id != ?
         )
         """;
 
@@ -665,7 +666,6 @@ public class AdminRoomAssignmentController {
         }
         return false;
     }
-
 
     private void reloadFXML() {
         try {
