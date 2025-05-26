@@ -54,7 +54,7 @@ public class StudentDashboardController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/CopyGrades.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
-    private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/EnrollmentContent.fxml";
+    private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentEnrollmentContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
     // Initialize the controller and set up the dashboard
@@ -314,7 +314,7 @@ public class StudentDashboardController {
                 
                 // If loading home content, pass reference to this controller
                 if (fxmlPath.equals(HOME_FXML)) {
-                    HomeContentController homeController = loader.getController();
+                    StudentHomeContentController homeController = loader.getController();
                     homeController.setStudentDashboardController(this);
                     logger.info("Reference to StudentDashboardController passed to HomeContentController");
                     assert identifier != null;

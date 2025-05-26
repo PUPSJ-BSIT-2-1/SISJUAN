@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.event.ActionEvent;
 
-public class HomeContentController {
+public class StudentHomeContentController {
 
     @FXML
     private Label studentNameLabel;
@@ -25,7 +25,7 @@ public class HomeContentController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/CopyGrades.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/CopySchedule.fxml";
 
-    private static final Logger logger = LoggerFactory.getLogger(HomeContentController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StudentHomeContentController.class);
     
     private StudentDashboardController studentDashboardController;
 

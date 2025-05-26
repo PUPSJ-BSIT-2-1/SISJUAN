@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" styleClass="font" stylesheets="@../css/EnrollmentContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EnrollmentController">
+<VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" styleClass="font" stylesheets="@../css/StudentEnrollmentContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentEnrollmentController">
    <padding>
       <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
    </padding>
