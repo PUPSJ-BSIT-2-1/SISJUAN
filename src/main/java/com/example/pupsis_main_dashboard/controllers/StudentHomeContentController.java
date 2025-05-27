@@ -16,7 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class HomeContentController {
+public class StudentHomeContentController {
 
     @FXML
     private Label studentNameLabel;
@@ -42,7 +42,7 @@ public class HomeContentController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/CopyGrades.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
 
-    private static final Logger logger = LoggerFactory.getLogger(HomeContentController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StudentHomeContentController.class);
     
     private StudentDashboardController studentDashboardController;
 
