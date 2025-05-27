@@ -31,6 +31,7 @@ public class FacultyDashboardController {
     @FXML private HBox subjectsHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox schoolCalendarHBox;
+    @FXML private HBox scheduleHBox;
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
@@ -331,6 +332,7 @@ public void loadContent(String fxmlPath) {
         registrationHBox.getStyleClass().remove("selected");
         subjectsHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
+        scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
