@@ -1,6 +1,5 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-
 import com.example.pupsis_main_dashboard.models.Schedule;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
@@ -27,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FacultyRoomAssignmentController {
 
+    // FXML components 
     @FXML
     private VBox root;
     @FXML
@@ -50,7 +50,9 @@ public class FacultyRoomAssignmentController {
     private static final Logger logger = LoggerFactory.getLogger(FacultyRoomAssignmentController.class);
     private String sessionFacultyID;
 
-    @FXML private void initialize() {
+    // Initialize method to set up the table and load data
+    @FXML 
+    private void initialize() {
         schedules.clear();
         scheduleTable.setEditable(false);
         sessionFacultyID = SessionData.getInstance().getFacultyId();
@@ -101,6 +103,8 @@ public class FacultyRoomAssignmentController {
         });
     }
 
+
+    // Method to set a custom cell factory for wrapping text in header cells
     private void setWrappingHeaderCellFactory(TableColumn<Schedule, String> column) {
 
         AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
@@ -127,6 +131,7 @@ public class FacultyRoomAssignmentController {
                 setGraphic(pane);
             }
 
+            // Override the updateItem method to set the text of the label
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -140,6 +145,7 @@ public class FacultyRoomAssignmentController {
         });
     }
 
+    // Method to load schedules from the database for the current faculty
     private void loadSchedules(String sessionFacultyID) {
         String query = """
                     SELECT CONCAT(faculty_number, ' - ', description, ' (', year_section, ')') AS faculty, fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number, fl.load_id, sub.subject_id, sub.subject_code, sub.description,

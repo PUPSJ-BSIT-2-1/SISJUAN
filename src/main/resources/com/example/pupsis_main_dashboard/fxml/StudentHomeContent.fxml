@@ -41,14 +41,14 @@
                          <HBox prefWidth="810.0" spacing="10.0">
 
                                          <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
-            <Label styleClass="stat-value" text="2nd Year" />
-            <Label styleClass="stat-label" text="Second Semester" />
+            <Label fx:id="yearLevel" styleClass="stat-value" text="2nd Year" />
+            <Label fx:id="semester" styleClass="stat-label" text="Second Semester" />
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
         </VBox>
         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
-            <Label styleClass="stat-value" text="1.25" />
+            <Label fx:id="semGPA" styleClass="stat-value" text="1.25" />
             <Label styleClass="stat-label" text="Current GWA" />
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -67,7 +67,7 @@
       <children>
          <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <children>
-               <Label styleClass="stat-value" text="Enrolled" />
+               <Label fx:id="status" styleClass="stat-value" text="Enrolled" />
                <Label styleClass="stat-label" text="Status" />
             </children>
             <padding>
@@ -76,7 +76,7 @@
          </VBox>
          <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
             <children>
-               <Label styleClass="stat-value" text="8" />
+               <Label fx:id="totalSubjects" styleClass="stat-value" text="8" />
                <Label styleClass="stat-label" text="Graded Subjects " />
             </children>
             <padding>

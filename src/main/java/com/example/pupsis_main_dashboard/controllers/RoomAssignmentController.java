@@ -23,9 +23,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
 public class RoomAssignmentController {
 
+    // FXML components
     @FXML
     private TableView<Schedule> studentTable;
     @FXML
@@ -50,6 +50,8 @@ public class RoomAssignmentController {
     private final ObservableList<Schedule> scheduleList = FXCollections.observableArrayList();
     private static final Logger logger = LoggerFactory.getLogger(RoomAssignmentController.class);
 
+    // Initialize method to set up the table and load data
+    @FXML
     public void initialize() {
         studentTable.setEditable(false);
         Task<Void> loadTask = new Task<>() {
@@ -61,6 +63,7 @@ public class RoomAssignmentController {
         };
         new Thread(loadTask).start();
 
+        // Set up the table columns
         subjCodeCell.setCellValueFactory(new PropertyValueFactory<>("subCode"));
         subjDescriptionCell.setCellValueFactory(new PropertyValueFactory<>("subDesc"));
         lecHourCell.setCellValueFactory(new PropertyValueFactory<>("stringLectureHour"));
@@ -83,10 +86,12 @@ public class RoomAssignmentController {
         String sem = SchoolYearAndSemester.determineCurrentSemester();
         semester.setText("Academic Year " + acadYear + " - " + sem);
 
+        // Set wrapping header cell factory for each column
         for (TableColumn<Schedule, String> col : Arrays.asList(subjCodeCell, subjDescriptionCell, lecHourCell, labHourCell, unitsCell, scheduleCell, roomCell)) {
             setWrappingHeaderCellFactory(col);
         }
 
+        // Set row height
         studentTable.setRowFactory(_ -> {
             TableRow<Schedule> row = new TableRow<>();
             row.setPrefHeight(65);
@@ -96,6 +101,7 @@ public class RoomAssignmentController {
         studentTable.setItems(scheduleList);
     }
 
+    // Method to set a custom cell factory for wrapping text in header cells
     private void setWrappingHeaderCellFactory(TableColumn<Schedule, String> column) {
 
         AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
@@ -107,6 +113,7 @@ public class RoomAssignmentController {
             }
         });
 
+        // Set the cell factory for the column to wrap text and center it
         column.setCellFactory(_ -> new TableCell<>() {
             private final Label label = new Label();
 
@@ -135,11 +142,14 @@ public class RoomAssignmentController {
         });
     }
 
+    // Method to load schedules from the database
     private void loadSchedules() {
         String sessionStudentID = SessionData.getInstance().getStudentNumber();
         System.out.println("STUDENT_ID:" + sessionStudentID);
+        
+        // SQL query to fetch schedules for the student
         String query = """
-                SELECT DISTINCT ON (s.student_id, sub.subject_id)
+                SELECT
                     s.student_id,
                     s.student_number,
                     s.year_section,
@@ -159,15 +169,16 @@ public class RoomAssignmentController {
                     sch.laboratory_hour
                 FROM student_load sl
                 JOIN students s ON sl.student_id = s.student_id
-                JOIN faculty_load fl ON sl.load_id = fl.load_id
+                JOIN subjects sub ON sl.subject_id = sub.subject_id
+                JOIN faculty_load fl ON sl.faculty_load = fl.load_id
                 JOIN faculty fac ON fl.faculty_id = fac.faculty_id
-                JOIN subjects sub ON fl.subject_id = sub.subject_id
-                JOIN schedule sch ON fl.load_id = sl.load_id
+                JOIN schedule sch ON fl.load_id = sch.faculty_load_id
                 JOIN room r ON sch.room_id = r.room_id
                 WHERE s.student_id = ? AND fl.year_section = ?
                 ORDER BY s.student_id, sub.subject_id, sch.start_time;
                 """;
 
+        // SQL query to get student ID and year section based on student number
         String query2 = "SELECT student_id, year_section FROM students WHERE student_number = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -219,7 +230,6 @@ public class RoomAssignmentController {
             logger.error("Error loading school events", ex);
         }
     }
-
 }
 
 

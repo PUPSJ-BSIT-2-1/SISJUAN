@@ -114,21 +114,25 @@ public class AdminRoomAssignmentController {
     private final List<Schedule> allSchedules = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(AdminRoomAssignmentController.class);
 
+    // This method is called when the FXML file is loaded
+    // and initializes the controller.
     @FXML
     private void initialize() {
         vBox.toFront();
         scheduleContainer.setOpacity(0);
         initializeComboBoxes();
         scheduleTable.setEditable(false);
-
+        
+        // Create a task to load schedules in the background
         Task<Void> task = getVoidTask();
         new Thread(task).start();
 
-        // add more column cell if necessary
         var columns = new TableColumn[]{subCodeCell, subDescriptionCell, facultyNameCell, facultyIDCell, scheduleCell, roomCell, editCell};
         for (var col : columns) {
             col.setReorderable(false);
         }
+
+        // Set cell value factories for each column
         facultyNameCell.setCellValueFactory(new PropertyValueFactory<>("facultyName"));
         facultyIDCell.setCellValueFactory(new PropertyValueFactory<>("facultyID"));
         subCodeCell.setCellValueFactory(new PropertyValueFactory<>("subCode"));
@@ -167,6 +171,7 @@ public class AdminRoomAssignmentController {
         addSchedule.setOnAction(_ -> handleAddSchedule(borderPane, scheduleContainer));
     }
 
+    // This method creates a Task that loads schedules and populates the combo boxes.
     private Task<Void> getVoidTask() {
         Task<Void> task = new Task<>() {
             @Override
@@ -184,13 +189,14 @@ public class AdminRoomAssignmentController {
         return task;
     }
 
+    // This method loads schedules from the database and populates the schedule list.
     private void loadSchedules() {
         String query = """
                     SELECT CONCAT(fac.faculty_number, ' - ', sub.description, ' (', fl.year_section, ')') AS faculty, fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number, fl.load_id, sub.subject_id, sub.subject_code, sub.description,
                            fl.year_section, sch.days, TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
                            TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time, r.room_name AS room, sub.units, sch.lecture_hour, sch.laboratory_hour
                     FROM schedule sch
-                    JOIN faculty_load fl ON sch.load_id = fl.load_id
+                    JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id
                     JOIN faculty fac ON fl.faculty_id = fac.faculty_id
                     JOIN subjects sub ON fl.subject_id = sub.subject_id
                     JOIN room r ON sch.room_id = r.room_id;
@@ -203,7 +209,7 @@ public class AdminRoomAssignmentController {
             while (rs.next()) {
                 Button editBtn = new Button("Edit");
                 editBtn.getStyleClass().add("edit-button");
-                // Get values first
+                // Get values first from the ResultSet and then create a Schedule object
                 int loadID = rs.getInt("load_id");
                 String faculty = rs.getString("faculty");
                 String subjectID = rs.getString("subject_id");
@@ -237,6 +243,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method sets a custom header cell factory for the specified column to allow wrapping text.
     private void setWrappingHeaderCellFactory(TableColumn<Schedule, String> column) {
 
         AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
@@ -286,6 +293,7 @@ public class AdminRoomAssignmentController {
         });
     }
 
+    // This method populates the faculty ID combo box with faculty loads that are not assigned to any schedule.
     private void populateFacultyIDComboBox() {
         String query = """
                 SELECT CONCAT(faculty_number, ' - ', description, ' (', year_section, ')') AS faculty
@@ -293,7 +301,7 @@ public class AdminRoomAssignmentController {
                 JOIN faculty ON faculty.faculty_id = faculty_load.faculty_id
                 JOIN subjects ON subjects.subject_id = faculty_load.subject_id
                 WHERE faculty_load.semester = ?
-                AND faculty_load.load_id NOT IN (SELECT load_id FROM schedule)
+                AND faculty_load.load_id NOT IN (SELECT faculty_load_id FROM schedule)
                 ORDER BY faculty_number
                 """;
 
@@ -312,13 +320,14 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method populates the start and end time combo boxes with time slots.
     private void populateTimeComboBox() {
         String[] times = new String[28];
         LocalTime time = LocalTime.of(7, 30);
         for (int i = 0; i < times.length; i++) {
             times[i] = time.format(DateTimeFormatter.ofPattern("h:mm a"));
             time = time.plusMinutes(30);
-            if (time.isAfter(LocalTime.of(22, 0))) {
+            if (time.isAfter(LocalTime.of(21, 0))) {
                 break;
             }
         }
@@ -326,6 +335,7 @@ public class AdminRoomAssignmentController {
         endTimeComboBox.getItems().addAll(times);
     }
 
+    // This method populates the filter faculty combo box with distinct faculty names.
     private void populateFilterFacultyComboBox() {
         String query = "SELECT DISTINCT firstname || ' ' || lastname AS full_name FROM faculty";
 
@@ -343,6 +353,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method populates the filter room combo box with distinct room names.
     private void populateFilterRoomComboBox() {
         String query = "SELECT DISTINCT room_id, room_name FROM room ORDER BY room_id ASC";
 
@@ -359,6 +370,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method retrieves the selected days from the checkboxes and returns them as a string.
     private String getSelectedDays() {
         StringBuilder sb = new StringBuilder();
 
@@ -373,6 +385,7 @@ public class AdminRoomAssignmentController {
         return sb.toString();
     }
 
+    // This method handles the addition of a new schedule.
     private void handleAddSchedule(BorderPane borderPane, VBox scheduleContainer) {
         clearAllFields();
         borderPane.toFront();
@@ -411,7 +424,7 @@ public class AdminRoomAssignmentController {
                 return;
             }
 
-            String query = "INSERT INTO schedule (load_id, start_time, end_time, lecture_hour, laboratory_hour, days, room_id) " +
+            String query = "INSERT INTO schedule (faculty_load_id, start_time, end_time, lecture_hour, laboratory_hour, days, room_id) " +
                     "VALUES (?, TO_TIMESTAMP(?, 'HH12:MI AM'), TO_TIMESTAMP(?, 'HH12:MI AM'), ?, ?, ?, ?)";
 
             String getRoomID = "SELECT room_id FROM room WHERE room_name = ?";
@@ -455,6 +468,7 @@ public class AdminRoomAssignmentController {
         scheduleTable.refresh();
     }
 
+    // This method searches for the faculty load ID based on the selected faculty in the combo box.
     private int searchFacultyLoadID() {
         String facultySplit = facultyIDComboBox.getValue();
 
@@ -490,6 +504,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method handles the editing of an existing schedule.
     private void handleEditSchedule(Schedule schedule, BorderPane borderPane, VBox scheduleContainer) {
         borderPane.toFront();
         scheduleContainer.setOpacity(1);
@@ -548,7 +563,7 @@ public class AdminRoomAssignmentController {
             schedule.setDays(updatedDays);
 
             // Update the database
-            String updateQuery = "UPDATE schedule SET start_time = TO_TIMESTAMP(?, 'HH12:MI AM'), end_time = TO_TIMESTAMP(?, 'HH12:MI AM'), lecture_hour = ?, laboratory_hour = ?, days = ?, room_id = ? WHERE load_id = ?";
+            String updateQuery = "UPDATE schedule SET start_time = TO_TIMESTAMP(?, 'HH12:MI AM'), end_time = TO_TIMESTAMP(?, 'HH12:MI AM'), lecture_hour = ?, laboratory_hour = ?, days = ?, room_id = ? WHERE faculty_load_id = ?";
 
             String getRoomID = "SELECT room_id FROM room WHERE room_name = ?";
             int roomID = 0;
@@ -578,15 +593,17 @@ public class AdminRoomAssignmentController {
             // Refresh the table view or perform additional actions as needed
             scheduleTable.refresh();
             handleCancelSchedule(); // Return to the previous view
+            reloadFXML();
         });
         deleteButton.setOnAction(_ -> handleDeleteSchedule(schedule));
     }
 
+    // This method handles the deletion of a schedule.
     private void handleDeleteSchedule(Schedule schedule) {
         int facultyLoadID = schedule.getLoadID();
 
         try {
-            String deleteQuery = "DELETE FROM schedule WHERE load_id = ?";
+            String deleteQuery = "DELETE FROM schedule WHERE faculty_load_id = ?";
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
                 stmt.setInt(1, facultyLoadID);
@@ -619,6 +636,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method checks if the proposed schedule is free in the specified room.
     private boolean isScheduleFree(String room, String proposedStart, String proposedEnd, String proposedDays, int facultyLoadId) {
         String query = """
         SELECT s.days
@@ -627,8 +645,8 @@ public class AdminRoomAssignmentController {
         WHERE (
             TO_TIMESTAMP(?, 'HH12:MI AM')::time < s.end_time
             AND TO_TIMESTAMP(?, 'HH12:MI AM')::time > s.start_time
-            AND (r.room_name = ? OR s.load_id = ?)
-            AND s.load_id != ?
+            AND (r.room_name = ? OR s.faculty_load_id = ?)
+            AND s.faculty_load_id != ?
         )
         """;
 
@@ -653,6 +671,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method checks if the existing days overlap with the proposed days.
     private boolean daysOverlap(String existingDays, String proposedDays) {
         // example: existing = "TTh", proposed = "Th"
         // check if any of the proposed substrings exist in the scheduled days
@@ -666,7 +685,7 @@ public class AdminRoomAssignmentController {
         return false;
     }
 
-
+    // This method reloads the FXML to refresh the view.
     private void reloadFXML() {
         try {
             // Get the current stage
@@ -686,6 +705,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method handles the cancellation of the schedule creation or update.
     private void handleCancelSchedule() {
         vBox.toFront();
         scheduleContainer.setDisable(true);
@@ -694,6 +714,7 @@ public class AdminRoomAssignmentController {
         showCreateButtonsContainer();
     }
 
+    // This method shows the create buttons container and hides the update buttons container.
     private void showCreateButtonsContainer() {
         createScheduleButtonsContainer.toFront();
         createScheduleButtonsContainer.setOpacity(1);
@@ -703,6 +724,7 @@ public class AdminRoomAssignmentController {
         updateScheduleButtonsContainer.setDisable(true);
     }
 
+    // This method shows the update buttons container and hides the create buttons container.
     private void showUpdateButtonsContainer() {
         updateScheduleButtonsContainer.toFront();
         updateScheduleButtonsContainer.setOpacity(1);
@@ -712,6 +734,7 @@ public class AdminRoomAssignmentController {
         createScheduleButtonsContainer.setDisable(true);
     }
 
+    // This method initializes the combo boxes for filtering schedules.
     private void initializeComboBoxes() {
         ObservableList<String> facultyOptions = FXCollections.observableArrayList("All Faculty");
         ObservableList<String> roomOptions = FXCollections.observableArrayList("All Room");
@@ -732,6 +755,7 @@ public class AdminRoomAssignmentController {
         filterRoomComboBox.getSelectionModel().select("All Room");
     }
 
+    // This method filters the schedules based on the selected faculty and room.
     private void filterSchedules() {
         String selectedFaculty = filterFacultyComboBox.getSelectionModel().getSelectedItem();
         String selectedRoom = filterRoomComboBox.getSelectionModel().getSelectedItem();
@@ -756,6 +780,7 @@ public class AdminRoomAssignmentController {
         }
     }
 
+    // This method clears all input fields in the schedule creation form.
     private void clearAllFields() {
         facultyIDComboBox.setValue(null);
         lectureHourTextField.clear();

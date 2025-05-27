@@ -320,7 +320,6 @@ public class StudentDashboardController {
                     assert identifier != null;
                     String studentNumber = getStudentFormattedNumber(identifier);
                     SessionData.getInstance().setStudentNumber(studentNumber);
-                    System.out.println("Student Number: " + studentNumber);
                 }
 
                 contentCache.put(fxmlPath, content);
