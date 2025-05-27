@@ -16,11 +16,10 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class EnrollmentController implements Initializable {
+public class StudentEnrollmentController implements Initializable {
 
     @FXML private Button selectAllButton;
     @FXML private Button enrollButton;
