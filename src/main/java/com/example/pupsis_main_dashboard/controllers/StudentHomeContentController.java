@@ -39,7 +39,7 @@ public class StudentHomeContentController {
     @FXML
     private Label totalSubjects;
 
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/CopyGrades.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGrades.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
 
     private static final Logger logger = LoggerFactory.getLogger(StudentHomeContentController.class);
