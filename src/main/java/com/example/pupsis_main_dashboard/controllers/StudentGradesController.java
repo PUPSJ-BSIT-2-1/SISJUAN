@@ -53,6 +53,7 @@ public class StudentGradesController {
     @FXML
     private Label semesterGPA;
 
+    private static double borrowGPA = 0;
     private final ObservableList<Grades> studentsList = FXCollections.observableArrayList();
     private final Logger logger = LoggerFactory.getLogger(StudentGradesController.class);
 
@@ -296,7 +297,16 @@ public class StudentGradesController {
         } else {
             double semGPA = totalGradePoints / totalUnits;
             semesterGPA.setText(String.format("%.2f", semGPA));
+            setGWA(semGPA);
         }
+    }
+
+    private void setGWA(double semGPA) {
+        borrowGPA = semGPA;
+    }
+
+    public static double getGWA() {
+        return borrowGPA;
     }
 
     private void filterGrades() {

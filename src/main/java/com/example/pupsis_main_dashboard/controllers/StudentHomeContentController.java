@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.event.ActionEvent;
@@ -27,7 +28,7 @@ public class StudentHomeContentController {
     @FXML
     private Button viewPaymentButton; //TODO: Add payment button
     @FXML
-    private Button requestDocumentButton; //TODO: Add request document button
+    private Button seeEnrollmentButton;
     @FXML
     private Label yearLevel;
     @FXML
@@ -38,18 +39,23 @@ public class StudentHomeContentController {
     private Label semGPA;
     @FXML
     private Label totalSubjects;
+    @FXML
+    private Label numAnnouncements;
+    @FXML
+    private ListView<String> listAnnouncements;
 
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGrades.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
+    private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentEnrollmentContent.fxml";
 
     private static final Logger logger = LoggerFactory.getLogger(StudentHomeContentController.class);
-    
+
     private StudentDashboardController studentDashboardController;
 
     // Method to set the reference to StudentDashboardController
     public void setStudentDashboardController(StudentDashboardController controller) {
         this.studentDashboardController = controller;
-        
+
         // Set up the viewGradesButton click event
         if (viewGradesButton != null) {
             viewGradesButton.setOnAction(this::viewGradesButtonClick);
@@ -58,6 +64,10 @@ public class StudentHomeContentController {
         // Set up the viewScheduleButton click event
         if (viewScheduleButton != null) {
             viewScheduleButton.setOnAction(this::viewScheduleButtonClick);
+        }
+
+        if (seeEnrollmentButton != null) {
+            seeEnrollmentButton.setOnAction(this::seeEnrollmentButtonClick);
         }
     }
 
@@ -82,6 +92,10 @@ public class StudentHomeContentController {
                         determineCurrentYearLevel();
                         determineCurrentSemester();
                         determineCurrentStatus();
+                        calculateTotalSubjects();
+                        calculateCurrentGWA();
+                        populateAnnouncements();
+                        calculateNumAnnouncements();
                         if (fullName.contains(",")) {
                             String[] nameParts = fullName.split(",");
                             String firstName = nameParts.length > 1 ?
@@ -116,6 +130,7 @@ public class StudentHomeContentController {
         if (studentDashboardController != null) {
             logger.info("View Grades button clicked, loading grades content");
             studentDashboardController.loadContent(GRADES_FXML);
+            studentDashboardController.handleQuickActionClicks(GRADES_FXML);
         } else {
             logger.error("StudentDashboardController reference is null, cannot load grades content");
         }
@@ -126,9 +141,17 @@ public class StudentHomeContentController {
         if (studentDashboardController != null) {
             logger.info("View Schedule button clicked, loading schedule content");
             studentDashboardController.loadContent(SCHEDULE_FXML);
+            studentDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
         } else {
             logger.error("StudentDashboardController reference is null, cannot load schedule content");
         }
+    }
+
+    // Handler for seeEnrollmentButton click
+    private void seeEnrollmentButtonClick(ActionEvent event) {
+        logger.info("See Enrollment button clicked, loading enrollment content");
+        studentDashboardController.loadContent(ENROLLMENT_FXML);
+        studentDashboardController.handleQuickActionClicks(ENROLLMENT_FXML);
     }
 
     private void determineCurrentYearLevel() {
@@ -221,4 +244,80 @@ public class StudentHomeContentController {
         }
     }
 
+    private void calculateTotalSubjects() {
+        String identifier = SessionData.getInstance().getStudentNumber();
+
+        String getStudentID = "SELECT student_id FROM students WHERE student_number = ?";
+        String query = """  
+            SELECT COUNT(*) AS total_subjects
+            FROM student_load sl
+            JOIN year_section yr ON sl.year_section = yr.year_section
+                AND sl.semester = yr.semester\s
+                AND sl.academic_year = yr.academic_year\s
+            WHERE sl.student_id = ?;
+            """;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt1 = connection.prepareStatement(getStudentID);
+             PreparedStatement stmt2 = connection.prepareStatement(query)) {
+
+            stmt1.setString(1, identifier);
+            ResultSet rs1 = stmt1.executeQuery();
+
+            if (rs1.next()) {
+                int studentID = rs1.getInt("student_id");
+                stmt2.setInt(1, studentID);
+                ResultSet rs2 = stmt2.executeQuery();
+
+                if (rs2.next()) {
+                    int subjects = rs2.getInt("total_subjects");
+                    totalSubjects.setText(String.valueOf(subjects));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving total subjects", e);
+            totalSubjects.setText("0");
+        }
+    }
+
+    private void calculateCurrentGWA() {
+        double currentGWA = StudentGradesController.getGWA();
+        if (currentGWA != 0.00) {
+            semGPA.setText(String.format("%.2f", currentGWA));
+        }
+        else {
+            semGPA.setText("N/A");
+        }
+    }
+
+    private void populateAnnouncements() {
+        listAnnouncements.getItems().clear();
+        String query = "SELECT announcement || '( || date || )' as announcement FROM announcement ORDER BY date DESC LIMIT 5";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.isBeforeFirst()) {
+                while (rs.next()) {
+                    String announcement = rs.getString("announcement");
+                    listAnnouncements.getItems().add("• " + announcement);
+                }
+            } else {
+                listAnnouncements.getItems().clear();
+                listAnnouncements.getItems().add("• No announcements available");
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error retrieving announcements", e);
+        }
+    }
+
+    private void calculateNumAnnouncements() {
+        int numberOfAnnouncements = listAnnouncements.getItems().size();
+        if (listAnnouncements.getItems().contains("• No announcements available")) {
+            numberOfAnnouncements--;
+        }
+        numAnnouncements.setText(String.valueOf(numberOfAnnouncements));
+    }
 }

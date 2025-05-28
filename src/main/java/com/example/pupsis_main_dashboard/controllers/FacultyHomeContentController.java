@@ -41,6 +41,8 @@ public class FacultyHomeContentController {
     @FXML private VBox rootVBox;
     @FXML private VBox eventsVBox;
     @FXML private Button inputGradesButton;
+    @FXML private Button checkScheduleButton;
+
     
     private String facultyId;
 
@@ -51,6 +53,10 @@ public class FacultyHomeContentController {
 
         if (inputGradesButton != null) {
             inputGradesButton.setOnAction(this::inputGradesButtonClick);
+        }
+
+        if (checkScheduleButton != null) {
+            checkScheduleButton.setOnAction(this::checkScheduleButtonClick);
         }
     }
 
@@ -86,9 +92,18 @@ public class FacultyHomeContentController {
         if (facultyDashboardController != null) {
             String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
             facultyDashboardController.loadContent(GRADES_FXML);
+            facultyDashboardController.handleQuickActionClicks(GRADES_FXML);
         }
     }
-    
+
+    private void checkScheduleButtonClick(javafx.event.ActionEvent actionEvent) {
+        if (facultyDashboardController != null) {
+            String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyRoomAssignment.fxml";
+            facultyDashboardController.loadContent(SCHEDULE_FXML);
+            facultyDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
+        }
+    }
+
     /**
      * Applies the current theme (dark/light) based on user preferences
      */

@@ -31,7 +31,6 @@ public class StudentDashboardController {
     @FXML private HBox homeHBox;
     @FXML private HBox registrationHBox;
     @FXML private HBox paymentInfoHBox;
-    @FXML private HBox subjectsHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox scheduleHBox;
     @FXML private HBox schoolCalendarHBox;
@@ -121,7 +120,7 @@ public class StudentDashboardController {
     private void preloadFxmlContent(String fxmlPath) {
         try {
             if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) {
-                // Check if resource exists before trying to load it
+                // Check if a resource exists before trying to load it
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
                     Parent content = FXMLLoader.load(resource);
@@ -373,12 +372,28 @@ public class StudentDashboardController {
         }
     }
 
+    public void handleQuickActionClicks(String fxmlPath) {
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            clearAllSelections();
+            scheduleHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(GRADES_FXML)) {
+            clearAllSelections();
+            schoolCalendarHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(ENROLLMENT_FXML)) {
+            clearAllSelections();
+            registrationHBox.getStyleClass().add("selected");
+        }
+    }
+
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
         registrationHBox.getStyleClass().remove("selected");
         paymentInfoHBox.getStyleClass().remove("selected");
-        subjectsHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
         scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");

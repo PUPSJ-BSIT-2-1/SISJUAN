@@ -326,7 +326,7 @@
             <VBox alignment="TOP_CENTER" prefWidth="235.0" spacing="5.0" styleClass="quick-actions-container">
                <children>
                   <Label styleClass="section-header" text="Quick Actions" />
-                  <Button minWidth="190.0" styleClass="action-button" text="Approve Documents">
+                  <Button minWidth="190.0" styleClass="action-button" text="Manage Faculty">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -334,7 +334,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Button>
-                  <Button styleClass="action-button" text="Manage Faculty">
+                  <Button styleClass="action-button" text="Manage Student">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -342,7 +342,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Button>
-                  <Button styleClass="action-button" text="Course Management">
+                  <Button styleClass="action-button" text="Manage Subject">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -350,7 +350,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Button>
-                  <Button styleClass="action-button" text="Generate Reports">
+                  <Button styleClass="action-button" text="Manage Schedule">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>

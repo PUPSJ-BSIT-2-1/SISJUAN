@@ -326,6 +326,18 @@ public void loadContent(String fxmlPath) {
         }
     }
 
+    public void handleQuickActionClicks(String fxmlPath) {
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            clearAllSelections();
+            scheduleHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(GRADES_FXML)) {
+            clearAllSelections();
+            schoolCalendarHBox.getStyleClass().add("selected");
+        }
+    }
+
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");

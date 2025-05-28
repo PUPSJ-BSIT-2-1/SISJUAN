@@ -57,6 +57,7 @@ public class AdminDashboardController {
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
     private static final String STUDENT_MANAGEMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentManagement.fxml";
+
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -134,7 +135,7 @@ public class AdminDashboardController {
         loadContent(HOME_FXML);
 
 
-        // Preload and cache other content asynchronously to avoid blocking UI
+        // Preload and cache other content asynchronously to avoid blocking the UI
         Platform.runLater(() -> {
             System.out.println("Starting asynchronous preloading of interfaces...");
 
@@ -167,7 +168,7 @@ public class AdminDashboardController {
                 boolean darkModeEnabled = prefs.getBoolean("darkMode", false);
 
                 if (content != null) {
-                    // Apply appropriate CSS classes based on current theme
+                    // Apply appropriate CSS classes based on the current theme
                     content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
                     content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
                 }
@@ -367,6 +368,28 @@ public class AdminDashboardController {
         }
     }
 
+    public void handleQuickActionClicks(String fxmlPath) {
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            clearAllSelections();
+            scheduleHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(SUBJECTS_FXML)) {
+            clearAllSelections();
+            subjectsHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(STUDENT_MANAGEMENT_FXML)) {
+            clearAllSelections();
+            studentsHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(FACULTY_FXML)) {
+            clearAllSelections();
+            facultyHBox.getStyleClass().add("selected");
+        }
+    }
+
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
@@ -382,7 +405,4 @@ public class AdminDashboardController {
         studentsHBox.getStyleClass().remove("selected");
     }
 
-    /**
-     * Preloads the Student Management interface to improve performance when navigating to it
-     */
 }
