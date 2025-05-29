@@ -4,8 +4,6 @@ import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.EmailService;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
-import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -38,8 +36,6 @@ import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.example.pupsis_main_dashboard.utilities.AuthenticationService.authenticate;
 
 public class FacultyLoginController {
     @FXML private VBox leftSide;
@@ -141,8 +137,7 @@ public class FacultyLoginController {
                                 com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
                             }
                         } catch (IOException e) {
-                            showAlert(Alert.AlertType.ERROR,
-                                    "Login Error",
+                            showAlert(
                                     "Unable to load dashboard",
                                     "There was an error loading the dashboard. Please try again.");
                         }
@@ -154,8 +149,7 @@ public class FacultyLoginController {
                 Platform.runLater(() -> {
                     leftSide.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
-                    showAlert(Alert.AlertType.ERROR,
-                            "Login Error",
+                    showAlert(
                             "Unable to connect to the server",
                             "Check your internet connection and try again.");
                 });
@@ -262,7 +256,7 @@ public class FacultyLoginController {
         if (scene != null) {
             com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
         } else {
-            // If scene isn't available yet, try again after a delay
+            // If a scene isn't available yet, try again after a delay
             Platform.runLater(() -> {
                 Scene delayedScene = mainLoginPane.getScene();
                 if (delayedScene != null) {
@@ -272,7 +266,7 @@ public class FacultyLoginController {
         }
     }
 
-    // Proceed with theme application
+    // Proceed with the theme application
     private void proceedWithThemeApplication() {
         Scene scene = mainLoginPane.getScene();
         if (scene != null) {
@@ -281,7 +275,7 @@ public class FacultyLoginController {
         }
     }
 
-    // Creates a pulsing dots loading animation
+    // Creates a pulsing dot loading animation
     public Node createPulsingDotsLoader(int dotCount, double dotRadius, Color color, double spacing, double animationDurationSeconds) {
         HBox container = new HBox(spacing);
         container.setAlignment(Pos.CENTER);
@@ -327,7 +321,7 @@ public class FacultyLoginController {
                 child.setEffect(blur);
             }
             
-            // Get the exact border radius from CSS (20px from .border-pane class)
+            // Get the exact border radius from CSS (20 px from .border-pane class)
             double cornerRadius = 20.0;
             
             // Store original styles for later restoration
@@ -347,13 +341,13 @@ public class FacultyLoginController {
             clip.setArcWidth(cornerRadius * 2);
             clip.setArcHeight(cornerRadius * 2);
             
-            // Ensure clip resizes with pane
+            // Ensure the clip resizes with pane
             clip.widthProperty().bind(targetPane.widthProperty());
             clip.heightProperty().bind(targetPane.heightProperty());
             
             // Add a solid background color to match the CSS
             if (isDarkMode) {
-                // For dark mode, use solid color with exact radius from CSS
+                // For dark mode, use solid color with an exact radius from CSS
                 targetPane.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: " + cornerRadius + ";");
             } else {
                 // For light mode
@@ -366,12 +360,12 @@ public class FacultyLoginController {
             // Mark that this pane has blur applied
             targetPane.getProperties().put("blurApplied", true);
         } else {
-            // Remove blur effect from all children
+            // Remove the blur effect from all children
             for (Node child : targetPane.getChildren()) {
                 child.setEffect(null);
             }
             
-            // Restore original style if it was saved
+            // Restore the original style if it was saved
             if (targetPane.getProperties().containsKey("originalStyle")) {
                 String originalStyle = (String) targetPane.getProperties().get("originalStyle");
                 targetPane.setStyle(originalStyle != null ? originalStyle : "");
@@ -380,7 +374,7 @@ public class FacultyLoginController {
                 targetPane.setStyle("");
             }
             
-            // Restore original clip if it was saved
+            // Restore the original clip if it was saved
             if (targetPane.getProperties().containsKey("originalClip")) {
                 Object originalClip = targetPane.getProperties().get("originalClip");
                 if (originalClip instanceof javafx.scene.shape.Shape) {
@@ -399,9 +393,9 @@ public class FacultyLoginController {
     }
     
     // Shows an alert dialog with the specified properties
-    private void showAlert(Alert.AlertType type, String title, String header, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
+    private void showAlert(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Login Error");
         alert.setHeaderText(header);
         alert.setContentText(content);
         

@@ -8,6 +8,9 @@ import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +18,8 @@ import java.sql.SQLException;
 import java.util.prefs.Preferences;
 
 public class SettingsController {
+
+    private static final Logger logger = LoggerFactory.getLogger(SettingsController.class);
 
     @FXML private VBox rootSettingsVBox;
 
@@ -64,40 +69,30 @@ public class SettingsController {
 
     // Load user settings from preferences and set them in the UI components
     private void loadUserSettings() {
-        // Get user identifier using RememberMeHandler
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        String currentUserIdentifier = null;
+        // Try to get user email - first try getCurrentUserEmail which works regardless of remember me status
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
 
-        if (credentials != null && credentials.length > 0) {
-            currentUserIdentifier = credentials[0];
-        } else {
-            System.err.println("Could not retrieve user identifier from RememberMeHandler in loadUserSettings.");
-            // Set default/empty values if user identifier is not available
-            emailField.setText("Error loading email");
-            phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Load phone from prefs anyway
-            // Load other prefs with defaults
-            themeToggle.setSelected(prefs.getBoolean(THEME_PREF, false));
-            emailNotificationsCheckbox.setSelected(prefs.getBoolean(EMAIL_NOTIF_PREF, true));
-            newGradeNotificationsCheckbox.setSelected(prefs.getBoolean(GRADE_NOTIF_PREF, true));
-            announcementNotificationsCheckbox.setSelected(prefs.getBoolean(ANNOUNCEMENT_NOTIF_PREF, false));
-            return; // Stop loading if user cannot be identified
-        }
-
-        // Load email from DB
-        String emailFromDB = getUserEmailFromDB(currentUserIdentifier);
-        emailField.setText(emailFromDB != null ? emailFromDB : "Not found");
-
-        // Load phone from Preferences
-        phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Provide empty default if not set
-
-        // Load other settings from Preferences
-        boolean isDarkMode = prefs.getBoolean(THEME_PREF, false);
-        themeToggle.setSelected(isDarkMode);
-
+        // Load non-database dependent settings immediately
+        phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Load phone from prefs 
+        themeToggle.setSelected(prefs.getBoolean(THEME_PREF, false));
         emailNotificationsCheckbox.setSelected(prefs.getBoolean(EMAIL_NOTIF_PREF, true));
         newGradeNotificationsCheckbox.setSelected(prefs.getBoolean(GRADE_NOTIF_PREF, true));
         announcementNotificationsCheckbox.setSelected(prefs.getBoolean(ANNOUNCEMENT_NOTIF_PREF, false));
+
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
+            System.err.println("Could not retrieve user identifier from RememberMeHandler in loadUserSettings.");
+            emailField.setText("Error loading email");
+            return; // Stop loading if the user cannot be identified
+        }
+
+        // Move database operation to background thread
+        new Thread(() -> {
+            String emailFromDB = getUserEmailFromDB(currentUserIdentifier);
+            // Update UI components on the JavaFX Application Thread
+            javafx.application.Platform.runLater(() -> {
+                emailField.setText(emailFromDB != null ? emailFromDB : "Not found");
+            });
+        }).start();
     }
 
     // Method to get email from DB (Added)
@@ -105,21 +100,31 @@ public class SettingsController {
         if (identifier == null || identifier.isEmpty()) return null;
 
         boolean isEmailIdentifier = identifier.contains("@");
-        String query = isEmailIdentifier
-            ? "SELECT email FROM students WHERE LOWER(email) = LOWER(?)"
-            : "SELECT email FROM students WHERE student_id = ?";
+        String query;
+        if (isEmailIdentifier) {
+            query = "SELECT email FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            // Assumes 'identifier' is the formatted student_number
+            // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
+            query = "SELECT email FROM students WHERE student_number = ?";
+        }
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, identifier.toLowerCase()); // Use lowercase for email consistency
+            if (isEmailIdentifier) {
+                statement.setString(1, identifier.toLowerCase());
+            } else {
+                // Identifier is treated as the formatted student_number (String)
+                statement.setString(1, identifier);
+            }
             ResultSet rs = statement.executeQuery();
 
             if (rs.next()) {
                 return rs.getString("email");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving email from DB: {}", e.getMessage());
         }
         return null; // Return null if not found or on error
     }
@@ -134,17 +139,17 @@ public class SettingsController {
 
     // Set up listeners for notification checkboxes to automatically save preferences
     private void setupNotificationCheckboxListeners() {
-        emailNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+        emailNotificationsCheckbox.selectedProperty().addListener((_, _, newVal) -> {
             prefs.putBoolean(EMAIL_NOTIF_PREF, newVal);
             updateNotificationPreference("emailNotifications", newVal);
         });
         
-        newGradeNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+        newGradeNotificationsCheckbox.selectedProperty().addListener((_, _, newVal) -> {
             prefs.putBoolean(GRADE_NOTIF_PREF, newVal);
             updateNotificationPreference("gradeNotifications", newVal);
         });
         
-        announcementNotificationsCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+        announcementNotificationsCheckbox.selectedProperty().addListener((_, _, newVal) -> {
             prefs.putBoolean(ANNOUNCEMENT_NOTIF_PREF, newVal);
             updateNotificationPreference("announcementNotifications", newVal);
         });
@@ -184,13 +189,10 @@ public class SettingsController {
         String confirmPass = confirmNewPasswordField.getText();
 
         // Get user identifier using RememberMeHandler
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        String currentUserIdentifier = null;
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
 
-        if (credentials != null && credentials.length > 0) {
-            currentUserIdentifier = credentials[0];
-        } else {
+
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
             // Handle case where credentials couldn't be loaded (e.g., user not logged in or 'Remember Me' was off)
             System.err.println("Could not retrieve user identifier from RememberMeHandler.");
             showAlert("Error", "Unable to identify current user. Please log in again.", Alert.AlertType.ERROR);
@@ -217,9 +219,9 @@ public class SettingsController {
             isCurrentPasswordCorrect = AuthenticationService.authenticate(currentUserIdentifier, currentPass);
         } catch (Exception e) {
             System.err.println("Error during authentication check: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error during authentication check: {}", e.getMessage());
             showAlert("Error", "An unexpected error occurred during authentication.", Alert.AlertType.ERROR);
-            return; // Stop if authentication check fails
+            return; // Stop if the authentication check fails
         }
 
         if (!isCurrentPasswordCorrect) {
@@ -229,7 +231,7 @@ public class SettingsController {
             return;
         }
 
-        // 2. If current password is correct, hash the new password and update the database
+        // 2. If the current password is correct, hash the new password and update the database
         try {
             String hashedNewPassword = PasswordHandler.hashPassword(newPass);
 
@@ -249,7 +251,7 @@ public class SettingsController {
                     newPasswordField.clear();
                     confirmNewPasswordField.clear();
                     
-                    // Send a notification about password change
+                    // Send a notification about the password change
                     notificationManager.addNotification(
                         "Password Changed",
                         "Your password was successfully changed.",
@@ -262,27 +264,39 @@ public class SettingsController {
             }
         } catch (SQLException e) {
             System.err.println("SQL error during password update: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("SQL error during password update: {}", e.getMessage());
             showAlert("Database Error", "An error occurred while updating the password in the database.", Alert.AlertType.ERROR);
         } catch (Exception e) {
             // Catch potential exceptions from hashing or other logic
             System.err.println("Error changing password: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error changing password: {}", e.getMessage());
             showAlert("Error", "An unexpected error occurred while changing the password.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleSaveProfile() {
-        String email = emailField.getText(); // Keep getting text in case needed for logging/validation later
+        if (emailField.getText().isEmpty()) {
+            showAlert("Error", "Email cannot be empty.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Get user identifier using RememberMeHandler
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
+
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
+            // Handle case where no user is currently logged in
+            showAlert("Error", "No user is currently logged in. Please log in again.", Alert.AlertType.ERROR);
+            return;
+        }
+
         String phone = phoneField.getText();
         // TODO: Add validation for phone formats if needed
-        // Removed saving email to prefs: prefs.put(EMAIL_FIELD_PREF, email);
         prefs.put(PHONE_FIELD_PREF, phone); // Keep saving phone to prefs
         System.out.println("Profile settings saved (Phone number updated in prefs). Email field is display-only from DB.");
         showAlert("Profile Saved", "Your phone number preference has been updated.", Alert.AlertType.INFORMATION); // Updated message
         
-        // Send a notification about profile update
+        // Send a notification about a profile update
         notificationManager.addNotification(
             "Profile Updated",
             "Your profile information has been updated.",

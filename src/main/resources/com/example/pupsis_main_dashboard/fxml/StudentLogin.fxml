@@ -68,7 +68,7 @@
                          <Font name="Poppins Bold" size="24.0" />
                      </font>
                  </Label>
-                 <Label prefWidth="125.0" text="Enter your Student ID">
+                 <Label prefWidth="125.0" styleClass="small-text" text="Enter your Student ID">
                      <padding>
                          <Insets bottom="30.0" top="-5.0" />
                      </padding>
@@ -86,7 +86,7 @@
                          <Insets bottom="10.0" />
                      </VBox.margin>
                  </TextField>
-                 <PasswordField fx:id="passwordField" promptText="Password" styleClass="fields">
+                 <PasswordField fx:id="loginPasswordField" promptText="Password" styleClass="fields">
                      <padding>
                          <Insets left="15.0" />
                      </padding>
@@ -201,22 +201,14 @@
                              <Insets bottom="10.0" />
                          </VBox.margin>
                      </TextField>
-                     <PasswordField fx:id="password" prefHeight="30.0" prefWidth="218.0" promptText="Password" styleClass="fields">
-                         <padding>
-                             <Insets left="15.0" />
-                         </padding>
-                         <VBox.margin>
-                             <Insets bottom="10.0" />
-                         </VBox.margin>
-                     </PasswordField>
-                     <PasswordField fx:id="reType" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password" styleClass="fields">
+                     <TextField fx:id="address" prefHeight="30.0" prefWidth="218.0" promptText="Address" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
                          <VBox.margin>
                              <Insets bottom="20.0" />
                          </VBox.margin>
-                     </PasswordField>
+                     </TextField>
                      <Label styleClass="font" text="Birthday">
                          <VBox.margin>
                              <Insets bottom="10.0" left="10.0" top="10.0" />

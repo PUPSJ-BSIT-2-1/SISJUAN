@@ -234,10 +234,10 @@
 }
 
 .dark-theme .signup-link {
-    -fx-text-fill: #87CEFA; /* LightSkyBlue for links */
+    -fx-text-fill: #a0a0a0; /* Gray instead of LightSkyBlue for links */
 }
 .dark-theme .signup-link:hover {
-    -fx-text-fill: #add8e6; /* Lighter blue on hover */
+    -fx-text-fill: #c0c0c0; /* Lighter gray on hover */
 }
 
 
@@ -283,10 +283,10 @@
 }
 
 .dark-theme .resend-code-link {
-    -fx-text-fill: #87CEFA; /* Link color */
+    -fx-text-fill: #a0a0a0; /* Gray instead of blue for links */
 }
 .dark-theme .resend-code-link:hover {
-    -fx-text-fill: #add8e6; /* Link hover color */
+    -fx-text-fill: #c0c0c0; /* Lighter gray on hover */
 }
 
 /* --- Fade Effects Dark Theme (from StudentDashboard.css) --- */
@@ -301,7 +301,7 @@
 /* --- ScrollBar Dark Theme (within .content-container or globally if needed) --- */
 
 /* ============== DARK THEME STYLES from HomeContent.css ============== */
-/* Specific styles for HomeContent.fxml when in dark mode */
+/* Specific styles for StudentHomeContent.fxml when in dark mode */
 
 .dark-theme .home-content-pane {
     -fx-background-color: transparent; /* Let the parent dark theme background show */
@@ -351,7 +351,7 @@
     -fx-bar-fill: #b22222; /* Firebrick for first series */
 }
 .dark-theme .default-color1.chart-bar {
-    -fx-bar-fill: #4682b4; /* SteelBlue for second series */
+    -fx-bar-fill: #707070; /* Gray instead of SteelBlue for second series */
 }
 /* Add more .default-colorN.chart-bar styles if you have more series */
 
@@ -363,7 +363,7 @@
     -fx-stroke: #b22222;
 }
 .dark-theme .default-color1.chart-series-line {
-    -fx-stroke: #4682b4;
+    -fx-stroke: #707070; /* Gray instead of blue */
 }
 
 .dark-theme .chart-line-symbol {
@@ -376,7 +376,7 @@
     -fx-background-color: #b22222, #1e1e1e;
 }
 .dark-theme .default-color1.chart-line-symbol {
-    -fx-background-color: #4682b4, #1e1e1e;
+    -fx-background-color: #707070, #1e1e1e; /* Gray instead of blue */
 }
 
 /* Ensure birthday field remains rounded in dark mode */

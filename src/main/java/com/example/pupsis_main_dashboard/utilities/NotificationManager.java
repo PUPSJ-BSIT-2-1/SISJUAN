@@ -86,39 +86,31 @@ public class NotificationManager {
                     notification.getMessage()
                 );
                 System.out.println("Email notification sent to: " + userEmail);
-            } catch (MessagingException e) {
-                System.err.println("Failed to send email notification: " + e.getMessage());
-                e.printStackTrace();
-                
-                // Show error popup on UI thread
-                Platform.runLater(() -> {
-                    showEmailErrorPopup(e.getMessage());
-                });
+            } catch (jakarta.mail.MessagingException e) {
+                throw new RuntimeException(e);
             }
         });
     }
     
     private String getCurrentUserEmail() {
-        // Get current user ID from RememberMeHandler
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials == null || credentials.length == 0) {
+        // Get current user email using RememberMeHandler's static method
+        String email = RememberMeHandler.getCurrentUserEmail();
+        if (email == null || email.isEmpty()) {
             return null;
         }
         
-        String identifier = credentials[0];
-        boolean isEmail = identifier.contains("@");
+        boolean isEmail = email.contains("@");
         
         // If identifier is already an email, return it
         if (isEmail) {
-            return identifier;
+            return email;
         }
         
         // Otherwise, query the database for the email
         String query = "SELECT email FROM students WHERE student_id = ?";
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, identifier);
+            statement.setString(1, email);
             ResultSet result = statement.executeQuery();
             
             if (result.next()) {

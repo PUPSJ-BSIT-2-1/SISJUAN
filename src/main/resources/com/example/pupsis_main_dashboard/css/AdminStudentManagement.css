@@ -1,0 +1,64 @@
+.root {
+    -background-color: #f8fcfc;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%) !important;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.table-header {
+    -fx-background-color: #f8fcfc;
+    -fx-text-fill: #000000;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 14px;
+}
+
+/* Dark theme styles */
+
+.dark-theme .root {
+    -background-color: #2b2b2b;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3)) !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+
+.dark-theme .cards {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .table-header {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 14px;
+}

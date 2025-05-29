@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox fx:id="rootVBox" maxWidth="810.0" minWidth="810.0" prefHeight="866.0" prefWidth="810.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyHomeContentController">
+<VBox fx:id="rootVBox" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyHomeContentController">
    <children>
       <!-- Welcome Header -->
       <FlowPane prefHeight="50.0" prefWidth="810.0" styleClass="red-card">
@@ -107,6 +107,9 @@
                      </padding>
                   </VBox>
                </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
             </VBox>
             
             <VBox alignment="TOP_CENTER" styleClass="chart-container" HBox.hgrow="ALWAYS">
@@ -114,6 +117,9 @@
                   <Label styleClass="section-header" text="Class Distribution" />
                   <PieChart fx:id="classDistributionChart" labelLineLength="20.0" labelsVisible="false" legendSide="RIGHT" styleClass="distribution-chart" />
                </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
             </VBox>
          </children>
          <VBox.margin>
@@ -141,12 +147,25 @@
                      </padding>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
             
             <VBox alignment="TOP_CENTER" prefHeight="254.0" prefWidth="150.0" styleClass="quick-actions-container">
                <children>
                   <Label styleClass="section-header" text="Quick Actions" />
-                  <Button minWidth="190.0" styleClass="action-button" text="Input Grades">
+                  <Button fx:id="inputGradesButton" minWidth="190.0" styleClass="action-button" text="Input Grades">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="subjectsInfoButton" styleClass="action-button" text="Subjects Info">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="checkScheduleButton" styleClass="action-button" text="Check Schedule">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" top="5.0" />
                      </VBox.margin>
@@ -156,17 +175,10 @@
                         <Insets left="10.0" right="10.0" top="5.0" />
                      </VBox.margin>
                   </Button>
-                  <Button styleClass="action-button" text="Record Attendance">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="5.0" />
-                     </VBox.margin>
-                  </Button>
-                  <Button styleClass="action-button" text="Submit Requirements">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="5.0" />
-                     </VBox.margin>
-                  </Button>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
          </children>
          <VBox.margin>

@@ -1,0 +1,285 @@
+.label {
+    -fx-font-family: 'Inter';
+}
+
+/* Apply to all text elements in TableView */
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Column headers */
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-font-size: 12px; /* Ensures header text is 12px */
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10px, 5px, 0px, 5px;
+    -fx-text-fill: black;
+}
+
+/* Table cells */
+.table-view .table-cell {
+    -fx-border-width: 0 0 1 0;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-text-fill: black;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-padding: 5px;
+    -fx-text-fill: black;
+}
+
+.schedule-table {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 0 2 2 2;
+    -fx-border-radius: 0 0 10 10;
+    -fx-padding: 0 10 10 10;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-padding : 20px;
+}
+
+.red-card .label {
+    -fx-text-fill: white;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+.table-header {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2 2 0 2;
+    -fx-border-radius: 10 10 0 0;
+    -fx-padding: 10 10 3 10;
+    -fx-alignment: center-left;
+}
+
+.small-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.small-cards-title {
+    -fx-font-size: 16px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+    -fx-padding : 0 0 5 10;
+}
+
+.small-cards-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #6c757d;
+    -fx-wrap-text: true;
+}
+
+.stat-value {
+    -fx-font-size: 18px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.stat-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6c757d;
+}
+
+.region {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-padding: 15 0 0 0;
+}
+
+.icons {
+    -fx-fill: black;
+}
+
+/* ==================== DARK THEME STYLES ==================== */
+
+.dark-icons {
+    -fx-fill: white;
+}
+
+.dark-theme .label {
+    -fx-font-family: 'Inter';
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: #2b2b2b;
+    -fx-table-header-border-color: #555555;
+}
+
+.dark-theme .table-view .column-header-background {
+    -fx-background-color: #2b2b2b;
+}
+
+.dark-theme .table-view .column-header {
+    -fx-background-color: #2b2b2b;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #555555;
+    -fx-font-size: 12px;
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10px, 5px, 0px, 5px;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .table-view .table-cell {
+    -fx-border-width: 0 0 1 0;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-padding: 5px;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .schedule-table {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-color: #555555;
+    -fx-border-width: 0 2 2 2;
+    -fx-border-radius: 0 0 10 10;
+    -fx-padding: 0 10 10 10;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-padding : 20px;
+}
+
+.dark-theme .red-card .label {
+    -fx-text-fill: white;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cccccc;
+}
+
+.dark-theme .table-header {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: #555555;
+    -fx-border-width: 2 2 0 2;
+    -fx-border-radius: 10 10 0 0;
+    -fx-padding: 10 10 3 10;
+    -fx-alignment: center-left;
+}
+
+.dark-theme .small-cards {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-color: #555555;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.dark-theme .small-cards-title {
+    -fx-font-size: 16px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #f0f0f0;
+    -fx-font-weight: bold;
+    -fx-padding : 0 0 5 10;
+}
+
+.dark-theme .small-cards-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #aaaaaa;
+    -fx-wrap-text: true;
+}
+
+.dark-theme .stat-value {
+    -fx-font-size: 18px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .stat-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #aaaaaa;
+}
+
+.dark-theme .region {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #555555;
+    -fx-padding: 15 0 0 0;
+}
+
+
+

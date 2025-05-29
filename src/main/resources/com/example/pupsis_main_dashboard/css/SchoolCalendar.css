@@ -3,28 +3,16 @@
     -fx-background-color: white;
 }
 
-.dark-theme .main-root {
-    -fx-background-color: #1f1f1f;
-}
-
 /* Sub container style */
 .sub-root {
-    -fx-background-color: white;
-}
-
-.dark-theme .sub-root {
-    -fx-background-color: #1f1f1f;
+    -fx-background-color: white
 }
 
 /* Header section containing month/year selector */
 .header-container {
-    -fx-background-color: maroon;
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
     -fx-background-radius: 10;
     -fx-border-color: transparent;
-}
-
-.dark-theme .header-container {
-    -fx-background-color: #800000;
 }
 
 /* Container for weekday labels (Mon, Tue, etc) */
@@ -38,11 +26,6 @@
     -fx-padding: 5;
 }
 
-.dark-theme .days-container {
-    -fx-background-color: #2b2b2b;
-    -fx-border-color: #4a4a4a;
-}
-
 /* Individual weekday label styling */
 .days {
     -fx-font-size: 14px;
@@ -50,10 +33,6 @@
     -fx-font-family: "Inter 18pt Medium";
     -fx-text-fill: #343a40;
     -fx-alignment: center;
-}
-
-.dark-theme .days {
-    -fx-text-fill: #e0e0e0;
 }
 
 /* Main calendar grid container */
@@ -65,28 +44,15 @@
     -fx-border-radius: 10;
 }
 
-.dark-theme .calendar {
-    -fx-background-color: #2b2b2b;
-    -fx-border-color: #4a4a4a;
-}
-
 /* Icons in the header (arrows etc) */
 .icons {
     -fx-fill: #2b2b2b;
-}
-
-.dark-theme .icons {
-    -fx-fill: white;
 }
 
 /* Navigation button hover effects */
 .icons:hover {
     -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
     -fx-cursor: hand;
-}
-
-.dark-theme .icons:hover {
-    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
 }
 
 /* Month/Year selector combo box */
@@ -97,10 +63,6 @@
     -fx-font-weight: bold;
     -fx-font-size: 24px;
     -fx-padding: 0;
-}
-
-.dark-theme .combo-box {
-    -fx-text-fill: #e0e0e0;
 }
 
 /* Month/Year selector combo box hover effect */
@@ -119,11 +81,6 @@
     -fx-alignment: center;
 }
 
-.dark-theme .month-picker, .dark-theme .year-picker {
-    -fx-background-color: #2b2b2b;
-    -fx-border-color: #4a4a4a;
-}
-
 /* Event details dialog window */
 .custom-dialog {
     -fx-background-color: white;
@@ -132,11 +89,6 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
     -fx-padding: 3;
-}
-
-.dark-theme .custom-dialog {
-    -fx-background-color: #2b2b2b;
-    -fx-border-color: #4a4a4a;
 }
 
 /* Dialog window buttons */
@@ -148,27 +100,15 @@
     -fx-background-radius: 20;
 }
 
-.dark-theme .custom-dialog .button {
-    -fx-background-color: #b22222;
-}
-
 .custom-dialog .button:hover {
     -fx-background-color: #5e0000;
     -fx-cursor: hand;
-}
-
-.dark-theme .custom-dialog .button:hover {
-    -fx-background-color: #e57373;
 }
 
 /* Date styling in event dialog */
 .custom-dialog-date {
     -fx-font-size: 11px;
     -fx-font-family: "Inter 18pt Regular";
-}
-
-.dark-theme .custom-dialog-date {
-    -fx-text-fill: #e0e0e0;
 }
 
 /* Event type header in dialog */
@@ -179,19 +119,11 @@
     -fx-text-fill: #343a40;
 }
 
-.dark-theme .custom-dialog-header {
-    -fx-text-fill: #e0e0e0;
-}
-
 /* Event description text styling */
 .custom-dialog-description {
     -fx-font-family: "Inter 14pt Regular";
     -fx-font-size: 13px;
     -fx-padding: 8, 0, 0, 0;
-}
-
-.dark-theme .custom-dialog-description {
-    -fx-text-fill: #e0e0e0;
 }
 
 /* Content container for event dialog */
@@ -203,11 +135,6 @@
     -fx-border-color: #e3e5e6;
 }
 
-.dark-theme .custom-dialog-content {
-    -fx-background-color: #2b2b2b;
-    -fx-border-color: #4a4a4a;
-}
-
 /* Individual day cell in calendar */
 .calendar-day {
     -fx-border-color: gray;
@@ -216,21 +143,12 @@
     -fx-background-radius: 10;
 }
 
-.dark-theme .calendar-day {
-    -fx-border-color: #555555;
-    -fx-text-fill: #e0e0e0;
-}
-
 /* Hover effect for calendar days */
 .calendar-day:hover {
     -fx-background-color: #e3e5e6;
     -fx-cursor: hand;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-}
-
-.dark-theme .calendar-day:hover {
-    -fx-background-color: #555555;
 }
 
 /* Month/Year picker button */
@@ -243,19 +161,12 @@
     -fx-background-radius: 10;
 }
 
-.dark-theme .picker-button {
-    -fx-text-fill: #e0e0e0;
-}
-
+/* Hover effect for picker button */
 .picker-button:hover {
     -fx-background-color: #e3e5e6;
     -fx-cursor: hand;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-}
-
-.dark-theme .picker-button:hover {
-    -fx-background-color: #555555;
 }
 
 /* Styling for the current day */
@@ -268,10 +179,6 @@
     -fx-background-radius: 10;
 }
 
-.dark-theme .current-day {
-    -fx-background-color: #b22222;
-}
-
 /* Hover effect for current day */
 .current-day:hover {
     -fx-background-color: #3e0000;
@@ -280,20 +187,12 @@
     -fx-background-radius: 10;
 }
 
-.dark-theme .current-day:hover {
-    -fx-background-color: #e57373;
-}
-
 /* Day number for current day */
 .current-day-number {
     -fx-text-fill: white;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-font-family: "Inter 18pt Medium";
-}
-
-.dark-theme .current-day-number {
-    -fx-text-fill: white;
 }
 
 /* Event description for current day */
@@ -305,91 +204,263 @@
     -fx-border-radius: 10;
 }
 
+.day-number {
+    -fx-padding: 5px;
+}
+
+/* --- DARK THEME STYLES for School Calendar --- */
+
+/* Dark theme main container */
+.dark-theme .main-root {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+    -fx-border-width: 0;
+}
+
+/* Dark theme sub container */
+.dark-theme .sub-root {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+    -fx-border-width: 0;
+}
+
+/* Dark theme header */
+.dark-theme .header-container {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+}
+
+/* Dark theme calendar containers */
+.dark-theme .days-container,
+.dark-theme .calendar {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme weekday labels */
+.dark-theme .days {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme button container */
+.dark-theme .button-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme icons in the header (arrows etc) */
+.dark-theme .icons {
+    -fx-fill: white;
+}
+
+/* Dark theme button hover effects */
+.dark-theme .icons:hover {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+
+}
+
+/* Dark theme combo box */
+.dark-theme .combo-box {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme pickers and dialogs */
+.dark-theme .month-picker,
+.dark-theme .year-picker,
+.dark-theme .custom-dialog {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme calendar days */
+.dark-theme .calendar-day {
+    -fx-border-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme hover effects */
+.dark-theme .calendar-day:hover,
+.dark-theme .picker-button:hover {
+    -fx-background-color: #555555;
+}
+
+/* Dark theme current day */
+.dark-theme .current-day {
+    -fx-background-color: #b22222;
+}
+
+/* Dark theme current day hover */
+.dark-theme .current-day:hover {
+    -fx-background-color: #e57373;
+}
+
+/* Dark theme current day number */
+.dark-theme .current-day-number {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+}
+
+/* Dark theme event description */
 .dark-theme .current-day-description {
     -fx-text-fill: #ff9999;
+    -fx-font-size: 12px;
+    -fx-padding: 3;
     -fx-border-color: #ff9999;
+    -fx-border-radius: 10;
+}
+
+/* Dark theme dialog styles */
+.dark-custom-dialog {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 2;
+    -fx-text-fill: #f0f0f0;
+}
+
+.dark-theme .custom-dialog-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-button:hover {
+    -fx-background-color: #e57373;
+
+}
+
+.dark-theme .custom-dialog-date {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-description {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-content {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
 }
 
 /* --- EVENT COLOR THEME for School Calendar --- */
 
 .administrative {
-    -fx-background-color: #4A90E2; /* Soft Blue */
+    -fx-background-color: #245A94; /* Dark Navy Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #4A90E2; /* Soft Blue border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #245A94;
 }
 
 .holiday {
-    -fx-background-color: #E94E77; /* Bright Pink/Red */
+    -fx-background-color: #B03040; /* Deep Crimson */
     -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #E94E77; /* Bright Pink/Red border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #B03040;
 }
 
 .registration {
-    -fx-background-color: #50E3C2; /* Teal / Mint */
-    -fx-text-fill: black;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #50E3C2; /* Teal / Mint border */
+    -fx-background-color: #2F6F61; /* Dark Forest Teal */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #2F6F61;
 }
 
 .academic {
-    -fx-background-color: #F5A623; /* Amber / Orange */
-    -fx-text-fill: black;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #F5A623; /* Amber / Orange border */
+    -fx-background-color: #C05A0E; /* Deep Burnt Orange */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #C05A0E;
 }
 
 .meeting {
-    -fx-background-color: #7B61FF; /* Soft Purple */
+    -fx-background-color: #4C3EC5; /* Indigo */
     -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #7B61FF; /* Soft Purple border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #4C3EC5;
+}
+
+.graduation {
+    -fx-background-color: #CC704B; /* Deep Coral */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #CC704B;
+}
+
+.default {
+    -fx-background-color: #1C5B89; /* Navy Blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #1C5B89;
 }
 
 /* --- DARK EVENT COLOR THEME for School Calendar --- */
 
 .dark-theme .administrative {
-    -fx-background-color: #2F80ED; /* Bright blue on dark */
+    -fx-background-color: #3A8DFF; /* Vivid Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #2F80ED; /* Bright blue border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #3A8DFF;
 }
 
 .dark-theme .holiday {
-    -fx-background-color: #D64550; /* Soft red on dark */
+    -fx-background-color: #FF5E6E; /* Bright Rose Red */
     -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #D64550; /* Soft red border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FF5E6E;
 }
 
 .dark-theme .registration {
-    -fx-background-color: #43B29D; /* Deep teal */
-    -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #43B29D; /* Deep teal border */
+    -fx-background-color: #5CD6BE; /* Mint Green */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #5CD6BE;
 }
 
 .dark-theme .academic {
-    -fx-background-color: #E67E22; /* Burnt orange */
-    -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #E67E22; /* Burnt orange border */
+    -fx-background-color: #FFA348; /* Lighter Orange */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FFA348;
 }
 
 .dark-theme .meeting {
-    -fx-background-color: #9B59B6; /* Muted purple */
+    -fx-background-color: #B47CFF; /* Soft Lavender */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #B47CFF;
+}
+
+.dark-theme .graduation {
+    -fx-background-color: #FFB48E; /* Light Coral */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FFB48E;
+}
+
+.dark-theme .default {
+    -fx-background-color: #4A90E2; /* Soft Blue */
     -fx-text-fill: white;
-    -fx-background-radius: 10px; /* Background rounded corners */
-    -fx-border-radius: 10px; /* Border rounded corners */
-    -fx-border-color: #9B59B6; /* Muted purple border */
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #4A90E2;
 }

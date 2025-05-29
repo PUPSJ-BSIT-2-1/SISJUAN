@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Test extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(Test.class);
+public class TestFacultyDB extends Application {
+    private static final Logger logger = LoggerFactory.getLogger(TestFacultyDB.class);
 
     @Override
     public void start(Stage stage) {
@@ -24,7 +24,7 @@ public class Test extends Application {
 
         try {
             Stage initializedStage = utility.loadStage(
-                    "fxml/FacultyLogin.fxml",
+                    "fxml/FacultyDashboard.fxml",
                     "PUPSIS",
                     Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/PUPSJ Logo.png")).toExternalForm(),
                     StageAndSceneUtils.WindowSize.MEDIUM

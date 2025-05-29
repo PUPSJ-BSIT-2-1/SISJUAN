@@ -31,6 +31,7 @@ public class FacultyDashboardController {
     @FXML private HBox subjectsHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox schoolCalendarHBox;
+    @FXML private HBox scheduleHBox;
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
@@ -49,21 +50,27 @@ public class FacultyDashboardController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyRoomAssignment.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials != null && credentials.length == 2) {
+        String identifier = RememberMeHandler.getCurrentUserEmail();
+        if (identifier != null && !identifier.isEmpty()) {
             // Get faculty info from the database
-            String identifier = credentials[0];
             loadFacultyInfo(identifier);
+        } else {
+            // Handle case when no user is logged in
+            studentNameLabel.setText("User not logged in");
+            studentIdLabel.setText("");
+            departmentLabel.setText("");
         }
         
-        // Initialize fade1 as fully transparent
+        // Initialize fade1 as fully transparent and fade2 as visible
         fade1.setOpacity(0);
+        fade2.setOpacity(1);
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
@@ -78,13 +85,15 @@ public class FacultyDashboardController {
             double vvalue = newVal.doubleValue();
             
             // Show/hide top fade based on scroll position
-            fade1.setOpacity(vvalue > 0.05 ? 1 : 0);
+            // If scroll value is not 0, show fade1
+            fade1.setOpacity(vvalue > 0 ? 1 : 0);
             
-            // Show/hide bottom fade: visible on scroll, hidden if scrolled to the very bottom
+            // Show/hide bottom fade based on scroll position
+            // If at bottom, hide fade2, otherwise show as long as we've scrolled
             if (Math.abs(vvalue - 1.0) < 0.001) { // Check if vvalue is at the bottom
                 fade2.setOpacity(0);
             } else {
-                fade2.setOpacity(vvalue > 0.05 ? 1 : 0); // Visible if scrolled down, but not at the bottom
+                fade2.setOpacity(1); // Always visible unless at the very bottom
             }
         });
     }
@@ -98,17 +107,25 @@ public class FacultyDashboardController {
         preloadFxmlContent(GRADES_FXML);
         preloadFxmlContent(CALENDAR_FXML);
         preloadFxmlContent(SETTINGS_FXML);
+        preloadFxmlContent(ABOUT_FXML);
+        preloadFxmlContent(SCHEDULE_FXML);
     }
     
     // Preload and cache a specific FXML file
     private void preloadFxmlContent(String fxmlPath) {
         try {
             if (!contentCache.containsKey(fxmlPath)) {
-                Parent content = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
-                contentCache.put(fxmlPath, content);
+                var resource = getClass().getResource(fxmlPath);
+                if (resource != null) {
+                    Parent content = FXMLLoader.load(resource);
+                    contentCache.put(fxmlPath, content);
+                } else {
+                    System.err.println("Resource not found: " + fxmlPath);
+                }
             }
         } catch (IOException e) {
-            // Silently handle the exception, content will be loaded on-demand if needed
+            System.err.println("Error preloading content: " + fxmlPath);
+            e.printStackTrace();
         }
     }
     
@@ -123,7 +140,7 @@ public class FacultyDashboardController {
         boolean isEmail = identifier.contains("@");
         
         try (Connection connection = DBConnection.getConnection()) {
-            // First try by ID if the identifier is not an email
+            // First, try by ID if the identifier is not an email
             if (!isEmail) {
                 String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
                 try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -135,6 +152,7 @@ public class FacultyDashboardController {
                         return;
                     }
                 }
+
             }
             
             // If not found by ID or is an email, try with email (case-insensitive)
@@ -177,12 +195,14 @@ public class FacultyDashboardController {
         
         Platform.runLater(() -> {
             studentNameLabel.setText(formattedName);
+            SessionData data = SessionData.getInstance();
+            data.setFacultyId(facultyId);
             studentIdLabel.setText(facultyId);
             departmentLabel.setText(department != null ? department : "Department not set");
         });
     }
     
-    // Format faculty name as "LastName, FirstName"
+    // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
         
@@ -228,24 +248,35 @@ public class FacultyDashboardController {
             case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
-            case "scheduleHBox" ->null;
+            case "scheduleHBox" -> SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
-            case "aboutHBox" ->null;
+            case "aboutHBox" -> ABOUT_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
             default -> HOME_FXML;
         };
     }
 
-private void loadContent(String fxmlPath) {
+public void loadContent(String fxmlPath) {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent content = loader.load();
-        
+
+        if (fxmlPath.equals(HOME_FXML)) {
+            FacultyHomeContentController facultyHomeContentController = loader.getController();
+            facultyHomeContentController.setFacultyDashboardController(this);
+        }
+
         // Set faculty ID in SessionData when loading grading module
         if (fxmlPath.equals(GRADES_FXML)) {
-            String facultyId = studentIdLabel.getText();
-            SessionData.getInstance().setStudentId(facultyId);
+            String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
+            SessionData.getInstance().setStudentId(facultyId); // if needed
         }
-        
+
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            String facultyId = SessionData.getInstance().getFacultyId();
+            SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
+        }
+
         contentPane.setContent(content);
         contentCache.put(fxmlPath, content);
         addLayoutChangeListener(content);
@@ -295,12 +326,25 @@ private void loadContent(String fxmlPath) {
         }
     }
 
+    public void handleQuickActionClicks(String fxmlPath) {
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            clearAllSelections();
+            scheduleHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(GRADES_FXML)) {
+            clearAllSelections();
+            schoolCalendarHBox.getStyleClass().add("selected");
+        }
+    }
+
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
         registrationHBox.getStyleClass().remove("selected");
         subjectsHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
+        scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");

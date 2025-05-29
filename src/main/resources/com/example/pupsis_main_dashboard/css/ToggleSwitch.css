@@ -31,3 +31,12 @@
 .switch-toggle-button:selected .thumb {
     -fx-translate-x: 21px;
 }
+
+.dark-theme .switch-toggle-button {
+    -fx-text-fill: #505050;
+    -fx-background-color: #505050;
+}
+
+.dark-theme .switch-toggle-button:selected {
+    -fx-background-color: #b22222;
+}

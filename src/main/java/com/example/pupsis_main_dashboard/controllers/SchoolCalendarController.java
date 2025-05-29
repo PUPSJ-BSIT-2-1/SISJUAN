@@ -11,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.concurrent.Task;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,6 +43,8 @@ public class SchoolCalendarController {
     protected double yOffset = 0;
 
     private final String stylesheetPath = Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm();
+
+    private static final Logger logger = LoggerFactory.getLogger(SchoolCalendarController.class);
 
     @FXML private void initialize() {
         // Load events asynchronously
@@ -84,7 +88,7 @@ public class SchoolCalendarController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error loading school events", e);
         }
     }
 
@@ -112,7 +116,7 @@ public class SchoolCalendarController {
 
         Dialog<Void> dialog = new Dialog<>();
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.getDialogPane().setPrefSize(270, 270);
+        dialog.getDialogPane().setPrefSize(370, 320);  // Increased size
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
 
@@ -147,9 +151,10 @@ public class SchoolCalendarController {
         for (String event : eventDetails) {
             String[] elements = event.split(",");
             String eventDescription = elements[2];
+            String eventDescWithBullets = "• " + eventDescription;
 
             // Event Description Label
-            Label eventDescLabel = new Label(eventDescription);
+            Label eventDescLabel = new Label(eventDescWithBullets);
             eventDescLabel.getStyleClass().add("custom-dialog-description");
             eventDescLabel.setWrapText(true);
 
@@ -204,7 +209,7 @@ public class SchoolCalendarController {
 
         preloadEventsTask.setOnFailed(_ -> {
             System.err.println("Failed to load events.");
-            preloadEventsTask.getException().printStackTrace();
+            logger.error("Failed to load events.");  // Log the error();
         });
 
         // Start the task in a new thread
@@ -264,6 +269,7 @@ public class SchoolCalendarController {
 
     private VBox getVBox(int day) {
         Label dayNumber = new Label(String.valueOf(day));
+        dayNumber.getStyleClass().add("day-number");
         VBox dayButton = new VBox(dayNumber);
 
         LocalDate date = LocalDate.of(currentYear, currentMonth, day);
@@ -277,20 +283,26 @@ public class SchoolCalendarController {
             Label eventIndicator = new Label(eventDetails);
 
             switch (eventType) {
-                case "Administrative":
-                    eventIndicator.getStyleClass().add("administrative");
-                    break;
-                case "Holiday":
-                    eventIndicator.getStyleClass().add("holiday");
-                    break;
-                case "Registration":
+                case "Enrollment & Registration":
                     eventIndicator.getStyleClass().add("registration");
                     break;
-                case "Academic":
+                case "Holidays & Observances":
+                    eventIndicator.getStyleClass().add("holiday");
+                    break;
+                case "Administrative Deadlines":
+                    eventIndicator.getStyleClass().add("administrative");
+                    break;
+                case "Academic Schedule":
                     eventIndicator.getStyleClass().add("academic");
                     break;
-                case "Meeting":
+                case "Institutional Meetings":
                     eventIndicator.getStyleClass().add("meeting");
+                    break;
+                case "Graduation / Commencement":
+                    eventIndicator.getStyleClass().add("graduation");
+                    break;
+                default:
+                    eventIndicator.getStyleClass().add("default");
                     break;
             }
 

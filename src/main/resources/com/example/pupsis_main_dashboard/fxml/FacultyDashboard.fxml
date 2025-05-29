@@ -116,6 +116,19 @@
                   <Insets left="10.0" />
                </padding>
             </HBox>
+            <HBox fx:id="scheduleHBox" alignment="CENTER_LEFT" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
+               <children>
+                  <SVGPath content="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12-5.383,12-12,12Zm0-22C6.486,2,2,6.486,2,12s4.486,10,10,10,10-4.486,10-10S17.514,2,12,2Zm5,10c0-.553-.447-1-1-1h-3V6c0-.553-.448-1-1-1s-1,.447-1,1v6c0,.553,.448,1,1,1h4c.553,0,1-.447,1-1Z" fill="black" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </SVGPath>
+                  <Label styleClass="sidebar-label-font" text="Schedule" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
             <HBox fx:id="schoolCalendarHBox" alignment="CENTER_LEFT" layoutX="40.0" layoutY="436.0" onMouseClicked="#handleSidebarItemClick" prefHeight="40.0" styleClass="sidebar-items">
                <children>
                   <SVGPath content="M19,2H18V1a1,1,0,0,0-2,0V2H8V1A1,1,0,0,0,6,1V2H5A5.006,5.006,0,0,0,0,7V19a5.006,5.006,0,0,0,5,5H19a5.006,5.006,0,0,0,5-5V7A5.006,5.006,0,0,0,19,2ZM2,7A3,3,0,0,1,5,4H19a3,3,0,0,1,3,3V8H2ZM19,22H5a3,3,0,0,1-3-3V10H22v9A3,3,0,0,1,19,22Z" fill="black" scaleX="0.8" scaleY="0.8" styleClass="icons">

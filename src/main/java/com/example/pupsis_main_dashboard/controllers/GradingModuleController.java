@@ -3,7 +3,7 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 //import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
-import com.example.pupsis_main_dashboard.utilities.Subject;
+import com.example.pupsis_main_dashboard.models.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -31,6 +31,7 @@ import java.util.Objects;
 
 import javafx.scene.Node;
 import javafx.application.Platform;
+import javafx.scene.layout.StackPane;
 
 public class GradingModuleController implements Initializable {
     @FXML private TextField searchBar; // Add this field
@@ -40,6 +41,7 @@ public class GradingModuleController implements Initializable {
     @FXML private TableColumn<Subject, String> subjCodeCol;
     @FXML private TableColumn<Subject, String> subjDescCol;
     @FXML private Label validationLabel;
+    @FXML private StackPane searchIconContainer;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
     // Keep a reference to the original data
@@ -58,6 +60,9 @@ public class GradingModuleController implements Initializable {
         semCol.setReorderable(false);
         subjCodeCol.setReorderable(false);
         subjDescCol.setReorderable(false);
+
+        // Set up search icon click handler
+        searchIconContainer.setOnMouseClicked(event -> performSearch());
 
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
@@ -200,32 +205,11 @@ public class GradingModuleController implements Initializable {
 
         // Add listener to searchBar text property
         searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(subject -> {
-                // If search text is empty, display all subjects
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                // Convert search text to lower case
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                // Match against all fields
-                if (subject.getYearSection().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (subject.getSemester().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-
-                if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)){
-                    return true;
-                }
-                return subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter);// Does not match
-            });
+            applyFilter(filteredData, newValue);
         });
+
+        // Make search field responsive to ENTER key
+        searchBar.setOnAction(event -> performSearch());
 
         // Wrap the FilteredList in a SortedList
         SortedList<Subject> sortedData = new SortedList<>(filteredData);
@@ -237,6 +221,49 @@ public class GradingModuleController implements Initializable {
         subjectsTable.setItems(sortedData);
 
         subjectsTable.getColumns().forEach(column -> column.setReorderable(false));
+    }
+    
+    // Method to handle search button clicks
+    private void performSearch() {
+        // Get the current text from the search field
+        String searchText = searchBar.getText();
+        
+        // Request focus on the table to show we're done with the search input
+        subjectsTable.requestFocus();
+        
+        // If there's an active filter and results are empty, show a helpful message
+        if (!searchText.isEmpty() && subjectsTable.getItems().isEmpty()) {
+            subjectsTable.setPlaceholder(new Label("No matches found for: " + searchText));
+        }
+    }
+    
+    // Method to apply filter logic - extracted for reuse
+    private void applyFilter(FilteredList<Subject> filteredData, String newValue) {
+        filteredData.setPredicate(subject -> {
+            // If search text is empty, display all subjects
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
+            }
+
+            // Convert search text to lower case
+            String lowerCaseFilter = newValue.toLowerCase();
+
+            // Match against all fields
+            if (subject.getYearSection().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            if (subject.getSemester().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+
+            if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)){
+                return true;
+            }
+            return false; // Does not match
+        });
     }
 
     // Update your refreshTable method to maintain the search functionality

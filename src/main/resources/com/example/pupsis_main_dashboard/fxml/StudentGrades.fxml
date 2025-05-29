@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="782.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/Grades.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentGradesController">
+   <children>
+      <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="105.0" prefWidth="810.0" spacing="10.0" styleClass="backgrounds">
+         <children>
+            <VBox alignment="CENTER" prefHeight="102.0" prefWidth="382.0" styleClass="red-card" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label prefHeight="26.0" prefWidth="246.0" styleClass="header" text="Student Grade Portal">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="sub-header" text="Academic Records and Evaluation" />
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="166.0" prefWidth="810.0" spacing="10.0">
+         <children>
+            <HBox prefHeight="166.0" prefWidth="510.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox prefHeight="166.0" prefWidth="614.0">
+                     <children>
+                        <VBox prefHeight="156.0" prefWidth="629.0" styleClass="cards">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                           <children>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <VBox alignment="CENTER" prefHeight="70.0" prefWidth="300.0">
+                                       <children>
+                                          <Label fx:id="yearLevel" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="86.0" styleClass="info-description" text="2nd Year" textFill="#8e0000" />
+                                          <Label styleClass="info-sub-header" text="Year Level" textFill="#8e0000" />
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER" prefHeight="70.0" prefWidth="300.0">
+                                       <children>
+                                          <Label fx:id="scholasticStatus" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="86.0" styleClass="info-description" text="Regular" textFill="#8e0000" />
+                                          <Label styleClass="info-sub-header" text="Scholastic Status" textFill="#8e0000" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="48.0" prefWidth="518.0" spacing="10.0">
+                                 <children>
+                                    <VBox alignment="CENTER" prefHeight="48.0" prefWidth="300.0">
+                                       <children>
+                                          <ComboBox fx:id="yearSectionComboBox" prefHeight="27.0" prefWidth="310.0" promptText="Year Level" styleClass="modules" />
+                                          <Label styleClass="filter-text" text="Year Level">
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER" prefHeight="48.0" prefWidth="300.0">
+                                       <children>
+                                          <ComboBox fx:id="semesterComboBox" prefHeight="27.0" prefWidth="356.0" promptText="Semester" styleClass="modules" />
+                                          <Label styleClass="filter-text" text="Semester">
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="156.0" prefWidth="50.0" styleClass="cards" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <SVGPath content="M15 15.505c0-.527.09-1.032.256-1.501H6.253a2.25 2.25 0 0 0-2.25 2.25v.92c0 .572.18 1.13.511 1.596C6.056 20.935 8.58 22.008 12 22.008q2.267 0 4-.63v-3.044a4.5 4.5 0 0 1-1-2.83m-3-13.5a5 5 0 0 1 5 5.001a5 5 0 1 1-5-5.002m11 13.5a3.5 3.5 0 1 1-7.001 0a3.5 3.5 0 0 1 7.001 0m-1 3.743a4.5 4.5 0 0 1-2.5.758c-.925 0-1.785-.28-2.5-.758v3.506c0 .201.226.32.392.206l2.108-1.453l2.108 1.453a.25.25 0 0 0 .392-.206z" styleClass="filter-icon" />
+                        <Label styleClass="gpa-header" text="GPA Summary" />
+                     </children>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="90.0" prefWidth="163.0" styleClass="gpa-container">
+                           <children>
+                              <Label fx:id="semesterGPA" styleClass="stat-value" text="1.25">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="info-sub-header" text="Semester" textFill="#8e0000" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="504.0" prefWidth="810.0" stylesheets="@../css/GradesTable.css">
+         <children>
+            <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="499.0" prefWidth="810.0" styleClass="grades-table">
+               <columns>
+                  <TableColumn fx:id="subCode" editable="false" maxWidth="140.0" minWidth="73.60001373291016" prefWidth="101.60000610351562" resizable="false" text="Subject Code" />
+                  <TableColumn fx:id="subDescription" editable="false" maxWidth="246.4000244140625" minWidth="160.0" prefWidth="207.19998168945312" resizable="false" text="Description" />
+                  <TableColumn fx:id="facultyName" editable="false" maxWidth="233.5999755859375" minWidth="112.800048828125" prefWidth="150.4000244140625" resizable="false" text="Faculty Name" />
+                  <TableColumn fx:id="units" editable="true" maxWidth="128.800048828125" minWidth="30.39996337890625" prefWidth="58.39996337890625" resizable="false" text="Units" />
+                  <TableColumn fx:id="sectionCode" maxWidth="174.4000244140625" minWidth="32.0" prefWidth="100.0" resizable="false" text="Section Code" />
+                  <TableColumn fx:id="finGrade" editable="true" maxWidth="139.199951171875" minWidth="38.4000244140625" prefWidth="94.39990234375" resizable="false" text="Final Grade" />
+                  <TableColumn fx:id="gradeStatus" editable="true" maxWidth="126.39990234375" minWidth="38.4000244140625" prefWidth="75.2000732421875" resizable="false" text="Remarks" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</VBox>
