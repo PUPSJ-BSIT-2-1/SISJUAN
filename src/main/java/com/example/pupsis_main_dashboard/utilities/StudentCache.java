@@ -13,14 +13,14 @@ public class StudentCache {
     private static long cacheDuration = 0; // in milliseconds
 
     private StudentCache(int maxSize, long cacheDuration) {
-        this.cacheMap = new LinkedHashMap<>(maxSize, 0.75f, true) {
+        cacheMap = new LinkedHashMap<>(maxSize, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<String, CacheEntry> eldest) {
                 return size() > maxSize;
             }
         };
         this.maxSize = maxSize;
-        this.cacheDuration = cacheDuration;
+        StudentCache.cacheDuration = cacheDuration;
     }
 
     public static synchronized StudentCache getInstance() {
@@ -39,7 +39,7 @@ public class StudentCache {
         CacheEntry entry = cacheMap.get(subjectCode);
         if (entry == null) return null;
 
-        // Check if cache entry is expired
+        // Check if the cache entry is expired
         if (System.currentTimeMillis() - entry.timestamp > cacheDuration) {
             cacheMap.remove(subjectCode);
             return null;

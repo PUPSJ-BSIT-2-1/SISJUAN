@@ -17,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
+import java.text.DecimalFormat;
 
 public class EditGradesPageController implements Initializable {
 
@@ -39,6 +40,9 @@ public class EditGradesPageController implements Initializable {
     private String selectedSubjectCode;
     private String selectedSubjectDesc;
 
+    // Add DecimalFormat for consistent grade formatting
+    private final DecimalFormat gradeFormat = new DecimalFormat("0.00");
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (studentsTable == null) {
@@ -60,7 +64,7 @@ public class EditGradesPageController implements Initializable {
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
 
         // Make final grade column editable with custom cell factory
-        finGradeCol.setCellFactory(_ -> new TableCell<>() {
+        finGradeCol.setCellFactory(tc -> new TableCell<Student, String>() {
             private TextField textField;
 
             @Override
@@ -71,7 +75,13 @@ public class EditGradesPageController implements Initializable {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(item);
+                    // Format the grade for display
+                    try {
+                        float gradeValue = Float.parseFloat(item);
+                        setText(gradeFormat.format(gradeValue));
+                    } catch (NumberFormatException e) {
+                        setText(item); // fallback to original if parsing fails
+                    }
                     setGraphic(null);
                 }
             }
@@ -91,34 +101,53 @@ public class EditGradesPageController implements Initializable {
             @Override
             public void cancelEdit() {
                 super.cancelEdit();
-                setText(getItem());
+                // Format the grade when canceling edit
+                try {
+                    float gradeValue = Float.parseFloat(getItem());
+                    setText(gradeFormat.format(gradeValue));
+                } catch (NumberFormatException e) {
+                    setText(getItem());
+                }
                 setGraphic(null);
             }
 
             private void createTextField() {
-                textField = new TextField(getItem());
+                // Set initial value with proper formatting
+                String initialValue = getItem();
+                try {
+                    float gradeValue = Float.parseFloat(initialValue);
+                    initialValue = gradeFormat.format(gradeValue);
+                } catch (NumberFormatException e) {
+                    // keep original value if parsing fails
+                }
+
+                textField = new TextField(initialValue);
                 textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
 
                 textField.setOnKeyPressed(e -> {
                     if (e.getCode() == KeyCode.ENTER) {
                         if (isValidGrade(textField.getText())) {
-                            commitEdit(textField.getText());
+                            // Format the input before committing
+                            String formattedGrade = formatGradeInput(textField.getText());
+                            commitEdit(formattedGrade);
                         } else {
                             cancelEdit();
-                            showError("Invalid Grade", "Please enter a valid grade between 1.0 and 5.0");
+                            showError("Invalid Grade", "Please enter a valid grade between 1.00 and 5.00");
                         }
                     } else if (e.getCode() == KeyCode.ESCAPE) {
                         cancelEdit();
                     }
                 });
 
-                textField.focusedProperty().addListener((_, _, isNowFocused) -> {
+                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                     if (!isNowFocused) {
                         if (isValidGrade(textField.getText())) {
-                            commitEdit(textField.getText());
+                            // Format the input before committing
+                            String formattedGrade = formatGradeInput(textField.getText());
+                            commitEdit(formattedGrade);
                         } else {
                             cancelEdit();
-                            showError("Invalid Grade", "Please enter a valid grade between 1.0 and 5.0");
+                            showError("Invalid Grade", "Please enter a valid grade between 1.00 and 5.00");
                         }
                     }
                 });
@@ -153,10 +182,19 @@ public class EditGradesPageController implements Initializable {
         }
     }
 
-    // Setup row hover effect
+    // Add method to format grade input
+    private String formatGradeInput(String input) {
+        try {
+            float gradeValue = Float.parseFloat(input);
+            return gradeFormat.format(gradeValue);
+        } catch (NumberFormatException e) {
+            return input;
+        }
+    }
+
     private void setupRowHoverEffect() {
-        studentsTable.setRowFactory(_ -> {
-            TableRow<Student> row = new TableRow<>() {
+        studentsTable.setRowFactory(tv -> {
+            TableRow<Student> row = new TableRow<Student>() {
                 @Override
                 protected void updateItem(Student item, boolean empty) {
                     super.updateItem(item, empty);
@@ -170,7 +208,7 @@ public class EditGradesPageController implements Initializable {
             };
 
             // Add mouse hover effect
-            row.hoverProperty().addListener((_, _, isNowHovered) -> {
+            row.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
                 if (isNowHovered && !row.isEmpty()) {
                     row.setStyle("table-row-cell:hover"); // Set your desired hover color
                 } else {
@@ -182,28 +220,28 @@ public class EditGradesPageController implements Initializable {
         });
     }
 
-    // Check if the entered grade is valid
     private boolean isValidGrade(String grade) {
         try {
             float gradeValue = Float.parseFloat(grade);
             return gradeValue >= 1.0 && gradeValue <= 5.0;
         } catch (NumberFormatException e) {
             showError("Invalid Grade",
-                    """
-                            Please enter a valid grade:
-                            • Must be between 1.00 and 5.00
-                            """
+                    "Please enter a valid grade:\n" +
+                            "• Must be between 1.00 and 5.00\n"
             );
             return false;
         }
     }
 
-    // Update the grade in the database
     private void updateGradeInDatabase(Student student) {
         try (Connection conn = DBConnection.getConnection()) {
             // Update both final grade and grade status
-            String query = "UPDATE grade SET \"final_grade\" = ?, \"gradestat\" = ? " +
-                    "WHERE \"student_id\" = ? AND \"subject_code\" = ?";
+            String query = "UPDATE grade \n" +
+                    "SET final_grade = ?, gradestat = ? \n" +
+                    "FROM subjects \n" +
+                    "WHERE grade.student_id = ? \n" +
+                    "AND grade.subject_id = subjects.subject_id \n" +
+                    "AND subjects.subject_code = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 String newGrade = student.getFinalGrade();
@@ -239,10 +277,10 @@ public class EditGradesPageController implements Initializable {
                     // Refresh the TableView
                     studentsTable.refresh();
 
-                    // Show a success message
-                    showSuccess(String.format(
-                            "Grade successfully updated to: %.2f\nStatus: %s",
-                            gradeValue, gradeStatus));
+                    // Show success message with formatted grade
+                    showSuccess("Success", String.format(
+                            "Grade successfully updated to: %s\nStatus: %s",
+                            gradeFormat.format(gradeValue), gradeStatus));
                 }
             }
         } catch (SQLException e) {
@@ -254,7 +292,6 @@ public class EditGradesPageController implements Initializable {
         }
     }
 
-    // Load students by subject code
     private void loadStudentsBySubjectCode(String subjectCode) {
         // Check cache first
         ObservableList<Student> cachedStudents = StudentCache.get(subjectCode);
@@ -263,7 +300,7 @@ public class EditGradesPageController implements Initializable {
             return;
         }
 
-        // Run database operation in the background thread
+        // Run database operation in background thread
         Task<ObservableList<Student>> loadTask = new Task<>() {
             @Override
             protected ObservableList<Student> call() throws Exception {
@@ -271,11 +308,13 @@ public class EditGradesPageController implements Initializable {
 
                 try (Connection conn = DBConnection.getConnection()) {
                     String query = """
-                    SELECT g."id", g."student_id", g."subject_code", g."final_grade",
-                           g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
-                    FROM grade g, students s
-                    WHERE g."student_id" = s."student_id" and g.subject_code = ? and g.faculty_id = ?
-                    ORDER BY CAST(g."id" AS INTEGER)""";
+                    SELECT g."grade_id" as id, g."student_id", su."subject_code", g."final_grade", g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
+                    FROM grade g, students s, subjects su, faculty_load f
+                    WHERE g."student_id" = s."student_number" and
+                          su.subject_id = g.subject_id and
+                          g.faculty_load = f.load_id and
+                          su.subject_code = ? and f.faculty_id = ?::smallint
+                    ORDER BY CAST(g."grade_id" AS INTEGER);""";
 
                     try (PreparedStatement pstmt = conn.prepareStatement(query,
                             ResultSet.TYPE_FORWARD_ONLY,
@@ -289,12 +328,24 @@ public class EditGradesPageController implements Initializable {
                             while (rs.next()) {
                                 if (isCancelled()) break;
 
+                                // Format the final grade from database
+                                String finalGradeFromDB = rs.getString("final_grade");
+                                String formattedGrade = finalGradeFromDB;
+                                if (finalGradeFromDB != null && !finalGradeFromDB.isEmpty()) {
+                                    try {
+                                        float gradeValue = Float.parseFloat(finalGradeFromDB);
+                                        formattedGrade = gradeFormat.format(gradeValue);
+                                    } catch (NumberFormatException e) {
+                                        // Keep original value if parsing fails
+                                    }
+                                }
+
                                 Student student = new Student(
                                         rs.getString("id"),
                                         rs.getString("student_id"),
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
-                                        rs.getString("final_grade"),
+                                        formattedGrade,
                                         rs.getString("gradestat")
                                 );
                                 tempList.add(student);
@@ -306,14 +357,14 @@ public class EditGradesPageController implements Initializable {
             }
         };
 
-        loadTask.setOnSucceeded(_ -> {
+        loadTask.setOnSucceeded(e -> {
             ObservableList<Student> result = loadTask.getValue();
             studentCache.put(subjectCode, result);
             updateTableView(result);
             setupSearch();
         });
 
-        loadTask.setOnFailed(_ -> {
+        loadTask.setOnFailed(e -> {
             Throwable ex = loadTask.getException();
             showError("Database Error", "Failed to load data: " + ex.getMessage());
             ex.printStackTrace();
@@ -322,11 +373,14 @@ public class EditGradesPageController implements Initializable {
         new Thread(loadTask).start();
     }
 
-    // Populate subject codes
     private void populateSubjectCodes() {
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-                SELECT DISTINCT subject_code FROM grade WHERE faculty_id = ?;""";
+            SELECT DISTINCT s.subject_code\s
+            FROM grade g, subjects s, faculty_load f
+            WHERE s.subject_id = g.subject_id and
+                  g.faculty_load = f.load_id and
+                    f.faculty_id = ?::smallint;""";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, SessionData.getInstance().getStudentId());
                 ResultSet rs = pstmt.executeQuery();
@@ -334,7 +388,7 @@ public class EditGradesPageController implements Initializable {
                 while (rs.next()) {
                     String subjCode = rs.getString("subject_code");
                     javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem(subjCode);
-                    item.setOnAction(_ -> {
+                    item.setOnAction(event -> {
                         subjCodeCombBox.setText(subjCode);
                         loadStudentsBySubjectCode(subjCode);
                     });
@@ -348,7 +402,6 @@ public class EditGradesPageController implements Initializable {
         }
     }
 
-    // Update the TableView
     private void updateTableView(ObservableList<Student> students) {
         Platform.runLater(() -> {
             studentsList.clear();
@@ -357,7 +410,6 @@ public class EditGradesPageController implements Initializable {
         });
     }
 
-    // Set the selected subject code
     public void setSubjectCode(String subjectCode) {
         this.selectedSubjectCode = subjectCode;
         if (subjCodeCombBox != null) {
@@ -366,32 +418,32 @@ public class EditGradesPageController implements Initializable {
         }
     }
 
-    // Setup search
     private void setupSearch() {
 
         // Create a filtered list wrapping the original list
-        FilteredList<Student> filteredData = new FilteredList<>(studentsList, _ -> true);
+        FilteredList<Student> filteredData = new FilteredList<>(studentsList, p -> true);
 
         // Add listener to searchBar text property
-        searchBar.textProperty().addListener((_, _, newValue) ->
-                filteredData.setPredicate(subject -> {
-            // If a search text is empty, display all subjects
-            if (newValue == null || newValue.isEmpty()) {
-                return true;
-            }
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(subject -> {
+                // If search text is empty, display all subjects
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
 
-            // Convert search text to lower case
-            String lowerCaseFilter = newValue.toLowerCase();
+                // Convert search text to lower case
+                String lowerCaseFilter = newValue.toLowerCase();
 
-            // Match against all fields
-            if (subject.getStudentId().toLowerCase().contains(lowerCaseFilter)) {
-                return true;
-            }
-            if (subject.getStudentNa().toLowerCase().contains(lowerCaseFilter)) {
-                return true;
-            }
-            return subject.getSubjCode().toLowerCase().contains(lowerCaseFilter);// Does not match
-        }));
+                // Match against all fields
+                if (subject.getStudentId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                if (subject.getStudentNa().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return subject.getSubjCode().toLowerCase().contains(lowerCaseFilter);// Does not match
+            });
+        });
 
         // Wrap the FilteredList in a SortedList
         SortedList<Student> sortedData = new SortedList<>(filteredData);
@@ -405,7 +457,6 @@ public class EditGradesPageController implements Initializable {
         studentsTable.getColumns().forEach(column -> column.setReorderable(false));
     }
 
-    // Set the selected subject description
     public void setSubjectDesc(String subjectDesc) {
         this.selectedSubjectDesc = subjectDesc;
         if (subjDescLbl != null) {
@@ -413,20 +464,18 @@ public class EditGradesPageController implements Initializable {
         }
     }
 
-    // Clear the cache for a specific subject
     public void clearCacheForSubject(String subjectCode) {
         studentCache.remove(subjectCode);
     }
 
-    // Handle refresh button click
-    @FXML private void handleRefresh() {
+    @FXML
+    private void handleRefresh() {
         if (selectedSubjectCode != null) {
             studentCache.remove(selectedSubjectCode);
             loadStudentsBySubjectCode(selectedSubjectCode);
         }
     }
 
-    // Show the error message dialog box with the specified title and content
     private void showError(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -435,10 +484,9 @@ public class EditGradesPageController implements Initializable {
         alert.showAndWait();
     }
 
-    // Show the success message dialog box with the specified title and content
-    private void showSuccess(String content) {
+    private void showSuccess(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
+        alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
