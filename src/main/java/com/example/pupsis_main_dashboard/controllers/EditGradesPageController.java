@@ -1,5 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.models.Student;
 import com.example.pupsis_main_dashboard.utilities.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -312,11 +313,10 @@ public class EditGradesPageController implements Initializable {
                 try (Connection conn = DBConnection.getConnection()) {
                     String query = """
                     SELECT g."grade_id" as id, g."student_id", su."subject_code", g."final_grade", g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
-                    FROM grade g, students s, subjects su, schedule sc, faculty_load f
+                    FROM grade g, students s, subjects su, faculty_load f
                     WHERE g."student_id" = s."student_number" and
                           su.subject_id = g.subject_id and
-                          g.schedule_id = sc.schedule_id and
-                          sc.load_id = f.load_id and
+                          g.faculty_load = f.load_id and
                           su.subject_code = ? and f.faculty_id = ?::smallint
                     ORDER BY CAST(g."grade_id" AS INTEGER);""";
 
@@ -381,10 +381,9 @@ public class EditGradesPageController implements Initializable {
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
             SELECT DISTINCT s.subject_code\s
-            FROM grade g, subjects s, schedule sc, faculty_load f
+            FROM grade g, subjects s, faculty_load f
             WHERE s.subject_id = g.subject_id and
-                  g.schedule_id = sc.schedule_id and
-                  sc.load_id = f.load_id and
+                  g.faculty_load = f.load_id and
                     f.faculty_id = ?::smallint;""";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, SessionData.getInstance().getStudentId());

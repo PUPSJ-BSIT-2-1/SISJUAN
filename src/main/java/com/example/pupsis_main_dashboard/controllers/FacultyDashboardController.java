@@ -184,23 +184,23 @@ public class FacultyDashboardController {
         }
     }
     
-    // Update the UI with faculty data
-    private void updateFacultyUI(ResultSet rs) throws SQLException {
-        String facultyId = rs.getString("faculty_id");
-        String firstName = rs.getString("firstname");
-        String lastName = rs.getString("lastname");
-        String department = rs.getString("department");
+private void updateFacultyUI(ResultSet rs) throws SQLException {
+    String facultyId = rs.getString("faculty_id");
+    String firstName = rs.getString("firstname");
+    String lastName = rs.getString("lastname");
+    String department = rs.getString("department");
+    
+    String formattedName = formatFacultyName(firstName, lastName);
+    
+    Platform.runLater(() -> {
+        // Set the faculty ID first to ensure it's available
+        SessionData.getInstance().setFacultyId(facultyId);
         
-        String formattedName = formatFacultyName(firstName, lastName);
-        
-        Platform.runLater(() -> {
-            studentNameLabel.setText(formattedName);
-            SessionData data = SessionData.getInstance();
-            data.setFacultyId(facultyId);
-            studentIdLabel.setText(facultyId);
-            departmentLabel.setText(department != null ? department : "Department not set");
-        });
-    }
+        studentNameLabel.setText(formattedName);
+        studentIdLabel.setText(facultyId);
+        departmentLabel.setText(department != null ? department : "Department not set");
+    });
+}
     
     // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {

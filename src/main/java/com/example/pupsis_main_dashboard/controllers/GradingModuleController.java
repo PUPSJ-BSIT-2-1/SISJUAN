@@ -62,7 +62,11 @@ public class GradingModuleController implements Initializable {
         subjDescCol.setReorderable(false);
 
         // Set up search icon click handler
-        searchIconContainer.setOnMouseClicked(event -> performSearch());
+        if (searchIconContainer != null) {
+            searchIconContainer.setOnMouseClicked(event -> {
+                // Your click handler code
+            });
+        }
 
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
