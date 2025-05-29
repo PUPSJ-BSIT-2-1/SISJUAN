@@ -17,11 +17,7 @@ import javafx.scene.input.KeyCode;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
-import java.util.Objects;
 import java.text.DecimalFormat;
-import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-import java.io.IOException;
 
 public class EditGradesPageController implements Initializable {
 
