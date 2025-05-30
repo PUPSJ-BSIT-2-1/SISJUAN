@@ -40,23 +40,6 @@ public class FacultyTabController {
     @FXML private TableColumn<Faculty, String> joinedColumn;
     private FacultyDAO facultyDAO;
 
-    private AdminDashboardController dashboardController;
-
-    public void setDashboardController(AdminDashboardController controller) {
-        this.dashboardController = controller;
-
-        if (manageButton != null) {
-            manageButton.setOnAction(this::loadFacultyTab);
-        }
-    }
-
-    private void loadFacultyTab(ActionEvent event) {
-        if (dashboardController != null) {
-            String FACULTY_TAB_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyManagement.fxml";
-            dashboardController.loadContent(FACULTY_TAB_FXML);
-        }
-    }
-
     @FXML
     private void initialize() {
         try {
@@ -66,6 +49,7 @@ public class FacultyTabController {
             return;
         }
 
+        // Set the action for the "Manage Faculty" button
         manageButton.setOnAction(this::loadFacultyTab);
 
         idColumn.setCellValueFactory(new PropertyValueFactory<>("facultyId"));
@@ -88,6 +72,34 @@ public class FacultyTabController {
         Tooltip.install(searchField, new Tooltip("Search by faculty ID, name or department"));
 
         loadDashboardData();
+    }
+
+    @FXML
+    private void loadFacultyTab(ActionEvent event) {
+        try {
+            // Locate the ScrollPane with fx:id "contentPane" in the current scene
+            ScrollPane contentPane = (ScrollPane) recentFacultyTable.getScene().lookup("#contentPane");
+
+            // If the ScrollPane is found, proceed with loading new content
+            if (contentPane != null) {
+                // Create an FXMLLoader to load the FacultyManagement.fxml layout
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyManagement.fxml")
+                );
+
+                // Load the FXML content into a Parent node
+                Parent newContent = loader.load();
+
+                // Retrieve the controller for the loaded FXML (FacultyManagementController)
+                FacultyManagementController controller = loader.getController();
+
+                // Replace the current content of the ScrollPane with the newly loaded content
+                contentPane.setContent(newContent);
+            }
+        } catch (IOException e) {
+            // Print error details in case the FXML fails to load
+            e.printStackTrace();
+        }
     }
 
     private void loadDashboardData() {

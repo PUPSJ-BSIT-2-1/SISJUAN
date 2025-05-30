@@ -20,7 +20,7 @@ public class FacultyDAO {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, faculty.getFacultyId());
+            stmt.setInt(1, Integer.parseInt(faculty.getFacultyId()));
             stmt.setString(2, faculty.getFirstName());
             stmt.setString(3, faculty.getMiddleName());
             stmt.setString(4, faculty.getLastName());
@@ -84,7 +84,7 @@ public class FacultyDAO {
             stmt.setDate(7, Date.valueOf(faculty.getBirthdate()));
             stmt.setString(8, faculty.getStatus());
             stmt.setDate(9, faculty.getDateJoined() != null ? Date.valueOf(faculty.getDateJoined()) : null);
-            stmt.setString(10, faculty.getFacultyId());
+            stmt.setInt(10, Integer.parseInt(faculty.getFacultyId()));
 
             return stmt.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -98,7 +98,7 @@ public class FacultyDAO {
         String sql = "DELETE FROM faculty WHERE faculty_id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, facultyId);
+            stmt.setInt(1, Integer.parseInt(facultyId));
             return stmt.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println("SQL Error (deleteFaculty): " + e.getMessage());

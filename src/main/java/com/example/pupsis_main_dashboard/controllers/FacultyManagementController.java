@@ -61,6 +61,10 @@ public class FacultyManagementController {
             return;
         }
 
+
+        // Go back to the dashboard when the back button is clicked
+        backButton.setOnAction(_ -> handleBackToDashboard());
+
         idColumn.setCellValueFactory(new PropertyValueFactory<>("facultyId"));
         nameColumn.setCellValueFactory(cellData -> {
             Faculty faculty = cellData.getValue();
@@ -209,22 +213,35 @@ public class FacultyManagementController {
             return subjectCodes;
         } catch (SQLException e) {
             e.printStackTrace();
-            return List.of();  // Return empty list on error
+            return List.of();  // Return an empty list on error
         }
     }
-
 
     @FXML
     private void handleBackToDashboard() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyTab.fxml"));
-            Parent dashboardRoot = loader.load();
+            // Find the ScrollPane with fx:id "contentPane" in the current scene
+            ScrollPane contentPane = (ScrollPane) facultyTable.getScene().lookup("#contentPane");
 
-            Stage currentStage = (Stage) backButton.getScene().getWindow();
-            currentStage.setScene(new Scene(dashboardRoot));
-            currentStage.setTitle("Faculty Dashboard");
+            // If the ScrollPane exists, proceed
+            if (contentPane != null) {
+                // Create an FXMLLoader to load the FacultyTab.fxml layout
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyTab.fxml")
+                );
+
+                // Load the FXML content as a Parent node
+                Parent newContent = loader.load();
+
+                // Get the controller associated with the loaded FXML (FacultyTabController)
+                FacultyTabController controller = loader.getController();
+
+                // Replace the current content of the ScrollPane with the new view
+                contentPane.setContent(newContent);
+            }
         } catch (IOException e) {
-            showAlert("Navigation Error", "Unable to return to dashboard.", Alert.AlertType.ERROR);
+            // Print the stack trace if loading the FXML fails
+            e.printStackTrace();
         }
     }
 

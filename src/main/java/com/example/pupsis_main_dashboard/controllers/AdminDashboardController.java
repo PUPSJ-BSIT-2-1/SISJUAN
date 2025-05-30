@@ -322,14 +322,6 @@ public class AdminDashboardController {
                 );
                 content = loader.load();
 
-                // If loading home content, pass reference to this controller
-                if (fxmlPath.equals(FACULTY_FXML)) {
-                    FacultyTabController tabController = loader.getController();
-                    if (tabController != null) {
-                        tabController.setDashboardController(this);
-                    }
-                }
-
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
