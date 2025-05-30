@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyManagementController"
+      spacing="10.0"
+      stylesheets="@../css/FacultyManagement.css"
+      styleClass="root"
+      prefWidth="810.0">
+
+    <!-- Title Header -->
+    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="header-bar">
+        <ImageView fitHeight="50" fitWidth="50" styleClass="header-logo">
+                <Image url="@../Images/PUP Logo.png" />
+        </ImageView>
+        <Label text="Faculty Management" styleClass="header-label" />
+        <Region HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Search Bar -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="search-bar">
+        <Label text="Search:" styleClass="label-bold" />
+        <TextField fx:id="searchField" promptText="Search by name, ID, or email..."
+                   onKeyReleased="#handleSearch"
+                   styleClass="search-field" />
+    </HBox>
+
+    <!-- Table of Faculty -->
+    <TableView fx:id="facultyTable" prefWidth="810">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="180"/>
+            <TableColumn fx:id="departmentColumn" text="Department" prefWidth="120"/>
+            <TableColumn fx:id="emailColumn" text="Email" prefWidth="180"/>
+            <TableColumn fx:id="contactColumn" text="Contact" prefWidth="120"/>
+            <TableColumn fx:id="detailsColumn" text=" " prefWidth="102"/>
+        </columns>
+    </TableView>
+
+    <!-- Button Bar -->
+    <!-- Main Actions Row -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" style="-fx-padding: 10 0 10 30;">
+        <Button fx:id="addButton" text="Add" styleClass="main-action-button" onAction="#handleAddFaculty">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/add_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="editButton" text="Edit" styleClass="main-action-button" onAction="#handleEditFaculty">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/edit_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="deleteButton" text="Delete" styleClass="main-action-button" onAction="#handleDeleteFaculty">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/delete_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="refreshButton" text="Refresh" styleClass="main-action-button" onAction="#handleRefreshTable">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/refresh_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="assignSubjectButton" text="Assign" styleClass="main-action-button" onAction="#handleAssignSubject">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/assignment_ind_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Utility Row -->
+    <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 8 30 20 0;">
+        <Button fx:id="exportCSVButton" text="Export CSV" styleClass="utility-button" onAction="#handleExportCSV">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/download_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="printReportButton" text="Print" styleClass="utility-button" onAction="#handlePrintReport">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/print_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="backButton" text="Back" styleClass="utility-button">
+            <graphic>
+                <ImageView fitHeight="16" fitWidth="16">
+                    <image>
+                        <Image url="@../Images/arrow_back_ios_24dp_E3E3E3.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+</VBox>

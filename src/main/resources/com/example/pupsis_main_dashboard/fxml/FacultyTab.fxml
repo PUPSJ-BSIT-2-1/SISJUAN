@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<!-- <?import javafx.scene.text.*?> -->
+
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyTabController"
+            stylesheets="@../css/FacultyDashboard.css"
+            prefWidth="810" prefHeight="600">
+
+    <!-- Top Header -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #8E170A; -fx-padding: 15 30 15 30;">
+            <ImageView fitHeight="50" fitWidth="50">
+                <image>
+                    <Image url="@../Images/PUP Logo.png" />
+                </image>
+            </ImageView>
+            <Label text="Faculty Dashboard"
+                   style="-fx-font-size: 26px; -fx-text-fill: white; -fx-font-weight: bold;" />
+        </HBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="20">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+
+            <!-- Summary Stats -->
+            <HBox spacing="40" alignment="CENTER">
+                <StackPane styleClass="highlight-box">
+                    <Label fx:id="totalFacultyLabel" styleClass="highlight-label" />
+                </StackPane>
+
+                <StackPane>
+                    <HBox fx:id="fullTimeContainer" spacing="10" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="24" fitHeight="24" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../Images/fulltime_icon.png" />
+                            </image>
+                        </ImageView>
+                        <Label fx:id="fullTimeFacultyLabel" styleClass="full-time-label" />
+                    </HBox>
+                </StackPane>
+
+                <StackPane>
+                    <HBox fx:id="partTimeContainer" spacing="10" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="24" fitHeight="24" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../Images/parttime_icon.png" />
+                            </image>
+                        </ImageView>
+                        <Label fx:id="partTimeFacultyLabel" styleClass="part-time-label" />
+                    </HBox>
+                </StackPane>
+
+                <Label fx:id="currentDateLabel" styleClass="dashboard-label" />
+            </HBox>
+
+            <!-- Recent Faculty Section -->
+            <Label text="Recently Added Faculty" styleClass="section-header" />
+            <TableView fx:id="recentFacultyTable" prefHeight="300">
+                <columns>
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="80" />
+                    <TableColumn fx:id="nameColumn" text="Name" prefWidth="200" />
+                    <TableColumn fx:id="deptColumn" text="Department" prefWidth="200" />
+                    <TableColumn fx:id="joinedColumn" text="Date Joined" prefWidth="290" />
+                </columns>
+            </TableView>
+
+            <!-- Search and Button -->
+            <HBox spacing="15" alignment="CENTER">
+                <Label text="🔍 Search:" style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                <TextField fx:id="searchField" promptText="Enter keyword..." prefWidth="200" />
+                <Button fx:id="manageButton" text="Manage Faculty" styleClass="action-button" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

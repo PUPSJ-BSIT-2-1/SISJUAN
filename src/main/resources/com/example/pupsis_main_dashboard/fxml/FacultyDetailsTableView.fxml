@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyDetailsController"
+      spacing="10" style="-fx-padding: 15 15 15 15;">
+
+    <Label text="Faculty Details" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <GridPane hgap="10" vgap="10">
+        <Label text="ID:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+        <Label fx:id="idLabel" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+        <Label text="First Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+        <Label fx:id="firstNameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+        <Label text="Middle Name:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+        <Label fx:id="middleNameLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+        <Label text="Last Name:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+        <Label fx:id="lastNameLabel" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+        <Label text="Department:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+        <Label fx:id="departmentLabel" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+
+        <Label text="Email:" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+        <Label fx:id="emailLabel" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+
+        <Label text="Contact:" GridPane.rowIndex="6" GridPane.columnIndex="0" />
+        <Label fx:id="contactLabel" GridPane.rowIndex="6" GridPane.columnIndex="1" />
+
+        <Label text="Birthdate:" GridPane.rowIndex="7" GridPane.columnIndex="0" />
+        <Label fx:id="birthdateLabel" GridPane.rowIndex="7" GridPane.columnIndex="1" />
+
+        <Label text="Date Joined:" GridPane.rowIndex="8" GridPane.columnIndex="0" />
+        <Label fx:id="dateJoinedLabel" GridPane.rowIndex="8" GridPane.columnIndex="1" />
+
+        <Label text="Status:" GridPane.rowIndex="9" GridPane.columnIndex="0" />
+        <Label fx:id="statusLabel" GridPane.rowIndex="9" GridPane.columnIndex="1" />
+    </GridPane>
+
+    <Button text="Close" onAction="#handleClose" maxWidth="100" alignment="CENTER" />
+</VBox>
