@@ -9,6 +9,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -50,17 +51,109 @@ public class SubjectController implements Initializable {
         equivSubjectCodeColumn.setCellValueFactory(new PropertyValueFactory<>("equivSubjectCode"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        descriptionColumn.setCellFactory(tc -> {
-            TableCell<SubjectManagement, String> cell = new TableCell<>() {
-                private final Text text = new Text();
-                {
-                    text.wrappingWidthProperty().bind(descriptionColumn.widthProperty().subtract(10));
-                    setGraphic(text);
-                }
+        // Center align all columns except description
+        subjectCodeColumn.setCellFactory(tc -> {
+            TableCell<SubjectManagement, String> cell = new TableCell<SubjectManagement, String>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    text.setText(empty || item == null ? null : item);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item);
+                    }
+                    setAlignment(Pos.CENTER);
+                }
+            };
+            return cell;
+        });
+
+        prerequisiteColumn.setCellFactory(tc -> {
+            TableCell<SubjectManagement, String> cell = new TableCell<SubjectManagement, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item);
+                    }
+                    setAlignment(Pos.CENTER);
+                }
+            };
+            return cell;
+        });
+
+        equivSubjectCodeColumn.setCellFactory(tc -> {
+            TableCell<SubjectManagement, String> cell = new TableCell<SubjectManagement, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item);
+                    }
+                    setAlignment(Pos.CENTER);
+                }
+            };
+            return cell;
+        });
+
+        unitColumn.setCellFactory(tc -> {
+            TableCell<SubjectManagement, Double> cell = new TableCell<SubjectManagement, Double>() {
+                @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.toString());
+                    }
+                    setAlignment(Pos.CENTER);
+                }
+            };
+            return cell;
+        });
+
+        // Wrap Description Text with center alignment and proper text color handling
+        descriptionColumn.setCellFactory(tc -> {
+            TableCell<SubjectManagement, String> cell = new TableCell<SubjectManagement, String>() {
+                private final Text text = new Text();
+
+                {
+                    text.wrappingWidthProperty().bind(descriptionColumn.widthProperty().subtract(10));
+                    setGraphic(text);
+                    setAlignment(Pos.CENTER);
+                }
+
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        text.setText(null);
+                    } else {
+                        text.setText(item);
+                    }
+
+                    // Handle text color for hover state
+                    TableRow<?> row = getTableRow();
+                    if (row != null) {
+                        row.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+                            if (isNowHovered) {
+                                text.setStyle("-fx-fill: white;");
+                            } else {
+                                text.setStyle("-fx-fill: black;");
+                            }
+                        });
+
+                        // Set initial color based on current hover state
+                        if (row.isHover()) {
+                            text.setStyle("-fx-fill: white;");
+                        } else {
+                            text.setStyle("-fx-fill: black;");
+                        }
+                    }
                 }
             };
             return cell;
@@ -110,9 +203,9 @@ public class SubjectController implements Initializable {
     }
 
     private void setupInitialSubjects() {
-       /* allSubjects.addAll(
-                new Subject("COMP 002", "", "COMP 002", "Computer Programming 1", 3.0, "1st Year", "1st Semester"),
-                new Subject("GEED 032", "", "GEED 032", "Filipinolohiya at Pambansang Kaunlaran", 3.0, "1st Year", "1st Semester"),
+        allSubjects.addAll(
+                new SubjectManagement("COMP 002", "", "COMP 002", "Computer Programming 1", 3.0, "1st Year", "1st Semester"),
+        /*        new Subject("GEED 032", "", "GEED 032", "Filipinolohiya at Pambansang Kaunlaran", 3.0, "1st Year", "1st Semester"),
                 new Subject("COMP 001", "", "COMP 001", "Introduction to Computing", 3.0, "1st Year", "1st Semester"),
                 new Subject("GEED 004", "", "GEED 004", "Mathematics in the Modern World/Matematika sa Makabagong Daigdig", 3.0, "1st Year", "1st Semester"),
                 new Subject("NSTP 001", "", "NSTP 001", "National Service Training Program 1", 3.0, "1st Year", "1st Semester"),
@@ -172,12 +265,10 @@ public class SubjectController implements Initializable {
                 new Subject("GEED 007", "", "GEED 007", "Science, Technology and Society/Agham, Teknolohiya at  Lipunan", 3.0, "4th Year", "1st Semester"),
                 new Subject("COMP 023", "", "COMP 023", "Social and Professional Issues in Computing", 3.0, "4th Year", "1st Semester"),
                 new Subject("INTE 403", "INTE 301", "INTE 403", "Systems Administration and Maintenance", 3.0, "4th Year", "1st Semester"),
-
-                new Subject("INTE 404", "INTE 303, INTE 302, COMP 019, COMP 008", "INTE 404", "Practicum (500 Hours)", 6.0, "4th Year", "2nd Semester"),
-                new Subject("COMP 024", "HRMA 001", "COMP 024", "Technopreneurship", 3.0, "4th Year", "2nd Semester")
-        );
-
         */
+                new SubjectManagement("INTE 404", "INTE 303, INTE 302, COMP 019, COMP 008", "INTE 404", "Practicum (500 Hours)", 6.0, "4th Year", "2nd Semester"),
+                new SubjectManagement("COMP 024", "HRMA 001", "COMP 024", "Technopreneurship", 3.0, "4th Year", "2nd Semester")
+        );
     }
 
 

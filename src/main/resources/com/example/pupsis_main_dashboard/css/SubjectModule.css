@@ -173,7 +173,7 @@
 
 /* Style selected row */
 .table-row-cell:filled:selected {
-    -fx-background-color: maroon;
+    -fx-background-color: #a03030;
 }
 
 .table-row-cell:filled:selected .table-cell,

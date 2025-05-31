@@ -83,7 +83,7 @@
                                             <children>
                                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true">
                                                     <image>
-                                                        <Image url="@../Images/Rectangle.jpg" />
+                                                        <Image url="@../Images/search_icon.png" />
                                                     </image>
                                                 </ImageView>
                                                 <TextField fx:id="searchBar" prefWidth="200.0" promptText="Search subject code, description..." />
