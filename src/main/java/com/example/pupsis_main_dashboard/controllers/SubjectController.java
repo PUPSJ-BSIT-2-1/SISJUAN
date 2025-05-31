@@ -20,6 +20,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 
 public class SubjectController implements Initializable {
 
@@ -170,7 +174,7 @@ public class SubjectController implements Initializable {
                 "2nd Year - 2nd Semester",
                 "3rd Year - 1st Semester",
                 "3rd Year - 2nd Semester",
-                "3rd Year - SUMMER",
+                "3rd Year - Summer Semester",
                 "4th Year - 1st Semester",
                 "4th Year - 2nd Semester"
         );
@@ -203,72 +207,43 @@ public class SubjectController implements Initializable {
     }
 
     private void setupInitialSubjects() {
-        allSubjects.addAll(
-                new SubjectManagement("COMP 002", "", "COMP 002", "Computer Programming 1", 3.0, "1st Year", "1st Semester"),
-        /*        new Subject("GEED 032", "", "GEED 032", "Filipinolohiya at Pambansang Kaunlaran", 3.0, "1st Year", "1st Semester"),
-                new Subject("COMP 001", "", "COMP 001", "Introduction to Computing", 3.0, "1st Year", "1st Semester"),
-                new Subject("GEED 004", "", "GEED 004", "Mathematics in the Modern World/Matematika sa Makabagong Daigdig", 3.0, "1st Year", "1st Semester"),
-                new Subject("NSTP 001", "", "NSTP 001", "National Service Training Program 1", 3.0, "1st Year", "1st Semester"),
-                new Subject("PATHFIT 1", "", "PATHFIT 1", "Physical Activity Towards Health and Fitness 1", 2.0, "1st Year", "1st Semester"),
-                new Subject("ACC 014", "", "ACC 014", "Principles of Accounting", 3.0, "1st Year", "1st Semester"),
-                new Subject("GEED 005", "", "GEED 005", "Purposive Communication/Malayuning Komunikasyon", 3.0, "1st Year", "1st Semester"),
+        // Clear existing subjects if any
+        allSubjects.clear();
 
-                new Subject("COMP 003", "COMP 002", "COMP 003", "Computer Programming 2", 3.0, "1st Year", "2nd Semester"),
-                new Subject("COMP 004", "GEED 004", "COMP 004", "Discrete Structures 1", 3.0, "1st Year", "2nd Semester"),
-                new Subject("NSTP 002", "", "NSTP 002", "National Service Training Program 2", 3.0, "1st Year", "2nd Semester"),
-                new Subject("GEED 033", "GEED 032", "GEED 033", "Pagsasalin sa Kontekstong Filipino", 3.0, "1st Year", "2nd Semester"),
-                new Subject("GEED 010", "", "GEED 010", "People and the Earth's Ecosystems", 3.0, "1st Year", "2nd Semester"),
-                new Subject("PATHFIT 2", "PATHFIT 1", "PATHFIT 2", "Physical Activity Towards Health and Fitness 2", 2.0, "1st Year", "2nd Semester"),
-                new Subject("GEED 020", "", "GEED 020", "Politics, Governance and Citizenship", 3.0, "1st Year", "2nd Semester"),
-                new Subject("GEED 002", "", "GEED 002", "Readings in Philippine History/Mga Babasahin Hinggil sa Kasaysayan ng Pilipinas", 3.0, "1st Year", "2nd Semester"),
+        // Fetch subjects from Supabase
+        try (Connection connection = DBConnection.getConnection()) {
+            String query = "SELECT subject_code, pre_requisites, description, units, year_level, semester " +
+                    "FROM subjects ORDER BY year_level, semester, subject_code";
 
-                new Subject("ELEC IT-FE1", "", "ELECT IT-FE1", "BSIT Free Elective 1", 3.0, "2nd Year", "1st Semester"),
-                new Subject("COMP 008", "", "COMP 008", "Data Communications and Networking", 3.0, "2nd Year", "1st Semester"),
-                new Subject("COMP 006", "COMP 003", "COMP 006", "Data Structures and Algorithms", 3.0, "2nd Year", "1st Semester"),
-                new Subject("COMP 007", "COMP 001", "COMP 007", "Operating Systems", 3.0, "2nd Year", "1st Semester"),
-                new Subject("PATHFIT 3", "PATHFIT 2", "PATHFIT 3", "Physical Activity Towards Health and Fitness 3", 2.0, "2nd Year", "1st Semester"),
-                new Subject("INTE 201", "COMP 003", "INTE 201", "Programming 3 (Structured Programming)", 3.0, "2nd Year", "1st Semester"),
-                new Subject("GEED 028", "", "GEED 028", "Reading Visual Arts", 3.0, "2nd Year", "1st Semester"),
-                new Subject("GEED 001", "", "GEED 001", "Understanding the Self/Pag-unawa sa Sarili", 3.0, "2nd Year", "1st Semester"),
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
 
-                new Subject("ELEC IT-FE2", "", "ELECT IT-FE2", "BSIT Free Elective 2", 3.0, "2nd Year", "2nd Semester"),
-                new Subject("COMP 013", "COMP 002", "COMP 013", "Human Computer Interaction", 3.0, "2nd Year", "2nd Semester"),
-                new Subject("COMP 010", "COMP 006", "COMP 010", "Information Management", 3.0, "2nd Year", "2nd Semester"),
-                new Subject("INTE 202", "", "INTE 202", "Integrative Programming and Technologies 1", 3.0, "2nd Year", "2nd Semester"),
-                new Subject("COMP 012", "", "COMP 012", "Network Administration", 3.0, "2nd Year", "2nd Semester"),
-                new Subject("COMP 009", "COMP 003", "COMP 009", "Object Oriented Programming", 3.0, "2nd Year", "2nd Semester"),
-                new Subject("PATHFIT 4", "PATHFIT 3", "PATHFIT 4", "Physical Activity Towards Health and Fitness 4", 2.0, "2nd Year", "2nd Semester"),
-                new Subject("COMP 014", "", "COMP 014", "Quantitative Methods with Modeling and Simulation", 3.0, "2nd Year", "2nd Semester"),
+                while (resultSet.next()) {
+                    String subjectCode = resultSet.getString("subject_code");
+                    String preRequisites = resultSet.getString("pre_requisites");
+                    String description = resultSet.getString("description");
+                    double units = resultSet.getDouble("units");
+                    String yearLevel = resultSet.getString("year_level");
+                    String semester = resultSet.getString("semester");
 
-                new Subject("GEED 006", "", "GEED 006", "Art Appreciation/Pagpapahalaga sa Sining", 3.0, "3rd Year", "1st Semester"),
-                new Subject("COMP 018", "", "COMP 018", "Database Administration", 3.0, "3rd Year", "1st Semester"),
-                new Subject("COMP 015", "", "COMP 015", "Fundamentals of Research", 3.0, "3rd Year", "1st Semester"),
-                new Subject("ELEC IT-E1", "", "ELECT IT-E1", "IT Elective 1", 3.0, "3rd Year", "1st Semester"),
-                new Subject("COMP 017", "", "COMP 017", "Multimedia", 3.0, "3rd Year", "1st Semester"),
-                new Subject("INTE 301", "INTE 202", "INTE 301", "Systems Integration and Architecture 1", 3.0, "3rd Year", "1st Semester"),
-                new Subject("COMP 016", "COMP 009", "COMP 016", "Web Development", 3.0, "3rd Year", "1st Semester"),
+                    // Using subjectCode for equivSubjectCode as specified
+                    SubjectManagement subject = new SubjectManagement(
+                            subjectCode,
+                            preRequisites != null ? preRequisites : "",
+                            subjectCode, // Using subject_code for equiv_code
+                            description,
+                            units,
+                            yearLevel,
+                            semester
+                    );
 
-                new Subject("COMP 019", "COMP 009", "COMP 019", "Applications Development and Emerging Technologies", 3.0, "3rd Year", "2nd Semester"),
-                new Subject("INTE 303", "COMP 015", "INTE 303", "Capstone Project 1", 3.0, "3rd Year", "2nd Semester"),
-                new Subject("GEED 008", "", "GEED 008", "Ethics/Etika", 3.0, "3rd Year", "2nd Semester"),
-                new Subject("INTE 302", "INTE 301", "INTE 302", "Information Assurance and Security 1", 3.0, "3rd Year", "2nd Semester"),
-                new Subject("ELEC IT-E2", "", "ELECT IT-E2", "IT Elective 2", 3.0, "3rd Year", "2nd Semester"),
-                new Subject("HRMA 001", "", "HRMA 001", "Principles of Organization and Management", 3.0, "3rd Year", "2nd Semester"),
-                new Subject("GEED 003", "", "GEED 003", "The Contemporary World/Ang Kasalukuyang Daigdig", 3.0, "3rd Year", "2nd Semester"),
-
-                new Subject("ELEC IT-E3", "", "ELEC IT-E3", "IT Elective 3", 3.0, "3rd Year", "SUMMER"),
-                new Subject("GEED 037", "", "GEED 037", "Life and Works of Rizal/Buhay at Mga Gawa ni Rizal", 3.0, "3rd Year", "SUMMER"),
-
-                new Subject("INTE 402", "INTE 303", "INTE 402", "Capstone Project 2", 3.0, "4th Year", "1st Semester"),
-                new Subject("INTE 401", "INTE 302", "INTE 401", "Information Assurance and Security 2", 3.0, "4th Year", "1st Semester"),
-                new Subject("ELEC IT-E4", "", "ELECT IT-4", "IT Elective 4", 3.0, "4th Year", "1st Semester"),
-                new Subject("GEED 007", "", "GEED 007", "Science, Technology and Society/Agham, Teknolohiya at  Lipunan", 3.0, "4th Year", "1st Semester"),
-                new Subject("COMP 023", "", "COMP 023", "Social and Professional Issues in Computing", 3.0, "4th Year", "1st Semester"),
-                new Subject("INTE 403", "INTE 301", "INTE 403", "Systems Administration and Maintenance", 3.0, "4th Year", "1st Semester"),
-        */
-                new SubjectManagement("INTE 404", "INTE 303, INTE 302, COMP 019, COMP 008", "INTE 404", "Practicum (500 Hours)", 6.0, "4th Year", "2nd Semester"),
-                new SubjectManagement("COMP 024", "HRMA 001", "COMP 024", "Technopreneurship", 3.0, "4th Year", "2nd Semester")
-        );
+                    allSubjects.add(subject);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to load subjects from the database: " + e.getMessage());
+        }
     }
 
 
@@ -369,5 +344,61 @@ public class SubjectController implements Initializable {
     public void addSubject(SubjectManagement subject) {
         allSubjects.add(subject);
         updateFilter();
+    }
+
+    private boolean saveSubjectToDatabase(SubjectManagement subject, boolean isNewSubject) {
+        String query;
+
+        if (isNewSubject) {
+            query = "INSERT INTO subjects (subject_code, pre_requisites, description, units, year_level, semester) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+        } else {
+            query = "UPDATE subjects SET pre_requisites = ?, description = ?, units = ?, " +
+                    "year_level = ?, semester = ? WHERE subject_code = ?";
+        }
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            if (isNewSubject) {
+                statement.setString(1, subject.getSubjectCode());
+                statement.setString(2, subject.getPreRequisites());
+                statement.setString(3, subject.getDescription());
+                statement.setDouble(4, subject.getUnits());
+                statement.setString(5, subject.getYearLevel());
+                statement.setString(6, subject.getSemester());
+            } else {
+                statement.setString(1, subject.getPreRequisites());
+                statement.setString(2, subject.getDescription());
+                statement.setDouble(3, subject.getUnits());
+                statement.setString(4, subject.getYearLevel());
+                statement.setString(5, subject.getSemester());
+                statement.setString(6, subject.getSubjectCode());
+            }
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error",
+                    isNewSubject ? "Failed to add new subject: " : "Failed to update subject: " + e.getMessage());
+            return false;
+        }
+    }
+    private boolean deleteSubjectFromDatabase(SubjectManagement subject) {
+        String query = "DELETE FROM subjects WHERE subject_code = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, subject.getSubjectCode());
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to delete subject: " + e.getMessage());
+            return false;
+        }
     }
 }
