@@ -205,7 +205,10 @@ public class SubjectController implements Initializable {
         addButton.setOnAction(e -> handleAdd());
         editButton.setOnAction(e -> handleEdit());
         deleteButton.setOnAction(e -> handleDelete());
-        refreshButton.setOnAction(e -> updateFilter());
+        refreshButton.setOnAction(e -> {
+            setupInitialSubjects();
+            updateFilter();
+        });
     }
 
     private void setupInitialSubjects() {
@@ -283,7 +286,13 @@ public class SubjectController implements Initializable {
     private void handleAdd() {
         SubjectManagement newSubject = showSubjectForm(null);
         if (newSubject != null) {
-            addSubject(newSubject);
+            // Save to database first
+            if (saveSubjectToDatabase(newSubject, true)) {
+                // If database save was successful, add to UI
+                allSubjects.add(newSubject);
+                updateFilter();
+                showAlert("Success", "Subject added successfully.");
+            }
         }
     }
 
@@ -292,7 +301,13 @@ public class SubjectController implements Initializable {
         if (selected != null) {
             SubjectManagement updatedSubject = showSubjectForm(selected);
             if (updatedSubject != null) {
-                tableView.refresh();
+                // Save changes to database
+                if (saveSubjectToDatabase(updatedSubject, false)) {
+                    // Refresh the table
+                    setupInitialSubjects(); // Reload all subjects
+                    tableView.refresh();
+                    showAlert("Success", "Subject updated successfully.");
+                }
             }
         } else {
             showAlert("Edit Failed", "Please select a subject to edit.");
@@ -302,8 +317,22 @@ public class SubjectController implements Initializable {
     private void handleDelete() {
         SubjectManagement selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            allSubjects.remove(selected);
-            updateFilter();
+            // Confirm deletion
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Confirm Deletion");
+            confirmAlert.setHeaderText(null);
+            confirmAlert.setContentText("Are you sure you want to delete the subject: " + selected.getSubjectCode() + "?");
+        
+            Optional<ButtonType> result = confirmAlert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                // Delete from database first
+                if (deleteSubjectFromDatabase(selected)) {
+                    // If database deletion was successful, remove from UI
+                    allSubjects.remove(selected);
+                    updateFilter();
+                    showAlert("Success", "Subject deleted successfully.");
+                }
+            }
         } else {
             showAlert("Delete Failed", "Please select a subject to delete.");
         }
@@ -311,7 +340,7 @@ public class SubjectController implements Initializable {
 
     private SubjectManagement showSubjectForm(SubjectManagement subject) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/subjectmodule/fxml/SubjectForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SubjectForm.fxml"));
             Parent parent = loader.load();
 
             SubjectFormController controller = loader.getController();
@@ -329,7 +358,7 @@ public class SubjectController implements Initializable {
 
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Form Load Error", "Unable to open the subject form.");
+            showAlert("Form Load Error", "Unable to open the subject form: " + e.getMessage());
             return null;
         }
     }
@@ -348,59 +377,129 @@ public class SubjectController implements Initializable {
         updateFilter();
     }
 
-    private boolean saveSubjectToDatabase(SubjectManagement subject, boolean isNewSubject) {
-        String query;
-
+private boolean saveSubjectToDatabase(SubjectManagement subject, boolean isNewSubject) {
+    try (Connection connection = DBConnection.getConnection()) {
         if (isNewSubject) {
-            query = "INSERT INTO subjects (subject_code, pre_requisites, description, units, year_level, semester) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+            // First, get the next value from the sequence or find max id and increment
+            int newSubjectId = getNextSubjectId(connection);
+            
+            // Now insert with the explicit subject_id
+            String query = "INSERT INTO subjects (subject_id, subject_code, pre_requisites, description, units, year_level, semester) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, newSubjectId);
+                statement.setString(2, subject.getSubjectCode());
+                statement.setString(3, subject.getPrerequisite());
+                statement.setString(4, subject.getDescription());
+                statement.setDouble(5, subject.getUnit());
+                statement.setString(6, subject.getYearLevel());
+                statement.setString(7, subject.getSemester());
+                
+                int rowsAffected = statement.executeUpdate();
+                
+                if (rowsAffected > 0) {
+                    setupInitialSubjects();  // Refresh data
+                    return true;
+                }
+                return false;
+            }
         } else {
-            query = "UPDATE subjects SET pre_requisites = ?, description = ?, units = ?, " +
-                    "year_level = ?, semester = ? WHERE subject_code = ?";
-        }
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            if (isNewSubject) {
-                statement.setString(1, subject.getSubjectCode());
-                statement.setString(2, subject.getPreRequisites());
-                statement.setString(3, subject.getDescription());
-                statement.setDouble(4, subject.getUnits());
-                statement.setString(5, subject.getYearLevel());
-                statement.setString(6, subject.getSemester());
-            } else {
-                statement.setString(1, subject.getPreRequisites());
+            // For updates, we need to find the subject_id first based on subject_code
+            int subjectId = getSubjectIdByCode(connection, subject.getSubjectCode());
+            
+            if (subjectId == -1) {
+                showAlert("Update Error", "Could not find subject with code: " + subject.getSubjectCode());
+                return false;
+            }
+            
+            String query = "UPDATE subjects SET pre_requisites = ?, description = ?, units = ?, " +
+                    "year_level = ?, semester = ? WHERE subject_id = ?";
+                    
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, subject.getPrerequisite());
                 statement.setString(2, subject.getDescription());
-                statement.setDouble(3, subject.getUnits());
+                statement.setDouble(3, subject.getUnit());
                 statement.setString(4, subject.getYearLevel());
                 statement.setString(5, subject.getSemester());
-                statement.setString(6, subject.getSubjectCode());
+                statement.setInt(6, subjectId);
+                
+                int rowsAffected = statement.executeUpdate();
+                return rowsAffected > 0;
             }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        showAlert("Database Error", 
+                isNewSubject ? "Failed to add new subject: " : "Failed to update subject: " + e.getMessage());
+        return false;
+    }
+}
 
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error",
-                    isNewSubject ? "Failed to add new subject: " : "Failed to update subject: " + e.getMessage());
-            return false;
+// Helper method to get the next available subject_id
+private int getNextSubjectId(Connection connection) throws SQLException {
+    // Try to get the next value from a sequence if it exists
+    try {
+        String sequenceQuery = "SELECT nextval('subjects_subject_id_seq')";
+        try (PreparedStatement stmt = connection.prepareStatement(sequenceQuery);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+    } catch (SQLException e) {
+        // Sequence doesn't exist, fallback to finding max and incrementing
+        System.out.println("Sequence not found, getting max ID instead: " + e.getMessage());
+    }
+    
+    // Find the maximum subject_id and increment by 1
+    String maxIdQuery = "SELECT COALESCE(MAX(subject_id), 0) + 1 FROM subjects";
+    try (PreparedStatement stmt = connection.prepareStatement(maxIdQuery);
+         ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+            return rs.getInt(1);
         }
     }
-    private boolean deleteSubjectFromDatabase(SubjectManagement subject) {
-        String query = "DELETE FROM subjects WHERE subject_code = ?";
+    
+    // Default to 1 if we can't determine next ID
+    return 1;
+}
 
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, subject.getSubjectCode());
-
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "Failed to delete subject: " + e.getMessage());
-            return false;
+// Helper method to get subject_id by subject_code
+private int getSubjectIdByCode(Connection connection, String subjectCode) throws SQLException {
+    String query = "SELECT subject_id FROM subjects WHERE subject_code = ?";
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        stmt.setString(1, subjectCode);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("subject_id");
+            }
         }
     }
+    return -1; // Not found
+}
+
+// Helper method to get the next available subject_id via stored function if available
+private boolean deleteSubjectFromDatabase(SubjectManagement subject) {
+    try (Connection connection = DBConnection.getConnection()) {
+        // First, find the subject_id based on subject_code
+        int subjectId = getSubjectIdByCode(connection, subject.getSubjectCode());
+        
+        if (subjectId == -1) {
+            showAlert("Delete Error", "Could not find subject with code: " + subject.getSubjectCode());
+            return false;
+        }
+        
+        String query = "DELETE FROM subjects WHERE subject_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, subjectId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        showAlert("Database Error", "Failed to delete subject: " + e.getMessage());
+        return false;
+    }
+}
 }

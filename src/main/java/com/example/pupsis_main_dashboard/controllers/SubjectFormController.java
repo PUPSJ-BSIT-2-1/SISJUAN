@@ -22,30 +22,59 @@ public class SubjectFormController {
 
     @FXML
     public void initialize() {
+        // Initialize ComboBox values to match filtering options
+        yearLevelCombo.getItems().addAll(
+            "1st Year",
+            "2nd Year",
+            "3rd Year",
+            "4th Year"
+        );
+        
+        semesterCombo.getItems().addAll(
+            "1st Semester",
+            "2nd Semester",
+            "Summer Semester"
+        );
+        
+        // Set default values if empty
+        if (yearLevelCombo.getValue() == null) {
+            yearLevelCombo.setValue("1st Year");
+        }
+        
+        if (semesterCombo.getValue() == null) {
+            semesterCombo.setValue("1st Semester");
+        }
+
         cancelButton.setOnAction(e -> ((Stage) cancelButton.getScene().getWindow()).close());
 
         saveButton.setOnAction(e -> {
-            if (subject == null) {
-                subject = new SubjectManagement(
-                        subjectCodeField.getText(),
-                        prerequisiteField.getText(),
-                        equivCodeField.getText(),
-                        descriptionField.getText(),
-                        Double.parseDouble(unitField.getText()),
-                        yearLevelCombo.getValue(),
-                        semesterCombo.getValue()
-                );
-            } else {
-                subject.setSubjectCode(subjectCodeField.getText());
-                subject.setPrerequisite(prerequisiteField.getText());
-                subject.setEquivSubjectCode(equivCodeField.getText());
-                subject.setDescription(descriptionField.getText());
-                subject.setUnit(Double.parseDouble(unitField.getText()));
-                subject.setYearLevel(yearLevelCombo.getValue());
-                subject.setSemester(semesterCombo.getValue());
-            }
+            try {
+                double unitValue = Double.parseDouble(unitField.getText());
+                
+                if (subject == null) {
+                    subject = new SubjectManagement(
+                            subjectCodeField.getText(),
+                            prerequisiteField.getText(),
+                            equivCodeField.getText(),
+                            descriptionField.getText(),
+                            unitValue,
+                            yearLevelCombo.getValue(),
+                            semesterCombo.getValue()
+                    );
+                } else {
+                    subject.setSubjectCode(subjectCodeField.getText());
+                    subject.setPrerequisite(prerequisiteField.getText());
+                    subject.setEquivSubjectCode(equivCodeField.getText());
+                    subject.setDescription(descriptionField.getText());
+                    subject.setUnit(unitValue);
+                    subject.setYearLevel(yearLevelCombo.getValue());
+                    subject.setSemester(semesterCombo.getValue());
+                }
 
-            ((Stage) saveButton.getScene().getWindow()).close();
+                ((Stage) saveButton.getScene().getWindow()).close();
+            } catch (NumberFormatException ex) {
+                showAlert("Invalid Input", "Please enter a valid number for Units.");
+            }
         });
     }
 
@@ -63,5 +92,13 @@ public class SubjectFormController {
 
     public SubjectManagement getSubject() {
         return subject;
+    }
+    
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
