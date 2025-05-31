@@ -1,0 +1,209 @@
+.root {
+    -fx-font-family: "Inter";
+    -fx-background-radius: 20;
+    -fx-background-color: transparent;
+    -fx-border-radius: 10;
+}
+
+#gradesHeaderLbl {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 40px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#gradesHeaderLbl:focused {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.red-card .label {
+    -fx-font-size: 30px !important;
+    -fx-min-height: 50 !important;
+    -fx-max-height: 50 !important;
+    -fx-pref-height: 50 !important;
+}
+
+.label {
+    -fx-font-family: 'Inter';
+}
+
+.rounded-border-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+/* TableView Styles */
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+    -fx-table-cell-border-color: #ddd;
+    -fx-table-header-border-color: #ddd;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+/* Table Header Cells with Gridlines */
+.table-view .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-border-width: 0.5px;
+    -fx-border-color: #ccc; /* Light gray for subtle grid look */
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.table-view .column-header {
+    -fx-background-color: #F8F7F7;
+    -fx-border-width: 0.5px;
+    -fx-border-color: #bbb;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10px;
+}
+
+.table-view .table-cell, .table-cell {
+    -fx-border-width: 0.5px;
+    -fx-border-color: #ccc;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: center-left;
+    -fx-text-fill: black;
+    -fx-padding: 5px 10px;
+    -fx-cell-size: -1;
+}
+
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.styled-button {
+    -fx-background-color: white;
+    -fx-text-fill: maroon;
+    -fx-font-family: 'Inter';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 6, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-pref-width: 100px;
+    -fx-pref-height: 40px;
+}
+
+.styled-button:hover {
+    -fx-background-color: #f9f9f9;
+}
+
+.styled-button:pressed {
+    -fx-background-color: #f0f0f0;
+}
+
+
+.styled-button:pressed {
+    -fx-background-color: #f0f0f0;
+}
+
+
+.bold-label {
+    -fx-font-weight: bold;
+}
+
+/* Hover effect for table rows */
+.table-row-cell:hover {
+    -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
+}
+
+.table-row-cell:hover .table-cell,
+.table-row-cell:hover .text {
+    -fx-text-fill: white;
+    -fx-fill: white; /* for .text nodes */
+}
+
+/* Small and regular cards */
+.small-cards, .cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.cards {
+    -fx-padding: 8;
+}
+
+/* Red card */
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+/* ComboBox styles */
+.combo-box {
+    -fx-background-color: maroon;
+    -fx-text-fill: white;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+/* Remove hover effect */
+.table-row-cell:hover {
+    -fx-background-color: maroon;
+}
+
+/* Style selected row */
+.table-row-cell:filled:selected {
+    -fx-background-color: maroon;
+}
+
+.table-row-cell:filled:selected .table-cell,
+.table-row-cell:filled:selected .text {
+    -fx-text-fill: white;
+}
+
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.combo-box:focused,
+.combo-box:showing {
+    -fx-background-color: maroon;
+    -fx-text-fill: black;
+}
+
+.combo-box .list-view .list-cell {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+.combo-box .list-view .list-cell:hover {
+    -fx-background-color: #f4dada;
+    -fx-text-fill: black;
+}
+
+.combo-box .list-view .list-cell:selected {
+    -fx-background-color: #d19c9c;
+    -fx-text-fill: black;
+}

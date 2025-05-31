@@ -51,7 +51,7 @@ public class AdminDashboardController {
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
     private static final String USERS_FXML = null;
     private static final String FACULTY_FXML = null;
-    private static final String SUBJECTS_FXML = null;
+    private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/SubjectModule.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminRoomAssignment.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
@@ -146,6 +146,7 @@ public class AdminDashboardController {
             preloadFxmlContent(CALENDAR_FXML);
             preloadFxmlContent(ABOUT_FXML);
             preloadFxmlContent(STUDENT_MANAGEMENT_FXML);
+            preloadFxmlContent(SUBJECTS_FXML);
 
             System.out.println("All interfaces preloaded successfully");
         });
@@ -298,7 +299,7 @@ public class AdminDashboardController {
             case "registrationHBox" ->
                     null;
             case "paymentInfoHBox" ->null;
-            case "subjectsHBox" -> null;
+            case "subjectsHBox" -> SUBJECTS_FXML;
             case "gradesHBox" -> null;
             case "scheduleHBox" -> SCHEDULE_FXML;
             case "calendarHBox" -> CALENDAR_FXML;

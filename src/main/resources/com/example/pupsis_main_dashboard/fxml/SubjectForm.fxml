@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="400.0" prefWidth="400.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.pupsis_main_dashboard.controllers.SubjectFormController">
+    <children>
+        <VBox spacing="10.0" alignment="TOP_LEFT" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+            <padding>
+                <Insets top="20" left="20" right="20" bottom="20"/>
+            </padding>
+            <children>
+                <Label text="Subject Code:"/>
+                <TextField fx:id="subjectCodeField"/>
+
+                <Label text="Prerequisite:"/>
+                <TextField fx:id="prerequisiteField"/>
+
+                <Label text="Equivalent Code:"/>
+                <TextField fx:id="equivCodeField"/>
+
+                <Label text="Description:"/>
+                <TextField fx:id="descriptionField"/>
+
+                <Label text="Units:"/>
+                <TextField fx:id="unitField"/>
+
+                <Label text="Year Level:"/>
+                <ComboBox fx:id="yearLevelCombo"/>
+
+                <Label text="Semester:"/>
+                <ComboBox fx:id="semesterCombo"/>
+
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <children>
+                        <Button text="Save" fx:id="saveButton"/>
+                        <Button text="Cancel" fx:id="cancelButton"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
