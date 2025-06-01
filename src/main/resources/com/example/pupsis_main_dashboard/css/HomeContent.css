@@ -82,6 +82,7 @@
     -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
     -fx-border-radius: 8;
+    -fx-padding: 8;
 }
 
 .dark-theme .schedule-box {
@@ -127,6 +128,7 @@
     -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
     -fx-border-radius: 8;
+    -fx-padding: 8;
 }
 
 .dark-theme .event-box {

@@ -27,7 +27,6 @@ import java.util.*;
 public class FacultyDashboardController {
 
     @FXML private HBox homeHBox;
-    @FXML private HBox registrationHBox;
     @FXML private HBox subjectsHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox schoolCalendarHBox;
@@ -44,6 +43,7 @@ public class FacultyDashboardController {
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
+    private String formattedName;
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyHomeContent.fxml";
@@ -189,13 +189,12 @@ private void updateFacultyUI(ResultSet rs) throws SQLException {
     String firstName = rs.getString("firstname");
     String lastName = rs.getString("lastname");
     String department = rs.getString("department");
+    SessionData.getInstance().setFacultyId(facultyId);
     
-    String formattedName = formatFacultyName(firstName, lastName);
-    
+    formattedName = formatFacultyName(firstName, lastName);
+
     Platform.runLater(() -> {
         // Set the faculty ID first to ensure it's available
-        SessionData.getInstance().setFacultyId(facultyId);
-        
         studentNameLabel.setText(formattedName);
         studentIdLabel.setText(facultyId);
         departmentLabel.setText(department != null ? department : "Department not set");
@@ -243,9 +242,6 @@ private void updateFacultyUI(ResultSet rs) throws SQLException {
     // Get FXML path based on clicked HBox
     private String getFxmlPathFromHBox(HBox clickedHBox) {
         return switch (clickedHBox.getId()) {
-            case "registrationHBox" ->
-                    null;
-            case "paymentInfoHBox" ->null;
             case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" -> SCHEDULE_FXML;
@@ -263,7 +259,7 @@ public void loadContent(String fxmlPath) {
 
         if (fxmlPath.equals(HOME_FXML)) {
             FacultyHomeContentController facultyHomeContentController = loader.getController();
-            facultyHomeContentController.setFacultyDashboardController(this);
+            facultyHomeContentController.setFacultyDashboardController(this, formattedName);
         }
 
         // Set faculty ID in SessionData when loading grading module
@@ -341,7 +337,6 @@ public void loadContent(String fxmlPath) {
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
-        registrationHBox.getStyleClass().remove("selected");
         subjectsHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
         scheduleHBox.getStyleClass().remove("selected");

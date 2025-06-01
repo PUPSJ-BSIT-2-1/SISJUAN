@@ -48,25 +48,14 @@ public class FacultyRoomAssignmentController {
 
     private final ObservableList<Schedule> schedules = FXCollections.observableArrayList();
     private static final Logger logger = LoggerFactory.getLogger(FacultyRoomAssignmentController.class);
-    private String sessionFacultyID;
 
     // Initialize method to set up the table and load data
     @FXML 
     private void initialize() {
         schedules.clear();
         scheduleTable.setEditable(false);
-        sessionFacultyID = SessionData.getInstance().getFacultyId();
 
-        var task = new Task<Void>() {
-            @Override
-            protected Void call() {
-                loadSchedules(sessionFacultyID);
-                return null;
-            }
-        };
-        task.setOnSucceeded(_ -> scheduleTable.refresh());
-        task.setOnFailed(event -> logger.error("Failed to load schedules", event.getSource().getException()));
-        new Thread(task).start();
+        loadSchedules();
 
         var columns = new TableColumn[]{subjCodeCell, subjDescriptionCell, sectionCell, scheduleCell, dayCell, roomCell};
         for (var col : columns) {
@@ -146,7 +135,8 @@ public class FacultyRoomAssignmentController {
     }
 
     // Method to load schedules from the database for the current faculty
-    private void loadSchedules(String sessionFacultyID) {
+    private void loadSchedules() {
+        String sessionFacultyID = SessionData.getInstance().getFacultyId();
         String query = """
                     SELECT CONCAT(faculty_number, ' - ', description, ' (', year_section, ')') AS faculty, fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number, fl.load_id, sub.subject_id, sub.subject_code, sub.description,
                            fl.year_section, sch.days, TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,

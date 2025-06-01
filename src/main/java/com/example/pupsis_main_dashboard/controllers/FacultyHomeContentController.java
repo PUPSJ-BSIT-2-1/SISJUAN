@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -48,8 +49,11 @@ public class FacultyHomeContentController {
 
     private FacultyDashboardController facultyDashboardController;
 
-    public void setFacultyDashboardController(FacultyDashboardController controller) {
+    public void setFacultyDashboardController(FacultyDashboardController controller, String formatteName) {
         this.facultyDashboardController = controller;
+        String[] nameParts = formatteName.split(", ");
+        String finalFormattedName = nameParts[1].trim() + " " + nameParts[0].trim();
+        this.facultyNameLabel.setText(finalFormattedName);
 
         if (inputGradesButton != null) {
             inputGradesButton.setOnAction(this::inputGradesButtonClick);
@@ -142,8 +146,7 @@ public class FacultyHomeContentController {
         try {
             // Get faculty info (name)
             Map<String, String> facultyInfo = getFacultyInfo(identifier);
-            Platform.runLater(() -> updateFacultyInfo(facultyInfo));
-            
+
             // Load teaching load statistics
             loadTeachingLoad();
             
@@ -167,59 +170,56 @@ public class FacultyHomeContentController {
      */
     private Map<String, String> getFacultyInfo(String identifier) {
         Map<String, String> facultyInfo = new HashMap<>();
-        
+
         try (Connection conn = DBConnection.getConnection()) {
-            // First try to get faculty by ID
-            String query = "SELECT faculty_id, firstname, lastname FROM faculty WHERE faculty_id = ?";
-            
+            if (conn == null) {
+                System.out.println("Connection failed.");
+                facultyInfo.put("name", "Unknown Faculty");
+                return facultyInfo;
+            }
+
+            identifier = identifier.trim();
+
+            // First, try to get faculty by ID, only if identifier is a number
+            if (identifier.matches("\\d+")) {
+                String query = "SELECT faculty_id, firstname, lastname FROM faculty WHERE faculty_id = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setInt(1, Integer.parseInt(identifier));
+
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            facultyId = String.valueOf(rs.getInt("faculty_id"));
+                            String firstName = rs.getString("firstname");
+                            String lastName = rs.getString("lastname");
+                            facultyInfo.put("name", firstName + " " + lastName);
+                            return facultyInfo;
+                        }
+                    }
+                }
+            }
+
+            // Try to find by email (case-insensitive)
+            String query = "SELECT faculty_id, firstname, lastname FROM faculty WHERE LOWER(email) = LOWER(?)";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, identifier);
-                
+
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        facultyId = rs.getString("faculty_id");
+                        facultyId = String.valueOf(rs.getInt("faculty_id"));
                         String firstName = rs.getString("firstname");
                         String lastName = rs.getString("lastname");
-                        
                         facultyInfo.put("name", firstName + " " + lastName);
                         return facultyInfo;
                     }
                 }
             }
-            
-            // If not found by ID, try to find by email (case-insensitive)
-            query = "SELECT faculty_id, firstname, lastname FROM faculty WHERE LOWER(email) = LOWER(?)";
-            
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, identifier);
-                
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        facultyId = rs.getString("faculty_id");
-                        String firstName = rs.getString("firstname");
-                        String lastName = rs.getString("lastname");
-                        
-                        facultyInfo.put("name", firstName + " " + lastName);
-                        return facultyInfo;
-                    }
-                }
-            }
-        } catch (SQLException _) {
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        
-        // Set default values if faculty not found
+
         facultyInfo.put("name", "Unknown Faculty");
-        
         return facultyInfo;
-    }
-    
-    /**
-     * Updates the UI with faculty information
-     * 
-     * @param facultyInfo Map containing faculty information
-     */
-    private void updateFacultyInfo(Map<String, String> facultyInfo) {
-        facultyNameLabel.setText(facultyInfo.get("name"));
     }
     
     /**
@@ -232,28 +232,29 @@ public class FacultyHomeContentController {
         
         try (Connection conn = DBConnection.getConnection()) {
             // Count total classes (subjects) taught by faculty
-            String classesQuery = "SELECT COUNT(DISTINCT subject_code) AS class_count FROM subjects WHERE professor = ?";
+            String classesQuery = "SELECT COUNT(*) AS class_count FROM faculty_load WHERE faculty_id = ?";
             
             try (PreparedStatement stmt = conn.prepareStatement(classesQuery)) {
-                stmt.setString(1, facultyId);
+                stmt.setInt(1, Integer.parseInt(facultyId));
                 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         int classCount = rs.getInt("class_count");
-                        Platform.runLater(() -> totalClassesLabel.setText(String.valueOf(classCount)));
+                       Platform.runLater(() -> totalClassesLabel.setText(String.valueOf(classCount)));
                     }
                 }
             }
             
             // Count total students across all classes
-            String studentsQuery = "SELECT COUNT(DISTINCT s.student_id) AS student_count " +
-                                  "FROM students s " +
-                                  "JOIN schedule sc ON s.student_id = sc.student_id " +
-                                  "JOIN subjects sub ON sc.subject_code = sub.subject_code " +
-                                  "WHERE sub.professor = ?";
+            String studentsQuery = """
+                SELECT COUNT(*) as student_count
+                FROM student_load sl
+                JOIN faculty_load fl ON fl.load_id = sl.faculty_load
+                WHERE fl.faculty_id = ?;
+            """;
             
             try (PreparedStatement stmt = conn.prepareStatement(studentsQuery)) {
-                stmt.setString(1, facultyId);
+                stmt.setInt(1, Integer.parseInt(facultyId));
                 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
@@ -262,15 +263,18 @@ public class FacultyHomeContentController {
                     }
                 }
             }
-            
+
             // Count classes scheduled for today
-            String todayClassesQuery = "SELECT COUNT(DISTINCT s.subject_code) AS today_classes " +
-                                      "FROM subjects s " +
-                                      "JOIN schedule sch ON s.subject_code = sch.subject_code " +
-                                      "WHERE s.professor = ?";
+            String todayClassesQuery = """
+                SELECT COUNT(*) as today_classes
+                FROM schedule sh
+                JOIN faculty_load fl ON fl.load_id = sh.faculty_load_id
+                WHERE fl.faculty_id = ? AND sh.days LIKE '%' || ? || '%';
+            """;
             
             try (PreparedStatement stmt = conn.prepareStatement(todayClassesQuery)) {
-                stmt.setString(1, facultyId);
+                stmt.setInt(1, Integer.parseInt(facultyId));
+                stmt.setString(2, searchDayToday());
                 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
@@ -279,8 +283,24 @@ public class FacultyHomeContentController {
                     }
                 }
             }
-        } catch (SQLException _) {
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
+
+    private String searchDayToday() {
+        LocalDate today = LocalDate.now();
+        DayOfWeek day = today.getDayOfWeek();
+
+        return switch(day) {
+            case MONDAY -> "M";
+            case TUESDAY -> "T";
+            case WEDNESDAY -> "W";
+            case THURSDAY -> "Th";
+            case FRIDAY -> "F";
+            case SATURDAY -> "S";
+            case SUNDAY -> "Su";
+        };
     }
     
     /**
@@ -290,43 +310,44 @@ public class FacultyHomeContentController {
         if (facultyId == null) {
             return;
         }
-        
+
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT s.subject_code, s.description, sch.time, r.room, ys.year_section " +
-                           "FROM subjects s " +
-                           "JOIN schedule sch ON s.subject_code = sch.subject_code " +
-                           "LEFT JOIN \"room assignment\" r ON s.subject_code = r.subject_code " +
-                           "LEFT JOIN faculty_load fl ON s.subject_code = fl.subject_code AND fl.faculty_id = ? " +
-                           "LEFT JOIN year_section ys ON fl.year_section = ys.year_section " +
-                           "WHERE s.professor = ? " +
-                           "ORDER BY sch.time";
-            
+            String query = """
+                SELECT su.subject_code, su.description, sh.start_time, sh.end_time, r.room_name, fl.year_section
+                FROM schedule sh
+                JOIN faculty_load fl ON fl.load_id = sh.faculty_load_id
+                JOIN subjects su ON fl.subject_id = su.subject_id
+                JOIN room r ON sh.room_id = r.room_id
+                WHERE fl.faculty_id = ? AND sh.days LIKE '%' || ? || '%';
+            """;
+
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, facultyId);
-                stmt.setString(2, facultyId);
-                
+                stmt.setInt(1, Integer.parseInt(facultyId));
+                stmt.setString(2, searchDayToday());
+
                 try (ResultSet rs = stmt.executeQuery()) {
                     List<Node> scheduleBoxes = new ArrayList<>();
                     boolean hasSchedule = false;
-                    
+
                     while (rs.next()) {
                         hasSchedule = true;
                         String subjectCode = rs.getString("subject_code");
                         String description = rs.getString("description");
-                        String timeStart = rs.getString("time"); // Just time, not separate start/end
-                        String room = rs.getString("room");
+                        String timeStart = rs.getString("start_time");
+                        String timeEnd = rs.getString("end_time");
+                        String room = rs.getString("room_name");
                         String section = rs.getString("year_section");
-                        
+
                         // Format location with room if available
                         String location = room != null ? room : "TBA";
-                        
+
                         // Create a schedule box with available information
                         VBox scheduleBox = createScheduleBox(
-                            subjectCode, 
-                            description, 
-                            timeStart, 
-                            null, // No explicit end time in schema 
-                            location, 
+                            subjectCode,
+                            description,
+                            timeStart,
+                            timeEnd,
+                            location,
                             section != null ? section : "N/A"
                         );
                         scheduleBoxes.add(scheduleBox);
@@ -335,7 +356,7 @@ public class FacultyHomeContentController {
                     boolean finalHasSchedule = hasSchedule;
                     Platform.runLater(() -> {
                         todayScheduleVBox.getChildren().clear();
-                        
+
                         if (finalHasSchedule) {
                             todayScheduleVBox.getChildren().addAll(scheduleBoxes);
                         } else {
@@ -347,6 +368,7 @@ public class FacultyHomeContentController {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             Platform.runLater(() -> {
                 todayScheduleVBox.getChildren().clear();
                 Label errorLabel = new Label("Error loading schedule");
@@ -405,14 +427,15 @@ public class FacultyHomeContentController {
             try {
                 // Query the information schema to see if the table exists
                 String checkTableQuery = 
-                    "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'calendar_events')";
+                    "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'school_events')";
                 try (PreparedStatement checkStmt = conn.prepareStatement(checkTableQuery);
                      ResultSet checkRs = checkStmt.executeQuery()) {
                     if (checkRs.next()) {
                         tableExists = checkRs.getBoolean(1);
                     }
                 }
-            } catch (SQLException _) {
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
             
             if (!tableExists) {
@@ -427,11 +450,15 @@ public class FacultyHomeContentController {
             }
             
             // Table exists, continue with normal operation
-            String query = "SELECT event_name, event_date, location, description " +
-                           "FROM calendar_events " +
-                           "WHERE event_date >= CURRENT_DATE " +
-                           "ORDER BY event_date " +
-                           "LIMIT 5";
+            String query = """
+                SELECT se.*, MIN(sd.event_date) AS first_date
+                FROM school_events se
+                JOIN school_dates sd ON se.event_id = sd.event_id
+                WHERE sd.event_date >= CURRENT_DATE
+                GROUP BY se.event_id, se.event_description
+                ORDER BY first_date
+                LIMIT 3;
+            """;
             
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 try (ResultSet rs = stmt.executeQuery()) {
@@ -440,12 +467,11 @@ public class FacultyHomeContentController {
                     
                     while (rs.next()) {
                         hasEvents = true;
-                        String eventName = rs.getString("event_name");
-                        LocalDate eventDate = rs.getDate("event_date").toLocalDate();
-                        String location = rs.getString("location");
-                        String description = rs.getString("description");
+                        String eventName = rs.getString("event_type");
+                        LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                        String description = rs.getString("event_description");
                         
-                        VBox eventBox = createEventBox(eventName, eventDate, location, description);
+                        VBox eventBox = createEventBox(eventName, eventDate, description);
                         eventBoxes.add(eventBox);
                     }
 
@@ -464,6 +490,7 @@ public class FacultyHomeContentController {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             Platform.runLater(() -> {
                 eventsVBox.getChildren().clear();
                 Label errorLabel = new Label("Unable to load events");
@@ -476,27 +503,24 @@ public class FacultyHomeContentController {
     /**
      * Creates a VBox containing event details for display in the UI.
      */
-    private VBox createEventBox(String eventName, LocalDate eventDate, String location, String description) {
+    private VBox createEventBox(String eventName, LocalDate eventDate, String description) {
         VBox eventBox = new VBox(5);
         eventBox.getStyleClass().add("event-box");
-        
+
         Label nameLabel = new Label(eventName);
         nameLabel.getStyleClass().add("event-name");
-        
+
         Label dateLabel = new Label(eventDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")));
         dateLabel.getStyleClass().add("event-date");
-        
-        Label locationLabel = new Label(location);
-        locationLabel.getStyleClass().add("event-location");
-        
+
         Label descLabel = new Label(description);
         descLabel.getStyleClass().add("event-description");
         descLabel.setWrapText(true);
-        
-        eventBox.getChildren().addAll(nameLabel, dateLabel, locationLabel, descLabel);
+
+        eventBox.getChildren().addAll(nameLabel, dateLabel, descLabel);
         return eventBox;
     }
-    
+
     /**
      * Creates a pie chart showing class distribution by subject.
      */
@@ -507,15 +531,18 @@ public class FacultyHomeContentController {
         
         try (Connection conn = DBConnection.getConnection()) {
             // Get distribution of students by subject for classes taught by this faculty
-            String query = "SELECT subj.subject_code, COUNT(s.student_id) as count " +
-                          "FROM students s " +
-                          "JOIN schedule sc ON s.student_id = sc.student_id " +
-                          "JOIN subjects subj ON sc.subject_code = subj.subject_code " +
-                          "WHERE subj.professor = ? " +
-                          "GROUP BY subj.subject_code";
+            String query = """
+                SELECT su.subject_code, fl.year_section, COUNT(*) AS student_count
+                FROM student_load sl
+                JOIN faculty_load fl ON fl.load_id = sl.faculty_load
+                JOIN subjects su ON fl.subject_id = su.subject_id
+                WHERE fl.faculty_id = ?
+                GROUP BY fl.year_section, su.subject_code
+                ORDER BY fl.year_section;
+            """;
             
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, facultyId);
+                stmt.setInt(1, Integer.parseInt(facultyId));
                 
                 try (ResultSet rs = stmt.executeQuery()) {
                     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
@@ -524,7 +551,7 @@ public class FacultyHomeContentController {
                     while (rs.next()) {
                         hasData = true;
                         String subjectCode = rs.getString("subject_code");
-                        int count = rs.getInt("count");
+                        int count = rs.getInt("student_count");
                         pieChartData.add(new PieChart.Data(subjectCode, count));
                     }
 
@@ -545,6 +572,7 @@ public class FacultyHomeContentController {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             Platform.runLater(() -> {
                 ObservableList<PieChart.Data> errorChart = FXCollections.observableArrayList(
                     new PieChart.Data("Error Loading Data", 1)
