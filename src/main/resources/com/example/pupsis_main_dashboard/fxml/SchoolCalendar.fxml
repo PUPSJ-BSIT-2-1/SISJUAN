@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="stackPane" prefHeight="611.0" prefWidth="810.0" styleClass="main-root" stylesheets="@../css/SchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
+<StackPane fx:id="stackPane" prefHeight="631.0" prefWidth="810.0" styleClass="main-root" stylesheets="@../css/SchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
    <children>
       <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
          <children>
@@ -76,8 +76,11 @@
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
             </HBox>
-            <GridPane alignment="CENTER" prefHeight="46.0" prefWidth="802.0" style="-fx-alignment: center;">
+            <GridPane alignment="CENTER" prefHeight="35.0" prefWidth="810.0" style="-fx-alignment: center;" styleClass="calendar-day-container">
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="122.19998168945312" minWidth="10.0" prefWidth="117.6000244140625" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="188.0" minWidth="10.0" prefWidth="107.19997558593751" />

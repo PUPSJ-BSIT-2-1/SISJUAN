@@ -77,14 +77,18 @@ public class SchoolCalendarController {
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                String date = rs.getString("event_date");
-                String eventName = rs.getString("event_description");
-                String eventType = rs.getString("event_type");
+            if (rs.isBeforeFirst()) {
+                while (rs.next()) {
+                    String date = rs.getString("event_date");
+                    String eventName = rs.getString("event_description");
+                    String eventType = rs.getString("event_type");
 
-                String formatted = String.format("%s,%s,%s", date, eventType, eventName);
+                    String formatted = String.format("%s,%s,%s", date, eventType, eventName);
 
-                eventsMap.computeIfAbsent(date, _ -> new ArrayList<>()).add(formatted);
+                    eventsMap.computeIfAbsent(date, _ -> new ArrayList<>()).add(formatted);
+                }
+            } else {
+                logger.warn("No records found in school_dates and school_events tables");
             }
 
         } catch (SQLException e) {
