@@ -7,7 +7,7 @@
 <AnchorPane prefHeight="400.0" prefWidth="400.0"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.pupsis_main_dashboard.controllers.SubjectFormController">
+            fx:controller="com.example.pupsis_main_dashboard.controllers.ADMINSubjectFormController">
     <children>
         <VBox spacing="10.0" alignment="TOP_LEFT" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
             <padding>

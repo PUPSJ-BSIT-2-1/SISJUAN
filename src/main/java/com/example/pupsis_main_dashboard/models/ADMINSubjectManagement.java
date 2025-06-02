@@ -6,10 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MainSubject extends Application {
+public class ADMINSubjectManagement extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/subjectmodule/fxml/SubjectModule.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/subjectmodule/fxml/ADMINSubjectModule.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Subject Module");
         primaryStage.setScene(new Scene(root));

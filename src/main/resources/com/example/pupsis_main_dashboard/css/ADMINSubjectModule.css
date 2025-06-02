@@ -55,7 +55,7 @@
 /* Table Header Cells with Gridlines */
 .table-view .column-header {
     -fx-background-color: #f5f5f5;
-    -fx-border-width: 0.5px;
+    -fx-border-width: 1px;
     -fx-border-color: #ccc; /* Light gray for subtle grid look */
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
@@ -63,7 +63,7 @@
 
 .table-view .column-header {
     -fx-background-color: #F8F7F7;
-    -fx-border-width: 0.5px;
+    -fx-border-width: 1px;
     -fx-border-color: #bbb;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
@@ -77,7 +77,7 @@
 }
 
 .table-view .table-cell, .table-cell {
-    -fx-border-width: 0.5px;
+    -fx-border-width: 1px;
     -fx-border-color: #ccc;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';

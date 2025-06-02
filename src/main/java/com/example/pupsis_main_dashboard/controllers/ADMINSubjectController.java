@@ -25,7 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
-public class SubjectController implements Initializable {
+public class ADMINSubjectController implements Initializable {
 
     @FXML private TableView<SubjectManagement> tableView;
     @FXML private TableColumn<SubjectManagement, String> subjectCodeColumn;
@@ -340,10 +340,10 @@ public class SubjectController implements Initializable {
 
     private SubjectManagement showSubjectForm(SubjectManagement subject) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/SubjectForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/ADMINSubjectForm.fxml"));
             Parent parent = loader.load();
 
-            SubjectFormController controller = loader.getController();
+            ADMINSubjectFormController controller = loader.getController();
             if (subject != null) {
                 controller.setSubject(subject);
             }

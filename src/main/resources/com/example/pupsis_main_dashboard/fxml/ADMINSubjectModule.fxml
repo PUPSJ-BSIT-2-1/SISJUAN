@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/SubjectModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SubjectController">
+<AnchorPane prefHeight="800.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/ADMINSubjectModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.ADMINSubjectController">
     <children>
         <BorderPane prefHeight="800.0" prefWidth="810.0">
             <top>
@@ -57,18 +57,18 @@
             <center>
                 <Pane prefHeight="650.0" prefWidth="750.0" BorderPane.alignment="CENTER">
                     <children>
-                        <VBox prefHeight="650.0" prefWidth="750.0" spacing="10.0">
+                        <VBox layoutX="-26.0" prefHeight="650.0" prefWidth="804.0" spacing="10.0">
                             <padding>
                                 <Insets top="10.0" />
                             </padding>
                             <children>
                                 <!-- Controls -->
-                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="small-cards">
+                                <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="789.0" spacing="10.0" styleClass="small-cards">
                                     <padding>
                                         <Insets left="10.0" right="10.0" />
                                     </padding>
                                     <children>
-                                        <ComboBox fx:id="yearSemComboBox" prefWidth="200.0" promptText="Year &amp; Semester">
+                                        <ComboBox fx:id="yearSemComboBox" prefHeight="46.0" prefWidth="227.0" promptText="Year &amp; Semester">
                                             <styleClass>
                                                 <String fx:value="cards" />
                                                 <String fx:value="red-card" />
@@ -96,13 +96,13 @@
                                 <!-- Table -->
                                 <HBox prefHeight="500.0" styleClass="small-cards">
                                     <children>
-                                        <TableView fx:id="tableView" layoutX="20" layoutY="20" prefHeight="565" prefWidth="760">
+                                        <TableView fx:id="tableView" layoutX="20" layoutY="20" prefHeight="476.0" prefWidth="786.0">
                                             <columns>
                                                 <TableColumn fx:id="subjectCodeColumn" prefWidth="114.39994621276855" text="Subject Code" />
                                                 <TableColumn fx:id="prerequisiteColumn" prefWidth="127.20001983642578" text="Prerequisite" />
                                                 <TableColumn fx:id="equivSubjectCodeColumn" prefWidth="127.20001220703125" text="Equivalent Code" />
-                                                <TableColumn fx:id="descriptionColumn" prefWidth="287.199951171875" text="Description" />
-                                                <TableColumn fx:id="unitColumn" prefWidth="79.9998779296875" text="Units" />
+                                                <TableColumn fx:id="descriptionColumn" prefWidth="327.99981689453125" text="Description" />
+                                                <TableColumn fx:id="unitColumn" prefWidth="79.199951171875" text="Units" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -128,7 +128,7 @@
                                 <Insets right="30.0" top="5.0" />
                             </padding>
                             <children>
-                                <Button fx:id="addButton" styleClass="styled-button" text="Add" />
+                                <Button fx:id="addButton" prefWidth="93.0" styleClass="styled-button" text="Add" />
                                 <Button fx:id="editButton" styleClass="styled-button" text="Edit" />
                                 <Button fx:id="deleteButton" styleClass="styled-button" text="Delete" />
                                 <Button fx:id="refreshButton" styleClass="styled-button" text="Refresh" />
