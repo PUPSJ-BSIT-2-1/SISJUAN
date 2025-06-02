@@ -146,7 +146,6 @@ public class StudentGradesController {
 
     private void loadGrades() {
         String sessionStudentID = SessionData.getInstance().getStudentNumber();
-        System.out.println("STUDENT_ID:" + sessionStudentID);
         String query = """
             SELECT DISTINCT ON (s.student_id, sub.subject_id)
             s.student_id,

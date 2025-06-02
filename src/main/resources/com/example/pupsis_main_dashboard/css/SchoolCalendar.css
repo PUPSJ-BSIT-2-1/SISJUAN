@@ -38,15 +38,23 @@
 /* Main calendar grid container */
 .calendar {
     -fx-background-color: #f8fcfc;
-    -fx-background-radius: 10;
     -fx-border-color: #e3e5e6;
-    -fx-border-width: 2;
-    -fx-border-radius: 10;
+    -fx-border-width: 0 2 2 2;
+    -fx-background-radius: 0 0 10 10;
+    -fx-border-radius: 0 0 10 10;
+}
+
+.calendar-day-container {
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2 2 0 2;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-radius: 10 10 0 0;
 }
 
 /* Icons in the header (arrows etc) */
 .icons {
-    -fx-fill: #2b2b2b;
+    -fx-fill: white;
 }
 
 /* Navigation button hover effects */
@@ -232,7 +240,8 @@
 
 /* Dark theme calendar containers */
 .dark-theme .days-container,
-.dark-theme .calendar {
+.dark-theme .calendar,
+.dark-theme .calendar-day-container {
     -fx-background-color: #3a3a3a;
     -fx-border-color: #555555;
 }
