@@ -122,6 +122,7 @@ public class GradingModuleController implements Initializable {
         });
         return loadTask;
     }
+
     private void setupRowClickHandler() {
         subjectsTable.setRowFactory(tv -> {
             TableRow<Subject> row = new TableRow<>() {
@@ -142,6 +143,7 @@ public class GradingModuleController implements Initializable {
                     Subject selectedSubject = row.getItem();
                     String subjectCode = selectedSubject.getSubjectCode();
                     String subjectDesc = selectedSubject.getSubjectDescription();
+                    String yearSection = selectedSubject.getYearSection(); // Get the year section
 
                     try {
                         ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
@@ -157,9 +159,8 @@ public class GradingModuleController implements Initializable {
                             // Get the controller after loading
                             EditGradesPageController controller = loader.getController();
 
-                            // Set the subject code and description
-                            controller.setSubjectCode(subjectCode);
-                            controller.setSubjectDesc(subjectDesc);
+                            // Set the subject code, description, and year section together
+                            controller.setSubjectAndYearSection(subjectCode, subjectDesc, yearSection);
 
                             // Set the content
                             contentPane.setContent(newContent);
@@ -172,6 +173,7 @@ public class GradingModuleController implements Initializable {
             return row;
         });
     }
+
     private ObservableList<Subject> loadSubjectsDataAsync() throws SQLException {
 
         if (facultyId == null || facultyId.isEmpty()) {
@@ -226,21 +228,21 @@ public class GradingModuleController implements Initializable {
 
         subjectsTable.getColumns().forEach(column -> column.setReorderable(false));
     }
-    
+
     // Method to handle search button clicks
     private void performSearch() {
         // Get the current text from the search field
         String searchText = searchBar.getText();
-        
+
         // Request focus on the table to show we're done with the search input
         subjectsTable.requestFocus();
-        
+
         // If there's an active filter and results are empty, show a helpful message
         if (!searchText.isEmpty() && subjectsTable.getItems().isEmpty()) {
             subjectsTable.setPlaceholder(new Label("No matches found for: " + searchText));
         }
     }
-    
+
     // Method to apply filter logic - extracted for reuse
     private void applyFilter(FilteredList<Subject> filteredData, String newValue) {
         filteredData.setPredicate(subject -> {
