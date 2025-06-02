@@ -86,7 +86,7 @@ public class RoomAssignmentController {
         String sem = SchoolYearAndSemester.determineCurrentSemester();
         semester.setText("Academic Year " + acadYear + " - " + sem);
 
-        // Set wrapping header cell factory for each column
+        // Set the wrapping header cell factory for each column
         for (TableColumn<Schedule, String> col : Arrays.asList(subjCodeCell, subjDescriptionCell, lecHourCell, labHourCell, unitsCell, scheduleCell, roomCell)) {
             setWrappingHeaderCellFactory(col);
         }
@@ -149,34 +149,34 @@ public class RoomAssignmentController {
         
         // SQL query to fetch schedules for the student
         String query = """
-                SELECT
-                    s.student_id,
-                    s.student_number,
-                    s.year_section,
-                    sub.subject_id,
-                    sub.subject_code,
-                    sub.description,
-                    sub.units,
-                    sch.days,
-                    TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
-                    TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time,
-                    r.room_name AS room,
-                    fl.load_id,
-                    fac.faculty_id,
-                    fac.faculty_number,
-                    fac.firstname || ' ' || fac.lastname AS faculty_name,
-                    sch.lecture_hour,
-                    sch.laboratory_hour
-                FROM student_load sl
-                JOIN students s ON sl.student_id = s.student_id
-                JOIN subjects sub ON sl.subject_id = sub.subject_id
-                JOIN faculty_load fl ON sl.faculty_load = fl.load_id
-                JOIN faculty fac ON fl.faculty_id = fac.faculty_id
-                JOIN schedule sch ON fl.load_id = sch.faculty_load_id
-                JOIN room r ON sch.room_id = r.room_id
-                WHERE s.student_id = ? AND fl.year_section = ?
-                ORDER BY s.student_id, sub.subject_id, sch.start_time;
-                """;
+            SELECT
+                s.student_id,
+                s.student_number,
+                s.year_section,
+                sub.subject_id,
+                sub.subject_code,
+                sub.description,
+                sub.units,
+                sch.days,
+                TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
+                TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time,
+                r.room_name AS room,
+                fl.load_id,
+                fac.faculty_id,
+                fac.faculty_number,
+                fac.firstname || ' ' || fac.lastname AS faculty_name,
+                sch.lecture_hour,
+                sch.laboratory_hour
+            FROM student_load sl
+            JOIN students s ON sl.student_id = s.student_id
+            JOIN subjects sub ON sl.subject_id = sub.subject_id
+            JOIN faculty_load fl ON sl.faculty_load = fl.load_id
+            JOIN faculty fac ON fl.faculty_id = fac.faculty_id
+            LEFT JOIN schedule sch ON fl.load_id = sch.faculty_load_id
+            LEFT JOIN room r ON sch.room_id = r.room_id
+            WHERE s.student_id = ? AND fl.year_section = ?
+            ORDER BY s.student_id, sub.subject_id, sch.start_time;
+            """;
 
         // SQL query to get student ID and year section based on student number
         String query2 = "SELECT student_id, year_section FROM students WHERE student_number = ?";

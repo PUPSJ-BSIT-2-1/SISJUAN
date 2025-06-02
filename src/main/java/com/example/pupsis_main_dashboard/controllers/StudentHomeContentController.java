@@ -167,7 +167,6 @@ public class StudentHomeContentController {
 
             if (rs.next()) {
                 String yearSection = rs.getString("year_section");
-                System.out.println("Year section: " + yearSection);
                 determineYearLevel(yearSection);
             }
         } catch (SQLException e) {

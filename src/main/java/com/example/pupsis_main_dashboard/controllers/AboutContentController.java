@@ -19,6 +19,8 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +44,8 @@ public class AboutContentController extends Developer {
     private List<Developer> developers;
     private List<Developer> filteredDevelopers = new ArrayList<>();
     private int currentIndex = 0;
+
+    private final Logger logger = LoggerFactory.getLogger(AboutContentController.class);
 
     /**
      * Initializes the controller by populating the module picker, loading developer content,
@@ -79,7 +83,7 @@ public class AboutContentController extends Developer {
             developers = objectMapper.readValue(inputStream, new TypeReference<>() {
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to load developers content: {}", e.getMessage());
         }
     }
 

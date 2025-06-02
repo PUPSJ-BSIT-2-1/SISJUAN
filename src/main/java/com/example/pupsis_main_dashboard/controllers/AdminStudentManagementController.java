@@ -16,6 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -29,7 +31,9 @@ import java.util.ResourceBundle;
 public class AdminStudentManagementController implements Initializable {
 
     @FXML
-    private VBox studentList; 
+    private VBox studentList;
+
+    private final Logger logger = LoggerFactory.getLogger(AdminStudentManagementController.class);
 
     private static class StudentData {
         int id;
@@ -75,7 +79,7 @@ public class AdminStudentManagementController implements Initializable {
                     ));
                 }
             } catch (SQLException e) {
-                e.printStackTrace(); 
+                logger.error("Failed to load pending students", e);
                 Platform.runLater(() -> showAlert("Database Error", "Failed to load pending students."));
             }
 
@@ -135,12 +139,12 @@ public class AdminStudentManagementController implements Initializable {
         Button acceptButton = new Button("✓");
         acceptButton.getStyleClass().add("accept-button");
         acceptButton.setFont(Font.font("System Bold", 14));
-        acceptButton.setOnAction(e -> handleAcceptStudent(student.id));
+        acceptButton.setOnAction(_ -> handleAcceptStudent(student.id));
 
         Button rejectButton = new Button("✗");
         rejectButton.getStyleClass().add("reject-button");
         rejectButton.setFont(Font.font("System Bold", 14));
-        rejectButton.setOnAction(e -> handleRejectStudent(student.id));
+        rejectButton.setOnAction(_ -> handleRejectStudent(student.id));
         
         HBox actionsBox = new HBox(5, acceptButton, rejectButton);
         actionsBox.setAlignment(Pos.CENTER);
@@ -166,7 +170,7 @@ public class AdminStudentManagementController implements Initializable {
                      Platform.runLater(() -> showAlert("Update Failed", "Could not accept student. Student not found or status already updated."));
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Failed to update student status", e);
                 Platform.runLater(() -> showAlert("Database Error", "Failed to update student status."));
             }
         }).start();
@@ -185,7 +189,7 @@ public class AdminStudentManagementController implements Initializable {
                     Platform.runLater(() -> showAlert("Deletion Failed", "Could not reject student. Student not found."));
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Failed to delete student record", e);
                 Platform.runLater(() -> showAlert("Database Error", "Failed to delete student record."));
             }
         }).start();
