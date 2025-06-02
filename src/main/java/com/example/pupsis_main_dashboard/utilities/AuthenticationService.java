@@ -23,9 +23,9 @@ public class AuthenticationService {
 
         String query;
         if (isEmail) {
-            query = "SELECT password FROM students WHERE LOWER(email) = LOWER(?)";
+            query = "SELECT password, status FROM students WHERE LOWER(email) = LOWER(?)";
         } else {
-            query = "SELECT password FROM students WHERE student_number = ?";
+            query = "SELECT password, status FROM students WHERE student_number = ?";
         }
 
         try (Connection connection = DBConnection.getConnection();
@@ -40,11 +40,24 @@ public class AuthenticationService {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String storedPassword = resultSet.getString("password");
-                isAuthenticated = PasswordHandler.verifyPassword(password, storedPassword);
+                String status = resultSet.getString("status");
+                
+                // Verify password and check if status is "Accepted"
+                if (PasswordHandler.verifyPassword(password, storedPassword)) {
+                    if ("Accepted".equalsIgnoreCase(status)) {
+                        isAuthenticated = true;
+                    } else {
+                        logger.info("Student login attempt for '{}' failed: Status is '{}', not 'Accepted'.", input, status);
+                    }
+                } else {
+                    logger.warn("Student login attempt for '{}' failed: Invalid password.", input);
+                }
+            } else {
+                logger.warn("Student login attempt for '{}' failed: User not found.", input);
             }
 
         } catch (SQLException e) {
-            logger.error("SQL error during authentication", e);
+            logger.error("SQL error during authentication for input '{}'", input, e);
         }
 
         return isAuthenticated;

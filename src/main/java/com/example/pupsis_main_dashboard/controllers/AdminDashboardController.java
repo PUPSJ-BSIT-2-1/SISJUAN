@@ -65,13 +65,15 @@ public class AdminDashboardController {
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        String identifier = RememberMeHandler.getCurrentUserEmail();
-        if (identifier != null && !identifier.isEmpty()) {
-            // Get faculty info from the database
-            loadFacultyInfo(identifier);
+        Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class); // Use AdminLoginController's preferences node
+        String facultyId = prefs.get("admin_id", null); // Retrieve stored faculty_id
+
+        if (facultyId != null && !facultyId.isEmpty()) {
+            loadFacultyInfo(facultyId);
         } else {
-            // Handle case when no user is logged in
-            studentNameLabel.setText("User not logged in");
+            // Handle case when no user is logged in or faculty_id is not found
+            logger.warn("Admin faculty_id not found in preferences. Cannot load admin info.");
+            studentNameLabel.setText("User not identified");
             studentIdLabel.setText("");
             departmentLabel.setText("");
         }
@@ -190,53 +192,44 @@ public class AdminDashboardController {
     }
     
     // Load faculty information from a database
-    private void loadFacultyInfo(String identifier) {
+    private void loadFacultyInfo(String facultyId) {
         // Get and display faculty name and ID
-        getFacultyData(identifier);
+        getFacultyData(facultyId);
     }
     
-    // Load faculty data from the database
-    private void getFacultyData(String identifier) {
-        boolean isEmail = identifier.contains("@");
+    // Load faculty data from the database using faculty_id
+    private void getFacultyData(String facultyIdStr) {
+        String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ? AND admin_type = TRUE";
         
-        try (Connection connection = DBConnection.getConnection()) {
-            // First, try by ID if the identifier is not an email
-            if (!isEmail) {
-                String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, identifier);
-                    ResultSet rs = stmt.executeQuery();
-                    
-                    if (rs.next()) {
-                        updateFacultyUI(rs);
-                        return;
-                    }
-                }
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             
-            // If not found by ID or is an email, try with email (case-insensitive)
-            String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE LOWER(email) = LOWER(?)";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, identifier);
-                ResultSet rs = stmt.executeQuery();
-                
+            stmt.setInt(1, Integer.parseInt(facultyIdStr)); // faculty_id is int2, so parse and set as int
+            
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     updateFacultyUI(rs);
-                    return;
+                } else {
+                    // Faculty with this ID not found or is not an admin
+                    logger.warn("Admin data not found for faculty_id: {} or user is not admin_type=TRUE", facultyIdStr);
+                    Platform.runLater(() -> {
+                        studentNameLabel.setText("Admin Not Found");
+                        studentIdLabel.setText("ID: " + facultyIdStr);
+                        departmentLabel.setText("-");
+                    });
                 }
             }
-            
-            // If we get here, faculty not found
-            Platform.runLater(() -> {
-                studentNameLabel.setText("Unknown Faculty");
-                studentIdLabel.setText("ID not found");
-                departmentLabel.setText("Department not found");
-            });
-            
         } catch (SQLException e) {
-            // Handle database error
+            logger.error("Database error while fetching admin data for faculty_id: " + facultyIdStr, e);
             Platform.runLater(() -> {
                 studentNameLabel.setText("Error loading data");
+                studentIdLabel.setText("");
+                departmentLabel.setText("");
+            });
+        } catch (NumberFormatException e) {
+            logger.error("Error parsing faculty_id from preferences: " + facultyIdStr, e);
+            Platform.runLater(() -> {
+                studentNameLabel.setText("Invalid Admin ID format");
                 studentIdLabel.setText("");
                 departmentLabel.setText("");
             });
@@ -259,19 +252,23 @@ public class AdminDashboardController {
         });
     }
     
-    // Format the faculty name as "LastName, FirstName"
+    // Format the faculty name as "FirstName LastName"
     private String formatFacultyName(String firstName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
-        
-        // Add last name
-        if (lastName != null && !lastName.trim().isEmpty()) {
-            formattedName.append(lastName.trim());
-            formattedName.append(", ");
-        }
         
         // Add first name
         if (firstName != null && !firstName.trim().isEmpty()) {
             formattedName.append(firstName.trim());
+        }
+        
+        // Add a space if both names are present
+        if (formattedName.length() > 0 && lastName != null && !lastName.trim().isEmpty()) {
+            formattedName.append(" ");
+        }
+        
+        // Add last name
+        if (lastName != null && !lastName.trim().isEmpty()) {
+            formattedName.append(lastName.trim());
         }
         
         return formattedName.toString().trim();
@@ -373,7 +370,7 @@ public class AdminDashboardController {
         StageAndSceneUtils.clearCache();
         if (logoutHBox.getScene() != null && logoutHBox.getScene().getWindow() != null) {
             Stage currentStage = (Stage) logoutHBox.getScene().getWindow();
-            stageUtils.loadStage(currentStage, "fxml/FacultyLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            stageUtils.loadStage(currentStage, "/com/example/pupsis_main_dashboard/fxml/AdminLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         }
     }
 
