@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<DialogPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyDialogController"
+            prefWidth="500.0"
+            styleClass="root">
+
+    <content>
+        <VBox spacing="15.0">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <children>
+
+                <Label text="Faculty Registration" styleClass="dialog-title">
+                    <font>
+                        <Font size="20.0"/>
+                    </font>
+                </Label>
+
+                <GridPane hgap="10" vgap="10">
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <!-- Row 0 -->
+                    <Label text="Faculty ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="facultyIdField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <!-- Row 1 -->
+                    <Label text="First Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="firstNameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <!-- Row 2 -->
+                    <Label text="Middle Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="middleNameField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <!-- Row 3 -->
+                    <Label text="Last Name:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextField fx:id="lastNameField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <!-- Row 4 -->
+                    <Label text="Department:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="departmentField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                    <!-- Row 5 -->
+                    <Label text="Email:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                    <TextField fx:id="emailField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                    <!-- Row 6 -->
+                    <Label text="Contact Number:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                    <TextField fx:id="contactField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                    <!-- Row 7 -->
+                    <Label text="Birthdate:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="birthdatePicker" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+                    <!-- Row 8 -->
+                    <Label text="Status:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="statusComboBox" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+                    <!-- Row 9 -->
+                    <Label text="Date Joined:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="dateJoinedPicker" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+                </GridPane>
+
+                <!-- Buttons -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <padding>
+                        <Insets top="10" />
+                    </padding>
+                    <children>
+                        <Button text="Cancel" onAction="#handleCancel" />
+                        <Button text="Save" onAction="#handleSave" defaultButton="true"/>
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+    </content>
+</DialogPane>

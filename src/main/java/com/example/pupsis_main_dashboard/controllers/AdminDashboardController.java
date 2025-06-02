@@ -53,7 +53,7 @@ public class AdminDashboardController {
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
     private static final String USERS_FXML = null;
-    private static final String FACULTY_FXML = null;
+    private static final String FACULTY_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyTab.fxml";
     private static final String SUBJECTS_FXML = null;
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminRoomAssignment.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
@@ -149,6 +149,7 @@ public class AdminDashboardController {
             preloadFxmlContent(CALENDAR_FXML);
             preloadFxmlContent(ABOUT_FXML);
             preloadFxmlContent(STUDENT_MANAGEMENT_FXML);
+            preloadFxmlContent(FACULTY_FXML);
 
             System.out.println("All interfaces preloaded successfully");
         });
@@ -315,17 +316,20 @@ public class AdminDashboardController {
         };
     }
 
-    private void loadContent(String fxmlPath) {
+    public void loadContent(String fxmlPath) {
         try {
             Parent content = contentCache.get(fxmlPath);
             if (content == null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                FXMLLoader loader = new FXMLLoader(
+                        Objects.requireNonNull(getClass().getResource(fxmlPath))
+                );
                 content = loader.load();
 
                 if (fxmlPath.equals(null)) {// Set faculty ID in SessionData when loading grading module
                     String facultyId = studentIdLabel.getText();
                     SessionData.getInstance().setStudentId(facultyId);
                 }
+              
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
