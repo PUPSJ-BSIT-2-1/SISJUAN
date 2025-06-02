@@ -12,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
-import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.prefs.Preferences;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controller for the Faculty Home content view.
@@ -39,13 +43,11 @@ public class FacultyHomeContentController {
     @FXML private Label scheduledClassesTodayLabel;
     @FXML private VBox todayScheduleVBox;
     @FXML private PieChart classDistributionChart;
-    @FXML private VBox rootVBox;
     @FXML private VBox eventsVBox;
     @FXML private Button inputGradesButton;
     @FXML private Button checkScheduleButton;
-
-    
     private String facultyId;
+    private static final Logger logger = LoggerFactory.getLogger(FacultyHomeContentController.class);
 
     private FacultyDashboardController facultyDashboardController;
 
@@ -69,20 +71,20 @@ public class FacultyHomeContentController {
      */
     @FXML
     public void initialize() {
-        applyTheme();
-        
         // Format and display the current date
         LocalDate now = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
         dateLabel.setText(now.format(formatter));
         
-
         // Load faculty data using getCurrentUserEmail
         String identifier = RememberMeHandler.getCurrentUserEmail();
         if (identifier != null && !identifier.isEmpty()) {
-            CompletableFuture.runAsync(() -> {
-                loadFacultyData(identifier);
-            });
+            // Show loading indicators
+            totalClassesLabel.setText("Loading...");
+            totalStudentsLabel.setText("Loading...");
+            scheduledClassesTodayLabel.setText("Loading...");
+            
+            CompletableFuture.runAsync(() -> loadFacultyData(identifier));
         } else {
             // Handle case when no user email is available
             facultyNameLabel.setText("User not logged in");
@@ -107,35 +109,6 @@ public class FacultyHomeContentController {
             facultyDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
         }
     }
-
-    /**
-     * Applies the current theme (dark/light) based on user preferences
-     */
-    private void applyTheme() {
-        boolean isDarkMode = false;
-        try {
-            // First, check user preferences from the SettingsController
-            Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-            isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
-        } catch (Exception _) {
-        }
-        
-        // Apply a theme class to the scene
-        boolean finalIsDarkMode = isDarkMode;
-        Platform.runLater(() -> {
-            if (finalIsDarkMode) {
-                if (rootVBox.getScene() != null) {
-                    rootVBox.getScene().getRoot().getStyleClass().add("dark-theme");
-                }
-                rootVBox.getStyleClass().add("dark-theme");
-            } else {
-                if (rootVBox.getScene() != null) {
-                    rootVBox.getScene().getRoot().getStyleClass().remove("dark-theme");
-                }
-                rootVBox.getStyleClass().remove("dark-theme");
-            }
-        });
-    }
     
     /**
      * Loads faculty data including name, teaching load, schedule, and events.
@@ -144,22 +117,70 @@ public class FacultyHomeContentController {
      */
     private void loadFacultyData(String identifier) {
         try {
-            // Get faculty info (name)
-            Map<String, String> facultyInfo = getFacultyInfo(identifier);
-
-            // Load teaching load statistics
-            loadTeachingLoad();
+            // Get faculty info (name) first to get the faculty ID
+            getFacultyInfo(identifier);
             
-            // Load today's schedule
-            loadTodaySchedule();
+            if (facultyId == null) {
+                Platform.runLater(() -> {
+                    totalClassesLabel.setText("0");
+                    totalStudentsLabel.setText("0");
+                    scheduledClassesTodayLabel.setText("0");
+                });
+                return;
+            }
             
-            // Load upcoming events
-            loadUpcomingEvents();
+            // Use a thread pool for parallel execution
+            ExecutorService executor = Executors.newFixedThreadPool(4);
+            CountDownLatch latch = new CountDownLatch(4);
             
-            // Create a class distribution chart
-            createClassDistributionChart();
+            // Load teaching load statistics in parallel
+            executor.submit(() -> {
+                try {
+                    loadTeachingLoad();
+                } finally {
+                    latch.countDown();
+                }
+            });
             
-        } catch (Exception _) {
+            // Load today's schedule in parallel
+            executor.submit(() -> {
+                try {
+                    loadTodaySchedule();
+                } finally {
+                    latch.countDown();
+                }
+            });
+            
+            // Load upcoming events in parallel
+            executor.submit(() -> {
+                try {
+                    loadUpcomingEvents();
+                } finally {
+                    latch.countDown();
+                }
+            });
+            
+            // Create a class distribution chart in parallel
+            executor.submit(() -> {
+                try {
+                    createClassDistributionChart();
+                } finally {
+                    latch.countDown();
+                }
+            });
+            
+            // Wait for all tasks to complete (optional, for debugging)
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
+            // Shutdown the executor
+            executor.shutdown();
+            
+        } catch (Exception e) {
+            logger.error("Error loading faculty data: {}", e.getMessage());
         }
     }
     
@@ -215,7 +236,7 @@ public class FacultyHomeContentController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving faculty name", e);
         }
 
         facultyInfo.put("name", "Unknown Faculty");
@@ -231,63 +252,63 @@ public class FacultyHomeContentController {
         }
         
         try (Connection conn = DBConnection.getConnection()) {
-            // Count total classes (subjects) taught by faculty
-            String classesQuery = "SELECT COUNT(*) AS class_count FROM faculty_load WHERE faculty_id = ?";
+            // Combine all queries into a single batch to reduce database roundtrips
+            Map<String, Integer> results = new ConcurrentHashMap<>();
             
-            try (PreparedStatement stmt = conn.prepareStatement(classesQuery)) {
+            // Prepare the combined query
+            String combinedQuery = """
+                WITH class_count AS (
+                    SELECT COUNT(*) AS count FROM faculty_load WHERE faculty_id = ?
+                ),
+                student_count AS (
+                    SELECT COUNT(*) as count
+                    FROM student_load sl
+                    JOIN faculty_load fl ON fl.load_id = sl.faculty_load
+                    WHERE fl.faculty_id = ?
+                ),
+                today_classes AS (
+                    SELECT COUNT(*) as count
+                    FROM schedule sh
+                    JOIN faculty_load fl ON fl.load_id = sh.faculty_load_id
+                    WHERE fl.faculty_id = ? AND sh.days LIKE '%' || ? || '%'
+                )
+                SELECT
+                    (SELECT count FROM class_count) AS class_count,
+                    (SELECT count FROM student_count) AS student_count,
+                    (SELECT count FROM today_classes) AS today_classes
+            """;
+            
+            try (PreparedStatement stmt = conn.prepareStatement(combinedQuery)) {
                 stmt.setInt(1, Integer.parseInt(facultyId));
+                stmt.setInt(2, Integer.parseInt(facultyId));
+                stmt.setInt(3, Integer.parseInt(facultyId));
+                stmt.setString(4, searchDayToday());
                 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         int classCount = rs.getInt("class_count");
-                       Platform.runLater(() -> totalClassesLabel.setText(String.valueOf(classCount)));
-                    }
-                }
-            }
-            
-            // Count total students across all classes
-            String studentsQuery = """
-                SELECT COUNT(*) as student_count
-                FROM student_load sl
-                JOIN faculty_load fl ON fl.load_id = sl.faculty_load
-                WHERE fl.faculty_id = ?;
-            """;
-            
-            try (PreparedStatement stmt = conn.prepareStatement(studentsQuery)) {
-                stmt.setInt(1, Integer.parseInt(facultyId));
-                
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
                         int studentCount = rs.getInt("student_count");
-                        Platform.runLater(() -> totalStudentsLabel.setText(String.valueOf(studentCount)));
-                    }
-                }
-            }
-
-            // Count classes scheduled for today
-            String todayClassesQuery = """
-                SELECT COUNT(*) as today_classes
-                FROM schedule sh
-                JOIN faculty_load fl ON fl.load_id = sh.faculty_load_id
-                WHERE fl.faculty_id = ? AND sh.days LIKE '%' || ? || '%';
-            """;
-            
-            try (PreparedStatement stmt = conn.prepareStatement(todayClassesQuery)) {
-                stmt.setInt(1, Integer.parseInt(facultyId));
-                stmt.setString(2, searchDayToday());
-                
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
                         int todayClasses = rs.getInt("today_classes");
-                        Platform.runLater(() -> scheduledClassesTodayLabel.setText(String.valueOf(todayClasses)));
+                        
+                        Platform.runLater(() -> {
+                            totalClassesLabel.setText(String.valueOf(classCount));
+                            totalStudentsLabel.setText(String.valueOf(studentCount));
+                            scheduledClassesTodayLabel.setText(String.valueOf(todayClasses));
+                        });
                     }
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving teaching load statistics", e);
+            // Handle error gracefully
+            Platform.runLater(() -> {
+                totalClassesLabel.setText("Error");
+                totalStudentsLabel.setText("Error");
+                scheduledClassesTodayLabel.setText("Error");
+            });
         }
     }
-
+    
     private String searchDayToday() {
         LocalDate today = LocalDate.now();
         DayOfWeek day = today.getDayOfWeek();
@@ -368,7 +389,8 @@ public class FacultyHomeContentController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving today's schedule", e);
+            // Handle error gracefully
             Platform.runLater(() -> {
                 todayScheduleVBox.getChildren().clear();
                 Label errorLabel = new Label("Error loading schedule");
@@ -435,7 +457,7 @@ public class FacultyHomeContentController {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Error checking table existence", e);
             }
             
             if (!tableExists) {
@@ -490,7 +512,8 @@ public class FacultyHomeContentController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving upcoming events", e);
+            // Handle error gracefully
             Platform.runLater(() -> {
                 eventsVBox.getChildren().clear();
                 Label errorLabel = new Label("Unable to load events");
@@ -572,7 +595,8 @@ public class FacultyHomeContentController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving class distribution data", e);
+            // Handle error gracefully
             Platform.runLater(() -> {
                 ObservableList<PieChart.Data> errorChart = FXCollections.observableArrayList(
                     new PieChart.Data("Error Loading Data", 1)
