@@ -714,7 +714,7 @@ public class AdminRoomAssignmentController {
         showCreateButtonsContainer();
     }
 
-    // This method shows the create buttons container and hides the update buttons container.
+    // This method shows the creation buttons container and hides the update buttons container.
     private void showCreateButtonsContainer() {
         createScheduleButtonsContainer.toFront();
         createScheduleButtonsContainer.setOpacity(1);
@@ -724,7 +724,7 @@ public class AdminRoomAssignmentController {
         updateScheduleButtonsContainer.setDisable(true);
     }
 
-    // This method shows the update buttons container and hides the create buttons container.
+    // This method shows the update buttons container and hides the creation buttons container.
     private void showUpdateButtonsContainer() {
         updateScheduleButtonsContainer.toFront();
         updateScheduleButtonsContainer.setOpacity(1);

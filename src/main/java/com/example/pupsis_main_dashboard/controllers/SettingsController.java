@@ -69,7 +69,7 @@ public class SettingsController {
 
     // Load user settings from preferences and set them in the UI components
     private void loadUserSettings() {
-        // Try to get user email - first try getCurrentUserEmail which works regardless of remember me status
+        // Try to get user email - first try to getCurrentUserEmail, which works regardless of remembered me status
         String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
 
         // Load non-database dependent settings immediately
@@ -85,13 +85,11 @@ public class SettingsController {
             return; // Stop loading if the user cannot be identified
         }
 
-        // Move database operation to background thread
+        // Move database operation to the background thread
         new Thread(() -> {
             String emailFromDB = getUserEmailFromDB(currentUserIdentifier);
             // Update UI components on the JavaFX Application Thread
-            javafx.application.Platform.runLater(() -> {
-                emailField.setText(emailFromDB != null ? emailFromDB : "Not found");
-            });
+            javafx.application.Platform.runLater(() -> emailField.setText(emailFromDB != null ? emailFromDB : "Not found"));
         }).start();
     }
 
