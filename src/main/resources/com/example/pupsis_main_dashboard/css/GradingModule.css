@@ -58,7 +58,6 @@
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
     -fx-font-style: italic;
-    -fx-padding: 15px, 10px, 0px, 10px;
 }
 
 /* Table cells */
@@ -268,12 +267,15 @@
 }
 
 .cards {
-    -fx-background-color: linear-gradient(to right, #800000, #FF0000);
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
     -fx-background-radius: 10;
+    -fx-border-color: transparent;
 }
 
 .red-card {
-    -fx-background-color: linear-gradient(to right, #800000, #FF0000);
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
 }
 
 /* SVG Search Icon styling */

@@ -17,9 +17,9 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/EditGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EditGradesPageController">
+<AnchorPane prefWidth="810.0" styleClass="root" stylesheets="@../css/EditGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyEditGradesPageController">
     <children>
-        <BorderPane prefHeight="1080.0" prefWidth="810.0">
+        <BorderPane prefWidth="810.0">
             <top>
                 <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
@@ -50,9 +50,9 @@
                 </Pane>
             </top>
             <center>
-                <Pane prefHeight="938.0" prefWidth="750.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <VBox alignment="TOP_CENTER" layoutX="-1.0" layoutY="14.0" prefHeight="920.0" prefWidth="750.0" spacing="10.0">
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                        <VBox alignment="TOP_CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
                                     <children>
@@ -90,7 +90,7 @@
                                        </VBox.margin>
                                     </Label>
                                     <Region prefHeight="30.0" prefWidth="786.0" styleClass="region" />
-                                    <Line endX="619.4928588867188" startX="-100.0" stroke="#cdd0d1" />
+                                    <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                                         <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0">
@@ -100,30 +100,19 @@
                                                 <TableColumn fx:id="studNameCol" editable="false" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" resizable="false" text="Student Name" />
                                                 <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
                                                 <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
-                                                <TableColumn fx:id="gradeStatCol" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Grade Status" />
+                                                <TableColumn fx:id="gradeStatCol" maxWidth="183.20004882812498" minWidth="120.0" prefWidth="183.20004882812498" resizable="false" text="Grade Status" />
                                             </columns>
                                         </TableView>
                            </children>
                         </VBox>
                             </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
                         </VBox>
-                    </children>
-                </Pane>
+               </children>
+            </HBox>
             </center>
-            <left>
-                <Pane prefHeight="200.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
-            </left>
-            <right>
-                <Pane prefHeight="200.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
-            </right>
-            <bottom>
-                <Pane prefHeight="35.0" prefWidth="200.0" styleClass="pane-footer" BorderPane.alignment="CENTER">
-                    <padding>
-
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                    </padding>
-                </Pane>
-            </bottom>
         </BorderPane>
     </children>
 </AnchorPane>

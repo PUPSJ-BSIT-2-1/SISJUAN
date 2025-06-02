@@ -2,6 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -89,20 +90,23 @@ public class FacultyHomeContentController {
         dateLabel.setText(now.format(formatter));
         logger.info("FacultyHomeContentController initialized. Date set to: {}", dateLabel.getText());
         
-        // Load faculty data using getCurrentUserFacultyNumber
-        String identifier = RememberMeHandler.getCurrentUserFacultyNumber();
-        logger.info("Retrieved faculty identifier from RememberMeHandler: '{}'", identifier);
-        if (identifier != null && !identifier.isEmpty()) {
+        // Load faculty data using facultyId from SessionData
+        this.facultyId = SessionData.getInstance().getFacultyId(); // Get DB PK from SessionData
+        logger.info("Retrieved facultyId from SessionData: '{}'", this.facultyId);
+        if (this.facultyId != null && !this.facultyId.isEmpty()) {
             // Show loading indicators
             totalClassesLabel.setText("Loading...");
             totalStudentsLabel.setText("Loading...");
             scheduledClassesTodayLabel.setText("Loading...");
             
-            CompletableFuture.runAsync(() -> loadFacultyData(identifier));
+            CompletableFuture.runAsync(this::loadFacultyData); // Call loadFacultyData without arguments
         } else {
-            // Handle case when no user email is available
-            logger.warn("Faculty identifier is null or empty. Displaying 'User not logged in'.");
-            facultyNameLabel.setText("User not logged in");
+            // Handle case when no faculty ID is available in SessionData
+            logger.warn("FacultyId from SessionData is null or empty. Displaying 'User not identified'.");
+            // facultyNameLabel might have been set by setFacultyDashboardController already
+            if (facultyNameLabel.getText() == null || facultyNameLabel.getText().isEmpty() || facultyNameLabel.getText().equals("Faculty Name Unavailable")) {
+                 facultyNameLabel.setText("User not identified");
+            }
             totalClassesLabel.setText("0");
             totalStudentsLabel.setText("0");
             scheduledClassesTodayLabel.setText("0");
@@ -111,7 +115,8 @@ public class FacultyHomeContentController {
 
     private void inputGradesButtonClick(javafx.event.ActionEvent actionEvent) {
         if (facultyDashboardController != null) {
-            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
+            // Use the consistent FXML path for editing grades
+            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/EditGradesPage.fxml"; 
             facultyDashboardController.loadContent(GRADES_FXML);
             facultyDashboardController.handleQuickActionClicks(GRADES_FXML);
         }
@@ -127,17 +132,13 @@ public class FacultyHomeContentController {
     
     /**
      * Loads faculty data including name, teaching load, schedule, and events.
-     * 
-     * @param identifier The faculty's faculty number
+     * Uses this.facultyId which should be populated from SessionData.
      */
-    private void loadFacultyData(String identifier) {
+    private void loadFacultyData() { // Changed signature: no longer takes 'identifier'
         try {
-            // Get faculty info (name) first to get the faculty ID
-            logger.info("loadFacultyData: Attempting to get faculty info for identifier: '{}'", identifier);
-            getFacultyInfo(identifier);
-            
-            if (facultyId == null) {
-                logger.warn("loadFacultyData: facultyId is null after getFacultyInfo for identifier: '{}'. Aborting further data load.", identifier);
+            // this.facultyId should already be set from SessionData in initialize()
+            if (this.facultyId == null || this.facultyId.isEmpty()) {
+                logger.warn("loadFacultyData: this.facultyId is null or empty. Aborting further data load.");
                 Platform.runLater(() -> {
                     totalClassesLabel.setText("0");
                     totalStudentsLabel.setText("0");
@@ -145,6 +146,7 @@ public class FacultyHomeContentController {
                 });
                 return;
             }
+            logger.info("loadFacultyData: Loading data for facultyId: '{}'", this.facultyId);
             
             // Use a thread pool for parallel execution
             ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -201,39 +203,6 @@ public class FacultyHomeContentController {
         } catch (Exception e) {
             logger.error("Error loading faculty data: {}", e.getMessage(), e);
         }
-    }
-    
-    /**
-     * Gets faculty information from the database using the faculty's faculty number
-     * @param identifier Faculty number of the faculty
-     * @return Map containing faculty information (name)
-     */
-    private Map<String, String> getFacultyInfo(String identifier) {
-        Map<String, String> facultyInfo = new ConcurrentHashMap<>();
-        String sql = "SELECT faculty_id, firstname, lastname FROM faculty WHERE faculty_number = ?";
-        logger.info("getFacultyInfo: Attempting to fetch faculty info for identifier: '{}' with query: {}", identifier, sql);
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, identifier);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    this.facultyId = rs.getString("faculty_id");
-                    String firstName = rs.getString("firstname");
-                    String lastName = rs.getString("lastname");
-                    String formattedName = lastName + ", " + firstName;
-                    facultyInfo.put("name", formattedName);
-                    logger.info("getFacultyInfo: Found faculty. ID: '{}', Name: '{}'", facultyId, formattedName);
-                } else {
-                    logger.warn("getFacultyInfo: No faculty record found for identifier: '{}'", identifier);
-                    this.facultyId = null; // Ensure facultyId is null if not found
-                }
-            }
-        } catch (SQLException e) {
-            logger.error("getFacultyInfo: SQL error while fetching faculty info for identifier: '{}'. Error: {}", identifier, e.getMessage(), e);
-            this.facultyId = null; // Ensure facultyId is null on error
-        }
-        return facultyInfo;
     }
     
     /**

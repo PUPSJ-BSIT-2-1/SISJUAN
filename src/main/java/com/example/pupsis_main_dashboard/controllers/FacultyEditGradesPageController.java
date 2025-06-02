@@ -12,14 +12,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 
 import java.net.URL;
 import java.sql.*;
-import java.util.ResourceBundle;
 import java.text.DecimalFormat;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class EditGradesPageController implements Initializable {
+public class FacultyEditGradesPageController implements Initializable {
+
+    private static final Logger logger = Logger.getLogger(FacultyEditGradesPageController.class.getName());
 
     @FXML private TextField searchBar;
     @FXML private Label gradesHeaderLbl;
@@ -48,17 +53,21 @@ public class EditGradesPageController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        logger.info("FacultyEditGradesPageController initializing...");
         // Add this check at the beginning of initializing
         if (gradesHeaderLbl == null) {
+            logger.severe("Error: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
             System.err.println("Error: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
         }
 
-   if (subjCodeCombBox == null) {
-       System.err.println("Error: subjCodeCombBox is null. Check FXML file for proper fx:id.");
-       return;
-   }
+        if (subjCodeCombBox == null) {
+            logger.severe("Error: subjCodeCombBox is null. Check FXML file for proper fx:id.");
+            System.err.println("Error: subjCodeCombBox is null. Check FXML file for proper fx:id.");
+            return;
+        }
 
         if (studentsTable == null) {
+            logger.severe("Error: studentsTable is null. Check FXML file for proper fx:id.");
             System.err.println("Error: studentsTable is null. Check FXML file for proper fx:id.");
             return;
         }
@@ -176,7 +185,9 @@ public class EditGradesPageController implements Initializable {
             subDesclbl.setText(selectedSubjectDesc);
             loadStudentsBySubjectCode(selectedSubjectCode);
         }
+        logger.info("FacultyEditGradesPageController initialized.");
     }
+
     private String roundGradeToQuarter(String gradeInput) {
         if (gradeInput == null || gradeInput.trim().isEmpty()) {
             return gradeInput;
@@ -227,6 +238,7 @@ public class EditGradesPageController implements Initializable {
             return gradeInput;
         }
     }
+
     // Updated method to handle both numeric grades and special text values
     private String formatGradeInput(String input) {
         if (input == null || input.trim().isEmpty()) {
@@ -315,7 +327,7 @@ public class EditGradesPageController implements Initializable {
 
         String trimmedGrade = finalGrade.trim().toUpperCase();
 
-        // Handle special cases
+        // Handle special cases first
         if (trimmedGrade.equals("W")) {
             return "Withdrawn";
         }
@@ -326,44 +338,46 @@ public class EditGradesPageController implements Initializable {
         // Handle numeric grades
         try {
             float gradeValue = Float.parseFloat(trimmedGrade);
-            if (gradeValue == 0.0) {
-                return "Incomplete";  // Handle 0 as incomplete
-            } else if (gradeValue >= 1.00 && gradeValue <= 3.00) {
+
+            if (gradeValue == 0.0f) { // 0.0 is Incomplete
+                return "Incomplete";
+            }
+
+            // Per user: 3.0 is Passed.
+            // Grades <3.0 (and >=1.0) or >3.0 (and <=5.0) are Failed.
+            if (gradeValue == 3.0f) {
                 return "Passed";
-            } else if (gradeValue > 3.00 && gradeValue <= 5.00) {
+            } else if (gradeValue >= 1.0f && gradeValue <= 5.0f) {
+                // This covers valid grades from 1.0 to 5.0 that are not 3.0 and not 0.0
+                // e.g., 1.0, 2.75, 3.25, 5.0 are all Failed according to this logic.
                 return "Failed";
             } else {
+                // For numeric grades outside the 0.0-5.0 range (e.g., 0.5, 7.0, negative values)
                 return "Incomplete";
             }
         } catch (NumberFormatException e) {
-            return "INC";
+            // If it's not W, D, or a parseable number.
+            return "Incomplete";
         }
     }
 
     private void updateGradeInDatabase(Student student) {
+        logger.info("Updating grade for grade_id: " + student.getStudentNo() +
+                    ", Student Number: " + student.getStudentId() +
+                    ", New Grade: " + student.getFinalGrade() + ", Status: " + student.getGradeStatus());
         try (Connection conn = DBConnection.getConnection()) {
-            // Update both final grade and grade status
-            String query = "UPDATE grade \n" +
-                    "SET final_grade = ?, gradestat = ? \n" +
-                    "FROM subjects \n" +
-                    "WHERE grade.student_id = ? \n" +
-                    "AND grade.subject_id = subjects.subject_id \n" +
-                    "AND subjects.subject_code = ?";
+            // Update both final grade and grade status using grade_id
+            String query = "UPDATE grade SET final_grade = ?, gradestat = ? WHERE grade_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                String newGrade = student.getFinalGrade();
-                String gradeStatus = determineGradeStatus(newGrade);
-
-                // Set parameters for update - store as text since the column is text
-                pstmt.setString(1, newGrade);
-                pstmt.setString(2, gradeStatus);
-                pstmt.setString(3, student.getStudentId());
-                pstmt.setString(4, student.getSubjCode());
+                pstmt.setString(1, student.getFinalGrade());
+                pstmt.setString(2, student.getGradeStatus());
+                pstmt.setInt(3, Integer.parseInt(student.getStudentNo())); // Corrected: getStudentNo() for grade_id
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     // Update the student object's grade status
-                    student.setGradeStatus(gradeStatus);
+                    student.setGradeStatus(determineGradeStatus(student.getFinalGrade()));
 
                     // Refresh the specific row in the table
                     int rowIndex = studentsList.indexOf(student);
@@ -377,16 +391,20 @@ public class EditGradesPageController implements Initializable {
                     // Show a success message with the formatted grade
                     showSuccess("Success", String.format(
                             "Grade successfully updated to: %s\nStatus: %s",
-                            formatGradeForDisplay(newGrade), gradeStatus));
+                            formatGradeForDisplay(student.getFinalGrade()), student.getGradeStatus()));
                 }
             }
         } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error updating grade in database for grade_id: " + student.getStudentNo(), e);
             showError("Database Error", "Failed to update grade: " + e.getMessage());
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            logger.log(Level.SEVERE, "Error parsing grade_id: " + student.getStudentNo(), e);
+            showError("Data Error", "Invalid grade ID format: " + student.getStudentNo());
         }
     }
 
     private void loadStudentsBySubjectCode(String subjectCode) {
+        logger.info("Loading students for Subject Code: " + subjectCode);
         Task<ObservableList<Student>> loadTask = new Task<>() {
             @Override
             protected ObservableList<Student> call() throws Exception {
@@ -395,27 +413,28 @@ public class EditGradesPageController implements Initializable {
                 try (Connection conn = DBConnection.getConnection()) {
                     StringBuilder queryBuilder = new StringBuilder();
                     queryBuilder.append("""
-                    SELECT DISTINCT 
-                           g.grade_id as id, 
-                           g.student_id, 
-                           su.subject_code, 
-                           g.final_grade, 
-                           g.gradestat, 
+                    SELECT DISTINCT
+                           g.grade_id as id,
+                           s.student_id,
+                           su.subject_code,
+                           g.final_grade,
+                           g.grade_status_id,
                            s.firstname,
                            s.lastname,
                            CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS "Student Name",
-                           f.year_section,
+                           ys.year_section,  
                            f.load_id
                     FROM faculty_load f
                     JOIN subjects su ON f.subject_id = su.subject_id
+                    JOIN year_section ys ON f.section_id = ys.section_id 
                     JOIN grade g ON g.faculty_load = f.load_id
-                    JOIN students s ON g.student_id = s.student_number
-                    WHERE su.subject_code = ? 
-                    AND f.faculty_id = ?::smallint
-                """);
+                    JOIN students s ON g.student_pk_id = s.student_id /* Corrected join: grade.student_pk_id to students.student_id */
+                    WHERE su.subject_code = ?
+                    AND CAST(f.faculty_id AS TEXT) = ? /* Cast SMALLINT column to TEXT to compare with String param */
+                    """);
 
                     if (selectedYearSection != null && !selectedYearSection.equals("All")) {
-                        queryBuilder.append(" AND f.year_section = ?");
+                        queryBuilder.append(" AND CAST(ys.year_section AS TEXT) = ?"); /* Explicitly TEXT = TEXT comparison */
                     }
                     queryBuilder.append(" ORDER BY s.lastname, s.firstname");
 
@@ -426,10 +445,10 @@ public class EditGradesPageController implements Initializable {
 
                         pstmt.setFetchSize(100);
                         pstmt.setString(1, subjectCode);
-                        pstmt.setString(2, SessionData.getInstance().getFacultyId());
+                        pstmt.setString(2, String.valueOf(SessionData.getInstance().getFacultyId()));    // faculty_id (assuming TEXT in live DB, was SMALLINT)
 
                         if (selectedYearSection != null && !selectedYearSection.equals("All")) {
-                            pstmt.setString(3, selectedYearSection);
+                            pstmt.setString(3, selectedYearSection); // year_section (TEXT)
                         }
 
                         try (ResultSet rs = pstmt.executeQuery()) {
@@ -443,7 +462,7 @@ public class EditGradesPageController implements Initializable {
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
                                         formattedGrade != null ? formattedGrade : "",
-                                        rs.getString("gradestat") != null ? rs.getString("gradestat") : ""
+                                        rs.getString("grade_status_id") != null ? rs.getString("grade_status_id") : ""
                                 );
                                 tempList.add(student);
                             }
@@ -467,6 +486,7 @@ public class EditGradesPageController implements Initializable {
                             ? String.format("%s - %s", subjectCode, selectedYearSection)
                             : subjectCode;
                 } else {
+                    logger.severe("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
                     System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
                 }
             });
@@ -474,20 +494,21 @@ public class EditGradesPageController implements Initializable {
 
         loadTask.setOnFailed(e -> {
             Throwable ex = loadTask.getException();
+            logger.log(Level.SEVERE, "Error loading students by subject code: " + subjectCode, ex);
             showError("Database Error", "Failed to load data: " + ex.getMessage());
-            ex.printStackTrace();
         });
 
         new Thread(loadTask).start();
     }
 
     private void populateSubjectCodes() {
+        logger.info("Populating subject codes for faculty ID: " + SessionData.getInstance().getFacultyId());
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
             SELECT DISTINCT s.subject_code, s.description
             FROM faculty_load f
             JOIN subjects s ON f.subject_id = s.subject_id
-            WHERE f.faculty_id = ?::smallint
+            WHERE CAST(f.faculty_id AS TEXT) = ? 
             ORDER BY s.subject_code;
             """;
 
@@ -502,6 +523,7 @@ public class EditGradesPageController implements Initializable {
                     String subjDesc = rs.getString("description");
                     MenuItem item = new MenuItem(subjCode);
                     item.setOnAction(event -> {
+                        logger.info("Subject code selected: " + subjCode + " (" + subjDesc + ")");
                         subjCodeCombBox.setText(subjCode);
                         subjDescLbl.setText(subjDesc);
                         selectedSubjectCode = subjCode;
@@ -517,8 +539,7 @@ public class EditGradesPageController implements Initializable {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error loading subject codes: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error loading subject codes for faculty ID: " + SessionData.getInstance().getFacultyId(), e);
             showError("Database Error", "Failed to load subject codes: " + e.getMessage());
         }
     }
@@ -581,14 +602,16 @@ public class EditGradesPageController implements Initializable {
     }
 
     private void populateYearSectionsForSubject(String subjectCode) {
+        logger.info("Populating year sections for subject: " + subjectCode);
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-        SELECT DISTINCT f.year_section
-        FROM faculty_load f 
+        SELECT DISTINCT ys.year_section 
+        FROM faculty_load f
         JOIN subjects s ON f.subject_id = s.subject_id
-        WHERE f.faculty_id = ?::smallint 
+        JOIN year_section ys ON f.section_id = ys.section_id 
+        WHERE f.faculty_id = CAST(? AS SMALLINT) 
         AND s.subject_code = ?
-        ORDER BY f.year_section;
+        ORDER BY ys.year_section 
         """;
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -619,6 +642,7 @@ public class EditGradesPageController implements Initializable {
                     for (String yearSection : yearSections) {
                         MenuItem item = new MenuItem(yearSection);
                         item.setOnAction(event -> {
+                            logger.info("Year section selected: " + yearSection);
                             yrSecCombBox.setText(yearSection);
                             selectedYearSection = yearSection;
                             loadStudentsBySubjectCode(selectedSubjectCode);
@@ -642,8 +666,7 @@ public class EditGradesPageController implements Initializable {
 
             }
         } catch (SQLException e) {
-            System.err.println("Error loading year sections for subject: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error loading year sections for subject: " + subjectCode, e);
             showError("Database Error", "Failed to load year sections: " + e.getMessage());
         }
     }
@@ -661,6 +684,7 @@ public class EditGradesPageController implements Initializable {
 
     @FXML
     private void handleRefresh() {
+        logger.info("Refreshing students for subject code: " + selectedSubjectCode);
         if (selectedSubjectCode != null) {
             studentCache.remove(selectedSubjectCode);
             loadStudentsBySubjectCode(selectedSubjectCode);
@@ -711,6 +735,7 @@ public class EditGradesPageController implements Initializable {
     }
 
     private void showError(String title, String content) {
+        logger.info("Showing error dialog: " + title + " - " + content);
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -719,6 +744,7 @@ public class EditGradesPageController implements Initializable {
     }
 
     private void showSuccess(String title, String content) {
+        logger.info("Showing success dialog: " + title + " - " + content);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -728,12 +754,14 @@ public class EditGradesPageController implements Initializable {
 
     // Modify the populateYearSections method to include filtering
     private void populateYearSections() {
+        logger.info("Populating year sections for faculty ID: " + SessionData.getInstance().getFacultyId());
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-        SELECT DISTINCT f.year_section 
-        FROM faculty_load f 
-        WHERE f.faculty_id = ?::smallint 
-        ORDER BY f.year_section;
+        SELECT DISTINCT ys.year_section 
+        FROM faculty_load fl
+        JOIN year_section ys ON fl.section_id = ys.section_id
+        WHERE fl.faculty_id = CAST(? AS SMALLINT) 
+        ORDER BY ys.year_section;
         """;
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -745,6 +773,7 @@ public class EditGradesPageController implements Initializable {
                 // Add "All" option for initial load
                 MenuItem allItem = new MenuItem("All");
                 allItem.setOnAction(event -> {
+                    logger.info("Year section selected: All");
                     yrSecCombBox.setText("All");
                     selectedYearSection = null;
                     if (selectedSubjectCode != null) {
@@ -757,6 +786,7 @@ public class EditGradesPageController implements Initializable {
                     String yearSection = rs.getString("year_section");
                     MenuItem item = new MenuItem(yearSection);
                     item.setOnAction(event -> {
+                        logger.info("Year section selected: " + yearSection);
                         yrSecCombBox.setText(yearSection);
                         selectedYearSection = yearSection;
                         if (selectedSubjectCode != null) {
@@ -770,8 +800,7 @@ public class EditGradesPageController implements Initializable {
                 yrSecCombBox.setDisable(false);
             }
         } catch (SQLException e) {
-            System.err.println("Error loading year sections: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error loading year sections: " + e.getMessage(), e);
             showError("Database Error", "Failed to load year sections: " + e.getMessage());
         }
     }

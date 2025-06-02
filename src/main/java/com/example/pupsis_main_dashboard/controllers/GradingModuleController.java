@@ -27,7 +27,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import java.io.IOException;
-import java.util.Objects;
 
 import javafx.scene.Node;
 import javafx.application.Platform;
@@ -155,7 +154,7 @@ public class GradingModuleController implements Initializable {
                             Parent newContent = loader.load();
 
                             // Get the controller after loading
-                            EditGradesPageController controller = loader.getController();
+                            FacultyEditGradesPageController controller = loader.getController();
 
                             // Set the subject code and description
                             controller.setSubjectCode(subjectCode);
@@ -181,9 +180,19 @@ public class GradingModuleController implements Initializable {
         ObservableList<Subject> tempList = FXCollections.observableArrayList();
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-                SELECT year_section, f.semester, subject_code, s.description, s.subject_code
-                FROM faculty_load f, subjects s
-                WHERE f.subject_id = s.subject_id and f.faculty_id = ?::smallint;""";
+                SELECT 
+                    ys.year_section, 
+                    sem.semester_id, 
+                    s.subject_code, 
+                    s.description,
+                    s.subject_id
+                FROM faculty_load fl
+                JOIN subjects s ON fl.subject_id = s.subject_id
+                JOIN year_section ys ON fl.section_id = ys.section_id
+                JOIN semesters sem ON fl.semester_id = sem.semester_id
+                WHERE fl.faculty_id = ?::smallint
+                ORDER BY ys.year_section, sem.semester_id, s.subject_code;
+                """;
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, String.valueOf(facultyId));
                 pstmt.setFetchSize(50);
@@ -192,7 +201,7 @@ public class GradingModuleController implements Initializable {
                     while (rs.next()) {
                         tempList.add(new Subject(
                                 rs.getString("year_section"),
-                                rs.getString("semester"),
+                                rs.getString("semester_id"),
                                 rs.getString("subject_code"),
                                 rs.getString("description")
                         ));

@@ -135,21 +135,28 @@ public class FacultyRoomAssignmentController {
 
     // Method to load schedules from the database for the current faculty
     private void loadSchedules() {
-        String sessionFacultyNumber = SessionData.getInstance().getFacultyId();
-        logger.info("FacultyRoomAssignmentController: Retrieved SessionData.facultyId (faculty_number): '{}'", sessionFacultyNumber);
+        String facultyIdString = SessionData.getInstance().getFacultyId();
+        logger.info("FacultyRoomAssignmentController: Retrieved SessionData.facultyId: '{}'", facultyIdString);
 
-        if (sessionFacultyNumber == null || sessionFacultyNumber.trim().isEmpty()) {
-            logger.error("FacultyRoomAssignmentController: Session faculty number is null or empty. Cannot load schedules.");
+        if (facultyIdString == null || facultyIdString.trim().isEmpty()) {
+            logger.error("FacultyRoomAssignmentController: Session faculty_id is null or empty. Cannot load schedules.");
             scheduleTable.setPlaceholder(new Label("Unable to load schedule: Faculty identifier not found in session."));
             return; // Exit if no ID
         }
 
-        int facultyIdInt = getIntegerFacultyIdByFacultyNumber(sessionFacultyNumber);
+        int facultyIdInt;
+        try {
+            facultyIdInt = Integer.parseInt(facultyIdString);
+        } catch (NumberFormatException e) {
+            logger.error("FacultyRoomAssignmentController: Could not parse faculty_id '{}' to an integer.", facultyIdString, e);
+            scheduleTable.setPlaceholder(new Label("Unable to load schedule: Invalid faculty identifier format."));
+            return;
+        }
 
-        if (facultyIdInt == 0) { // Assuming 0 indicates not found or error
-            logger.error("FacultyRoomAssignmentController: Could not retrieve a valid integer faculty_id for faculty_number: '{}'. Cannot load schedules.", sessionFacultyNumber);
+        if (facultyIdInt == 0) { // Assuming 0 might still be an invalid ID if parsing succeeded but was '0'
+            logger.error("FacultyRoomAssignmentController: faculty_id is 0, which is considered invalid. Cannot load schedules.");
             scheduleTable.setPlaceholder(new Label("Unable to load schedule: Invalid faculty identifier."));
-            return; // Exit if faculty_id is not valid
+            return; 
         }
 
         String query = """
