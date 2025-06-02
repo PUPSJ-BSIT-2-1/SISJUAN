@@ -16,6 +16,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -42,6 +44,7 @@ public class FacultyDashboardController {
     @FXML private Node fade2;
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
+    private final Logger logger = LoggerFactory.getLogger(FacultyDashboardController.class);
     private final Map<String, Parent> contentCache = new HashMap<>();
     private String formattedName;
     
@@ -74,7 +77,7 @@ public class FacultyDashboardController {
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
-        
+
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
     }
@@ -125,7 +128,7 @@ public class FacultyDashboardController {
             }
         } catch (IOException e) {
             System.err.println("Error preloading content: " + fxmlPath);
-            e.printStackTrace();
+            logger.error("Error preloading content: {}", fxmlPath, e);
         }
     }
     
@@ -252,35 +255,37 @@ private void updateFacultyUI(ResultSet rs) throws SQLException {
         };
     }
 
-public void loadContent(String fxmlPath) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent content = loader.load();
+    public void loadContent(String fxmlPath) {
+        try {
+            Parent content = contentCache.get(fxmlPath);
+            if (content == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                content = loader.load();
 
-        if (fxmlPath.equals(HOME_FXML)) {
-            FacultyHomeContentController facultyHomeContentController = loader.getController();
-            facultyHomeContentController.setFacultyDashboardController(this, formattedName);
+                if (fxmlPath.equals(HOME_FXML)) {
+                    FacultyHomeContentController facultyHomeContentController = loader.getController();
+                    facultyHomeContentController.setFacultyDashboardController(this, formattedName);
+                }
+
+                // Set faculty ID in SessionData when loading grading module
+                if (fxmlPath.equals(GRADES_FXML)) {
+                    String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
+                    SessionData.getInstance().setStudentId(facultyId); // if needed
+                }
+
+                if (fxmlPath.equals(SCHEDULE_FXML)) {
+                    String facultyId = SessionData.getInstance().getFacultyId();
+                    SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
+                }
+                contentCache.put(fxmlPath, content);
+                addLayoutChangeListener(content);
+            }
+            contentPane.setContent(content);
+            resetScrollPosition();
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading content"));
         }
-
-        // Set faculty ID in SessionData when loading grading module
-        if (fxmlPath.equals(GRADES_FXML)) {
-            String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
-            SessionData.getInstance().setStudentId(facultyId); // if needed
-        }
-
-        if (fxmlPath.equals(SCHEDULE_FXML)) {
-            String facultyId = SessionData.getInstance().getFacultyId();
-            SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
-        }
-
-        contentPane.setContent(content);
-        contentCache.put(fxmlPath, content);
-        addLayoutChangeListener(content);
-        resetScrollPosition();
-    } catch (IOException e) {
-        contentPane.setContent(new Label("Error loading content"));
     }
-}
     
     // Add layout change listener to content
     private void addLayoutChangeListener(Parent content) {

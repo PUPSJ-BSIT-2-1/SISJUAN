@@ -16,6 +16,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -45,6 +47,7 @@ public class AdminDashboardController {
     @FXML private Node fade2;
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
+    private final Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
     private final Map<String, Parent> contentCache = new HashMap<>();
     
     // FXML paths as constants
@@ -105,7 +108,7 @@ public class AdminDashboardController {
             try {
                 handleLogoutButton(event);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Failed to handle logout button click", e);
             }
         });
     }
@@ -180,7 +183,7 @@ public class AdminDashboardController {
         } catch (IOException e) {
             // Silently handle the exception, content will be loaded on-demand if needed
             System.err.println("Error preloading " + fxmlPath + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error preloading {}", fxmlPath, e);
         }
     }
     
@@ -314,22 +317,23 @@ public class AdminDashboardController {
 
     private void loadContent(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent content = loader.load();
-            
-            // Set faculty ID in SessionData when loading grading module
-            if (fxmlPath.equals(null)) {
-                String facultyId = studentIdLabel.getText();
-                SessionData.getInstance().setStudentId(facultyId);
+            Parent content = contentCache.get(fxmlPath);
+            if (content == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                content = loader.load();
+
+                if (fxmlPath.equals(null)) {// Set faculty ID in SessionData when loading grading module
+                    String facultyId = studentIdLabel.getText();
+                    SessionData.getInstance().setStudentId(facultyId);
+                }
+                contentCache.put(fxmlPath, content);
+                addLayoutChangeListener(content);
             }
-            
             contentPane.setContent(content);
-            contentCache.put(fxmlPath, content);
-            addLayoutChangeListener(content);
             resetScrollPosition();
         } catch (IOException e) {
             contentPane.setContent(new Label("Error loading content"));
-            e.printStackTrace();
+            logger.error("Error loading content", e);
         }
     }
     
