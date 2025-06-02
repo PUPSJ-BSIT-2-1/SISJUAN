@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
 public class EditGradesPageController implements Initializable {
 
     @FXML private TextField searchBar;
-    @FXML private Label gradesHeaderlbl;
+    @FXML private Label gradesHeaderLbl;
     @FXML private Label subDesclbl;
     @FXML private Label subjDescLbl;
     @FXML private MenuButton subjCodeCombBox;
@@ -43,8 +43,16 @@ public class EditGradesPageController implements Initializable {
     // Add DecimalFormat for consistent grade formatting
     private final DecimalFormat gradeFormat = new DecimalFormat("0.00");
 
+    // Add this field at the top of your class with other fields
+    private String selectedYearSection;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Add this check at the beginning of initializing
+        if (gradesHeaderLbl == null) {
+            System.err.println("Error: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
+        }
+        
         if (studentsTable == null) {
             System.err.println("Error: studentsTable is null. Check FXML file for proper fx:id.");
             return;
@@ -112,13 +120,13 @@ public class EditGradesPageController implements Initializable {
             }
 
             private void createTextField() {
-                // Set initial value with proper formatting
+                // Set the initial value with proper formatting
                 String initialValue = getItem();
                 try {
                     float gradeValue = Float.parseFloat(initialValue);
                     initialValue = gradeFormat.format(gradeValue);
                 } catch (NumberFormatException e) {
-                    // keep original value if parsing fails
+                    // keep the original value if parsing fails
                 }
 
                 textField = new TextField(initialValue);
@@ -173,6 +181,9 @@ public class EditGradesPageController implements Initializable {
 
         // Populate the subject codes dropdown
         populateSubjectCodes();
+
+        // Add this line in the initialize() method after populateSubjectCodes();
+        populateYearSections();
 
         // If a subject code was set before initialization, load it now
         if (selectedSubjectCode != null && selectedSubjectDesc != null) {
@@ -277,7 +288,7 @@ public class EditGradesPageController implements Initializable {
                     // Refresh the TableView
                     studentsTable.refresh();
 
-                    // Show success message with formatted grade
+                    // Show a success message with a formatted grade
                     showSuccess("Success", String.format(
                             "Grade successfully updated to: %s\nStatus: %s",
                             gradeFormat.format(gradeValue), gradeStatus));
@@ -293,114 +304,136 @@ public class EditGradesPageController implements Initializable {
     }
 
     private void loadStudentsBySubjectCode(String subjectCode) {
-        // Check cache first
-        ObservableList<Student> cachedStudents = StudentCache.get(subjectCode);
-        if (cachedStudents != null) {
-            updateTableView(cachedStudents);
-            return;
-        }
+    Task<ObservableList<Student>> loadTask = new Task<>() {
+        @Override
+        protected ObservableList<Student> call() throws Exception {
+            ObservableList<Student> tempList = FXCollections.observableArrayList();
 
-        // Run database operation in background thread
-        Task<ObservableList<Student>> loadTask = new Task<>() {
-            @Override
-            protected ObservableList<Student> call() throws Exception {
-                ObservableList<Student> tempList = FXCollections.observableArrayList();
+            try (Connection conn = DBConnection.getConnection()) {
+                StringBuilder queryBuilder = new StringBuilder();
+                queryBuilder.append("""
+                    SELECT DISTINCT 
+                           g.grade_id as id, 
+                           g.student_id, 
+                           su.subject_code, 
+                           g.final_grade, 
+                           g.gradestat, 
+                           s.firstname,
+                           s.lastname,
+                           CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS "Student Name",
+                           f.year_section,
+                           f.load_id
+                    FROM faculty_load f
+                    JOIN subjects su ON f.subject_id = su.subject_id
+                    JOIN grade g ON g.faculty_load = f.load_id
+                    JOIN students s ON g.student_id = s.student_number
+                    WHERE su.subject_code = ? 
+                    AND f.faculty_id = ?::smallint
+                """);
+                
+                if (selectedYearSection != null && !selectedYearSection.equals("All")) {
+                    queryBuilder.append(" AND f.year_section = ?");
+                }
+                queryBuilder.append(" ORDER BY s.lastname, s.firstname");
 
-                try (Connection conn = DBConnection.getConnection()) {
-                    String query = """
-                    SELECT g."grade_id" as id, g."student_id", su."subject_code", g."final_grade", g."gradestat", concat(firstname, ' ', lastname) AS "Student Name"
-                    FROM grade g, students s, subjects su, faculty_load f
-                    WHERE g."student_id" = s."student_number" and
-                          su.subject_id = g.subject_id and
-                          g.faculty_load = f.load_id and
-                          su.subject_code = ? and f.faculty_id = ?::smallint
-                    ORDER BY CAST(g."grade_id" AS INTEGER);""";
+                try (PreparedStatement pstmt = conn.prepareStatement(
+                        queryBuilder.toString(),
+                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY)) {
 
-                    try (PreparedStatement pstmt = conn.prepareStatement(query,
-                            ResultSet.TYPE_FORWARD_ONLY,
-                            ResultSet.CONCUR_READ_ONLY)) {
+                    pstmt.setFetchSize(100);
+                    pstmt.setString(1, subjectCode);
+                    pstmt.setString(2, SessionData.getInstance().getStudentId());
+                    
+                    if (selectedYearSection != null && !selectedYearSection.equals("All")) {
+                        pstmt.setString(3, selectedYearSection);
+                    }
 
-                        pstmt.setFetchSize(100);
-                        pstmt.setString(1, subjectCode);
-                        pstmt.setString(2, SessionData.getInstance().getStudentId());
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        while (rs.next() && !isCancelled()) {
+                            String finalGradeFromDB = rs.getString("final_grade");
+                            String formattedGrade = formatGradeFromDB(finalGradeFromDB);
 
-                        try (ResultSet rs = pstmt.executeQuery()) {
-                            while (rs.next()) {
-                                if (isCancelled()) break;
-
-                                // Format the final grade from database
-                                String finalGradeFromDB = rs.getString("final_grade");
-                                String formattedGrade = finalGradeFromDB;
-                                if (finalGradeFromDB != null && !finalGradeFromDB.isEmpty()) {
-                                    try {
-                                        float gradeValue = Float.parseFloat(finalGradeFromDB);
-                                        formattedGrade = gradeFormat.format(gradeValue);
-                                    } catch (NumberFormatException e) {
-                                        // Keep original value if parsing fails
-                                    }
-                                }
-
-                                Student student = new Student(
-                                        rs.getString("id"),
-                                        rs.getString("student_id"),
-                                        rs.getString("Student Name"),
-                                        rs.getString("subject_code"),
-                                        formattedGrade,
-                                        rs.getString("gradestat")
-                                );
-                                tempList.add(student);
-                            }
+                            Student student = new Student(
+                                rs.getString("id"),
+                                rs.getString("student_id"),
+                                rs.getString("Student Name"),
+                                rs.getString("subject_code"),
+                                formattedGrade != null ? formattedGrade : "",
+                                rs.getString("gradestat") != null ? rs.getString("gradestat") : ""
+                            );
+                            tempList.add(student);
                         }
                     }
-                    return tempList;
                 }
+                return tempList;
             }
-        };
-
-        loadTask.setOnSucceeded(e -> {
-            ObservableList<Student> result = loadTask.getValue();
-            studentCache.put(subjectCode, result);
-            updateTableView(result);
-            setupSearch();
-        });
-
-        loadTask.setOnFailed(e -> {
-            Throwable ex = loadTask.getException();
-            showError("Database Error", "Failed to load data: " + ex.getMessage());
-            ex.printStackTrace();
-        });
-
-        new Thread(loadTask).start();
-    }
-
-    private void populateSubjectCodes() {
-        try (Connection conn = DBConnection.getConnection()) {
-            String query = """
-            SELECT DISTINCT s.subject_code\s
-            FROM grade g, subjects s, faculty_load f
-            WHERE s.subject_id = g.subject_id and
-                  g.faculty_load = f.load_id and
-                    f.faculty_id = ?::smallint;""";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, SessionData.getInstance().getStudentId());
-                ResultSet rs = pstmt.executeQuery();
-
-                while (rs.next()) {
-                    String subjCode = rs.getString("subject_code");
-                    javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem(subjCode);
-                    item.setOnAction(event -> {
-                        subjCodeCombBox.setText(subjCode);
-                        loadStudentsBySubjectCode(subjCode);
-                    });
-                    subjCodeCombBox.getItems().add(item);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error loading subject codes: " + e.getMessage());
-            e.printStackTrace();
-            showError("Database Error", "Failed to load subject codes: " + e.getMessage());
         }
+    };
+
+    loadTask.setOnSucceeded(e -> {
+        ObservableList<Student> result = loadTask.getValue();
+        studentCache.put(subjectCode, result);
+        updateTableView(result);
+        setupSearch();
+        
+        Platform.runLater(() -> {
+            // Add null check for gradesHeaderLbl
+            if (gradesHeaderLbl != null) {
+                String headerText = selectedYearSection != null && !selectedYearSection.equals("All") 
+                    ? String.format("%s - %s", subjectCode, selectedYearSection)
+                    : subjectCode;
+            } else {
+                System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
+            }
+        });
+    });
+
+    loadTask.setOnFailed(e -> {
+        Throwable ex = loadTask.getException();
+        showError("Database Error", "Failed to load data: " + ex.getMessage());
+        ex.printStackTrace();
+    });
+
+    new Thread(loadTask).start();
+}
+
+private void populateSubjectCodes() {
+    try (Connection conn = DBConnection.getConnection()) {
+        String query = """
+            SELECT DISTINCT s.subject_code, s.description
+            FROM faculty_load f
+            JOIN subjects s ON f.subject_id = s.subject_id
+            WHERE f.faculty_id = ?::smallint
+            ORDER BY s.subject_code;
+            """;
+            
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, SessionData.getInstance().getStudentId());
+            ResultSet rs = pstmt.executeQuery();
+
+            subjCodeCombBox.getItems().clear();
+
+            while (rs.next()) {
+                String subjCode = rs.getString("subject_code");
+                String subjDesc = rs.getString("description");
+                MenuItem item = new MenuItem(subjCode);
+                item.setOnAction(event -> {
+                    subjCodeCombBox.setText(subjCode);
+                    subjDescLbl.setText(subjDesc);
+                    selectedSubjectCode = subjCode;
+                    selectedSubjectDesc = subjDesc;
+                    loadStudentsBySubjectCode(subjCode);
+                });
+                subjCodeCombBox.getItems().add(item);
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error loading subject codes: " + e.getMessage());
+        e.printStackTrace();
+        showError("Database Error", "Failed to load subject codes: " + e.getMessage());
     }
+}
 
     private void updateTableView(ObservableList<Student> students) {
         Platform.runLater(() -> {
@@ -426,7 +459,7 @@ public class EditGradesPageController implements Initializable {
         // Add listener to searchBar text property
         searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(subject -> {
-                // If search text is empty, display all subjects
+                // If a search text is empty, display all subjects
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
@@ -490,5 +523,65 @@ public class EditGradesPageController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    // Modify the populateYearSections method to include filtering
+    private void populateYearSections() {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = """
+            SELECT DISTINCT f.year_section 
+            FROM faculty_load f 
+            WHERE f.faculty_id = ?::smallint 
+            ORDER BY f.year_section;
+            """;
+
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, SessionData.getInstance().getStudentId());
+                ResultSet rs = pstmt.executeQuery();
+
+                yrSecCombBox.getItems().clear();
+
+                // Add "All" option
+                MenuItem allItem = new MenuItem("All");
+                allItem.setOnAction(event -> {
+                    yrSecCombBox.setText("All");
+                    selectedYearSection = null;
+                    if (selectedSubjectCode != null) {
+                        loadStudentsBySubjectCode(selectedSubjectCode);
+                    }
+                });
+                yrSecCombBox.getItems().add(allItem);
+
+                while (rs.next()) {
+                    String yearSection = rs.getString("year_section");
+                    MenuItem item = new MenuItem(yearSection);
+                    item.setOnAction(event -> {
+                        yrSecCombBox.setText(yearSection);
+                        selectedYearSection = yearSection;
+                        if (selectedSubjectCode != null) {
+                            loadStudentsBySubjectCode(selectedSubjectCode);
+                        }
+                    });
+                    yrSecCombBox.getItems().add(item);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error loading year sections: " + e.getMessage());
+            e.printStackTrace();
+            showError("Database Error", "Failed to load year sections: " + e.getMessage());
+        }
+    }
+
+    // Helper method to format grades from a database
+    private String formatGradeFromDB(String gradeStr) {
+        if (gradeStr != null && !gradeStr.isEmpty()) {
+            try {
+                float gradeValue = Float.parseFloat(gradeStr);
+                return gradeFormat.format(gradeValue);
+            } catch (NumberFormatException e) {
+                return gradeStr;
+            }
+        }
+        return gradeStr;
     }
 }

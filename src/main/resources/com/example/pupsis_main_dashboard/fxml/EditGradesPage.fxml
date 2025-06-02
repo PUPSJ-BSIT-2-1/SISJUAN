@@ -30,7 +30,7 @@
                     <children>
                         <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
                             <children>
-                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="153.0" text="Grades" textFill="WHITE">
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="373.0" text="Grades" textFill="WHITE">
                                     <font>
                                         <Font size="30.0" />
                                     </font>
