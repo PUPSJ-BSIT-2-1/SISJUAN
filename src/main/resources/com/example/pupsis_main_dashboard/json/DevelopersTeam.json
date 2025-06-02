@@ -10,7 +10,7 @@
     "devModule": "Main Dashboard",
     "devName": "Borgy Misael K. Palermo",
     "devRole": "Database Administrator (DBA)",
-    "devImage": "Images/PUPSJ.png",
+    "devImage": "Images/devs/PALERMO.jpg",
     "devDesc": "Handles server-side logic and integration with databases."
   },
   {
@@ -30,7 +30,7 @@
   {
     "devModule": "Grading",
     "devName": "Micah Athena D. Bugayong",
-    "devRole": "Quality Assurance (QA)",
+    "devRole": "UI/UX Designer",
     "devImage": "Images/devs/BUGAYONG.jpg",
     "devDesc": "She assisted in developing the Student View Module by designing and coding intuitive, responsive front-end components to improve the student experience when accessing academic records and grades. She also ensured a smooth interface and reliable functionality through thorough testing and bug fixing to meet quality standards."
   },
@@ -51,9 +51,9 @@
   {
     "devModule": "Grading",
     "devName": "Cydoel Tomas",
-    "devRole": "Frontend Developer",
+    "devRole": "Frontend and Backend Developer",
     "devImage": "Images/devs/GONZALES.jpg",
-    "devDesc": ""
+    "devDesc": "Designed and implemented the Grading Module interface, including CSS styling and key functional components. Established a secure cloud database connection to enable seamless data retrieval and updates for grading operations. Thoroughly tested and ensured the functionality of all GUI elements, delivering a user-friendly and efficient grading experience."
   },
   {
     "devModule": "Registration",
@@ -94,7 +94,7 @@
     "devModule": "Room Assignment",
     "devName": "Jesalyn Anne S. Segotier",
     "devRole": "Documentation Analyst",
-    "devImage": "Images/devs/SAJULAN.jpg",
-    "devDesc": "I worked as the frontend developer for the Room Assignment module of our system. I focused on the design and layout, choosing the right colors, fonts, and overall look to make the system clear and easy to use. I made sure the interface is user-friendly and works well for anyone using it. I also worked with the system’s data and functions."
+    "devImage": "Images/devs/SEGOTIER.jpg",
+    "devDesc": "Jesalyn creates and updates clear, easy-to-follow documentation for the Room Assignment module. She ensures that all instructions and records are accurate and accessible, helping users understand and navigate the system effectively. Her work supports smooth classroom scheduling and efficient system use.\n"
   }
 ]
