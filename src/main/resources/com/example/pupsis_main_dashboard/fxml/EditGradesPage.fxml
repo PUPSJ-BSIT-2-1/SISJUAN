@@ -7,13 +7,12 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="1080.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/EditGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.EditGradesPageController">
@@ -55,11 +54,7 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
                                     <children>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" smooth="false">
-                                            <image>
-                                                <Image url="@../Images/Rectangle.jpg" />
-                                            </image>
-                                        </ImageView>
+                              <SVGPath content="M6.62988 0.25C10.1566 0.250057 13.0098 3.06925 13.0098 6.53906C13.0095 10.0087 10.1564 12.8271 6.62988 12.8271C3.10331 12.8271 0.25025 10.0087 0.25 6.53906C0.25 3.06921 3.10316 0.25 6.62988 0.25ZM15.6533 18.5059L13.7832 19.6572L9.54688 12.9697L11.416 11.8174L15.6533 18.5059Z        M6.62988 2.25C4.20788 2.25 2.25 4.20788 2.25 6.53906C2.25 8.87024 4.20788 10.8271 6.62988 10.8271C9.05188 10.8271 11.0098 8.87024 11.0098 6.53906C11.0098 4.20788 9.05188 2.25 6.62988 2.25Z" fill="#b7b7b7" fillRule="EVEN_ODD" styleClass="shape-with-hole" />
                                         <TextField fx:id="searchBar" promptText="Search..." />
                                         <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="518.0" spacing="20.0">
                                             <children>
