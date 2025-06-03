@@ -328,7 +328,7 @@ public class StudentLoginController {
 
     // Handles the login button action to authenticate the user
     @FXML private void handleLogin(VBox leftSide, boolean isRegistration) {
-        String studentId = studentIdField.getText().trim();
+        String studentId = studentIdField.getText().trim(); // This is the student_number
         String password = loginPasswordField.getText().trim();
 
         if (studentId.isEmpty() || password.isEmpty()) {
@@ -343,8 +343,8 @@ public class StudentLoginController {
 
         loginExecutor.submit(() -> {
             try {
-                boolean isAuthenticated = authenticate(studentId, password);
-                String userEmail = isAuthenticated ? getStudentEmail(studentId) : null;
+                boolean isAuthenticated = authenticate(studentId, password); // Assumes authenticate uses student_number
+                // String userEmail = isAuthenticated ? getStudentEmail(studentId) : null; // Removed
 
                 Platform.runLater(() -> {
                     leftSide.getChildren().remove(loader);
@@ -352,13 +352,14 @@ public class StudentLoginController {
 
                     if (isAuthenticated) {
                         RememberMeHandler.savePreference(USER_TYPE, studentId, password, rememberMeCheckBox.isSelected());
-                        if (userEmail != null) {
-                            RememberMeHandler.setCurrentUserEmail(userEmail);
-                        } else {
-                            // Fallback or log if email couldn't be fetched but auth was successful
-                            RememberMeHandler.setCurrentUserEmail(studentId); // Or handle as an error/log
-                            logger.warn("Could not retrieve email for student ID: {}. Using ID as session identifier.", studentId);
-                        }
+                        // if (userEmail != null) { // Removed
+                        //     RememberMeHandler.setCurrentUserEmail(userEmail);
+                        // } else {
+                        //     // Fallback or log if email couldn't be fetched but auth was successful
+                        //     RememberMeHandler.setCurrentUserEmail(studentId); // Or handle as an error/log
+                        //     logger.warn("Could not retrieve email for student ID: {}. Using ID as session identifier.", studentId);
+                        // }
+                        RememberMeHandler.setCurrentUserStudentNumber(studentId); // Use student number
                         
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
@@ -394,11 +395,11 @@ public class StudentLoginController {
     // Method to get student status from the database
     private String getStudentStatus(String studentId) {
         String status = null;
-        String query = "SELECT status FROM students WHERE student_number = ? OR email = ?"; // Also check by email as studentId might be email
+        String query = "SELECT status FROM students WHERE student_number = ?"; // Removed OR email = ?
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, studentId);
-            preparedStatement.setString(2, studentId); // If studentIdField can contain email
+            // preparedStatement.setString(2, studentId); // Removed: If studentIdField can contain email
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 status = resultSet.getString("status");
@@ -873,6 +874,50 @@ public class StudentLoginController {
             logger.error("Error getting student full name", e);
         }
         return "";
+    }
+
+    // New method to get student's full name by student number
+    public static String getStudentFullName(String studentNumber) {
+        String fullName = null;
+        String query = "SELECT firstname, lastname, middlename FROM students WHERE student_number = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, studentNumber);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String firstName = resultSet.getString("firstname");
+                String lastName = resultSet.getString("lastname");
+                String middleName = resultSet.getString("middlename");
+
+                StringBuilder nameBuilder = new StringBuilder();
+                if (firstName != null && !firstName.isEmpty()) {
+                    nameBuilder.append(firstName);
+                }
+                if (middleName != null && !middleName.isEmpty()) {
+                    if (nameBuilder.length() > 0) nameBuilder.append(" ");
+                    nameBuilder.append(middleName.substring(0, 1).toUpperCase()).append("."); // Middle initial
+                }
+                if (lastName != null && !lastName.isEmpty()) {
+                    if (nameBuilder.length() > 0) nameBuilder.append(" ");
+                    nameBuilder.append(lastName);
+                }
+                fullName = nameBuilder.toString();
+                // Format to LastName, FirstName M.
+                if (lastName != null && firstName != null) {
+                    fullName = lastName + ", " + firstName;
+                    if (middleName != null && !middleName.isEmpty()) {
+                        fullName += " " + middleName.substring(0, 1).toUpperCase() + ".";
+                    }
+                }
+
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving student full name for student number {}: ", studentNumber, e);
+        }
+        return fullName;
     }
 
     private void clearRegistrationFields() {

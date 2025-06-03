@@ -60,7 +60,7 @@ public class FacultyDashboardController {
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        String identifier = RememberMeHandler.getCurrentUserEmail();
+        String identifier = RememberMeHandler.getCurrentUserFacultyNumber();
         if (identifier != null && !identifier.isEmpty()) {
             // Get faculty info from the database
             loadFacultyInfo(identifier);
@@ -140,26 +140,9 @@ public class FacultyDashboardController {
     
     // Load faculty data from the database
     private void getFacultyData(String identifier) {
-        boolean isEmail = identifier.contains("@");
-        
         try (Connection connection = DBConnection.getConnection()) {
-            // First, try by ID if the identifier is not an email
-            if (!isEmail) {
-                String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, identifier);
-                    ResultSet rs = stmt.executeQuery();
-                    
-                    if (rs.next()) {
-                        updateFacultyUI(rs);
-                        return;
-                    }
-                }
-
-            }
-            
-            // If not found by ID or is an email, try with email (case-insensitive)
-            String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE LOWER(email) = LOWER(?)";
+            // Query directly by faculty_number
+            String query = "SELECT faculty_number, firstname, lastname, department FROM faculty WHERE faculty_number = ?";
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setString(1, identifier);
                 ResultSet rs = stmt.executeQuery();
@@ -187,22 +170,22 @@ public class FacultyDashboardController {
         }
     }
     
-private void updateFacultyUI(ResultSet rs) throws SQLException {
-    String facultyId = rs.getString("faculty_id");
-    String firstName = rs.getString("firstname");
-    String lastName = rs.getString("lastname");
-    String department = rs.getString("department");
-    SessionData.getInstance().setFacultyId(facultyId);
-    
-    formattedName = formatFacultyName(firstName, lastName);
+    private void updateFacultyUI(ResultSet rs) throws SQLException {
+        String facultyId = rs.getString("faculty_number");
+        String firstName = rs.getString("firstname");
+        String lastName = rs.getString("lastname");
+        String department = rs.getString("department");
+        SessionData.getInstance().setFacultyId(facultyId);
+        
+        formattedName = formatFacultyName(firstName, lastName);
 
-    Platform.runLater(() -> {
-        // Set the faculty ID first to ensure it's available
-        studentNameLabel.setText(formattedName);
-        studentIdLabel.setText(facultyId);
-        departmentLabel.setText(department != null ? department : "Department not set");
-    });
-}
+        Platform.runLater(() -> {
+            // Set the faculty ID first to ensure it's available
+            studentNameLabel.setText(formattedName);
+            studentIdLabel.setText(facultyId);
+            departmentLabel.setText(department != null ? department : "Department not set");
+        });
+    }
     
     // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {

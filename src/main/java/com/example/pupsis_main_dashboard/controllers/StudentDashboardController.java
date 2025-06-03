@@ -50,7 +50,7 @@ public class StudentDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
-    private final String identifier = RememberMeHandler.getCurrentUserEmail();
+    // private final String identifier = RememberMeHandler.getCurrentUserEmail(); // Changed & moved to initialize
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
@@ -77,11 +77,11 @@ public class StudentDashboardController {
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
         
-        // Load student info using getCurrentUserEmail
-        String identifier = RememberMeHandler.getCurrentUserEmail();
+        // Load student info using getCurrentUserStudentNumber
+        String identifier = RememberMeHandler.getCurrentUserStudentNumber(); // Changed
         if (identifier != null && !identifier.isEmpty()) {
             logger.info("StudentDashboardController.initialize() - Calling loadStudentInfoWithTask for identifier: {}", identifier);
-            loadStudentInfoWithTask(identifier);
+            loadStudentInfoWithTask(identifier); // identifier is now student number
         } else {
             logger.error("No user is currently logged in");
             studentNameLabel.setText("User not logged in");
@@ -171,18 +171,13 @@ public class StudentDashboardController {
                 String finalStudentFormattedNumber = null;
 
                 // Get student name
-                boolean isEmail = identifier.contains("@");
-                String nameQuery = getNameQuery(isEmail);
+                String nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
                 
                 long dbNameQueryStartTime = System.currentTimeMillis();
                 logger.info("loadStudentInfoWithTask.call() - Fetching name - START");
                 try (Connection connection = DBConnection.getConnection();
                      PreparedStatement statement = connection.prepareStatement(nameQuery)) {
-                    if (isEmail) {
-                        statement.setString(1, identifier.toLowerCase());
-                    } else {
-                        statement.setString(1, identifier);
-                    }
+                    statement.setString(1, identifier); 
                     try (ResultSet result = statement.executeQuery()) {
                         if (result.next()) {
                             String firstName = result.getString("firstname");
@@ -201,80 +196,45 @@ public class StudentDashboardController {
                 finalStudentFormattedNumber = getStudentFormattedNumber(identifier); // This method needs to handle its own connection
                 logger.info("loadStudentInfoWithTask.call() - Fetching formatted ID - END. Duration: {} ms", (System.currentTimeMillis() - dbIdQueryStartTime));
 
-                logger.info("loadStudentInfoWithTask.call() - END. Total call() duration: {} ms", (System.currentTimeMillis() - callStartTime));
+                // Store student number in SessionData if not already there or different
+                if (finalStudentFormattedNumber != null && !finalStudentFormattedNumber.equals(SessionData.getInstance().getStudentNumber())) {
+                    SessionData.getInstance().setStudentNumber(finalStudentFormattedNumber);
+                    logger.info("Stored/Updated student_number in SessionData: {}", finalStudentFormattedNumber);
+                }
+
+                logger.info("loadStudentInfoWithTask.call() - END. Duration: {} ms", (System.currentTimeMillis() - callStartTime));
                 return new StudentInfoData(finalName, finalStudentFormattedNumber);
             }
         };
 
         loadTask.setOnSucceeded(event -> {
-            long succeededTime = System.currentTimeMillis();
-            logger.info("loadStudentInfoWithTask.onSucceeded() - START. Task duration (creation to success): {} ms", (succeededTime - taskCreationTime));
-            StudentInfoData info = loadTask.getValue();
-            studentNameLabel.setText(Objects.requireNonNullElse(info.name(), "Name not found"));
-            studentIdLabel.setText(Objects.requireNonNullElse(info.formattedId(), "ID not found"));
+            StudentInfoData studentInfo = loadTask.getValue();
+            studentNameLabel.setText(studentInfo.name());
+            studentIdLabel.setText(studentInfo.formattedId());
             if (loadingIndicator != null) loadingIndicator.setVisible(false);
-            logger.info("loadStudentInfoWithTask.onSucceeded() - END. UI updated.");
+            logger.info("loadStudentInfoWithTask.setOnSucceeded() - Student info loaded: Name='{}', ID='{}'", studentInfo.name(), studentInfo.formattedId());
         });
 
         loadTask.setOnFailed(event -> {
-            long failedTime = System.currentTimeMillis();
-            logger.error("loadStudentInfoWithTask.onFailed() - Task FAILED. Task duration (creation to failure): {} ms", (failedTime - taskCreationTime));
-            Throwable exception = loadTask.getException();
-            logger.error("Error loading student information", exception);
+            Throwable ex = loadTask.getException();
+            logger.error("Failed to load student information: {}", ex.getMessage(), ex);
             studentNameLabel.setText("Error loading name");
             studentIdLabel.setText("Error loading ID");
             if (loadingIndicator != null) loadingIndicator.setVisible(false);
         });
 
-        logger.info("loadStudentInfoWithTask({}) - Starting task thread.", identifier);
+        // Start the task on a new thread
         new Thread(loadTask).start();
-    }
-
-    private String getNameQuery(boolean isEmail) {
-        String nameQuery;
-
-        if (isEmail) {
-            // Case-insensitive email comparison
-            nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
-        } else {
-            // Assumes 'identifier' is the formatted student_number
-            // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
-            nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
-        }
-        return nameQuery;
+        logger.info("loadStudentInfoWithTask({}) - Task STARTED. Duration to start: {} ms", identifier, (System.currentTimeMillis() - taskCreationTime));
     }
 
     // Method to get student's formatted number (e.g., 2023-00001-SJ-0)
+    // Simplified: identifier is now always the student_number.
     private String getStudentFormattedNumber(String identifier) throws SQLException { 
-        boolean isEmail = identifier.contains("@");
-        String query;
-
-        if (isEmail) {
-            query = "SELECT student_number FROM students WHERE LOWER(email) = LOWER(?)";
-        } else {
-            // If identifier is not email, it's assumed to be the student_number already
-            // However, to be safe and consistent, let's ensure we fetch it if it was an email, or confirm it if it was an ID.
-            // This part might need adjustment based on whether 'identifier' for non-email is already the formatted number.
-            // For now, assuming if it's not an email, it IS the student_number we want to display.
-            // If 'identifier' for non-email is some other ID, this query needs to fetch 'student_number'.
-            return identifier; // If identifier is already the student_number, just return it.
-            // query = "SELECT student_number FROM students WHERE student_number = ?"; // If identifier is a different ID type
-        }
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, identifier.toLowerCase()); // Lowercase for email, safe for student_number if it's already that.
-            try (ResultSet result = statement.executeQuery()) {
-                if (result.next()) {
-                    return result.getString("student_number");
-                }
-            }
-        }
-        logger.warn("Could not retrieve student formatted number for identifier: {}", identifier);
-        return null; // Or some default/error string
+        return identifier; // If identifier is already the student_number, just return it.
     }
 
-    // Format student name as "LastName, FirstName MiddleInitial."
+    // Format student name for display
     private String formatStudentName(String firstName, String middleName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
         

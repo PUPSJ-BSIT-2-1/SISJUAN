@@ -8,7 +8,7 @@ public class RememberMeHandler {
     private static final String LAST_USERNAME_KEY_SUFFIX = "_last_username";
     private static final String REMEMBER_ME_KEY_SUFFIX = "_remember_me_selected";
     private static final String PASSWORD_KEY_SUFFIX = "_password"; // Key for storing password
-    private static final String CURRENT_SESSION_EMAIL_KEY = "current_session_email";
+    private static final String CURRENT_SESSION_USER_IDENTIFIER_KEY = "current_session_user_identifier";
 
     // Save preferences for a specific user type
     public static void savePreference(String userType, String username, String password, boolean rememberMe) {
@@ -51,39 +51,51 @@ public class RememberMeHandler {
         prefs.remove(userType + PASSWORD_KEY_SUFFIX); // Clear saved password
     }
 
-    // --- Current Session Email Management ---
+    // --- Current Session User Identifier Management ---
     // (These methods remain global, not user-type specific for session tracking)
 
-    public static String getCurrentUserEmail() {
-        return prefs.get(CURRENT_SESSION_EMAIL_KEY, null);
+    public static String getCurrentUserIdentifier() {
+        return prefs.get(CURRENT_SESSION_USER_IDENTIFIER_KEY, null);
     }
 
-    public static void setCurrentUserEmail(String email) {
-        if (email != null && !email.isEmpty()) {
-            prefs.put(CURRENT_SESSION_EMAIL_KEY, email);
+    public static void setCurrentUserIdentifier(String identifier) {
+        if (identifier != null && !identifier.isEmpty()) {
+            prefs.put(CURRENT_SESSION_USER_IDENTIFIER_KEY, identifier);
         } else {
-            prefs.remove(CURRENT_SESSION_EMAIL_KEY);
+            prefs.remove(CURRENT_SESSION_USER_IDENTIFIER_KEY);
         }
     }
 
-    public static void clearCurrentSessionEmail() {
-        prefs.remove(CURRENT_SESSION_EMAIL_KEY);
+    public static void clearCurrentSessionIdentifier() {
+        prefs.remove(CURRENT_SESSION_USER_IDENTIFIER_KEY);
     }
 
     // Add this method to get the student's identifier (student number or email)
     public static String getCurrentUserStudentNumber() {
-        // This retrieves the username stored for the STUDENT user type,
-        // which could be their student number or email used at login.
-        return getLastUsedUsername("STUDENT");
+        return getCurrentUserIdentifier(); // Get current logged-in user's identifier
+    }
+
+    // Added for faculty
+    public static String getCurrentUserFacultyNumber() {
+        return getCurrentUserIdentifier(); // Get current logged-in user's identifier
+    }
+
+    // Specific setters called by login controllers
+    public static void setCurrentUserStudentNumber(String studentNumber) {
+        setCurrentUserIdentifier(studentNumber);
+    }
+
+    public static void setCurrentUserFacultyNumber(String facultyNumber) {
+        setCurrentUserIdentifier(facultyNumber);
     }
 
     /**
-     * Call this method when a user logs out to clear their session email
+     * Call this method when a user logs out to clear their session identifier
      * and optionally their specific user-type preferences if remember me was not selected.
      * If remember me was selected for their user type, their username (and now password) would persist.
      */
     public static void onLogout(String userType) {
-        clearCurrentSessionEmail();
+        clearCurrentSessionIdentifier();
         // Optionally, if you want to clear even "remembered" details on logout, call:
         // clearUserTypePreferences(userType);
         // However, typical "Remember Me" implies details persist across sessions until explicitly cleared

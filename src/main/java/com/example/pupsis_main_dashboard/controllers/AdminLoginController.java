@@ -138,20 +138,25 @@ public class AdminLoginController {
 
                     if (isAuthenticated) {
                         RememberMeHandler.savePreference(USER_TYPE, identifier, password, rememberMeCheckBox.isSelected());
-                        RememberMeHandler.setCurrentUserEmail(identifier); // Track current session user
-
-                        getAdminFullName(identifier, isEmail);
-                        StageAndSceneUtils u = new StageAndSceneUtils();
-                        Stage stage = (Stage) leftSide.getScene().getWindow();
-                        try {
-                            u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/AdminDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
-                            if (stage.getScene() != null) {
-                                com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
-                            }
-                        } catch (IOException e) {
-                            showAlert(
-                                    "Unable to load dashboard",
-                                    "There was an error loading the dashboard. Please try again.");
+                        RememberMeHandler.setCurrentUserIdentifier(identifier); // Track current session user
+                        logger.info("Admin login successful for: {}", identifier);
+                        // Proceed to dashboard
+                        String adminFullName = getAdminFullName(identifier, isEmail);
+                        if (adminFullName != null) {
+                            Platform.runLater(() -> {
+                                StageAndSceneUtils u = new StageAndSceneUtils();
+                                Stage stage = (Stage) leftSide.getScene().getWindow();
+                                try {
+                                    u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/AdminDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                                    if (stage.getScene() != null) {
+                                        com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
+                                    }
+                                } catch (IOException e) {
+                                    showAlert(
+                                            "Unable to load dashboard",
+                                            "There was an error loading the dashboard. Please try again.");
+                                }
+                            });
                         }
                     } else {
                         errorLabel.setText("Invalid credentials");
@@ -195,10 +200,7 @@ public class AdminLoginController {
                         return false;
                     }
                     
-                    // The admin_id is set via setCurrentUserEmail and getAdminFullName now
-                    // Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class);
-                    // prefs.put("admin_id", resultSet.getString("faculty_id"));
-                    
+                    // The admin identifier is set via setCurrentUserIdentifier and used by getAdminFullName
                     return password.equals(storedPassword);
                 }
             }

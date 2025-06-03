@@ -111,16 +111,8 @@ public class FacultyLoginController {
         String identifier = facultyIdField.getText().trim();
         String password = passwordField.getText().trim();
         
-        boolean isEmail = identifier.contains("@");
-        boolean isValidId = !isEmail && identifier.matches("[A-Za-z0-9-]+");
-        
         if (identifier.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please fill in all fields");
-            return;
-        }
-        
-        if (!isEmail && !isValidId) {
-            errorLabel.setText("Invalid faculty ID format");
             return;
         }
         
@@ -140,9 +132,9 @@ public class FacultyLoginController {
 
                     if (isAuthenticated) {
                         RememberMeHandler.savePreference(USER_TYPE, identifier, password, rememberMeCheckBox.isSelected());
-                        RememberMeHandler.setCurrentUserEmail(identifier); // Track current session user
+                        RememberMeHandler.setCurrentUserFacultyNumber(identifier); // Changed from setCurrentUserEmail
 
-                        getFacultyFullName(identifier, isEmail);
+                        getFacultyFullName(identifier); // Removed isEmail parameter
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
@@ -174,30 +166,12 @@ public class FacultyLoginController {
 
     // Faculty authentication method
     private boolean authenticateFaculty(String identifier, String password) {
-        boolean isEmail = identifier.contains("@");
-        String query;
-        
-        if (isEmail) {
-            query = "SELECT faculty_id, password FROM faculty WHERE LOWER(email) = LOWER(?)";
-        } else {
-            query = "SELECT faculty_id, password FROM faculty WHERE faculty_id = ?";
-        }
+        String query = "SELECT faculty_id, password FROM faculty WHERE faculty_number = ?"; // Always use faculty_number
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
              
-            if (isEmail) {
-                statement.setString(1, identifier.toLowerCase()); // Ensure email is lowercased for query
-            } else {
-                try {
-                    // Attempt to parse the identifier as an integer if it's supposed to be a faculty_id
-                    int facultyIdInt = Integer.parseInt(identifier);
-                    statement.setInt(1, facultyIdInt);
-                } catch (NumberFormatException e) {
-                    logger.warn("Invalid faculty ID format: '{}' is not a valid integer.", identifier);
-                    return false; // If identifier is not a valid int, authentication fails
-                }
-            }
+            statement.setString(1, identifier); // Always set as string for faculty_number
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -209,14 +183,8 @@ public class FacultyLoginController {
                         return false;
                     }
                     
-                    // Storing faculty_id in global session via RememberMeHandler.setCurrentUserEmail
-                    // IMPORTANT: Replace this with a secure password verification (e.g., BCrypt)
-                    if (password.equals(storedPassword)) {
-                        // If authentication is successful, you might want to store the actual faculty_id (numeric or string)
-                        // String actualFacultyId = resultSet.getString("faculty_id");
-                        // RememberMeHandler.setCurrentUserActualId(actualFacultyId); // Example
-                        return true;
-                    }
+                    // Storing faculty_number in global session via RememberMeHandler.setCurrentUserFacultyNumber
+                    return password.equals(storedPassword);
                 }
             }
         } catch (SQLException e) {
@@ -227,20 +195,14 @@ public class FacultyLoginController {
     }
 
     // Retrieves and returns the full name of a faculty member
-    public static String getFacultyFullName(String identifier, boolean isEmail) {
+    public static String getFacultyFullName(String identifier) { // Removed isEmail parameter
         String fullName = "";
-        String query;
-        
-        if (isEmail) {
-            query = "SELECT faculty_id, firstname, lastname, middlename, department, contactnumber, status FROM faculty WHERE LOWER(email) = LOWER(?)";
-        } else {
-            query = "SELECT faculty_id, firstname, lastname, middlename, department, contactnumber, status FROM faculty WHERE faculty_id = ?";
-        }
+        String query = "SELECT faculty_id, firstname, lastname, middlename, department, contactnumber, status FROM faculty WHERE faculty_number = ?"; // Always use faculty_number
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
              
-            statement.setString(1, identifier);
+            statement.setString(1, identifier); // Always set as string for faculty_number
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {

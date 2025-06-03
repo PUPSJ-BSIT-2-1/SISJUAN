@@ -76,8 +76,8 @@ public class FacultyHomeContentController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
         dateLabel.setText(now.format(formatter));
         
-        // Load faculty data using getCurrentUserEmail
-        String identifier = RememberMeHandler.getCurrentUserEmail();
+        // Load faculty data using getCurrentUserFacultyNumber
+        String identifier = RememberMeHandler.getCurrentUserFacultyNumber();
         if (identifier != null && !identifier.isEmpty()) {
             // Show loading indicators
             totalClassesLabel.setText("Loading...");
@@ -113,7 +113,7 @@ public class FacultyHomeContentController {
     /**
      * Loads faculty data including name, teaching load, schedule, and events.
      * 
-     * @param identifier The faculty's email address or ID
+     * @param identifier The faculty's faculty number
      */
     private void loadFacultyData(String identifier) {
         try {
@@ -185,61 +185,50 @@ public class FacultyHomeContentController {
     }
     
     /**
-     * Gets faculty information from the database using the faculty's email or ID
-     * @param identifier Email or ID of the faculty
+     * Gets faculty information from the database using the faculty's faculty number
+     * @param identifier Faculty number of the faculty
      * @return Map containing faculty information (name)
      */
     private Map<String, String> getFacultyInfo(String identifier) {
         Map<String, String> facultyInfo = new HashMap<>();
 
-        try (Connection conn = DBConnection.getConnection()) {
+        // Identifier is now always faculty_number
+        String query = "SELECT faculty_number, firstname, lastname FROM faculty WHERE faculty_number = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             if (conn == null) {
                 System.out.println("Connection failed.");
-                facultyInfo.put("name", "Unknown Faculty");
-                return facultyInfo;
+                // facultyNameLabel.setText("Unknown Faculty"); // UI update should be on Platform.runLater
+                // This method is called on a background thread, so update UI carefully.
+                // For now, just set facultyId to null or a placeholder if needed by other methods.
+                this.facultyId = null; 
+                return facultyInfo; // Or throw an exception
             }
 
-            identifier = identifier.trim();
+            stmt.setString(1, identifier);
+            ResultSet rs = stmt.executeQuery();
 
-            // First, try to get faculty by ID, only if identifier is a number
-            if (identifier.matches("\\d+")) {
-                String query = "SELECT faculty_id, firstname, lastname FROM faculty WHERE faculty_id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, Integer.parseInt(identifier));
+            if (rs.next()) {
+                String firstName = rs.getString("firstname");
+                String lastName = rs.getString("lastname");
+                this.facultyId = rs.getString("faculty_number"); // Set the class field facultyId
 
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            facultyId = String.valueOf(rs.getInt("faculty_id"));
-                            String firstName = rs.getString("firstname");
-                            String lastName = rs.getString("lastname");
-                            facultyInfo.put("name", firstName + " " + lastName);
-                            return facultyInfo;
-                        }
-                    }
-                }
+                // The facultyNameLabel is set by setFacultyDashboardController, 
+                // but we can store the fetched name if needed elsewhere or for consistency.
+                String fullName = (lastName != null ? lastName : "") + ", " + (firstName != null ? firstName : "");
+                facultyInfo.put("name", fullName);
+                // Platform.runLater(() -> facultyNameLabel.setText(fullName)); // Avoid direct UI update here if already set
+            } else {
+                // facultyNameLabel.setText("Faculty not found");
+                this.facultyId = null; // Faculty not found
             }
-
-            // Try to find by email (case-insensitive)
-            String query = "SELECT faculty_id, firstname, lastname FROM faculty WHERE LOWER(email) = LOWER(?)";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, identifier);
-
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        facultyId = String.valueOf(rs.getInt("faculty_id"));
-                        String firstName = rs.getString("firstname");
-                        String lastName = rs.getString("lastname");
-                        facultyInfo.put("name", firstName + " " + lastName);
-                        return facultyInfo;
-                    }
-                }
-            }
-
         } catch (SQLException e) {
-            logger.error("Error retrieving faculty name", e);
+            logger.error("Error fetching faculty info: {}", e.getMessage());
+            // Platform.runLater(() -> facultyNameLabel.setText("Error loading data"));
+            this.facultyId = null; // Error occurred
         }
-
-        facultyInfo.put("name", "Unknown Faculty");
         return facultyInfo;
     }
     

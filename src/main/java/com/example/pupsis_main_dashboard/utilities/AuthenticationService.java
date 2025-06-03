@@ -1,6 +1,6 @@
 /**
  * This class handles the authentication of users in the PUPSIS application.
- * It checks if the provided email or student ID and password match the records in the database.
+ * It checks if the provided student ID and password match the records in the database.
  */
 
 package com.example.pupsis_main_dashboard.utilities;
@@ -17,25 +17,15 @@ public class AuthenticationService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public static boolean authenticate(String input, String password) {
+    public static boolean authenticate(String input, String password) { // 'input' is now always student_number
         boolean isAuthenticated = false;
-        boolean isEmail = input.contains("@");
 
-        String query;
-        if (isEmail) {
-            query = "SELECT password, status FROM students WHERE LOWER(email) = LOWER(?)";
-        } else {
-            query = "SELECT password, status FROM students WHERE student_number = ?";
-        }
+        String query = "SELECT password, status FROM students WHERE student_number = ?"; // Always use student_number
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            if (isEmail) {
-                preparedStatement.setString(1, input.toLowerCase());
-            } else {
-                preparedStatement.setString(1, input);
-            }
+            preparedStatement.setString(1, input); // Assumes input is student_number
             
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

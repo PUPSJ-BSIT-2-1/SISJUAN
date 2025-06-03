@@ -93,13 +93,13 @@ public class StudentHomeContentController {
         Task<HomeContentData> loadHomeDataTask = new Task<>() {
             @Override
             protected HomeContentData call() throws Exception {
-                String identifier = RememberMeHandler.getCurrentUserEmail();
+                String identifier = RememberMeHandler.getCurrentUserStudentNumber();
                 if (identifier == null || identifier.isEmpty()) {
                     throw new IllegalStateException("No user logged in.");
                 }
 
                 // Fetch all data in the background
-                String fullStudentName = StudentLoginController.getStudentFullName(identifier, identifier.contains("@"));
+                String fullStudentName = StudentLoginController.getStudentFullName(identifier);
                 String studentFirstName = "Student"; // Default
                 if (fullStudentName != null && fullStudentName.contains(",")) {
                     String[] nameParts = fullStudentName.split(",");
@@ -147,7 +147,7 @@ public class StudentHomeContentController {
             numAnnouncements.setText(data.numAnnouncementsText);
 
             logger.info("Home content loaded for student: {} (identifier: {})", 
-                        data.fullStudentName, RememberMeHandler.getCurrentUserEmail());
+                        data.fullStudentName, RememberMeHandler.getCurrentUserStudentNumber());
         });
 
         loadHomeDataTask.setOnFailed(event -> {
@@ -169,13 +169,11 @@ public class StudentHomeContentController {
 
     // Helper method to fetch student number if not in session (implement if needed)
     private String fetchStudentNumber(String identifier) throws SQLException {
-        String query = identifier.contains("@") ? 
-            "SELECT student_number FROM students WHERE LOWER(email) = LOWER(?)" :
-            "SELECT student_number FROM students WHERE student_number = ?";
+        String query = "SELECT student_number FROM students WHERE student_number = ?";
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, identifier.toLowerCase());
+            stmt.setString(1, identifier);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getString("student_number");
