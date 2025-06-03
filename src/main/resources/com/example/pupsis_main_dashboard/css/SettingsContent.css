@@ -1,35 +1,196 @@
-.settings-container {
-    -fx-background-color: white;
+/* General Styles */
+.root {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-background-color: #f4f6f8; /* Light grey background for the app (default for .root elements) */
+    -fx-fade1: #EAEAEA; /* Light theme fade1 */
+    -fx-fade2: #F5F5F5; /* Light theme fade2 */
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 1;
+    /* -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.5, 0, 2); */
+}
+
+/* Settings Page Specific Styles - Adjusted to mimic HomeContent */
+
+/* Styles for the root VBox of SettingsContent.fxml if needed, though it sits in .content-container */
+#rootSettingsVBox {
+    /* Match background to content-container or be transparent if content-container provides the bg */
+    -fx-background-color: transparent; 
 }
 
 .settings-title {
-    -fx-font-size: 24px;
     -fx-font-family: "Inter 18pt SemiBold";
-    -fx-text-fill: #000000;
-    -fx-padding: 0 0 20 0;
+    -fx-font-size: 28px; /* Or match a title style from Home if available */
+    -fx-text-fill: #343a40; /* Dark grey, similar to Home's .section-header */
+    -fx-padding: 0 0 20 0; /* Bottom padding */
 }
 
-.settings-section {
-    -fx-background-radius: 5;
+.settings-section { /* This is like .cards in HomeContent.css */
+    -fx-background-color: #f8fcfc; /* Match Home's .cards background */
+    -fx-padding: 20;               /* Match Home's .cards padding */
+    -fx-border-color: #e3e5e6;     /* Match Home's .cards border */
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    /* -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0.2, 0, 2); */ /* Softer shadow */
+    /* Spacing between sections will be handled by VBox spacing in FXML or specific margins */
 }
 
-.settings-label {
-    -fx-font-size: 16px;
-    -fx-text-fill: #000000;
-    -fx-font-family: "Inter 18pt";
+.settings-section-header { /* Matches .section-header from HomeContent.css */
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 18px;
+    -fx-text-fill: #343a40;
+    -fx-padding: 0 0 15 0; /* Bottom padding for the header */
+    -fx-border-width: 0 0 1 0; /* Optional: bottom border for separation */
+    -fx-border-color: #e3e5e6; /* Light border if used */
 }
 
-.settings-control {
+.settings-label { /* Matches .stat-label from HomeContent.css for general labels */
+    -fx-font-family: "Inter", sans-serif; /* Assuming "Inter" is the base font */
     -fx-font-size: 14px;
-    -fx-text-fill: #ffffff;
-    -fx-font-family: "Inter 18pt";
-    -fx-background-color: #800000; /* Maroon color */
-    -fx-background-radius: 3;
+    -fx-text-fill: #6c757d;
 }
 
-.settings-control:hover {
-    -fx-background-color: #600000; /* Darker maroon */
+/* Input fields styling - aiming for clean look within the "home-like" cards */
+.text-field, .password-field {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 14px;
+    -fx-pref-height: 35px;
+    -fx-background-color: #ffffff; /* White background */
+    -fx-border-color: #ced4da;    /* Light grey border, common in bootstrap-like forms */
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-prompt-text-fill: #6c757d;
+    -fx-padding: 5 10;
 }
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #800000; /* Maroon border on focus */
+    -fx-background-color: #ffffff;
+    /* -fx-effect: dropshadow(gaussian, rgba(128,0,0,0.2), 5, 0, 0, 0); */ /* Subtle maroon shadow */
+}
+
+.choice-box {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-pref-height: 35px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-mark-color: #343a40; /* Arrow color */
+}
+
+.choice-box .label { /* Text of selected item */
+    -fx-text-fill: #343a40;
+    -fx-padding: 0 0 0 5;
+}
+
+.choice-box .context-menu { /* Dropdown menu */
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced4da;
+}
+
+.choice-box .menu-item:focused .label,
+.choice-box .menu-item .label:hover {
+    -fx-text-fill: #ffffff; /* White text on hover/focus */
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #800000; /* Maroon background on hover/focus */
+}
+
+
+.check-box {
+    -fx-text-fill: #6c757d; /* Match .settings-label */
+}
+
+.check-box:hover {
+    -fx-cursor: hand;
+}
+
+.check-box .box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #800000; /* Maroon background when selected */
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white; /* White check mark */
+}
+
+.toggle-button { /* For Theme, Notifications, etc. */
+    -fx-background-color: #e9ecef; /* Light grey, less prominent than action buttons */
+    -fx-text-fill: #343a40;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-background-radius: 4
+}
+
+.toggle-button:selected {
+    -fx-background-color: #800000; /* Maroon when active */
+    -fx-text-fill: white;
+    -fx-border-color: #800000;
+}
+
+.settings-button { /* Save Changes button, matches .action-button from Home */
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-family: "Inter 18pt SemiBold"; /* Match font if needed, or keep default */
+    -fx-font-weight: bold; /* From .action-button */
+    -fx-padding: 10 15;   /* From .action-button */
+    -fx-background-radius: 5; /* From .action-button */
+    -fx-pref-height: 38px;
+}
+
+.settings-button:hover { /* Matches .action-button:hover */
+    -fx-background-color: #5e0000; /* Darker maroon */
+    -fx-cursor: hand;
+}
+
+/* Ensure .content-container (from StudentDashboard) styles are correctly applied */
+/* This is generally handled by .main-container or direct .content-container */
+
 .font{
-    -fx-font-family: "Inter 18pt";
+    -fx-font-family: "Inter", sans-serif;
+}
+
+/* Modern Toggle Switch CSS */
+.modern-toggle-switch {
+    /* -fx-skin: "com.sun.javafx.scene.control.skin.ToggleButtonSkin"; */ /* Removed problematic line */
+    -fx-background-radius: 15px; /* Roundness of the track */
+    -fx-background-color: #cccccc; /* Track color when off */
+    -fx-pref-width: 50px;
+    -fx-pref-height: 28px;
+    -fx-border-width: 0; /* Remove default border */
+    -fx-border-color: transparent; /* Remove default border */
+    -fx-focus-color: transparent; /* Remove focus ring */
+    -fx-faint-focus-color: transparent; /* Remove faint focus ring */
+    -fx-transition: -fx-background-color 0.2s ease-in-out; /* Animate track color change */
+}
+
+.modern-toggle-switch:hover {
+    -fx-cursor: hand;
+}
+
+.modern-toggle-switch:selected {
+    -fx-background-color: #800000; /* Track color when on (maroon) */
+}
+
+/* Save button styles */
+.save-button {
+    -fx-background-color: #e57373;
+}
+.thumb{
+    -fx-background-color: #ffffff; /* White thumb */
+    -fx-background-radius: 50%; /* Round thumb */
+    -fx-translate-x:-11.2px;
 }

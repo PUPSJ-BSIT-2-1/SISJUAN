@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxWidth="810.0" minWidth="810.0" prefHeight="457.0" prefWidth="810.0" spacing="10.0" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentHomeContentController">
+   <FlowPane prefHeight="100.0" prefWidth="810.0">
+      <children>
+      
+                                     <HBox alignment="CENTER_LEFT" spacing="15">
+              <ImageView fitHeight="50" fitWidth="50">
+                  <image>
+                      <Image url="@../Images/PUP Logo.png" />
+                  </image>
+              </ImageView>
+              <VBox>
+                  <Label styleClass="welcome-text" text="Welcome back," />
+                  <Label fx:id="studentNameLabel" styleClass="student-name" text="Student Name" />
+              </VBox>
+          </HBox>
+      </children>
+      <styleClass>
+         <String fx:value="cards" />
+         <String fx:value="red-card" />
+      </styleClass>
+      <padding>
+         <Insets bottom="30.0" left="15.0" right="30.0" top="30.0" />
+      </padding>
+   </FlowPane>
+
+                         <HBox prefWidth="810.0" spacing="10.0">
+
+                                         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label fx:id="yearLevel" styleClass="stat-value" text="2nd Year" />
+            <Label fx:id="semester" styleClass="stat-label" text="Second Semester" />
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+        </VBox>
+        <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label fx:id="semGPA" styleClass="stat-value" text="1.25" />
+            <Label styleClass="stat-label" text="Current GWA" />
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+        </VBox>
+   
+                                         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="stat-value" text="3" />
+            <Label styleClass="stat-label" text="Upcoming Events" />
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+        </VBox>
+    </HBox>
+   <HBox alignment="CENTER" spacing="10.0">
+      <children>
+         <VBox alignment="CENTER" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <children>
+               <Label fx:id="status" styleClass="stat-value" text="Enrolled" />
+               <Label styleClass="stat-label" text="Status" />
+            </children>
+            <padding>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+         </VBox>
+         <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <children>
+               <Label fx:id="totalSubjects" styleClass="stat-value" text="8" />
+               <Label styleClass="stat-label" text="Graded Subjects " />
+            </children>
+            <padding>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+         </VBox>
+      </children>
+   </HBox>
+
+                   <HBox prefWidth="810.0" spacing="10.0">
+        <VBox prefWidth="585.0" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="section-header" text="Announcements">
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin></Label>
+            <ListView fx:id="announcement" prefWidth="613.0" styleClass="announcement-list">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="• Registration opens May 15" />
+                        <String fx:value="• Final exams June 1-5" />
+                        <String fx:value="• Scholarship deadline May 30" />
+                    </FXCollections>
+                </items>
+            </ListView>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+        </VBox>
+
+                                <VBox alignment="TOP_CENTER" prefHeight="498.0" spacing="10" styleClass="cards" HBox.hgrow="ALWAYS">
+            <Label styleClass="section-header" text="Quick Actions" />
+            <Button fx:id="viewGradesButton" prefWidth="190.0" styleClass="action-button" text="View Grades">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding></Button>
+            <Button fx:id="viewScheduleButton" prefWidth="190.0" styleClass="action-button" text="Check Schedule">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding></Button>
+            <Button fx:id="viewPaymentButton" prefWidth="190.0" styleClass="action-button" text="Make Payment">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding></Button>
+            <Button fx:id="requestDocumentButton" prefWidth="190.0" styleClass="action-button" text="Request Documents">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding></Button>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+        </VBox>
+    </HBox>
+   <Region prefHeight="20.0" prefWidth="810.0" />
+</VBox>

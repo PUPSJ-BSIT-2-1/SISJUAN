@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<VBox fx:id="rootVBox" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyHomeContentController">
+   <children>
+      <!-- Welcome Header -->
+      <FlowPane prefHeight="50.0" prefWidth="810.0" styleClass="red-card">
+         <children>
+            <HBox alignment="CENTER_LEFT" styleClass="welcome-header-hbox">
+               <padding>
+                  <Insets left="15.0" right="15.0" />
+               </padding>
+               <children>
+                  <ImageView fitHeight="50" fitWidth="50" styleClass="welcome-logo">
+                     <image>
+                        <Image url="@../Images/PUPSJ Logo.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <VBox styleClass="welcome-info-container">
+                     <children>
+                        <Label styleClass="welcome-text" text="Welcome back," />
+                        <Label fx:id="facultyNameLabel" styleClass="faculty-name" text="Faculty Name" />
+                        <Label fx:id="dateLabel" styleClass="date-label" text="May 16, 2025" />
+                     </children>
+                  </VBox>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </HBox>
+         </children>
+      </FlowPane>
+      
+      <!-- Teaching Statistics -->
+      <HBox spacing="10.0" styleClass="stats-container">
+         <children>
+            <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane styleClass="svg-icon-container">
+                     <children>
+                        <SVGPath content="M4,6H2v14c0,1.1,0.9,2,2,2h14v-2H4V6z M20,2H8C6.9,2,6,2.9,6,4v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V4C22,2.9,21.1,2,20,2z M19,11h-4v4h-2v-4H9V9h4V5h2v4h4V11z" fill="WHITE" scaleX="0.9" scaleY="0.9" styleClass="svg-icon" />
+                     </children>
+                  </StackPane>
+                  <Label fx:id="totalClassesLabel" styleClass="stat-value" text="0" />
+                  <Label styleClass="stat-label" text="Total Classes" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane styleClass="svg-icon-container">
+                     <children>
+                        <SVGPath content="M16,11c1.66,0,2.99-1.34,2.99-3S17.66,5,16,5c-1.66,0-3,1.34-3,3s1.34,3,3,3z M8,11c1.66,0,2.99-1.34,2.99-3S9.66,5,8,5C6.34,5,5,6.34,5,8s1.34,3,3,3z M8,13c-2.33,0-7,1.17-7,3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z M16,13c-0.29,0-0.62,0.02-0.97,0.05c1.16,0.84,1.97,1.97,1.97,3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="WHITE" scaleX="0.9" scaleY="0.9" styleClass="svg-icon" />
+                     </children>
+                  </StackPane>
+                  <Label fx:id="totalStudentsLabel" styleClass="stat-value" text="0" />
+                  <Label styleClass="stat-label" text="Total Students" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane styleClass="svg-icon-container">
+                     <children>
+                        <SVGPath content="M19,3h-1V1h-2v2H8V1H6v2H5C3.9,3,3,3.9,3,5l0,14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M19,19H5V8h14V19z M9,10H7v2h2V10z M13,10h-2v2h2V10z M17,10h-2v2h2V10z M9,14H7v2h2V14z M13,14h-2v2h2V14z M17,14h-2v2h2V14z" fill="WHITE" scaleX="0.9" scaleY="0.9" styleClass="svg-icon" />
+                     </children>
+                  </StackPane>
+                  <Label fx:id="scheduledClassesTodayLabel" styleClass="stat-value" text="7" />
+                  <Label styleClass="stat-label" text="Scheduled Classes Today" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      
+      <!-- Schedule and Distribution -->
+      <HBox styleClass="content-row">
+         <children>
+            <VBox styleClass="schedule-container">
+               <children>
+                  <Label styleClass="section-header" text="Today's Schedule">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="todayScheduleVBox" styleClass="schedule-list">
+                     <!-- Schedule items will be added here dynamically -->
+                     <children>
+                        <Label styleClass="loading-label" text="Loading schedule..." />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </VBox>
+            
+            <VBox alignment="TOP_CENTER" styleClass="chart-container" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="section-header" text="Class Distribution" />
+                  <PieChart fx:id="classDistributionChart" labelLineLength="20.0" labelsVisible="false" legendSide="RIGHT" styleClass="distribution-chart" />
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      
+      <!-- Quick Actions and Events -->
+      <HBox styleClass="content-row">
+         <children>
+            <VBox prefHeight="254.0" prefWidth="613.0" styleClass="events-container" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="section-header" text="Upcoming Events">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="eventsVBox" styleClass="events-list">
+                     <!-- Events will be added here dynamically -->
+                     <children>
+                        <Label styleClass="loading-label" text="Loading events..." />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+            
+            <VBox alignment="TOP_CENTER" prefHeight="254.0" prefWidth="150.0" styleClass="quick-actions-container">
+               <children>
+                  <Label styleClass="section-header" text="Quick Actions" />
+                  <Button fx:id="inputGradesButton" minWidth="190.0" styleClass="action-button" text="Input Grades">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button styleClass="action-button" text="View Class Lists">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button styleClass="action-button" text="Record Attendance">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button styleClass="action-button" text="Submit Requirements">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

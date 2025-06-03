@@ -1,0 +1,466 @@
+/* Root container style */
+.main-root {
+    -fx-background-color: white;
+}
+
+/* Sub container style */
+.sub-root {
+    -fx-background-color: white
+}
+
+/* Header section containing month/year selector */
+.header-container {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+/* Container for weekday labels (Mon, Tue, etc) */
+.days-container {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+    -fx-padding: 5;
+}
+
+/* Individual weekday label styling */
+.days {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-text-fill: #343a40;
+    -fx-alignment: center;
+}
+
+/* Main calendar grid container */
+.calendar {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+/* Icons in the header (arrows etc) */
+.icons {
+    -fx-fill: #2b2b2b;
+}
+
+/* Navigation button hover effects */
+.icons:hover {
+    -fx-effect: dropshadow(gaussian, #555555, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+}
+
+/* Month/Year selector combo box */
+.combo-box {
+    -fx-background-color: transparent;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-padding: 0;
+}
+
+/* Month/Year selector combo box hover effect */
+.combo-box:hover {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+}
+
+/* Month/Year picker popup styling */
+.month-picker, .year-picker {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+}
+
+/* Event details dialog window */
+.custom-dialog {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-padding: 3;
+}
+
+/* Dialog window buttons */
+.custom-dialog .button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 10;
+    -fx-background-radius: 20;
+}
+
+.custom-dialog .button:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
+/* Date styling in event dialog */
+.custom-dialog-date {
+    -fx-font-size: 11px;
+    -fx-font-family: "Inter 18pt Regular";
+}
+
+/* Event type header in dialog */
+.custom-dialog-header {
+    -fx-font-family: "Inter 18pt Bold";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343a40;
+}
+
+/* Event description text styling */
+.custom-dialog-description {
+    -fx-font-family: "Inter 14pt Regular";
+    -fx-font-size: 13px;
+    -fx-padding: 8, 0, 0, 0;
+}
+
+/* Content container for event dialog */
+.custom-dialog-content {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+    -fx-border-color: #e3e5e6;
+}
+
+/* Individual day cell in calendar */
+.calendar-day {
+    -fx-border-color: gray;
+    -fx-padding: 10;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Hover effect for calendar days */
+.calendar-day:hover {
+    -fx-background-color: #e3e5e6;
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Month/Year picker button */
+.picker-button {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 5;
+    -fx-alignment: center;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Hover effect for picker button */
+.picker-button:hover {
+    -fx-background-color: #e3e5e6;
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Styling for the current day */
+.current-day {
+    -fx-background-color: maroon;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+    -fx-font-size: 14px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Hover effect for current day */
+.current-day:hover {
+    -fx-background-color: #3e0000;
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Day number for current day */
+.current-day-number {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+}
+
+/* Event description for current day */
+.current-day-description {
+    -fx-text-fill: maroon;
+    -fx-font-size: 12px;
+    -fx-padding: 3;
+    -fx-border-color: maroon;
+    -fx-border-radius: 10;
+}
+
+.day-number {
+    -fx-padding: 5px;
+}
+
+/* --- DARK THEME STYLES for School Calendar --- */
+
+/* Dark theme main container */
+.dark-theme .main-root {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+    -fx-border-width: 0;
+}
+
+/* Dark theme sub container */
+.dark-theme .sub-root {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+    -fx-border-width: 0;
+}
+
+/* Dark theme header */
+.dark-theme .header-container {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+}
+
+/* Dark theme calendar containers */
+.dark-theme .days-container,
+.dark-theme .calendar {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme weekday labels */
+.dark-theme .days {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme button container */
+.dark-theme .button-container {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme icons in the header (arrows etc) */
+.dark-theme .icons {
+    -fx-fill: white;
+}
+
+/* Dark theme button hover effects */
+.dark-theme .icons:hover {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand;
+
+}
+
+/* Dark theme combo box */
+.dark-theme .combo-box {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme pickers and dialogs */
+.dark-theme .month-picker,
+.dark-theme .year-picker,
+.dark-theme .custom-dialog {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+/* Dark theme calendar days */
+.dark-theme .calendar-day {
+    -fx-border-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Dark theme hover effects */
+.dark-theme .calendar-day:hover,
+.dark-theme .picker-button:hover {
+    -fx-background-color: #555555;
+}
+
+/* Dark theme current day */
+.dark-theme .current-day {
+    -fx-background-color: #b22222;
+}
+
+/* Dark theme current day hover */
+.dark-theme .current-day:hover {
+    -fx-background-color: #e57373;
+}
+
+/* Dark theme current day number */
+.dark-theme .current-day-number {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Inter 18pt Medium";
+}
+
+/* Dark theme event description */
+.dark-theme .current-day-description {
+    -fx-text-fill: #ff9999;
+    -fx-font-size: 12px;
+    -fx-padding: 3;
+    -fx-border-color: #ff9999;
+    -fx-border-radius: 10;
+}
+
+/* Dark theme dialog styles */
+.dark-custom-dialog {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 2;
+    -fx-text-fill: #f0f0f0;
+}
+
+.dark-theme .custom-dialog-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-button:hover {
+    -fx-background-color: #e57373;
+
+}
+
+.dark-theme .custom-dialog-date {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-description {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-content {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+/* --- EVENT COLOR THEME for School Calendar --- */
+
+.administrative {
+    -fx-background-color: #245A94; /* Dark Navy Blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #245A94;
+}
+
+.holiday {
+    -fx-background-color: #B03040; /* Deep Crimson */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #B03040;
+}
+
+.registration {
+    -fx-background-color: #2F6F61; /* Dark Forest Teal */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #2F6F61;
+}
+
+.academic {
+    -fx-background-color: #C05A0E; /* Deep Burnt Orange */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #C05A0E;
+}
+
+.meeting {
+    -fx-background-color: #4C3EC5; /* Indigo */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #4C3EC5;
+}
+
+.graduation {
+    -fx-background-color: #CC704B; /* Deep Coral */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #CC704B;
+}
+
+.default {
+    -fx-background-color: #1C5B89; /* Navy Blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #1C5B89;
+}
+
+/* --- DARK EVENT COLOR THEME for School Calendar --- */
+
+.dark-theme .administrative {
+    -fx-background-color: #3A8DFF; /* Vivid Blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #3A8DFF;
+}
+
+.dark-theme .holiday {
+    -fx-background-color: #FF5E6E; /* Bright Rose Red */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FF5E6E;
+}
+
+.dark-theme .registration {
+    -fx-background-color: #5CD6BE; /* Mint Green */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #5CD6BE;
+}
+
+.dark-theme .academic {
+    -fx-background-color: #FFA348; /* Lighter Orange */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FFA348;
+}
+
+.dark-theme .meeting {
+    -fx-background-color: #B47CFF; /* Soft Lavender */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #B47CFF;
+}
+
+.dark-theme .graduation {
+    -fx-background-color: #FFB48E; /* Light Coral */
+    -fx-text-fill: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #FFB48E;
+}
+
+.dark-theme .default {
+    -fx-background-color: #4A90E2; /* Soft Blue */
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #4A90E2;
+}

@@ -22,8 +22,8 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@../css/StudentLoginPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
-    <BorderPane fx:id="mainLoginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLoginPage.css">
+<StackPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@../css/StudentLogin.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentLoginController">
+    <BorderPane fx:id="mainLoginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/StudentLogin.css">
         <left>
              <VBox prefHeight="720.0" prefWidth="416.0">
                 <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="358.0">
@@ -68,7 +68,7 @@
                          <Font name="Poppins Bold" size="24.0" />
                      </font>
                  </Label>
-                 <Label prefWidth="125.0" text="Enter your Student ID">
+                 <Label prefWidth="125.0" styleClass="small-text" text="Enter your Student ID">
                      <padding>
                          <Insets bottom="30.0" top="-5.0" />
                      </padding>
@@ -86,7 +86,7 @@
                          <Insets bottom="10.0" />
                      </VBox.margin>
                  </TextField>
-                 <PasswordField fx:id="passwordField" promptText="Password" styleClass="fields">
+                 <PasswordField fx:id="loginPasswordField" promptText="Password" styleClass="fields">
                      <padding>
                          <Insets left="15.0" />
                      </padding>
@@ -201,22 +201,14 @@
                              <Insets bottom="10.0" />
                          </VBox.margin>
                      </TextField>
-                     <PasswordField fx:id="password" prefHeight="30.0" prefWidth="218.0" promptText="Password" styleClass="fields">
-                         <padding>
-                             <Insets left="15.0" />
-                         </padding>
-                         <VBox.margin>
-                             <Insets bottom="10.0" />
-                         </VBox.margin>
-                     </PasswordField>
-                     <PasswordField fx:id="reType" prefHeight="30.0" prefWidth="218.0" promptText="Re-type Password" styleClass="fields">
+                     <TextField fx:id="address" prefHeight="30.0" prefWidth="218.0" promptText="Address" styleClass="fields">
                          <padding>
                              <Insets left="15.0" />
                          </padding>
                          <VBox.margin>
                              <Insets bottom="20.0" />
                          </VBox.margin>
-                     </PasswordField>
+                     </TextField>
                      <Label styleClass="font" text="Birthday">
                          <VBox.margin>
                              <Insets bottom="10.0" left="10.0" top="10.0" />
@@ -278,7 +270,6 @@
          <String fx:value="border-pane" />
       </styleClass>
     </BorderPane>
-   <Pane fx:id="blurPane" mouseTransparent="true" prefHeight="200.0" prefWidth="200.0" />
     <BorderPane disable="true" mouseTransparent="true">
         <right>
             <VBox fx:id="centerVBox" alignment="TOP_RIGHT" prefHeight="451.0" prefWidth="862.0" BorderPane.alignment="CENTER">
