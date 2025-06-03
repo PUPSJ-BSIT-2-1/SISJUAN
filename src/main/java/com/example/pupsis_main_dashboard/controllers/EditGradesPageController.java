@@ -53,6 +53,11 @@ public class EditGradesPageController implements Initializable {
             System.err.println("Error: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
         }
 
+   if (subjCodeCombBox == null) {
+       System.err.println("Error: subjCodeCombBox is null. Check FXML file for proper fx:id.");
+       return;
+   }
+
         if (studentsTable == null) {
             System.err.println("Error: studentsTable is null. Check FXML file for proper fx:id.");
             return;
@@ -421,7 +426,7 @@ public class EditGradesPageController implements Initializable {
 
                         pstmt.setFetchSize(100);
                         pstmt.setString(1, subjectCode);
-                        pstmt.setString(2, SessionData.getInstance().getStudentId());
+                        pstmt.setString(2, SessionData.getInstance().getFacultyId());
 
                         if (selectedYearSection != null && !selectedYearSection.equals("All")) {
                             pstmt.setString(3, selectedYearSection);
@@ -487,7 +492,7 @@ public class EditGradesPageController implements Initializable {
             """;
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, SessionData.getInstance().getStudentId());
+                pstmt.setString(1, SessionData.getInstance().getFacultyId());
                 ResultSet rs = pstmt.executeQuery();
 
                 subjCodeCombBox.getItems().clear();
@@ -578,7 +583,7 @@ public class EditGradesPageController implements Initializable {
     private void populateYearSectionsForSubject(String subjectCode) {
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-        SELECT DISTINCT f.year_section 
+        SELECT DISTINCT f.year_section
         FROM faculty_load f 
         JOIN subjects s ON f.subject_id = s.subject_id
         WHERE f.faculty_id = ?::smallint 
@@ -587,7 +592,7 @@ public class EditGradesPageController implements Initializable {
         """;
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, SessionData.getInstance().getStudentId());
+                pstmt.setString(1, SessionData.getInstance().getFacultyId());
                 pstmt.setString(2, subjectCode);
                 ResultSet rs = pstmt.executeQuery();
 
@@ -732,7 +737,7 @@ public class EditGradesPageController implements Initializable {
         """;
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, SessionData.getInstance().getStudentId());
+                pstmt.setString(1, SessionData.getInstance().getFacultyId());
                 ResultSet rs = pstmt.executeQuery();
 
                 yrSecCombBox.getItems().clear();

@@ -30,7 +30,7 @@
 .table-view .column-header {
     -fx-background-color: transparent;
     -fx-border-width: 0 0 1 0;
-    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-border-color: #cdd0d1;
     -fx-font-size: 12px; /* Ensures header text is 12px */
 }
 
@@ -57,12 +57,14 @@
     -fx-alignment: CENTER;
     -fx-padding: 10px 0px 10px 0px;
 }
+
 /* Hover effect for table rows */
 .table-row-cell:hover {
     -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
     -fx-text-fill: white;           /* White text */
     -fx-background-radius: 10px;
 }
+
 /* Make sure text inside cells changes color */
 .table-row-cell:hover .text {
     -fx-fill: white;
@@ -77,6 +79,7 @@
     -fx-background-color: transparent;
 }
 
+/* Menu Button Base Styling */
 .menu-button {
     -fx-background-color: #962323;
     -fx-border-radius: 8px;
@@ -89,6 +92,100 @@
 
 .menu-button .text {
     -fx-fill: white;
+}
+
+.menu-button .arrow {
+    -fx-background-color: white;
+}
+
+.menu-button .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Menu Popup Container */
+.menu-button .context-menu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 2; /* Small padding for visual separation */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+.menu-button > .menu-popup {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Individual Menu Items */
+.menu-button .menu-item {
+    -fx-background-color: rgba(128, 0, 0, 0.50); /* maroon with 0.1 opacity */
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-background-insets: 1px; /* Small inset for visual separation */
+    -fx-border-color: rgba(128, 0, 0, 0.10);
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-button .menu-item:hover {
+    -fx-background-color: rgba(128, 0, 0, 1); /* maroon with 0.12 opacity on hover */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1), 4, 0, 0, 0);
+}
+
+/* Ensure text stays white and visible */
+.menu-button .menu-item .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold; /* Make text more visible */
+    -fx-font-family: 'Inter';
+}
+
+/* Note: JavaFX doesn't support :last-child, so we'll keep the border for all items */
+
+/* Alternative approach if the above doesn't work - force specific background */
+.menu-button .menu-item:focused {
+    -fx-background-color: rgba(128, 0, 0, 0.80);
+    -fx-text-fill: white;
+}
+
+.menu-button .menu-item:selected {
+    -fx-background-color: rgba(128, 0, 0, 1);
+    -fx-text-fill: white;
+}
+
+/* Disabled state for Menu Button */
+.menu-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #800000; /* Gray color when disabled */
+    -fx-cursor: default;
+}
+
+.menu-button:disabled .text {
+    -fx-fill: #ffffff; /* Lighter text color when disabled */
+}
+
+.menu-button:disabled .arrow {
+    -fx-background-color: #cccccc; /* Lighter arrow color when disabled */
+}
+
+/* Ensure disabled menu items are visually different */
+.menu-button .menu-item:disabled {
+    -fx-opacity: 0.7;
+    -fx-background-color: rgba(128, 128, 128, 0.5); /* Gray with transparency */
+}
+
+.menu-button .menu-item:disabled .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Remove hover effects for disabled items */
+.menu-button .menu-item:disabled:hover {
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-cursor: default;
+    -fx-effect: none;
+    -fx-background-color: rgba(128, 128, 128, 0.5);
 }
 
 .small-cards {
@@ -114,6 +211,7 @@
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
+
 #gradesHeaderLbl {
     -fx-min-height: 50;
     -fx-max-height: 50;
@@ -135,93 +233,18 @@
     -fx-max-height: 50 !important;
     -fx-pref-height: 50 !important;
 }
+
 #subDesclbl {
     -fx-font-size: 9px;
     -fx-text-fill: #6c757d;
 }
+
 #subDesclbl:focused {
     -fx-font-size: 9px;
     -fx-text-fill: #6c757d;
 }
+
 #subjDescLbl{
     -fx-font-size: 14px;
     -fx-text-fill: #000000;
-}
-.menu-button .arrow {
-    -fx-background-color: white;
-}
-
-.menu-button .arrow-button {
-    -fx-background-color: transparent;
-}
-.menu-button .context-menu {
-    -fx-background-color: #800000;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-padding: 0; /* Remove padding around the entire menu */
-}
-
-.menu-button > .menu-popup {
-    -fx-padding: 0;
-}
-
-.menu-button .menu-item {
-    -fx-background-color: #800000;
-    -fx-text-fill: white;
-    -fx-padding: 8px 16px;
-    -fx-transition: all 0.2s ease-in-out;
-    -fx-background-insets: 0; /* Remove any internal spacing */
-}
-
-/* Remove first and last item's extra spacing */
-.menu-button .menu-item.first {
-    -fx-background-insets: 0;
-}
-
-.menu-button .menu-item.last {
-    -fx-background-insets: 0;
-}
-
-.menu-button .menu-item {
-    -fx-background-color: #800000;
-    -fx-text-fill: white;
-    -fx-padding: 8px 16px;  /* Add some padding for better spacing */
-    -fx-transition: all 0.2s ease-in-out; /* Smooth transition for effects */
-}
-
-.menu-button .menu-item:hover {
-    -fx-background-color: #a03030;
-    -fx-scale-x: 1.02;  /* Slight scale effect on hover */
-    -fx-scale-y: 1.02;
-    -fx-cursor: hand;   /* Hand cursor on hover */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 0); /* Subtle shadow on hover */
-}
-
-.menu-button .menu-item:pressed {
-    -fx-background-color: #600000; /* Darker maroon when pressed */
-    -fx-scale-x: 0.98;  /* Slight press-in effect */
-    -fx-scale-y: 0.98;
-}
-
-.menu-button .menu-item .label {
-    -fx-text-fill: white;
-    -fx-font-weight: normal;
-}
-
-.menu-button .menu-item:focused {
-    -fx-background-color: #900000; /* Different shade for focused items */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0, 0, 0);
-}
-
-/* Add a subtle separator between menu items */
-.menu-button .menu-item .separator {
-    -fx-padding: 2px 0;
-    -fx-background-color: rgba(255,255,255,0.2);
-}
-
-.menu-button .menu-item .label {
-    -fx-text-fill: white;
-}
-.shape-with-hole {
-    fill-rule: evenodd;
 }
