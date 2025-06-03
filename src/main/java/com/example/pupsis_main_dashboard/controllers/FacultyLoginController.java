@@ -186,7 +186,18 @@ public class FacultyLoginController {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
              
-            statement.setString(1, identifier);
+            if (isEmail) {
+                statement.setString(1, identifier.toLowerCase()); // Ensure email is lowercased for query
+            } else {
+                try {
+                    // Attempt to parse the identifier as an integer if it's supposed to be a faculty_id
+                    int facultyIdInt = Integer.parseInt(identifier);
+                    statement.setInt(1, facultyIdInt);
+                } catch (NumberFormatException e) {
+                    logger.warn("Invalid faculty ID format: '{}' is not a valid integer.", identifier);
+                    return false; // If identifier is not a valid int, authentication fails
+                }
+            }
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -199,17 +210,20 @@ public class FacultyLoginController {
                     }
                     
                     // Storing faculty_id in global session via RememberMeHandler.setCurrentUserEmail
-                    // No longer needed: Preferences prefs = Preferences.userNodeForPackage(FacultyLoginController.class);
-                    // No longer needed: prefs.put("faculty_id", resultSet.getString("faculty_id"));
-                    
-                    return password.equals(storedPassword);
+                    // IMPORTANT: Replace this with a secure password verification (e.g., BCrypt)
+                    if (password.equals(storedPassword)) {
+                        // If authentication is successful, you might want to store the actual faculty_id (numeric or string)
+                        // String actualFacultyId = resultSet.getString("faculty_id");
+                        // RememberMeHandler.setCurrentUserActualId(actualFacultyId); // Example
+                        return true;
+                    }
                 }
             }
         } catch (SQLException e) {
-            logger.error("Database error during faculty authentication", e);
+            logger.error("Database error during faculty authentication for identifier: {}", identifier, e);
+            // Do not expose detailed SQL error to user, but log it.
         }
-        
-        return false;
+        return false; // Default to authentication failure
     }
 
     // Retrieves and returns the full name of a faculty member

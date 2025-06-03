@@ -49,13 +49,13 @@
          </VBox.margin>
          <children>
             <Label styleClass="semester-label" text="Current Semester:" />
-            <Label styleClass="value-label" text="1st Semester" />
+            <Label fx:id="currentSemesterDisplayLabel" styleClass="value-label" text="1st Semester" />
             <Label styleClass="semester-label" text="Year Level:">
                <HBox.margin>
                   <Insets left="30.0" />
                </HBox.margin>
             </Label>
-            <Label styleClass="value-label" text="2nd Year" />
+            <Label fx:id="currentYearLevelDisplayLabel" styleClass="value-label" text="2nd Year" />
          </children>
       </HBox>
       
