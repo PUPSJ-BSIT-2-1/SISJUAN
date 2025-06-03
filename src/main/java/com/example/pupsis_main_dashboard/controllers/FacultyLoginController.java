@@ -71,9 +71,14 @@ public class FacultyLoginController {
         if (lastFacultyId != null && !lastFacultyId.isEmpty()) {
             facultyIdField.setText(lastFacultyId);
             rememberMeCheckBox.setSelected(rememberMe);
-            // Password field is intentionally not pre-filled
             if (rememberMe) {
+                String savedPassword = RememberMeHandler.getSavedPassword(USER_TYPE);
+                if (savedPassword != null) {
+                    passwordField.setText(savedPassword);
+                }
                 Platform.runLater(() -> passwordField.requestFocus());
+            } else {
+                Platform.runLater(() -> facultyIdField.requestFocus());
             }
         } else {
             Platform.runLater(() -> facultyIdField.requestFocus());
@@ -134,7 +139,7 @@ public class FacultyLoginController {
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        RememberMeHandler.savePreference(USER_TYPE, identifier, rememberMeCheckBox.isSelected());
+                        RememberMeHandler.savePreference(USER_TYPE, identifier, password, rememberMeCheckBox.isSelected());
                         RememberMeHandler.setCurrentUserEmail(identifier); // Track current session user
 
                         getFacultyFullName(identifier, isEmail);

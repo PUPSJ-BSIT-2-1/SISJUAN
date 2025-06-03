@@ -105,7 +105,7 @@ public class StudentLoginController {
         });
     }
     
-    // Sets up the initial state of the UI components, including loading saved credentials,
+    // Sets up the initial state of the UI components, including loading saved credentials
     private void setupInitialState() {
         String lastStudentId = RememberMeHandler.getLastUsedUsername(USER_TYPE);
         boolean rememberMe = RememberMeHandler.wasRememberMeSelected(USER_TYPE);
@@ -113,11 +113,14 @@ public class StudentLoginController {
         if (lastStudentId != null && !lastStudentId.isEmpty()) {
             studentIdField.setText(lastStudentId);
             rememberMeCheckBox.setSelected(rememberMe);
-            // Password field is intentionally not pre-filled
             if (rememberMe) {
+                String savedPassword = RememberMeHandler.getSavedPassword(USER_TYPE);
+                if (savedPassword != null) {
+                    loginPasswordField.setText(savedPassword);
+                }
                 Platform.runLater(() -> loginPasswordField.requestFocus());
             } else {
-                 Platform.runLater(() -> studentIdField.requestFocus());
+                Platform.runLater(() -> studentIdField.requestFocus());
             }
         } else {
             Platform.runLater(() -> studentIdField.requestFocus());
@@ -348,7 +351,7 @@ public class StudentLoginController {
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        RememberMeHandler.savePreference(USER_TYPE, studentId, rememberMeCheckBox.isSelected());
+                        RememberMeHandler.savePreference(USER_TYPE, studentId, password, rememberMeCheckBox.isSelected());
                         if (userEmail != null) {
                             RememberMeHandler.setCurrentUserEmail(userEmail);
                         } else {

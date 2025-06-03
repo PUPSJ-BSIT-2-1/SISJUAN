@@ -63,16 +63,20 @@ public class AdminLoginController {
     
     // Sets up the initial state of the UI components, including loading saved credentials
     private void setupInitialState() {
-        // Use the new RememberMeHandler methods
         String lastAdminId = RememberMeHandler.getLastUsedUsername(USER_TYPE);
         boolean rememberMe = RememberMeHandler.wasRememberMeSelected(USER_TYPE);
 
         if (lastAdminId != null && !lastAdminId.isEmpty()) {
             adminIdField.setText(lastAdminId);
             rememberMeCheckBox.setSelected(rememberMe);
-            // Password field is intentionally not pre-filled for security
-            if (rememberMe) { // If remembered, prompt for password
+            if (rememberMe) {
+                String savedPassword = RememberMeHandler.getSavedPassword(USER_TYPE);
+                if (savedPassword != null) {
+                    passwordField.setText(savedPassword);
+                }
                 Platform.runLater(() -> passwordField.requestFocus());
+            } else {
+                Platform.runLater(() -> adminIdField.requestFocus());
             }
         } else {
             Platform.runLater(() -> adminIdField.requestFocus());
@@ -133,9 +137,8 @@ public class AdminLoginController {
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        // Use the new RememberMeHandler savePreference method
-                        RememberMeHandler.savePreference(USER_TYPE, identifier, rememberMeCheckBox.isSelected());
-                        RememberMeHandler.setCurrentUserEmail(identifier); // Keep track of current session user
+                        RememberMeHandler.savePreference(USER_TYPE, identifier, password, rememberMeCheckBox.isSelected());
+                        RememberMeHandler.setCurrentUserEmail(identifier); // Track current session user
 
                         getAdminFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
