@@ -1,105 +1,111 @@
-/**
- * Utility class for handling "Remember Me" functionality.
- * This class provides methods to save, load, and clear user credentials.
- */
-
 package com.example.pupsis_main_dashboard.utilities;
 
 import java.util.prefs.Preferences;
 
 public class RememberMeHandler {
-    private static final String KEY_REMEMBER_ME = "remember_me";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_PASSWORD = "password";
-    private static final String KEY_CURRENT_SESSION_EMAIL = "current_session_email";
 
-    private static final Preferences preferences = Preferences.userNodeForPackage(RememberMeHandler.class);
-    
-    // Store the current user's email for the active session
+    private static final String LAST_USERNAME_PREFIX = "last_username_";
+    private static final String REMEMBER_ME_SELECTED_PREFIX = "remember_me_selected_";
+
+    // For current session email (global)
+    private static final String KEY_CURRENT_SESSION_EMAIL = "current_session_email";
     private static String currentSessionEmail = null;
 
-    public static void saveCredentials(String username, String password, boolean rememberMe) {
-        // Always store the current session email
-        currentSessionEmail = username;
-        
-        if (rememberMe) {
-            preferences.putBoolean(KEY_REMEMBER_ME, true);
-            preferences.put(KEY_USERNAME, username);
-            preferences.put(KEY_PASSWORD, encrypt(password));
-            preferences.put(KEY_CURRENT_SESSION_EMAIL, username);
+    private static final Preferences preferences = Preferences.userNodeForPackage(RememberMeHandler.class);
+
+    /**
+     * Saves the "Remember Me" preference for a specific user type.
+     * It always saves the username as the last used username for that type.
+     *
+     * @param userType   A string identifying the user type (e.g., "ADMIN", "STUDENT", "FACULTY").
+     * @param username   The username or ID.
+     * @param rememberMe True if the "Remember Me" checkbox was selected.
+     */
+    public static void savePreference(String userType, String username, boolean rememberMe) {
+        String lastUsernameKey = LAST_USERNAME_PREFIX + userType;
+        String rememberMeSelectedKey = REMEMBER_ME_SELECTED_PREFIX + userType;
+
+        if (username != null && !username.isEmpty()) {
+            preferences.put(lastUsernameKey, username); // Always save/update last used username
+            preferences.putBoolean(rememberMeSelectedKey, rememberMe);
         } else {
-            clearRememberedCredentials();
-            // Still save the current session email
-            preferences.put(KEY_CURRENT_SESSION_EMAIL, username);
+            // If username is null or empty, clear preferences for this type
+            clearUserTypePreferences(userType);
         }
     }
 
-    public static String[] loadCredentials() {
-        if (preferences.getBoolean(KEY_REMEMBER_ME, false)) {
-            String username = preferences.get(KEY_USERNAME, "");
-            String password = decrypt(preferences.get(KEY_PASSWORD, ""));
-            return new String[]{username, password};
-        }
-        return null;
-    }
-    
     /**
-     * Gets the email of the currently logged-in user, regardless of remember me status.
-     * @return The email of the current user or null if not logged in
+     * Loads the last used username for a specific user type.
+     *
+     * @param userType A string identifying the user type.
+     * @return The last used username, or an empty string if none was saved.
      */
+    public static String getLastUsedUsername(String userType) {
+        String lastUsernameKey = LAST_USERNAME_PREFIX + userType;
+        return preferences.get(lastUsernameKey, ""); // Return empty string if not found
+    }
+
+    /**
+     * Checks if "Remember Me" was selected for the given user type during the last session
+     * where preferences were saved for a non-empty username.
+     *
+     * @param userType A string identifying the user type.
+     * @return True if "Remember Me" was selected for a stored username, false otherwise.
+     */
+    public static boolean wasRememberMeSelected(String userType) {
+        String lastUsername = getLastUsedUsername(userType);
+        if (!lastUsername.isEmpty()) {
+            String rememberMeSelectedKey = REMEMBER_ME_SELECTED_PREFIX + userType;
+            return preferences.getBoolean(rememberMeSelectedKey, false);
+        }
+        return false; // No last username, so "remember me" couldn't have been selected for it.
+    }
+
+    /**
+     * Clears all "Remember Me" related preferences for a specific user type.
+     *
+     * @param userType The user type whose preferences should be cleared.
+     */
+    public static void clearUserTypePreferences(String userType) {
+        String lastUsernameKey = LAST_USERNAME_PREFIX + userType;
+        String rememberMeSelectedKey = REMEMBER_ME_SELECTED_PREFIX + userType;
+        preferences.remove(lastUsernameKey);
+        preferences.remove(rememberMeSelectedKey);
+    }
+
+
+    // --- Current Session Email Management (kept as is from original, for global session tracking) ---
     public static String getCurrentUserEmail() {
-        // First try to get from memory
         if (currentSessionEmail != null && !currentSessionEmail.isEmpty()) {
             return currentSessionEmail;
         }
-        
-        // If not in memory, try to get from preferences
         String prefEmail = preferences.get(KEY_CURRENT_SESSION_EMAIL, null);
         if (prefEmail != null && !prefEmail.isEmpty()) {
-            currentSessionEmail = prefEmail; // Cache it in memory
+            currentSessionEmail = prefEmail;
             return prefEmail;
         }
-        
-        // Last resort: try to get from remembered credentials
-        String[] credentials = loadCredentials();
-        if (credentials != null) {
-            currentSessionEmail = credentials[0]; // Cache it in memory
-            return credentials[0];
-        }
-        
         return null;
     }
-    
-    /**
-     * Sets the email for the current user session
-     * @param email The email to set for the current session
-     */
+
     public static void setCurrentUserEmail(String email) {
         currentSessionEmail = email;
-        preferences.put(KEY_CURRENT_SESSION_EMAIL, email);
+        if (email != null && !email.isEmpty()) {
+            preferences.put(KEY_CURRENT_SESSION_EMAIL, email);
+        } else {
+            preferences.remove(KEY_CURRENT_SESSION_EMAIL);
+        }
     }
 
-    public static void clearCredentials() {
-        clearRememberedCredentials();
-        clearCurrentSession();
-    }
-    
-    private static void clearRememberedCredentials() {
-        preferences.remove(KEY_REMEMBER_ME);
-        preferences.remove(KEY_USERNAME);
-        preferences.remove(KEY_PASSWORD);
-    }
-    
-    private static void clearCurrentSession() {
+    public static void clearCurrentSessionEmail() {
         currentSessionEmail = null;
         preferences.remove(KEY_CURRENT_SESSION_EMAIL);
     }
 
-    private static String encrypt(String data) {
-        return data;
-    }
-
-    private static String decrypt(String data) {
-        return data;
+    /**
+     * Actions on logout, primarily clearing the active session email.
+     * "Remember Me" preferences persist based on user selection.
+     */
+    public static void onLogout() {
+        clearCurrentSessionEmail();
     }
 }

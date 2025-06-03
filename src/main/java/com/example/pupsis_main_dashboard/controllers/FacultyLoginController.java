@@ -50,6 +50,7 @@ public class FacultyLoginController {
     private EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(FacultyLoginController.class.getName());
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
+    private static final String USER_TYPE = "FACULTY"; // User type constant
     
     static {Runtime.getRuntime().addShutdownHook(new Thread(loginExecutor::shutdownNow));}
 
@@ -64,12 +65,18 @@ public class FacultyLoginController {
     
     // Sets up the initial state of the UI components, including loading saved credentials
     private void setupInitialState() {
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials != null) {
-            facultyIdField.setText(credentials[0]);
-            passwordField.setText(credentials[1]);
-            rememberMeCheckBox.setSelected(true);
+        String lastFacultyId = RememberMeHandler.getLastUsedUsername(USER_TYPE);
+        boolean rememberMe = RememberMeHandler.wasRememberMeSelected(USER_TYPE);
+
+        if (lastFacultyId != null && !lastFacultyId.isEmpty()) {
+            facultyIdField.setText(lastFacultyId);
+            rememberMeCheckBox.setSelected(rememberMe);
+            // Password field is intentionally not pre-filled
+            if (rememberMe) {
+                Platform.runLater(() -> passwordField.requestFocus());
+            }
+        } else {
+            Platform.runLater(() -> facultyIdField.requestFocus());
         }
     }
 
@@ -127,7 +134,9 @@ public class FacultyLoginController {
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
+                        RememberMeHandler.savePreference(USER_TYPE, identifier, rememberMeCheckBox.isSelected());
+                        RememberMeHandler.setCurrentUserEmail(identifier); // Track current session user
+
                         getFacultyFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
@@ -184,9 +193,9 @@ public class FacultyLoginController {
                         return false;
                     }
                     
-                    // Store the faculty_id in preferences
-                    Preferences prefs = Preferences.userNodeForPackage(FacultyLoginController.class);
-                    prefs.put("faculty_id", resultSet.getString("faculty_id"));
+                    // Storing faculty_id in global session via RememberMeHandler.setCurrentUserEmail
+                    // No longer needed: Preferences prefs = Preferences.userNodeForPackage(FacultyLoginController.class);
+                    // No longer needed: prefs.put("faculty_id", resultSet.getString("faculty_id"));
                     
                     return password.equals(storedPassword);
                 }

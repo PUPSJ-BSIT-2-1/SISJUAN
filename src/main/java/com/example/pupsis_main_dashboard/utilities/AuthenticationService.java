@@ -42,12 +42,12 @@ public class AuthenticationService {
                 String storedPassword = resultSet.getString("password");
                 String status = resultSet.getString("status");
                 
-                // Verify password and check if status is "Accepted"
+                // Verify password and check if status is "Enrolled"
                 if (PasswordHandler.verifyPassword(password, storedPassword)) {
-                    if ("Accepted".equalsIgnoreCase(status)) {
+                    if ("Enrolled".equalsIgnoreCase(status)) {
                         isAuthenticated = true;
                     } else {
-                        logger.info("Student login attempt for '{}' failed: Status is '{}', not 'Accepted'.", input, status);
+                        logger.info("Student login attempt for '{}' failed: Status is '{}', not 'Enrolled'.", input, status);
                     }
                 } else {
                     logger.warn("Student login attempt for '{}' failed: Invalid password.", input);

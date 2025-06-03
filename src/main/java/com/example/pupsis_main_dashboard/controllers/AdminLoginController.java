@@ -34,7 +34,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.prefs.Preferences;
 
 public class AdminLoginController {
     @FXML private VBox leftSide;
@@ -49,6 +48,7 @@ public class AdminLoginController {
     private EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(AdminLoginController.class.getName());
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
+    private static final String USER_TYPE = "ADMIN"; // User type constant
     
     static {Runtime.getRuntime().addShutdownHook(new Thread(loginExecutor::shutdownNow));}
 
@@ -63,12 +63,19 @@ public class AdminLoginController {
     
     // Sets up the initial state of the UI components, including loading saved credentials
     private void setupInitialState() {
-        RememberMeHandler rememberMeHandler = new RememberMeHandler();
-        String[] credentials = rememberMeHandler.loadCredentials();
-        if (credentials != null) {
-            adminIdField.setText(credentials[0]);
-            passwordField.setText(credentials[1]);
-            rememberMeCheckBox.setSelected(true);
+        // Use the new RememberMeHandler methods
+        String lastAdminId = RememberMeHandler.getLastUsedUsername(USER_TYPE);
+        boolean rememberMe = RememberMeHandler.wasRememberMeSelected(USER_TYPE);
+
+        if (lastAdminId != null && !lastAdminId.isEmpty()) {
+            adminIdField.setText(lastAdminId);
+            rememberMeCheckBox.setSelected(rememberMe);
+            // Password field is intentionally not pre-filled for security
+            if (rememberMe) { // If remembered, prompt for password
+                Platform.runLater(() -> passwordField.requestFocus());
+            }
+        } else {
+            Platform.runLater(() -> adminIdField.requestFocus());
         }
     }
 
@@ -126,7 +133,10 @@ public class AdminLoginController {
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
+                        // Use the new RememberMeHandler savePreference method
+                        RememberMeHandler.savePreference(USER_TYPE, identifier, rememberMeCheckBox.isSelected());
+                        RememberMeHandler.setCurrentUserEmail(identifier); // Keep track of current session user
+
                         getAdminFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
@@ -182,8 +192,9 @@ public class AdminLoginController {
                         return false;
                     }
                     
-                    Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class);
-                    prefs.put("admin_id", resultSet.getString("faculty_id"));
+                    // The admin_id is set via setCurrentUserEmail and getAdminFullName now
+                    // Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class);
+                    // prefs.put("admin_id", resultSet.getString("faculty_id"));
                     
                     return password.equals(storedPassword);
                 }

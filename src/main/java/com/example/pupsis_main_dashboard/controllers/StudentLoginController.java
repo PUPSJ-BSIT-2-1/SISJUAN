@@ -52,7 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.example.pupsis_main_dashboard.utilities.AuthenticationService.authenticate;
-//import static com.example.pupsis_main_dashboard.utility.AuthenticationService.authenticate;
 
 public class StudentLoginController {
     @FXML private VBox leftSide;
@@ -83,6 +82,7 @@ public class StudentLoginController {
     private final PauseTransition inputClearDelay = new PauseTransition(Duration.millis(700));
     private EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(StudentLoginController.class.getName());
+    private static final String USER_TYPE = "STUDENT"; // User type constant
 
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
     
@@ -107,13 +107,20 @@ public class StudentLoginController {
     
     // Sets up the initial state of the UI components, including loading saved credentials,
     private void setupInitialState() {
-        String[] credentials = RememberMeHandler.loadCredentials();
-        if (credentials != null) {
-            studentIdField.setText(credentials[0]);
-            if (loginPasswordField != null) { // Check if the login password field exists in FXML
-                loginPasswordField.setText(credentials[1]); 
+        String lastStudentId = RememberMeHandler.getLastUsedUsername(USER_TYPE);
+        boolean rememberMe = RememberMeHandler.wasRememberMeSelected(USER_TYPE);
+
+        if (lastStudentId != null && !lastStudentId.isEmpty()) {
+            studentIdField.setText(lastStudentId);
+            rememberMeCheckBox.setSelected(rememberMe);
+            // Password field is intentionally not pre-filled
+            if (rememberMe) {
+                Platform.runLater(() -> loginPasswordField.requestFocus());
+            } else {
+                 Platform.runLater(() -> studentIdField.requestFocus());
             }
-            rememberMeCheckBox.setSelected(true);
+        } else {
+            Platform.runLater(() -> studentIdField.requestFocus());
         }
         
         populateDays(31);
@@ -317,114 +324,59 @@ public class StudentLoginController {
     }
 
     // Handles the login button action to authenticate the user
-    @FXML private void handleLogin(VBox leftSide, boolean fromRegistration) {
-        String identifier = studentIdField.getText().trim();
-        String password; // Default to empty
-        if (loginPasswordField != null) {
-             password = loginPasswordField.getText().trim();
-        } else {
-            password = "";
-        }
+    @FXML private void handleLogin(VBox leftSide, boolean isRegistration) {
+        String studentId = studentIdField.getText().trim();
+        String password = loginPasswordField.getText().trim();
 
-        boolean isEmail = identifier.contains("@");
-        // Updated regex to match YYYY-######-SJ-01 format specifically or any sequence of digits for older/other IDs
-        boolean isValidId = !isEmail && (identifier.matches("\\d{4}-\\d{6}-SJ-01") || identifier.matches("\\d+"));
-
-        if (identifier.isEmpty() || password.isEmpty()) { // Password check re-added
+        if (studentId.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please fill in all fields");
             return;
         }
 
-        if (!isEmail && !isValidId) {
-            errorLabel.setText("Invalid student ID format");
-            return;
-        }
-        
         var loader = createPulsingDotsLoader(5, 10, Color.web("#800000"), 10, 0.4);
-        
-        if (fromRegistration) {
-            rightSide.getChildren().add(loader);
-        } else {
-            leftSide.setAlignment(Pos.CENTER);
-            leftSide.getChildren().add(loader);
-        }
-        
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.getChildren().add(loader);
         animateBlur(mainLoginPane, true);
 
         loginExecutor.submit(() -> {
             try {
-                boolean isAuthenticated = authenticate(identifier, password); // Pass actual password
+                boolean isAuthenticated = authenticate(studentId, password);
+                String userEmail = isAuthenticated ? getStudentEmail(studentId) : null;
 
-                if (isAuthenticated) {
-                    // Check student registration status
-                    String studentStatus = getStudentStatus(identifier);
+                Platform.runLater(() -> {
+                    leftSide.getChildren().remove(loader);
+                    animateBlur(mainLoginPane, false);
 
-                    if ("Pending".equalsIgnoreCase(studentStatus)) {
-                        Platform.runLater(() -> {
-                            showAlert(Alert.AlertType.WARNING, "Login Failed", "Pending Registration", "Your registration is still pending approval. Please wait for an administrator to approve your registration.");
-                            if (fromRegistration) {
-                                rightSide.getChildren().remove(loader);
-                            } else {
-                                leftSide.getChildren().remove(loader);
-                            }
-                            animateBlur(mainLoginPane, false);
-                            logger.info("Login failed for student {}: Registration pending.", identifier);
-                        });
-                        return; // Stop further login process
-                    }
-
-                    Platform.runLater(() -> {
-                        if (fromRegistration) {
-                            rightSide.getChildren().remove(loader);
+                    if (isAuthenticated) {
+                        RememberMeHandler.savePreference(USER_TYPE, studentId, rememberMeCheckBox.isSelected());
+                        if (userEmail != null) {
+                            RememberMeHandler.setCurrentUserEmail(userEmail);
                         } else {
-                            leftSide.getChildren().remove(loader);
+                            // Fallback or log if email couldn't be fetched but auth was successful
+                            RememberMeHandler.setCurrentUserEmail(studentId); // Or handle as an error/log
+                            logger.warn("Could not retrieve email for student ID: {}. Using ID as session identifier.", studentId);
                         }
-                        animateBlur(mainLoginPane, false);
-
-                        if (isAuthenticated) {
-                            if (loginPasswordField != null) { // Check if the login password field exists
-                               RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
-                            } else {
-                                RememberMeHandler.saveCredentials(identifier, "", rememberMeCheckBox.isSelected()); // Fallback if field not present
+                        
+                        StageAndSceneUtils u = new StageAndSceneUtils();
+                        Stage stage = (Stage) leftSide.getScene().getWindow();
+                        try {
+                            u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                            if (stage.getScene() != null) {
+                                com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
                             }
-                            // Ensure the current user email is always set, even if remember me is not selected
-                            RememberMeHandler.setCurrentUserEmail(identifier); // Use identifier as it could be email or student ID
-                            getStudentFullName(identifier, isEmail);
-                            StageAndSceneUtils u = new StageAndSceneUtils();
-                            Stage stage = (Stage) leftSide.getScene().getWindow();
-                            try {
-                                u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
-                                if (stage.getScene() != null) {
-                                    com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
-                                }
-                            } catch (IOException e) {
-                                showAlert(Alert.AlertType.ERROR,
-                                        "Login Error",
-                                        "Unable to load dashboard",
-                                        "There was an error loading the dashboard. Please try again.");
-                            }
-                        } else {
-                            errorLabel.setText("Invalid credentials");
+                        } catch (IOException e) {
+                            showAlert(Alert.AlertType.ERROR,
+                                    "Login Error",
+                                    "Unable to load dashboard",
+                                    "There was an error loading the dashboard. Please try again.");
                         }
-                    });
-                } else {
-                    Platform.runLater(() -> {
-                        if (fromRegistration) {
-                            rightSide.getChildren().remove(loader);
-                        } else {
-                            leftSide.getChildren().remove(loader);
-                        }
-                        animateBlur(mainLoginPane, false);
+                    } else {
                         errorLabel.setText("Invalid credentials");
-                    });
-                }
+                    }
+                });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    if (fromRegistration) {
-                        rightSide.getChildren().remove(loader);
-                    } else {
-                        leftSide.getChildren().remove(loader);
-                    }
+                    leftSide.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
                     showAlert(Alert.AlertType.ERROR,
                             "Login Error",
@@ -1052,5 +1004,35 @@ public class StudentLoginController {
             passwordArray[randomIndex] = temp;
         }
         return new String(passwordArray);
+    }
+
+    // Method to retrieve student's email from the database
+    private String getStudentEmail(String identifier) {
+        String email = null;
+        boolean isEmailAddress = identifier.contains("@");
+        String query;
+
+        if (isEmailAddress) {
+            // If the identifier is already an email, just return it after validation (optional)
+            // For simplicity, we'll assume if it contains "@", it's the email.
+            // A more robust solution might still query to ensure it's a valid/existing student email.
+            return identifier; 
+        }
+        // If identifier is a student number, query for the email
+        query = "SELECT email FROM students WHERE student_number = ?";
+        
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            statement.setString(1, identifier);
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching student email for ID: {}", identifier, e);
+        }
+        return email;
     }
 }
