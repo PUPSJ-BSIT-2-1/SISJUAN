@@ -14,31 +14,34 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StudentEnrollmentController implements Initializable {
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentEnrollmentController.class);
+
     @FXML private VBox subjectListContainer;
+    @FXML private VBox enrolledSubjectsDisplayContainer; 
     @FXML private Button selectAllButton;
     @FXML private Button enrollButton;
     @FXML private Label currentYearLevelDisplayLabel;
     @FXML private Label currentSemesterDisplayLabel;
-    @FXML private ProgressIndicator loadingIndicator; // Make sure fx:id="loadingIndicator" is in FXML
+    @FXML private ProgressIndicator loadingIndicator; 
 
-    // Instance variables
-    private StudentEnrollmentContext studentEnrollmentContext; // Ensure this declaration exists
+    private StudentEnrollmentContext studentEnrollmentContext; 
     private List<SubjectData> availableSubjects;
     private List<CheckBox> subjectCheckboxes = new ArrayList<>();
     private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
-    private Map<CheckBox, ComboBox<String>> checkboxScheduleMap = new HashMap<>();
+    private Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
 
-    // Define TIME_SLOTS - this should be populated appropriately, e.g., from a utility or constants class
     private static final List<String> TIME_SLOTS = Arrays.asList(
             "Mon/Wed 9:00-10:30 AM",
             "Tue/Thu 1:00-2:30 PM",
@@ -48,259 +51,17 @@ public class StudentEnrollmentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        enrollButton.setDisable(true);
-        selectAllButton.setDisable(true);
-        if (loadingIndicator != null) loadingIndicator.setVisible(true);
-
-        Task<StudentEnrollmentContext> fetchContextTask = new Task<>() {
-            @Override
-            protected StudentEnrollmentContext call() throws Exception {
-                return fetchStudentEnrollmentContextLogic();
-            }
-        };
-
-        fetchContextTask.setOnSucceeded(event -> {
-            StudentEnrollmentContext context = fetchContextTask.getValue();
-            if (context != null) {
-                updateContextUIDisplay(context);
-                loadSubjectsInBackground(context);
-            } else {
-                handleContextLoadingErrorUI();
-            }
-        });
-
-        fetchContextTask.setOnFailed(event -> {
-            handleContextLoadingErrorUI();
-            if (loadingIndicator != null) loadingIndicator.setVisible(false);
-            Throwable ex = fetchContextTask.getException();
-            if (ex != null) {
-                ex.printStackTrace();
-                // Optionally show an alert with ex.getMessage()
-            }
-        });
-
-        new Thread(fetchContextTask).start();
-
+        if (selectAllButton != null) {
+            selectAllButton.setOnAction(this::handleSelectAll);
+        }
         if (enrollButton != null) {
-             enrollButton.setOnAction(this::handleEnrollment); // Or handleEnrollAction if that's the correct method
+            enrollButton.setOnAction(this::handleEnrollment);
+            enrollButton.setDisable(true); // Initially disable until subjects are selected
         }
-        updateSelectAllButtonState(); // Initial state
-    }
-
-    private void updateContextUIDisplay(StudentEnrollmentContext context) {
-        if (currentYearLevelDisplayLabel != null) {
-            currentYearLevelDisplayLabel.setText(context.yearLevelString);
+        if (loadingIndicator != null) {
+            loadingIndicator.setVisible(false);
         }
-        if (currentSemesterDisplayLabel != null) {
-            currentSemesterDisplayLabel.setText(context.semesterString);
-        }
-    }
-
-    private void handleContextLoadingErrorUI() {
-        // This method is already on FX thread if called from setOnSucceeded/setOnFailed
-        if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText("N/A");
-        if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText("N/A");
-        showAlert("Error", "Could not load student enrollment details. Please check your profile or contact admin.");
-        subjectListContainer.getChildren().add(new Label("Could not load subjects. Please ensure your section and semester are correctly set."));
-        if (enrollButton != null) enrollButton.setDisable(true);
-        if (selectAllButton != null) selectAllButton.setDisable(true);
-    }
-
-    private void loadSubjectsInBackground(StudentEnrollmentContext context) {
-        if (context == null) {
-            showAlert("Error", "Cannot load subjects without student context.");
-            if (loadingIndicator != null) loadingIndicator.setVisible(false);
-            return;
-        }
-
-        if (loadingIndicator != null) loadingIndicator.setVisible(true);
-        enrollButton.setDisable(true);
-        selectAllButton.setDisable(true);
-
-        Task<List<SubjectData>> loadSubjectsTask = new Task<>() {
-            @Override
-            protected List<SubjectData> call() throws Exception {
-                return loadSubjectsLogic(context);
-            }
-        };
-
-        loadSubjectsTask.setOnSucceeded(event -> {
-            List<SubjectData> loadedSubjects = loadSubjectsTask.getValue();
-            populateSubjectListUI(loadedSubjects, context);
-            if (loadingIndicator != null) loadingIndicator.setVisible(false);
-            enrollButton.setDisable(false);
-            selectAllButton.setDisable(false);
-        });
-
-        loadSubjectsTask.setOnFailed(event -> {
-            showAlert("Error", "Failed to load subjects.");
-            subjectListContainer.getChildren().add(new Label("Failed to load subjects."));
-            if (enrollButton != null) enrollButton.setDisable(true);
-            if (selectAllButton != null) selectAllButton.setDisable(true);
-            if (loadingIndicator != null) loadingIndicator.setVisible(false);
-            Throwable ex = loadSubjectsTask.getException();
-            if (ex != null) {
-                ex.printStackTrace();
-            }
-        });
-
-        new Thread(loadSubjectsTask).start();
-    }
-
-    private StudentEnrollmentContext fetchStudentEnrollmentContextLogic() throws SQLException {
-        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
-        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
-            // This case should ideally be handled before even starting the task,
-            // or throw a specific exception to be caught by setOnFailed.
-            System.err.println("No user logged in. Cannot load enrollment details.");
-            return null; // Or throw new IllegalStateException("No user logged in.");
-        }
-
-        String sql;
-        boolean isEmail = currentUserIdentifier.contains("@");
-        if (isEmail) {
-            sql = "SELECT s.year_section AS student_year_section, ys.semester AS section_semester " +
-                  "FROM students s " +
-                  "LEFT JOIN year_section ys ON s.year_section = ys.year_section " +
-                  "WHERE LOWER(s.email) = LOWER(?)";
-        } else {
-            sql = "SELECT s.year_section AS student_year_section, ys.semester AS section_semester " +
-                  "FROM students s " +
-                  "LEFT JOIN year_section ys ON s.year_section = ys.year_section " +
-                  "WHERE s.student_number = ?";
-        }
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, currentUserIdentifier);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    String studentYearSection = rs.getString("student_year_section");
-                    String sectionSemester = rs.getString("section_semester");
-
-                    if (studentYearSection == null || studentYearSection.trim().isEmpty()) {
-                        // Throw exception or return null to indicate failure
-                        throw new SQLException("Student section not set.");
-                    }
-                    if (sectionSemester == null || sectionSemester.trim().isEmpty()) {
-                        throw new SQLException("Semester for section '" + studentYearSection + "' not defined.");
-                    }
-
-                    String[] parts = studentYearSection.split("-");
-                    if (parts.length > 0 && parts[0].matches("\\d+")) {
-                        int numericYearLevel = Integer.parseInt(parts[0]);
-                        String yearLevelString = convertNumericYearToString(numericYearLevel);
-                        String standardizedSemester = standardizeSemesterFormat(sectionSemester);
-
-                        if (yearLevelString == null) {
-                            throw new SQLException("Could not determine year level string from section: " + studentYearSection);
-                        }
-                        if (standardizedSemester == null) {
-                            throw new SQLException("Could not standardize semester from section's semester: " + sectionSemester);
-                        }
-                        return new StudentEnrollmentContext(yearLevelString, standardizedSemester);
-                    } else {
-                        throw new SQLException("Invalid section format: " + studentYearSection);
-                    }
-                }
-            }
-        }
-        return null; // Student not found or other issue
-    }
-
-    private List<SubjectData> loadSubjectsLogic(StudentEnrollmentContext context) throws SQLException {
-        List<SubjectData> subjectDataList = new ArrayList<>();
-        String sql = "SELECT subject_id, subject_code, description, units FROM subjects WHERE LOWER(year_level) = LOWER(?) AND LOWER(semester) = LOWER(?) ORDER BY description";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, context.yearLevelString); // Already lowercased by SQL LOWER()
-            pstmt.setString(2, context.semesterString);    // Already lowercased by SQL LOWER()
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    subjectDataList.add(new SubjectData(
-                            rs.getString("subject_code"),
-                            rs.getString("description"),
-                            rs.getInt("units"),
-                            rs.getInt("subject_id")
-                    ));
-                }
-            }
-        }
-        return subjectDataList;
-    }
-
-    private void populateSubjectListUI(List<SubjectData> loadedSubjects, StudentEnrollmentContext context) {
-        subjectListContainer.getChildren().clear();
-        subjectCheckboxes.clear();
-        checkboxSubjectMap.clear();
-        checkboxScheduleMap.clear();
-
-        if (loadedSubjects.isEmpty()) {
-            Label infoLabel = new Label("No subjects available for your year level ('" + context.yearLevelString +
-                                        "') and semester ('" + context.semesterString + "').");
-            infoLabel.setPadding(new Insets(10));
-            subjectListContainer.getChildren().add(infoLabel);
-        } else {
-            for (SubjectData subject : loadedSubjects) {
-                CheckBox checkBox = new CheckBox(); // Text will be handled by separate labels
-                checkBox.getStyleClass().add("custom-checkbox");
-                HBox.setMargin(checkBox, new Insets(0, 0, 0, 5));
-                checkBox.setOnAction(event -> updateSelectAllButtonState());
-
-                Label subjectCodeLabel = new Label(subject.code);
-                subjectCodeLabel.setPrefWidth(200.0);
-                subjectCodeLabel.getStyleClass().add("subject-code");
-
-                Label descriptionLabel = new Label(subject.name); // subject.name maps to DB's description column
-                descriptionLabel.setPrefWidth(300.0);
-                descriptionLabel.getStyleClass().add("subject-description");
-                descriptionLabel.setWrapText(true);
-
-                ComboBox<String> scheduleComboBox = new ComboBox<>();
-                scheduleComboBox.getItems().addAll(TIME_SLOTS); 
-                scheduleComboBox.setPromptText("Select Schedule");
-                scheduleComboBox.setPrefHeight(30.0);
-                scheduleComboBox.setPrefWidth(180.0);
-                scheduleComboBox.getStyleClass().add("modern-combo");
-
-                HBox subjectRow = new HBox(10); // Spacing is 10
-                subjectRow.setAlignment(Pos.CENTER_LEFT);
-                subjectRow.getStyleClass().add("subject-row");
-                subjectRow.setPadding(new Insets(5, 0, 5, 0)); // top, right, bottom, left
-                
-                subjectRow.getChildren().addAll(checkBox, subjectCodeLabel, descriptionLabel, scheduleComboBox);
-
-                subjectListContainer.getChildren().add(subjectRow);
-                subjectCheckboxes.add(checkBox);
-                checkboxSubjectMap.put(checkBox, subject);
-                checkboxScheduleMap.put(checkBox, scheduleComboBox);
-            }
-            selectAllButton.setDisable(false);
-        }
-        updateSelectAllButtonState(); // Initial state for the button text
-    }
-
-    @FXML
-    private void handleSelectAll() {
-        boolean allSelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-        boolean newSelectedState = !allSelected;
-        for (CheckBox cb : subjectCheckboxes) {
-            cb.setSelected(newSelectedState);
-        }
-        updateSelectAllButtonState();
-    }
-
-    private void updateSelectAllButtonState() {
-        if (subjectCheckboxes.isEmpty()) {
-            selectAllButton.setText("Select All");
-            selectAllButton.setDisable(true);
-        } else {
-            selectAllButton.setDisable(false);
-            boolean allSelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-            selectAllButton.setText(allSelected ? "Deselect All" : "Select All");
-        }
+        refreshEnrollmentView(); // Initial data load and view setup
     }
 
     @FXML
@@ -309,24 +70,24 @@ public class StudentEnrollmentController implements Initializable {
                 .filter(CheckBox::isSelected)
                 .map(cb -> {
                     SubjectData subjectData = checkboxSubjectMap.get(cb);
-                    ComboBox<String> scheduleBox = checkboxScheduleMap.get(cb);
-                    String selectedSchedule = scheduleBox.getValue() != null ? scheduleBox.getValue() : "Not Set";
-                    if ("Select Schedule".equals(selectedSchedule) || selectedSchedule.trim().isEmpty()) { // Treat placeholder or empty as "Not Set"
-                        selectedSchedule = "Not Set";
+                    ComboBox<String> scheduleComboBox = subjectScheduleMap.get(cb);
+                    String selectedScheduleDisplayString = scheduleComboBox.getValue(); // This is the display string like "MWF 9:00-10:00 AM - Room 101"
+
+                    if (selectedScheduleDisplayString == null || selectedScheduleDisplayString.equals("No schedules available") || selectedScheduleDisplayString.equals("No specific schedules listed") || selectedScheduleDisplayString.equals("Schedule TBD")) {
+                        showAlert("Invalid Selection", "Please select a valid schedule for " + subjectData.subjectCode() + ".", Alert.AlertType.WARNING);
+                        return null;
                     }
-                    return new EnrollmentData(subjectData.code, subjectData.name, selectedSchedule, subjectData.id);
+                    // The EnrollmentData's 'schedule' field is used as faculty_load_id in the INSERT query.
+                    // subjectData.offeringId() holds the faculty_load_id for this subject offering.
+                    return new EnrollmentData(subjectData.subjectId(), subjectData.offeringId());
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Check for unselected schedules before proceeding
-        boolean allSchedulesSet = selectedSubjects.stream().noneMatch(data -> "Not Set".equals(data.getSchedule()));
-        if (!allSchedulesSet && !selectedSubjects.isEmpty()) { // Only warn if subjects are selected but schedules are missing
-            showAlert("Schedule Selection Required", "Please select a schedule for all chosen subjects before enrolling.", Alert.AlertType.WARNING);
-            return;
-        }
-
         if (selectedSubjects.isEmpty()) {
-            showAlert("No Subjects Selected", "Please select at least one subject to enroll.", Alert.AlertType.WARNING);
+            showAlert("No Selection", "Please select at least one subject to enroll.");
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+            enrollButton.setDisable(false); 
             return;
         }
 
@@ -334,149 +95,462 @@ public class StudentEnrollmentController implements Initializable {
         selectAllButton.setDisable(true);
         if (loadingIndicator != null) loadingIndicator.setVisible(true);
 
-        Task<List<EnrollmentData>> enrollmentTask = new Task<>() { // Return List<EnrollmentData>
+        Task<Boolean> enrollmentTask = new Task<>() { 
             @Override
-            protected List<EnrollmentData> call() throws Exception {
-                // Fetch student ID (ensure this logic is robust)
-                String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail(); // Or student number
-                Integer studentId = getStudentIdByIdentifier(currentUserIdentifier);
-                if (studentId == null) {
-                    throw new SQLException("Could not retrieve student ID for enrollment.");
+            protected Boolean call() throws Exception {
+                StudentEnrollmentContext currentContext = fetchStudentEnrollmentContext(); // Fetch context within the task
+                logger.debug("handleEnrollment Task: Fetched context: {}", currentContext);
+
+                if (currentContext == null || currentContext.studentId() <= 0) { // Use currentContext and check studentId validity
+                    logger.error("handleEnrollment Task: Student context or ID not found for enrollment.");
+                    throw new SQLException("Student context or ID not found for enrollment.");
+                }
+                int studentDbId = currentContext.studentId(); // Use studentId from currentContext
+                String studentCurrentYearSection = currentContext.studentYearSection(); // Use yearSection from currentContext
+
+                if (studentCurrentYearSection == null || studentCurrentYearSection.trim().isEmpty()) {
+                     logger.error("handleEnrollment Task: Could not retrieve student's current year section from context for enrollment.");
+                     throw new SQLException("Could not retrieve student's current year section from context for enrollment.");
                 }
 
-                String studentYearSection = fetchStudentYearSection(studentId);
-                if (studentYearSection == null) {
-                    throw new SQLException("Could not retrieve student year section for enrollment.");
+                String academicYear = getCurrentAcademicYear();
+                // Ensure currentSemesterForDB is derived correctly, possibly from currentContext if UI label is not reliable here
+                String currentSemesterForDB = currentContext.semesterString(); 
+                if (currentSemesterForDB == null || currentSemesterForDB.equals("N/A") || currentSemesterForDB.trim().isEmpty()) {
+                     logger.error("handleEnrollment Task: Could not determine current semester for enrollment from context.");
+                     throw new SQLException("Could not determine current semester for enrollment from context.");
                 }
 
-                String academicYear = getCurrentAcademicYear(); // Implement this method
-                String currentSemesterForDB = standardizeSemesterFormat(currentSemesterDisplayLabel.getText());
-                if (currentSemesterForDB == null || currentSemesterForDB.equals("N/A")) {
-                    currentSemesterForDB = studentEnrollmentContext != null ? studentEnrollmentContext.getSemesterString() : "Unknown Semester";
-                    currentSemesterForDB = standardizeSemesterFormat(currentSemesterForDB); // Standardize again
-                }
-                if (currentSemesterForDB == null) { // Final fallback
-                     throw new SQLException("Could not determine current semester for enrollment.");
-                }
+                Connection connection = null;
+                try {
+                    connection = DBConnection.getConnection();
+                    connection.setAutoCommit(false);
 
-
-                try (Connection connection = DBConnection.getConnection()) {
-                    connection.setAutoCommit(false); // Start transaction
-
-                    // Get the next load_id
+                    // Get the next load_id for student_load. This assumes load_id is an auto-increment or needs manual sequence handling.
+                    // For simplicity, let's assume it's manually handled or you have a sequence. Here, we'll find max + 1.
+                    // THIS IS NOT ROBUST FOR CONCURRENT ENVIRONMENTS. A SEQUENCE IS PREFERRED.
                     int nextLoadId = 0;
-                    String maxLoadIdSql = "SELECT MAX(load_id) FROM student_load";
-                    try (PreparedStatement maxStmt = connection.prepareStatement(maxLoadIdSql);
-                         ResultSet rs = maxStmt.executeQuery()) {
-                        if (rs.next()) {
-                            nextLoadId = rs.getInt(1) + 1;
+                    try (Statement stmtMaxId = connection.createStatement();
+                         ResultSet rsMaxId = stmtMaxId.executeQuery("SELECT MAX(load_id) FROM student_load")) {
+                        if (rsMaxId.next()) {
+                            nextLoadId = rsMaxId.getInt(1) + 1;
                         }
-                        if (nextLoadId == 0) nextLoadId = 1; // Start from 1 if table is empty
+                        if (nextLoadId == 0) nextLoadId = 1; // First entry
                     }
 
-                    String insertSql = "INSERT INTO student_load (student_id, subject_id, semester, load_id, academic_year, year_section) " +
-                            "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (student_id, subject_id, semester) DO NOTHING";
+                    // student_load: student_id, subject_id, semester, load_id (PK), academic_year, year_section, faculty_load (FK to faculty_load.load_id)
+                    String insertSql = "INSERT INTO student_load (student_id, subject_id, semester, load_id, academic_year, year_section, faculty_load) " +
+                                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                     try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
                         for (EnrollmentData enrollment : selectedSubjects) {
-                            stmt.setInt(1, studentId);
-                            stmt.setInt(2, enrollment.getSubjectId());
+                            stmt.setInt(1, studentDbId); // student_id from students table
+                            stmt.setInt(2, Integer.parseInt(enrollment.subjectId())); // subject_id from subjects table
                             stmt.setString(3, currentSemesterForDB);
-                            stmt.setInt(4, nextLoadId++);
+                            stmt.setInt(4, nextLoadId++); // PK for student_load
                             stmt.setString(5, academicYear);
-                            stmt.setString(6, studentYearSection);
+                            stmt.setString(6, studentCurrentYearSection); // Student's current year_section
+                            stmt.setInt(7, Integer.parseInt(enrollment.schedule())); // This 'schedule' from EnrollmentData is actually faculty_load_id
                             stmt.addBatch();
                         }
                         stmt.executeBatch();
                     }
-                    connection.commit(); // Commit transaction
-                    return selectedSubjects; // Return the list of processed subjects
+                    connection.commit();
+                    return true;
                 } catch (SQLException e) {
-                    // connection.rollback(); // Rollback on error if autoCommit was false
-                    throw e; // Re-throw to be caught by onFailed
+                    // Log error properly
+                    logger.error("Enrollment failed in task: ", e); 
+                    if (connection != null) {
+                        try {
+                            connection.rollback();
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    throw e; // Re-throw to be caught by task's exception handler
                 }
             }
         };
-
         enrollmentTask.setOnSucceeded(workerStateEvent -> {
-            List<EnrollmentData> enrolledItems = enrollmentTask.getValue();
-            StringBuilder successMessage = new StringBuilder("Successfully enrolled in the following subjects:\n\n");
-            for (EnrollmentData item : enrolledItems) {
-                successMessage.append("- ").append(item.getSubjectCode()).append(" (").append(item.getSubjectName()).append("): ")
-                              .append(item.getSchedule()).append("\n");
+            if (enrollmentTask.getValue()) { 
+                showAlert("Enrollment Successful", "Subjects enrolled successfully.");
+                refreshEnrollmentView(); // Refresh data and view after successful enrollment
+            } else {
+                // This case might not be hit if exceptions are thrown for failures
+                showAlert("Enrollment Failed", "Failed to enroll subjects. Please check details.");
             }
-            showAlert("Enrollment Successful", successMessage.toString(), Alert.AlertType.INFORMATION);
-            clearEnrollmentUIState();
+            clearEnrollmentUIState(); // Clears checkbox selections etc.
             if (loadingIndicator != null) loadingIndicator.setVisible(false);
             enrollButton.setDisable(false);
             selectAllButton.setDisable(false);
         });
 
-        enrollmentTask.setOnFailed(workerStateEvent -> {
-            Throwable exception = enrollmentTask.getException();
-            System.err.println("Enrollment failed: " + exception.getMessage());
-            exception.printStackTrace();
+        enrollmentTask.setOnFailed(workerStateEvent -> { 
+            Throwable exception = enrollmentTask.getException(); 
+            logger.error("Enrollment failed in task: ", exception); 
             showAlert("Enrollment Failed", "An error occurred during enrollment: " + exception.getMessage(), Alert.AlertType.ERROR);
             if (loadingIndicator != null) loadingIndicator.setVisible(false);
             enrollButton.setDisable(false);
             selectAllButton.setDisable(false);
         });
 
-        new Thread(enrollmentTask).start();
+        new Thread(enrollmentTask).start(); 
     }
 
     private void clearEnrollmentUIState() {
         for (CheckBox cb : subjectCheckboxes) {
             cb.setSelected(false);
         }
-        for (ComboBox<String> cbBox : checkboxScheduleMap.values()) {
+        for (ComboBox<String> cbBox : subjectScheduleMap.values()) {
             cbBox.getSelectionModel().clearSelection();
-            cbBox.setPromptText("Select Schedule"); // Reset prompt text if needed
+            cbBox.setPromptText("Select Schedule"); 
         }
-        updateSelectAllButtonState(); // This will set text to "Select All" and enable button
+        updateSelectAllButtonState(); 
     }
 
-    // Helper method to get student_id (implement robustly)
-    private Integer getStudentIdByIdentifier(String identifier) throws SQLException {
-        String sql = identifier.contains("@") ? "SELECT student_id FROM students WHERE LOWER(email) = LOWER(?)" :
-                                              "SELECT student_id FROM students WHERE student_number = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, identifier);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("student_id");
-                }
+    private void updateSelectAllButtonState() {
+        if (selectAllButton != null) {
+            boolean allSelected = !subjectCheckboxes.isEmpty() && subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
+            selectAllButton.setText(allSelected ? "Deselect All" : "Select All");
+            selectAllButton.setDisable(subjectCheckboxes.isEmpty()); // Disable if no subjects to select
+        }
+    }
+
+    @FXML
+    private void handleSelectAll(ActionEvent event) {
+        boolean allCurrentlySelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
+        boolean targetState = !allCurrentlySelected;
+
+        for (CheckBox cb : subjectCheckboxes) {
+            cb.setSelected(targetState);
+        }
+        updateSelectAllButtonState(); // Update button text
+        updateEnrollButtonState(); // Update enroll button based on new selection
+    }
+
+    private void updateEnrollButtonState() {
+        if (enrollButton != null) {
+            boolean anySelected = subjectCheckboxes.stream().anyMatch(CheckBox::isSelected);
+            enrollButton.setDisable(!anySelected);
+        }
+    }
+
+    private void populateSubjectListUI(EnrollmentSubjectLists subjectLists, StudentEnrollmentContext context) {
+        logger.debug("populateSubjectListUI: Populating UI with {} enrolled and {} available subjects.", 
+            subjectLists.enrolledSubjects().size(), subjectLists.availableSubjects().size());
+        subjectCheckboxes.clear();
+        checkboxSubjectMap.clear();
+        subjectScheduleMap.clear();
+
+        this.availableSubjects = subjectLists.availableSubjects; 
+
+        if (enrolledSubjectsDisplayContainer != null && subjectLists.enrolledSubjects != null && !subjectLists.enrolledSubjects.isEmpty()) {
+            // Optional: Add headers for enrolled subjects section for consistency
+            HBox enrolledHeaderBox = new HBox(10);
+            enrolledHeaderBox.setPadding(new Insets(0, 0, 5, 0)); 
+            Label enrolledSpacer = new Label(); // Spacer for checkbox column alignment
+            enrolledSpacer.setPrefWidth(40); // Match checkbox area width
+            enrolledSpacer.getStyleClass().add("header-spacer"); 
+            Label enrolledCodeHeader = new Label("Subject Code");
+            enrolledCodeHeader.setPrefWidth(200);
+            enrolledCodeHeader.getStyleClass().add("section-header");
+            Label enrolledDescHeader = new Label("Description");
+            enrolledDescHeader.setPrefWidth(300);
+            enrolledDescHeader.getStyleClass().add("section-header");
+            Label enrolledSchedHeader = new Label("Enrolled Schedule");
+            enrolledSchedHeader.setPrefWidth(200); // Adjust as needed
+            enrolledSchedHeader.getStyleClass().add("section-header");
+            enrolledHeaderBox.getChildren().addAll(enrolledSpacer, enrolledCodeHeader, enrolledDescHeader, enrolledSchedHeader);
+            enrolledSubjectsDisplayContainer.getChildren().add(enrolledHeaderBox);
+            enrolledSubjectsDisplayContainer.getChildren().add(new Separator());
+
+            for (SubjectData subject : subjectLists.enrolledSubjects()) {
+                HBox subjectBox = new HBox(10);
+                subjectBox.setPadding(new Insets(5,0,5,0)); // Consistent padding
+                subjectBox.setAlignment(Pos.CENTER_LEFT);
+                subjectBox.getStyleClass().add("subject-row"); // Use similar styling if desired
+
+                Label spacerLabel = new Label(); // Spacer to align with checkbox column
+                spacerLabel.setPrefWidth(40); // Match checkbox area width
+                spacerLabel.getStyleClass().add("cell-spacer");
+
+                Label subjectInfoLabel = new Label(String.format("%s - %s (%d units)",
+                        subject.subjectCode(), subject.description(), subject.units()));
+                subjectInfoLabel.setPrefWidth(510); // Combined width for code and description for now
+                subjectInfoLabel.setWrapText(true);
+                subjectInfoLabel.getStyleClass().add("enrolled-subject-info"); // Specific style for enrolled info
+
+                Label scheduleLabel = new Label(subject.enrolledSchedule() != null ? subject.enrolledSchedule() : "N/A");
+                scheduleLabel.setPrefWidth(200); // Match schedule column width
+                scheduleLabel.setWrapText(true);
+                scheduleLabel.getStyleClass().add("enrolled-subject-schedule"); // Specific style for enrolled schedule
+
+                // For a more column-like appearance for subjectInfoLabel:
+                Label codeLabel = new Label(subject.subjectCode());
+                codeLabel.setPrefWidth(200);
+                codeLabel.getStyleClass().add("subject-code"); // Reuse existing style if applicable
+                
+                Label descLabel = new Label(subject.description() + " (" + subject.units() + " units)");
+                descLabel.setPrefWidth(300);
+                descLabel.setWrapText(true);
+                descLabel.getStyleClass().add("subject-description"); // Reuse existing style
+
+                subjectBox.getChildren().addAll(spacerLabel, codeLabel, descLabel, scheduleLabel);
+                enrolledSubjectsDisplayContainer.getChildren().add(subjectBox);
             }
-        }
-        return null;
-    }
-
-    // Helper method to fetch student's year_section (implement robustly)
-    private String fetchStudentYearSection(int studentId) throws SQLException {
-        String sql = "SELECT year_section FROM students WHERE student_id = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, studentId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("year_section");
-                }
-            }
-        }
-        return null;
-    }
-
-    // Helper method to get current academic year (implement as needed)
-    private String getCurrentAcademicYear() {
-        // Example: "2025-2026". This might come from a global setting or date calculation.
-        Calendar now = Calendar.getInstance();
-        int year = now.get(Calendar.YEAR);
-        int month = now.get(Calendar.MONTH);
-        // Assuming academic year starts around August/September (month 7 or 8)
-        if (month >= Calendar.AUGUST) {
-            return year + "-" + (year + 1);
         } else {
-            return (year - 1) + "-" + year;
+            enrolledSubjectsDisplayContainer.getChildren().add(new Label("No subjects currently enrolled for this term."));
         }
+
+        if (subjectLists.availableSubjects != null && !subjectLists.availableSubjects.isEmpty()) {
+            for (SubjectData subject : subjectLists.availableSubjects()) {
+                HBox subjectBox = new HBox(10);
+                subjectBox.setPadding(new Insets(5));
+                subjectBox.setAlignment(Pos.CENTER_LEFT);
+
+                CheckBox checkBox = new CheckBox();
+                Label subjectLabel = new Label(String.format("%s - %s (%d units)",
+                        subject.subjectCode(), subject.description(), subject.units()));
+                subjectLabel.setMinWidth(300); 
+                subjectLabel.setWrapText(true);
+
+                ComboBox<String> scheduleComboBox = new ComboBox<>();
+                if (subject.availableSchedules() != null && !subject.availableSchedules().isEmpty()) {
+                    scheduleComboBox.getItems().addAll(subject.availableSchedules());
+                    scheduleComboBox.setValue(subject.availableSchedules().get(0)); 
+                } else {
+                    scheduleComboBox.getItems().add("No schedules available");
+                    scheduleComboBox.setValue("No schedules available");
+                    scheduleComboBox.setDisable(true);
+                }
+                scheduleComboBox.setMinWidth(150); 
+
+                subjectCheckboxes.add(checkBox);
+                checkboxSubjectMap.put(checkBox, subject);
+                subjectScheduleMap.put(checkBox, scheduleComboBox);
+
+                checkBox.setOnAction(event -> {
+                    updateEnrollButtonState();
+                    updateSelectAllButtonState();
+                });
+
+                subjectBox.getChildren().addAll(checkBox, subjectLabel, scheduleComboBox);
+                subjectListContainer.getChildren().add(subjectBox);
+            }
+        } else {
+            subjectListContainer.getChildren().add(new Label("No subjects available for enrollment for your program/semester, or you are already enrolled in all offered subjects."));
+        }
+        updateEnrollButtonState(); 
+        updateSelectAllButtonState();
+        if (selectAllButton != null) {
+            selectAllButton.setDisable(this.availableSubjects.isEmpty()); // Corrected variable name
+            updateSelectAllButtonState(); // Ensure button text is correct
+        }
+        if (loadingIndicator != null) loadingIndicator.setVisible(false);
+    }
+
+    private record EnrollmentData(String subjectId, String schedule) {}
+
+    private record EnrollmentSubjectLists(List<SubjectData> enrolledSubjects, List<SubjectData> availableSubjects) {}
+
+    private record SubjectData(String subjectCode, String description, int units, String subjectId, List<String> availableSchedules, String offeringId, String enrolledSchedule) {
+        // Constructor for available subjects
+        public SubjectData(String subjectCode, String description, int units, String subjectId, List<String> availableSchedules, String offeringId) {
+            this(subjectCode, description, units, subjectId, availableSchedules, offeringId, null);
+        }
+        // Constructor for enrolled subjects
+        public SubjectData(String subjectCode, String description, int units, String subjectId, String offeringId, String enrolledSchedule) {
+            this(subjectCode, description, units, subjectId, Collections.emptyList(), offeringId, enrolledSchedule);
+        }
+    }
+
+    private record StudentEnrollmentContext(String yearLevelString, String semesterString, int studentId, String studentYearSection) {}
+
+    private void refreshEnrollmentView() {
+        logger.debug("refreshEnrollmentView: Starting data refresh.");
+        if (loadingIndicator != null) loadingIndicator.setVisible(true);
+        if (enrollButton != null) enrollButton.setDisable(true);
+        if (selectAllButton != null) selectAllButton.setDisable(true);
+        // Clear previous data immediately for better UX
+        if (subjectListContainer != null) subjectListContainer.getChildren().clear();
+        if (enrolledSubjectsDisplayContainer != null) enrolledSubjectsDisplayContainer.getChildren().clear();
+        if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText("Loading...");
+        if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText("Loading...");
+
+        Task<EnrollmentPageData> loadDataTask = new Task<>() {
+            @Override
+            protected EnrollmentPageData call() throws Exception {
+                StudentEnrollmentContext context = fetchStudentEnrollmentContext();
+                if (context == null) {
+                    throw new IllegalStateException("Failed to fetch student enrollment context.");
+                }
+                EnrollmentSubjectLists subjectLists = fetchEnrollmentSubjectLists(context);
+                return new EnrollmentPageData(context, subjectLists);
+            }
+        };
+
+        loadDataTask.setOnSucceeded(event -> {
+            EnrollmentPageData pageData = loadDataTask.getValue();
+            if (pageData != null && pageData.context() != null) {
+                logger.info("refreshEnrollmentView: Student context and subjects loaded: {}", pageData.context());
+                if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText(pageData.context().yearLevelString());
+                if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText(pageData.context().semesterString());
+                populateSubjectListUI(pageData.subjectLists(), pageData.context());
+            } else {
+                // This case should ideally be handled by onFailed if an exception was thrown
+                logger.error("refreshEnrollmentView: Task succeeded but returned null data or context.");
+                handleLoadErrorUI("Task completed but data is missing.");
+            }
+            // loadingIndicator visibility and button states are handled by populateSubjectListUI or handleLoadErrorUI
+        });
+
+        loadDataTask.setOnFailed(event -> {
+            Throwable ex = loadDataTask.getException();
+            logger.error("refreshEnrollmentView: Failed to load enrollment data.", ex);
+            handleLoadErrorUI(ex != null ? ex.getMessage() : "Unknown error during data loading.");
+        });
+
+        new Thread(loadDataTask).start();
+    }
+
+    private void handleLoadErrorUI(String errorMessage) {
+        if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText("N/A");
+        if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText("N/A");
+        if (subjectListContainer != null) {
+            subjectListContainer.getChildren().clear();
+            subjectListContainer.getChildren().add(new Label("Error: " + errorMessage));
+        }
+        if (enrolledSubjectsDisplayContainer != null) enrolledSubjectsDisplayContainer.getChildren().clear();
+        if (enrollButton != null) enrollButton.setDisable(true);
+        if (selectAllButton != null) selectAllButton.setDisable(true);
+        if (loadingIndicator != null) loadingIndicator.setVisible(false);
+        showAlert("Error Loading Data", "Could not load enrollment information: " + errorMessage);
+    }
+
+    private EnrollmentSubjectLists fetchEnrollmentSubjectLists(StudentEnrollmentContext context) throws SQLException {
+        List<SubjectData> enrolledSubjects = new ArrayList<>();
+        List<SubjectData> availableSubjects = new ArrayList<>();
+        String academicYear = getCurrentAcademicYear();
+
+        // Query for ENROLLED subjects
+        String enrolledQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, fl.load_id AS faculty_load_id, " +
+                             "sch.days, sch.start_time, sch.end_time, r.room_name " +
+                             "FROM subjects s " +
+                             "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
+                             "JOIN student_load sl ON fl.load_id = sl.faculty_load " +
+                             "LEFT JOIN schedule sch ON fl.load_id = sch.faculty_load_id " +
+                             "LEFT JOIN room r ON sch.room_id = r.room_id " +
+                             "WHERE sl.student_id = ? AND fl.year_section = ? AND fl.semester = ? AND sl.academic_year = ?";
+
+        logger.debug("fetchEnrollmentSubjectLists: Enrolled Query: {}, Params: [studentId={}, yearSection={}, semester={}, academicYear={}]", 
+            enrolledQuery, context.studentId(), context.studentYearSection(), context.semesterString(), academicYear);
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmtEnrolled = conn.prepareStatement(enrolledQuery)) {
+            pstmtEnrolled.setInt(1, context.studentId());
+            pstmtEnrolled.setString(2, context.studentYearSection());
+            pstmtEnrolled.setString(3, context.semesterString());
+            pstmtEnrolled.setString(4, academicYear);
+
+            try (ResultSet rs = pstmtEnrolled.executeQuery()) {
+                while (rs.next()) {
+                    String scheduleStr = "Not Set";
+                    if (rs.getString("days") != null && rs.getTime("start_time") != null && rs.getTime("end_time") != null) {
+                        scheduleStr = String.format("%s %s-%s",
+                                              rs.getString("days"),
+                                              rs.getTime("start_time").toLocalTime().format(DateTimeFormatter.ofPattern("hh:mma")),
+                                              rs.getTime("end_time").toLocalTime().format(DateTimeFormatter.ofPattern("hh:mma")));
+                        if (rs.getString("room_name") != null) {
+                            scheduleStr += " - " + rs.getString("room_name");
+                        }
+                    }
+                    enrolledSubjects.add(new SubjectData(
+                            rs.getString("subject_code"),
+                            rs.getString("description"),
+                            rs.getInt("units"),
+                            String.valueOf(rs.getInt("subject_id")),
+                            null, // For enrolled subjects, specific schedule is primary, not list
+                            String.valueOf(rs.getInt("faculty_load_id")),
+                            scheduleStr
+                    ));
+                }
+            }
+        }
+        logger.debug("fetchEnrollmentSubjectLists: Found {} enrolled subjects.", enrolledSubjects.size());
+
+        // Query for AVAILABLE subjects
+        String availableQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, fl.load_id AS faculty_load_id " +
+                              "FROM subjects s " +
+                              "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
+                              "WHERE fl.year_section = ? AND fl.semester = ? AND fl.academic_year = ? AND fl.load_id NOT IN (" +
+                              "  SELECT sl.faculty_load FROM student_load sl WHERE sl.student_id = ? AND sl.semester = ? AND sl.academic_year = ?" +
+                              ")";
+        logger.debug("fetchEnrollmentSubjectLists: Available Query: {}, Params: [yearSection={}, semester={}, academicYear={}, studentId={}, semester={}, academicYear={}]", 
+            availableQuery, context.studentYearSection(), context.semesterString(), academicYear, context.studentId(), context.semesterString(), academicYear);
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmtAvailable = conn.prepareStatement(availableQuery)) {
+            pstmtAvailable.setString(1, context.studentYearSection());
+            pstmtAvailable.setString(2, context.semesterString());
+            pstmtAvailable.setString(3, academicYear);
+            pstmtAvailable.setInt(4, context.studentId());
+            pstmtAvailable.setString(5, context.semesterString());
+            pstmtAvailable.setString(6, academicYear);
+
+            try (ResultSet rs = pstmtAvailable.executeQuery()) {
+                while (rs.next()) {
+                    String subjectIdStr = String.valueOf(rs.getInt("subject_id"));
+                    String facultyLoadIdStr = String.valueOf(rs.getInt("faculty_load_id"));
+                    List<String> schedulesForThisSubject = fetchSchedulesForOffering(facultyLoadIdStr); // N+1 query, potential future optimization
+                    availableSubjects.add(new SubjectData(
+                            rs.getString("subject_code"),
+                            rs.getString("description"),
+                            rs.getInt("units"),
+                            subjectIdStr,
+                            schedulesForThisSubject,
+                            facultyLoadIdStr,
+                            null // No single enrolled schedule for available subjects
+                    ));
+                }
+            }
+        }
+        logger.debug("fetchEnrollmentSubjectLists: Found {} available subjects.", availableSubjects.size());
+        return new EnrollmentSubjectLists(enrolledSubjects, availableSubjects);
+    }
+
+    private record EnrollmentPageData(StudentEnrollmentContext context, EnrollmentSubjectLists subjectLists) {}
+
+    private List<String> fetchSchedulesForOffering(String facultyLoadIdStr) throws SQLException {
+        List<String> schedules = new ArrayList<>();
+        // facultyLoadIdStr needs to be parsed to int for the query as faculty_load.load_id is int2
+        int facultyLoadId = Integer.parseInt(facultyLoadIdStr);
+
+        String query = "SELECT sch.days, sch.start_time, sch.end_time, r.room_name " +
+                     "FROM schedule sch " +
+                     "LEFT JOIN room r ON sch.room_id = r.room_id " +
+                     "WHERE sch.faculty_load_id = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, facultyLoadId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String scheduleStr = "Schedule TBD";
+                     if (rs.getString("days") != null && rs.getTime("start_time") != null && rs.getTime("end_time") != null) {
+                        scheduleStr = String.format("%s %s-%s", 
+                                              rs.getString("days"), 
+                                              rs.getTime("start_time").toLocalTime().format(DateTimeFormatter.ofPattern("hh:mma")), 
+                                              rs.getTime("end_time").toLocalTime().format(DateTimeFormatter.ofPattern("hh:mma")));
+                        if (rs.getString("room_name") != null) {
+                            scheduleStr += " - " + rs.getString("room_name");
+                        }
+                    }
+                    schedules.add(scheduleStr);
+                }
+            }
+        }
+        if (schedules.isEmpty()) {
+            schedules.add("No specific schedules listed"); // Placeholder if no schedules found
+        }
+        return schedules;
     }
 
     private void showAlert(String title, String message, Alert.AlertType alertType) {
@@ -497,80 +571,112 @@ public class StudentEnrollmentController implements Initializable {
         }
     }
 
-    // Original showAlert now defaults to ERROR
     private void showAlert(String title, String message) {
         showAlert(title, message, Alert.AlertType.ERROR);
     }
 
-    private static class EnrollmentData {
-        String subjectCode;
-        String subjectName;
-        String schedule;
-        int subjectId;
+    private StudentEnrollmentContext fetchStudentEnrollmentContext() {
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserStudentNumber();
+        logger.debug("fetchStudentEnrollmentContext: currentUserIdentifier from RememberMeHandler: {}", currentUserIdentifier);
 
-        public EnrollmentData(String subjectCode, String subjectName, String schedule, int subjectId) {
-            this.subjectCode = subjectCode;
-            this.subjectName = subjectName;
-            this.schedule = schedule;
-            this.subjectId = subjectId;
+        if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
+            logger.warn("fetchStudentEnrollmentContext: No user logged in or identifier is empty.");
+            Platform.runLater(() -> showAlert("Error", "No user logged in. Cannot load enrollment details."));
+            return null;
         }
 
-        public String getSubjectCode() { return subjectCode; }
-        public String getSubjectName() { return subjectName; }
-        public String getSchedule() { return schedule; }
-        public int getSubjectId() { return subjectId; }
+        String sql;
+        boolean isEmail = currentUserIdentifier.contains("@");
+        if (isEmail) {
+            sql = "SELECT s.year_section AS student_year_section, ys.semester AS section_semester, s.student_id " +
+                  "FROM students s " +
+                  "LEFT JOIN year_section ys ON s.year_section = ys.year_section " +
+                  "WHERE LOWER(s.email) = LOWER(?)";
+        } else {
+            sql = "SELECT s.year_section AS student_year_section, ys.semester AS section_semester, s.student_id " +
+                  "FROM students s " +
+                  "LEFT JOIN year_section ys ON s.year_section = ys.year_section " +
+                  "WHERE s.student_number = ?";
+        }
+        logger.debug("fetchStudentEnrollmentContext: SQL query: {}", sql);
+        logger.debug("fetchStudentEnrollmentContext: Parameter: {}", currentUserIdentifier);
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, currentUserIdentifier);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String studentYearSection = rs.getString("student_year_section");
+                String sectionSemester = rs.getString("section_semester");
+                int studentId = rs.getInt("student_id");
+                logger.debug("fetchStudentEnrollmentContext: Retrieved from DB - studentYearSection: {}, sectionSemester: {}, studentId: {}", studentYearSection, sectionSemester, studentId);
+
+                if (studentYearSection == null || studentYearSection.trim().isEmpty()) {
+                    logger.warn("fetchStudentEnrollmentContext: studentYearSection is null or empty.");
+                    Platform.runLater(() -> showAlert("Information", "Your section information is not set. Please contact admin."));
+                    return null;
+                }
+
+                String yearLevelString = convertYearSectionToYearLevel(studentYearSection);
+                String semesterString = standardizeSemesterFormat(sectionSemester);
+                logger.debug("fetchStudentEnrollmentContext: Converted - yearLevelString: {}, semesterString: {}", yearLevelString, semesterString);
+
+                if (yearLevelString == null || semesterString == null) {
+                     logger.warn("fetchStudentEnrollmentContext: yearLevelString or semesterString is null after conversion.");
+                     Platform.runLater(() -> showAlert("Error", "Could not determine year level or semester from your section: " + studentYearSection + ". Please contact admin."));
+                    return null;
+                }
+                StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelString, semesterString, studentId, studentYearSection);
+                logger.debug("fetchStudentEnrollmentContext: Returning context: {}", context);
+                return context;
+            } else {
+                logger.warn("fetchStudentEnrollmentContext: No records found for user identifier: {}", currentUserIdentifier);
+                Platform.runLater(() -> showAlert("Error", "Could not find enrollment context for the current user."));
+                return null;
+            }
+        } catch (SQLException e) {
+            logger.error("SQL Error fetching student enrollment context: ", e);
+            Platform.runLater(() -> showAlert("Database Error", "Failed to load student enrollment context: " + e.getMessage()));
+            return null;
+        }
     }
 
-    // Inner class to hold student context
-    private static class StudentEnrollmentContext {
-        final String yearLevelString;
-        final String semesterString;
-
-        StudentEnrollmentContext(String yearLevelString, String semesterString) {
-            this.yearLevelString = yearLevelString;
-            this.semesterString = semesterString;
+    private String convertYearSectionToYearLevel(String yearSection) {
+        if (yearSection == null || yearSection.isEmpty()) return null;
+        String digits = yearSection.replaceAll("[^0-9]", "");
+        if (!digits.isEmpty()) {
+            char yearChar = digits.charAt(0);
+            return convertNumericYearToString(Character.getNumericValue(yearChar));
         }
-        
-        public String getYearLevelString() {
-            return yearLevelString;
-        }
-        
-        public String getSemesterString() {
-            return semesterString;
-        }
-    }
-
-    private static class SubjectData {
-        final String code;
-        final String name;
-        final int units;
-        final int id; // subject_id
-
-        SubjectData(String code, String name, int units, int id) {
-            this.code = code;
-            this.name = name;
-            this.units = units;
-            this.id = id;
-        }
-    }
-
-    private String convertNumericYearToString(int numericYear) {
-        switch (numericYear) {
-            case 1: return "1st year";
-            case 2: return "2nd year";
-            case 3: return "3rd year";
-            case 4: return "4th year";
-            case 5: return "5th year";
-            default: return null;
-        }
-    }
-
-    private String standardizeSemesterFormat(String dbSemester) {
-        if (dbSemester == null) return null;
-        String lowerDbSemester = dbSemester.toLowerCase().trim();
-        if (lowerDbSemester.contains("1st") || lowerDbSemester.contains("first") || lowerDbSemester.equals("1")) return "1st semester";
-        if (lowerDbSemester.contains("2nd") || lowerDbSemester.contains("second") || lowerDbSemester.equals("2")) return "2nd semester";
-        if (lowerDbSemester.contains("3rd") || lowerDbSemester.contains("third") || lowerDbSemester.equals("3")) return "3rd semester";
+        if (yearSection.toLowerCase().contains("year")) return yearSection;
+        logger.error("Could not parse year level from year_section: {}", yearSection);
         return null;
+    }
+
+    private String convertNumericYearToString(int yearLevel) {
+        return switch (yearLevel) {
+            case 1 -> "1st Year";
+            case 2 -> "2nd Year";
+            case 3 -> "3rd Year";
+            case 4 -> "4th Year";
+            case 5 -> "5th Year"; // If applicable
+            default -> null;
+        };
+    }
+
+    private String standardizeSemesterFormat(String semester) {
+        if (semester == null) return null;
+        String lowerSemester = semester.toLowerCase().trim();
+        if (lowerSemester.contains("first") || lowerSemester.contains("1st")) return "1st Semester";
+        if (lowerSemester.contains("second") || lowerSemester.contains("2nd")) return "2nd Semester";
+        if (lowerSemester.contains("summer")) return "Summer";
+        logger.error("Could not standardize semester: {}", semester);
+        return null;
+    }
+
+    private String getCurrentAcademicYear() {
+        // This should ideally come from a config or a dedicated table/logic
+        return "2024-2025"; // Placeholder
     }
 }

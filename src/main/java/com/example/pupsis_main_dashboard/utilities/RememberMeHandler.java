@@ -70,6 +70,13 @@ public class RememberMeHandler {
         prefs.remove(CURRENT_SESSION_EMAIL_KEY);
     }
 
+    // Add this method to get the student's identifier (student number or email)
+    public static String getCurrentUserStudentNumber() {
+        // This retrieves the username stored for the STUDENT user type,
+        // which could be their student number or email used at login.
+        return getLastUsedUsername("STUDENT");
+    }
+
     /**
      * Call this method when a user logs out to clear their session email
      * and optionally their specific user-type preferences if remember me was not selected.
