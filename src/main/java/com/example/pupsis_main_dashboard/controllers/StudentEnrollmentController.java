@@ -85,7 +85,7 @@ public class StudentEnrollmentController implements Initializable {
                 .collect(Collectors.toList());
 
         if (selectedSubjects.isEmpty()) {
-            showAlert("No Selection", "Please select at least one subject to enroll.");
+            showAlert("No Selection", "Please select at least one subject to enroll.","warning");
             if (loadingIndicator != null) loadingIndicator.setVisible(false);
             enrollButton.setDisable(false); 
             return;
@@ -173,11 +173,11 @@ public class StudentEnrollmentController implements Initializable {
         };
         enrollmentTask.setOnSucceeded(workerStateEvent -> {
             if (enrollmentTask.getValue()) { 
-                showAlert("Enrollment Successful", "Subjects enrolled successfully.");
+                showAlert("Enrollment Successful", "Subjects enrolled successfully.","info");
                 refreshEnrollmentView(); // Refresh data and view after successful enrollment
             } else {
                 // This case might not be hit if exceptions are thrown for failures
-                showAlert("Enrollment Failed", "Failed to enroll subjects. Please check details.");
+                showAlert("Enrollment Failed", "Failed to enroll subjects. Please check details.","error");
             }
             clearEnrollmentUIState(); // Clears checkbox selections etc.
             if (loadingIndicator != null) loadingIndicator.setVisible(false);
@@ -424,7 +424,7 @@ public class StudentEnrollmentController implements Initializable {
         if (enrollButton != null) enrollButton.setDisable(true);
         if (selectAllButton != null) selectAllButton.setDisable(true);
         if (loadingIndicator != null) loadingIndicator.setVisible(false);
-        showAlert("Error Loading Data", "Could not load enrollment information: " + errorMessage);
+        showAlert("Error Loading Data", "Could not load enrollment information: " + errorMessage,"error");
     }
 
     private EnrollmentSubjectLists fetchEnrollmentSubjectLists(StudentEnrollmentContext context) throws SQLException {
@@ -482,8 +482,8 @@ public class StudentEnrollmentController implements Initializable {
         String availableQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, fl.load_id AS faculty_load_id " +
                               "FROM subjects s " +
                               "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
-                              "WHERE fl.year_section = ? AND fl.semester = ? AND fl.academic_year = ? AND fl.load_id NOT IN (" +
-                              "  SELECT sl.faculty_load FROM student_load sl WHERE sl.student_id = ? AND sl.semester = ? AND sl.academic_year = ?" +
+                              "WHERE fl.year_section = ? AND fl.semester = ? AND fl.load_id NOT IN (" +
+                              "  SELECT sl.faculty_load FROM student_load sl WHERE sl.student_id = ? AND sl.semester = ?" +
                               ")";
         logger.debug("fetchEnrollmentSubjectLists: Available Query: {}, Params: [yearSection={}, semester={}, academicYear={}, studentId={}, semester={}, academicYear={}]", 
             availableQuery, context.studentYearSection(), context.semesterString(), academicYear, context.studentId(), context.semesterString(), academicYear);
@@ -492,10 +492,8 @@ public class StudentEnrollmentController implements Initializable {
              PreparedStatement pstmtAvailable = conn.prepareStatement(availableQuery)) {
             pstmtAvailable.setString(1, context.studentYearSection());
             pstmtAvailable.setString(2, context.semesterString());
-            pstmtAvailable.setString(3, academicYear);
-            pstmtAvailable.setInt(4, context.studentId());
-            pstmtAvailable.setString(5, context.semesterString());
-            pstmtAvailable.setString(6, academicYear);
+            pstmtAvailable.setInt(3, context.studentId());
+            pstmtAvailable.setString(4, context.semesterString());
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
                 while (rs.next()) {
@@ -571,8 +569,14 @@ public class StudentEnrollmentController implements Initializable {
         }
     }
 
-    private void showAlert(String title, String message) {
-        showAlert(title, message, Alert.AlertType.ERROR);
+    private void showAlert(String title, String message,String type) {
+        if (type == "error"){
+            showAlert(title, message, Alert.AlertType.ERROR);
+        } else if (type == "info") {
+            showAlert(title, message, Alert.AlertType.INFORMATION);
+        } else {
+            showAlert(title, message, Alert.AlertType.WARNING);
+        }
     }
 
     private StudentEnrollmentContext fetchStudentEnrollmentContext() {
@@ -581,7 +585,7 @@ public class StudentEnrollmentController implements Initializable {
 
         if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
             logger.warn("fetchStudentEnrollmentContext: No user logged in or identifier is empty.");
-            Platform.runLater(() -> showAlert("Error", "No user logged in. Cannot load enrollment details."));
+            Platform.runLater(() -> showAlert("Error", "No user logged in. Cannot load enrollment details.","error"));
             return null;
         }
 
@@ -614,7 +618,7 @@ public class StudentEnrollmentController implements Initializable {
 
                 if (studentYearSection == null || studentYearSection.trim().isEmpty()) {
                     logger.warn("fetchStudentEnrollmentContext: studentYearSection is null or empty.");
-                    Platform.runLater(() -> showAlert("Information", "Your section information is not set. Please contact admin."));
+                    Platform.runLater(() -> showAlert("Information", "Your section information is not set. Please contact admin.","info"));
                     return null;
                 }
 
@@ -624,7 +628,7 @@ public class StudentEnrollmentController implements Initializable {
 
                 if (yearLevelString == null || semesterString == null) {
                      logger.warn("fetchStudentEnrollmentContext: yearLevelString or semesterString is null after conversion.");
-                     Platform.runLater(() -> showAlert("Error", "Could not determine year level or semester from your section: " + studentYearSection + ". Please contact admin."));
+                     Platform.runLater(() -> showAlert("Error", "Could not determine year level or semester from your section: " + studentYearSection + ". Please contact admin.","error"));
                     return null;
                 }
                 StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelString, semesterString, studentId, studentYearSection);
@@ -632,12 +636,12 @@ public class StudentEnrollmentController implements Initializable {
                 return context;
             } else {
                 logger.warn("fetchStudentEnrollmentContext: No records found for user identifier: {}", currentUserIdentifier);
-                Platform.runLater(() -> showAlert("Error", "Could not find enrollment context for the current user."));
+                Platform.runLater(() -> showAlert("Error", "Could not find enrollment context for the current user.","error"));
                 return null;
             }
         } catch (SQLException e) {
             logger.error("SQL Error fetching student enrollment context: ", e);
-            Platform.runLater(() -> showAlert("Database Error", "Failed to load student enrollment context: " + e.getMessage()));
+            Platform.runLater(() -> showAlert("Database Error", "Failed to load student enrollment context: " + e.getMessage(),"error"));
             return null;
         }
     }
