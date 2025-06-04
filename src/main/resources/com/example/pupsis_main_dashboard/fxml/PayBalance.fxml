@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.pupsis_main_dashboard.controllers.PayBalanceController"
+           stylesheets="@../css/PaymentInfo.css"
+           style="-fx-background-color: transparent;">
+
+    <!-- White Card Container -->
+    <VBox alignment="TOP_CENTER"
+          maxWidth="600"
+          spacing="20"
+          style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #ccc; -fx-border-radius: 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.3, 0, 4);">
+
+        <!-- Corrected padding block -->
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <!-- Top row: Back button aligned right -->
+        <AnchorPane prefHeight="30">
+            <children>
+                <Button fx:id="backBtn"
+                        text="← Back"
+                        onAction="#handleBack"
+                        styleClass="action-button"
+                        AnchorPane.rightAnchor="0"/>
+            </children>
+        </AnchorPane>
+
+        <!-- Header Texts -->
+        <Label text="PAY BALANCE" styleClass="section-header-bold-black"/>
+        <Label text="Select Payment Method" styleClass="section-header"/>
+
+        <!-- Payment Methods -->
+        <VBox spacing="12.0" alignment="CENTER">
+            <children>
+
+                <!-- Card Option -->
+                <HBox fx:id="cardContainer" styleClass="payment-card" alignment="CENTER_LEFT" spacing="12.0" onMouseClicked="#selectCard">
+                    <children>
+                        <ImageView fitWidth="24" fitHeight="24">
+                            <image>
+                                <Image url="@../images/Card.png"/>
+                            </image>
+                        </ImageView>
+                        <Label text="Credit or Debit Card"/>
+                        <RadioButton fx:id="cardBtn" visible="false"/>
+                    </children>
+                </HBox>
+
+                <!-- Bank Option -->
+                <HBox fx:id="bankContainer" styleClass="payment-card" alignment="CENTER_LEFT" spacing="12.0" onMouseClicked="#selectBank">
+                    <children>
+                        <ImageView fitWidth="24" fitHeight="24">
+                            <image>
+                                <Image url="@../images/Bank.png"/>
+                            </image>
+                        </ImageView>
+                        <Label text="Bank Transfer"/>
+                        <RadioButton fx:id="bankBtn" visible="false"/>
+                    </children>
+                </HBox>
+
+                <!-- GCash Option -->
+                <HBox fx:id="gcashContainer" styleClass="payment-card" alignment="CENTER_LEFT" spacing="12.0" onMouseClicked="#selectGCash">
+                    <children>
+                        <ImageView fitWidth="24" fitHeight="24">
+                            <image>
+                                <Image url="@../images/Gcash.png"/>
+                            </image>
+                        </ImageView>
+                        <Label text="GCash"/>
+                        <RadioButton fx:id="gcashBtn" visible="false"/>
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+
+        <!-- Balance + Amount Input -->
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <children>
+                <Label fx:id="balanceLabel"
+                       text="Current Balance: ₱5,000.00"
+                       style="-fx-font-weight: bold; -fx-background-color: #FFF3CD; -fx-text-fill: #B10000; -fx-padding: 4 8 4 8; -fx-background-radius: 5;"/>
+                <Label text="Amount:"/>
+                <TextField fx:id="amountField" promptText="Enter amount"/>
+            </children>
+        </HBox>
+
+        <!-- Continue Button -->
+        <Button fx:id="submitPaymentBtn"
+                text="Continue"
+                styleClass="action-button"/>
+
+        <!-- Error Label -->
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+
+    </VBox>
+</StackPane>

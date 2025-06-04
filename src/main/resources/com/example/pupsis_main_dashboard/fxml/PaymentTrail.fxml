@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <?import javafx.scene.control.*?>
+    <?import javafx.scene.image.Image?>
+    <?import javafx.scene.image.ImageView?>
+    <?import javafx.geometry.Insets?>
+    <?import javafx.scene.layout.*?>
+
+    <VBox spacing="6" maxWidth="810.0" minWidth="810.0" prefWidth="810.0"
+          styleClass="font-compact" stylesheets="@../css/PaymentInfo.css"
+          xmlns="http://javafx.com/javafx/23.0.1"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.example.pupsis_main_dashboard.controllers.PaymentTrailController">
+
+        <!-- Header Section -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ImageView fitHeight="45" fitWidth="45">
+                <image>
+                    <Image url="@../Images/PUP Logo.png" />
+                </image>
+            </ImageView>
+
+            <VBox spacing="2">
+                <Label styleClass="section-header-bold-black" text="Payment Info" />
+                <Label fx:id="balanceLabel" styleClass="balance-label-highlight" text="Current Balance: ₱0.00" />
+            </VBox>
+        </HBox>
+
+        <!-- Content Area that stretches -->
+        <StackPane fx:id="contentPane" prefWidth="810" VBox.vgrow="ALWAYS">
+            <!-- Default content is the VBox below -->
+            <VBox spacing="6" styleClass="cards" prefWidth="810" VBox.vgrow="ALWAYS">
+                <padding>
+                    <Insets top="6" right="12" bottom="6" left="12" />
+                </padding>
+
+                <Label styleClass="section-header" text="Payment Trail" />
+
+                <TableView fx:id="chargesTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="subjectCodeColumn" text="Subject Code" prefWidth="100"/>
+                        <TableColumn fx:id="subjectTitleColumn" text="Subject Title" prefWidth="200"/>
+                        <TableColumn fx:id="sectionCodeColumn" text="Section Code" prefWidth="100"/>
+                        <TableColumn fx:id="creditedUnitsColumn" text="Credited Units" prefWidth="120"/>
+                        <TableColumn fx:id="tuitionUnitsColumn" text="Tuition Units" prefWidth="120"/>
+                        <TableColumn fx:id="chargeColumn" text="Charge (₱)" prefWidth="120"/>
+                    </columns>
+                </TableView>
+
+                <Label fx:id="totalChargesLabel" text="Total Summary Charges: —" />
+            </VBox>
+        </StackPane>
+
+        <!-- Action Buttons: Positioned outside the table and below everything -->
+        <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
+            <Button fx:id="viewPaymentHistoryBtn" text="View Payment History" styleClass="action-button"/>
+            <Button fx:id="payBalanceBtn" text="Pay Balance" styleClass="action-button"/>
+        </HBox>
+
+    </VBox>
