@@ -25,9 +25,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.example.pupsis_main_dashboard.PUPSIS;
 
 public class StudentDashboardController {
 
@@ -47,6 +50,7 @@ public class StudentDashboardController {
     @FXML private Node fade2;
     @FXML private ProgressIndicator loadingIndicator;
 
+    private static final String USER_TYPE = "STUDENT";
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
@@ -87,6 +91,18 @@ public class StudentDashboardController {
             studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
         }
+
+        // Apply theme to the main dashboard scene
+        Platform.runLater(() -> {
+            if (contentPane != null && contentPane.getScene() != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
+            } else {
+                logger.warn("StudentDashboardController: Scene not available for initial theme application.");
+            }
+        });
+
         logger.info("StudentDashboardController.initialize() - END. Duration: {} ms", (System.currentTimeMillis() - startTime));
     }
     
@@ -139,6 +155,15 @@ public class StudentDashboardController {
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
                     Parent content = FXMLLoader.load(resource);
+                    // Apply theme to this loaded content
+                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+
+                    if (content != null) {
+                        // Apply appropriate CSS classes based on the current theme
+                        content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
+                        content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+                    }
                     contentCache.put(fxmlPath, content);
                     logger.info("preloadFxmlContent({}) - LOADED and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - startTime));
                 } else {
@@ -303,10 +328,10 @@ public class StudentDashboardController {
         return switch (clickedHBox.getId()) {
             case "registrationHBox" -> ENROLLMENT_FXML;
             case "paymentInfoHBox" ->null;
-            case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" ->SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
             case "aboutHBox" -> ABOUT_FXML;
             default -> HOME_FXML;
         };

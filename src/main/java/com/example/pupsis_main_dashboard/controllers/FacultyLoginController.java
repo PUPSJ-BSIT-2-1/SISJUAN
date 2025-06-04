@@ -37,6 +37,9 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.pupsis_main_dashboard.PUPSIS;
+import com.example.pupsis_main_dashboard.controllers.SettingsController;
+
 public class FacultyLoginController {
     @FXML private VBox leftSide;
     @FXML private ImageView closeButton;
@@ -60,7 +63,6 @@ public class FacultyLoginController {
         loginButton.setOnAction(_ -> handleLogin(leftSide));
         setupInitialState();
         requestInitialFocus();
-        Platform.runLater(this::applyInitialTheme);
     }
     
     // Sets up the initial state of the UI components, including loading saved credentials
@@ -140,7 +142,9 @@ public class FacultyLoginController {
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/FacultyDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                             if (stage.getScene() != null) {
-                                com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
+                                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                                PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
                             }
                         } catch (IOException e) {
                             showAlert(
@@ -237,20 +241,18 @@ public class FacultyLoginController {
 
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        // Use the same preference node as the global theme system
-        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
-
-        // Use the PUPSIS global theme mechanism instead of managing styles manually
-        Scene scene = mainLoginPane.getScene();
-        if (scene != null) {
-            com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
+        if (mainLoginPane != null && mainLoginPane.getScene() != null) {
+            Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+            boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+            PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
         } else {
-            // If a scene isn't available yet, try again after a delay
             Platform.runLater(() -> {
-                Scene delayedScene = mainLoginPane.getScene();
-                if (delayedScene != null) {
-                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(delayedScene, isDarkMode);
+                if (mainLoginPane != null && mainLoginPane.getScene() != null) {
+                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                    PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
+                } else {
+                    logger.warn("FacultyLoginController: Scene still not available for theme application.");
                 }
             });
         }

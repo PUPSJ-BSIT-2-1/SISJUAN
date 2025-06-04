@@ -50,7 +50,22 @@ public class SettingsController {
     private NotificationManager notificationManager;
 
     @FXML public void initialize() {
-        prefs = Preferences.userNodeForPackage(SettingsController.class); // Initialize user preferences storage
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
+        String userType = "UNKNOWN"; // Default / fallback
+
+        if (currentUserIdentifier != null && !currentUserIdentifier.isEmpty()) {
+            userType = RememberMeHandler.getUserTypeFromIdentifier(currentUserIdentifier);
+        }
+
+        if (userType != null && !userType.equals("UNKNOWN") && !userType.isEmpty()) {
+            prefs = Preferences.userNodeForPackage(SettingsController.class).node(userType.toUpperCase()); // Ensure consistent casing for node name
+            logger.info("SettingsController initialized for userType: {}", userType);
+        } else {
+            // Fallback to a general node if user type cannot be determined or is invalid
+            prefs = Preferences.userNodeForPackage(SettingsController.class);
+            logger.warn("SettingsController could not determine a valid user type for identifier: '{}'. Falling back to general preferences.", currentUserIdentifier);
+        }
+
         notificationManager = NotificationManager.getInstance();
         
         loadUserSettings(); // Load saved user settings into the UI

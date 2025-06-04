@@ -20,6 +20,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 
 @SuppressWarnings("ALL")
 public class StageAndSceneUtils {
@@ -42,13 +43,17 @@ public class StageAndSceneUtils {
         ZOOM_IN
     }
 
-    public void loadStage(Stage stage, String fxmlFile, WindowSize size) throws IOException {
+    public static void loadStage(Stage stage, String fxmlFile, WindowSize size) throws IOException {
         loadStage(stage, fxmlFile, size, TransitionType.FADE);
     }
 
-    public void loadStage(Stage stage, String fxmlFile, WindowSize size, TransitionType transitionType) throws IOException {
+    public static void loadStage(Stage stage, String fxmlFile, WindowSize size, TransitionType transitionType) throws IOException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
+            URL fxmlUrl = PUPSIS.class.getResource(fxmlFile);
+            if (fxmlUrl == null) {
+                throw new IOException("Cannot load FXML: " + fxmlFile + ". Resource not found.");
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
             Parent root = fxmlLoader.load();
 
             double width = size == WindowSize.MEDIUM ? MEDIUM_WIDTH : size == WindowSize.LARGE ? LARGE_WIDTH : SMALL_WIDTH;
@@ -65,13 +70,17 @@ public class StageAndSceneUtils {
         }
     }
 
-    public Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size) throws IOException {
+    public static Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size) throws IOException {
         return loadStage(fxmlFile, title, iconPath, size, TransitionType.FADE);
     }
 
-    public Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size, TransitionType transitionType) throws IOException {
+    public static Stage loadStage(String fxmlFile, String title, String iconPath, WindowSize size, TransitionType transitionType) throws IOException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(PUPSIS.class.getResource(fxmlFile));
+            URL fxmlUrl = PUPSIS.class.getResource(fxmlFile);
+            if (fxmlUrl == null) {
+                throw new IOException("Cannot load FXML: " + fxmlFile + ". Resource not found.");
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
             Parent root = fxmlLoader.load();
             
             Stage stage = new Stage();
@@ -98,7 +107,7 @@ public class StageAndSceneUtils {
         }
     }
 
-    private void applyTransition(Parent root, TransitionType transitionType) {
+    private static void applyTransition(Parent root, TransitionType transitionType) {
         final int TRANSITION_DURATION = 700;
         
         switch (transitionType) {

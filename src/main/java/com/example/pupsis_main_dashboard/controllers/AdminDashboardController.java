@@ -1,7 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-//import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-
+import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
@@ -46,11 +45,7 @@ public class AdminDashboardController {
     @FXML private Node fade1;
     @FXML private Node fade2;
 
-    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
-    private final Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
-    private final Map<String, Parent> contentCache = new HashMap<>();
-    
-    // FXML paths as constants
+    private static final String USER_TYPE = "ADMIN";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
     private static final String USERS_FXML = null;
     private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/ADMINSubjectModule.fxml";
@@ -61,6 +56,10 @@ public class AdminDashboardController {
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
     private static final String STUDENT_MANAGEMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentManagement.fxml";
 
+    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
+    private final Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
+    private final Map<String, Parent> contentCache = new HashMap<>();
+    
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -91,6 +90,16 @@ public class AdminDashboardController {
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
 
+        // Apply theme to the main dashboard scene
+        Platform.runLater(() -> {
+            if (contentPane != null && contentPane.getScene() != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
+            } else {
+                logger.warn("AdminDashboardController: Scene not available for initial theme application.");
+            }
+        });
     }
 
     // Set up click handlers for all sidebar menu items
@@ -171,8 +180,8 @@ public class AdminDashboardController {
                 Parent content = loader.load();
 
                 // Apply theme to this loaded content
-                Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
-                boolean darkModeEnabled = prefs.getBoolean("darkMode", false);
+                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
 
                 if (content != null) {
                     // Apply appropriate CSS classes based on the current theme

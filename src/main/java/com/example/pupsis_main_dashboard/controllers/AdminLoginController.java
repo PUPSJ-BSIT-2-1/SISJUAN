@@ -34,6 +34,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.prefs.Preferences;
+import com.example.pupsis_main_dashboard.PUPSIS;
+import com.example.pupsis_main_dashboard.controllers.SettingsController;
 
 public class AdminLoginController {
     @FXML private VBox leftSide;
@@ -58,7 +61,12 @@ public class AdminLoginController {
         loginButton.setOnAction(_ -> handleLogin(leftSide));
         setupInitialState();
         requestInitialFocus();
-        Platform.runLater(this::applyInitialTheme);
+        // Platform.runLater(this::applyInitialTheme); // Will be called after scene is available
+    }
+
+    // Called when the scene is ready to apply the theme
+    public void applyThemeAfterSceneReady() {
+        applyInitialTheme();
     }
     
     // Sets up the initial state of the UI components, including loading saved credentials
@@ -148,8 +156,11 @@ public class AdminLoginController {
                                 Stage stage = (Stage) leftSide.getScene().getWindow();
                                 try {
                                     u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/AdminDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                                    // Apply theme to new dashboard scene
                                     if (stage.getScene() != null) {
-                                        com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
+                                        Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                                        boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                                        PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
                                     }
                                 } catch (IOException e) {
                                     showAlert(
@@ -239,12 +250,24 @@ public class AdminLoginController {
 
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        Scene scene = mainLoginPane.getScene();
-        if (scene != null) {
-            com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(scene);
+        if (mainLoginPane != null && mainLoginPane.getScene() != null) {
+            Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+            boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+            PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
+        } else {
+            // Scene might not be ready yet, try again later or ensure this is called when scene is set
+            Platform.runLater(() -> {
+                if (mainLoginPane != null && mainLoginPane.getScene() != null) {
+                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                    PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
+                } else {
+                    logger.warn("AdminLoginController: Scene still not available for theme application.");
+                }
+            });
         }
     }
-    
+
     // Utility method to show alerts
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

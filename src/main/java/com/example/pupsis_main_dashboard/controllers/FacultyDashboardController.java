@@ -1,7 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-//import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-
+import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
@@ -18,13 +17,13 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 public class FacultyDashboardController {
 
@@ -43,12 +42,7 @@ public class FacultyDashboardController {
     @FXML private Node fade1;
     @FXML private Node fade2;
 
-    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
-    private final Logger logger = LoggerFactory.getLogger(FacultyDashboardController.class);
-    private final Map<String, Parent> contentCache = new HashMap<>();
-    private String formattedName;
-    
-    // FXML paths as constants
+    private static final String USER_TYPE = "FACULTY";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyHomeContent.fxml";
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
@@ -56,6 +50,11 @@ public class FacultyDashboardController {
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyRoomAssignment.fxml";
 
+    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
+    private final Logger logger = LoggerFactory.getLogger(FacultyDashboardController.class);
+    private final Map<String, Parent> contentCache = new HashMap<>();
+    private String formattedName;
+    
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
@@ -80,6 +79,17 @@ public class FacultyDashboardController {
 
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
+
+        // Apply theme to the main dashboard scene
+        Platform.runLater(() -> {
+            if (contentPane != null && contentPane.getScene() != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
+            } else {
+                logger.warn("FacultyDashboardController: Scene not available for initial theme application.");
+            }
+        });
     }
     
     // Set up scroll pane fade effects based on scroll position
@@ -117,18 +127,30 @@ public class FacultyDashboardController {
     // Preload and cache a specific FXML file
     private void preloadFxmlContent(String fxmlPath) {
         try {
-            if (!contentCache.containsKey(fxmlPath)) {
+            if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) { 
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
-                    Parent content = FXMLLoader.load(resource);
+                    FXMLLoader loader = new FXMLLoader(resource); 
+                    Parent content = loader.load();
+
+                    // Apply theme to this loaded content
+                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+
+                    if (content != null) {
+                        // Apply appropriate CSS classes based on the current theme
+                        content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
+                        content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+                    }
                     contentCache.put(fxmlPath, content);
                 } else {
                     System.err.println("Resource not found: " + fxmlPath);
+                    logger.warn("Resource not found for preloading: {}", fxmlPath); 
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error preloading content: " + fxmlPath);
-            logger.error("Error preloading content: {}", fxmlPath, e);
+            System.err.println("Error preloading content: " + fxmlPath); 
+            logger.error("Error preloading FXML content: {}", fxmlPath, e); 
         }
     }
     
@@ -252,13 +274,13 @@ public class FacultyDashboardController {
 
                 // Set faculty ID in SessionData when loading grading module
                 if (fxmlPath.equals(GRADES_FXML)) {
-                    String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
-                    SessionData.getInstance().setStudentId(facultyId); // if needed
+                    String facultyId = SessionData.getInstance().getFacultyId(); 
+                    SessionData.getInstance().setStudentId(facultyId); 
                 }
 
                 if (fxmlPath.equals(SCHEDULE_FXML)) {
                     String facultyId = SessionData.getInstance().getFacultyId();
-                    SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
+                    SessionData.getInstance().setFacultyId(facultyId); 
                 }
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
@@ -291,7 +313,7 @@ public class FacultyDashboardController {
                 public void run() {
                     Platform.runLater(() -> contentPane.setVvalue(0));
                 }
-            }, 100); // 100ms delay for final layout
+            }, 100); 
         });
     }
 
