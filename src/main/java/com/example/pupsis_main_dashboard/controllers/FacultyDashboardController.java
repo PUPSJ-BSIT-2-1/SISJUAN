@@ -197,6 +197,9 @@ private void updateFacultyUI(ResultSet rs) throws SQLException {
     formattedName = formatFacultyName(firstName, lastName);
 
     Platform.runLater(() -> {
+
+        SessionData.getInstance().setFacultyId(facultyId);
+
         // Set the faculty ID first to ensure it's available
         studentNameLabel.setText(formattedName);
         studentIdLabel.setText(facultyId);

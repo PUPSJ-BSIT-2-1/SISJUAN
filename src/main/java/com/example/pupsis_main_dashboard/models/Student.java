@@ -5,6 +5,7 @@ import javafx.beans.property.StringProperty;
 
 public class Student {
     private final StringProperty studentId;
+    private StringProperty studentNa;
     private final StringProperty firstName;
     private final StringProperty middleName;
     private final StringProperty lastName;
@@ -20,6 +21,7 @@ public class Student {
     // Constructor for the old properties (maintained for backward compatibility)
     public Student(String no, String id, String studentNa, String code, String grade, String status) {
         this.studentId = new SimpleStringProperty(id);
+        this.studentNa = new SimpleStringProperty(studentNa);
         this.firstName = new SimpleStringProperty("");
         this.middleName = new SimpleStringProperty("");
         this.lastName = new SimpleStringProperty("");
@@ -212,9 +214,17 @@ public class Student {
     public void setStudentNo(String no) {
         this.studentNo.set(no);
     }
-    
+
     public String getStudentNa() {
-        return getFullName();
+        return studentNa.get();
+    }
+
+    public StringProperty studentNaProperty() {
+        return studentNa;
+    }
+
+    public void setStudentNa(String no) {
+        this.studentNa.set(no);
     }
     
     public String getSubjCode() {

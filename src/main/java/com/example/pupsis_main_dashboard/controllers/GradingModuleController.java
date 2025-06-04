@@ -61,7 +61,7 @@ public class GradingModuleController implements Initializable {
         subjCodeCol.setReorderable(false);
         subjDescCol.setReorderable(false);
 
-        // Set up search icon click handler
+        // Set up the search icon click handler
         if (searchIconContainer != null) {
             searchIconContainer.setOnMouseClicked(event -> {
                 // Your click handler code
@@ -75,7 +75,7 @@ public class GradingModuleController implements Initializable {
 
         // Try to get student ID with a small delay to ensure SessionData is populated
         Platform.runLater(() -> {
-            facultyId = SessionData.getInstance().getStudentId();
+            facultyId = SessionData.getInstance().getFacultyId();
             if (facultyId != null && !facultyId.isEmpty()) {
                 // Load data asynchronously
                 Task<ObservableList<Subject>> loadTask = getObservableListTask();
@@ -87,7 +87,7 @@ public class GradingModuleController implements Initializable {
     }
 
     private String attemptToRetrieveStudentId() {
-        // Try to get student ID from label if available
+        // Try to get student ID from a label if available
         Node studentIdLabel = subjectsTable.getScene() != null ?
                 subjectsTable.getScene().lookup("#studentIdLabel") : null;
 
@@ -212,7 +212,7 @@ public class GradingModuleController implements Initializable {
             applyFilter(filteredData, newValue);
         });
 
-        // Make search field responsive to ENTER key
+        // Make the search field responsive to an ENTER key
         searchBar.setOnAction(event -> performSearch());
 
         // Wrap the FilteredList in a SortedList
@@ -244,7 +244,7 @@ public class GradingModuleController implements Initializable {
     // Method to apply filter logic - extracted for reuse
     private void applyFilter(FilteredList<Subject> filteredData, String newValue) {
         filteredData.setPredicate(subject -> {
-            // If search text is empty, display all subjects
+            // If a search text is empty, display all subjects
             if (newValue == null || newValue.isEmpty()) {
                 return true;
             }
