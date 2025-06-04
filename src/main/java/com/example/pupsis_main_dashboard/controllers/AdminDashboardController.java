@@ -70,7 +70,7 @@ public class AdminDashboardController {
             // Get faculty info from the database
             loadFacultyInfo(identifier);
         } else {
-            // Handle case when no user is logged in
+            // Handle a case when no user is logged in
             studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
             departmentLabel.setText("");
@@ -326,7 +326,7 @@ public class AdminDashboardController {
                 );
                 content = loader.load();
 
-                if (fxmlPath.equals(null)) {// Set faculty ID in SessionData when loading grading module
+                if (fxmlPath.equals(HOME_FXML)) {// Set faculty ID in SessionData when loading grading module
                     String facultyId = studentIdLabel.getText();
                     SessionData.getInstance().setStudentId(facultyId);
                 }

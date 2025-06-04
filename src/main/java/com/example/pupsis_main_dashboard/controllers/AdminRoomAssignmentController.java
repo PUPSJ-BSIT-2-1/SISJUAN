@@ -295,6 +295,7 @@ public class AdminRoomAssignmentController {
 
     // This method populates the faculty ID combo box with faculty loads that are not assigned to any schedule.
     private void populateFacultyIDComboBox() {
+        facultyIDComboBox.getItems().clear();
         String query = """
                 SELECT CONCAT(faculty_number, ' - ', description, ' (', year_section, ')') AS faculty
                 FROM faculty_load
@@ -593,7 +594,6 @@ public class AdminRoomAssignmentController {
             // Refresh the table view or perform additional actions as needed
             scheduleTable.refresh();
             handleCancelSchedule(); // Return to the previous view
-            reloadFXML();
         });
         deleteButton.setOnAction(_ -> handleDeleteSchedule(schedule));
     }
@@ -620,12 +620,12 @@ public class AdminRoomAssignmentController {
                     
                     // Refresh the table
                     scheduleTable.refresh();
+
+                    populateFacultyIDComboBox();
                     
                     // Show a success message
                     StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.INFORMATION), "Schedule deleted successfully!");
-                    
-                    // Reload the FXML if needed
-                    reloadFXML();
+
                 } else {
                     StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.WARNING), "No schedule was deleted. The record may have been removed already.");
                 }
@@ -683,26 +683,6 @@ public class AdminRoomAssignmentController {
             }
         }
         return false;
-    }
-
-    // This method reloads the FXML to refresh the view.
-    private void reloadFXML() {
-        try {
-            // Get the current stage
-            javafx.stage.Stage stage = (javafx.stage.Stage) root.getScene().getWindow();
-            
-            // Load the same FXML again
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/FXML/Admin/AdminRoomAssignment.fxml"));
-            javafx.scene.Parent root = loader.load();
-            
-            // Set the scene with the reloaded FXML
-            javafx.scene.Scene scene = new javafx.scene.Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            logger.error("Failed to reload FXML", e);
-            StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.ERROR), "Failed to reload the interface.");
-        }
     }
 
     // This method handles the cancellation of the schedule creation or update.
