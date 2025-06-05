@@ -51,11 +51,21 @@ public class FacultyHomeContentController {
 
     private FacultyDashboardController facultyDashboardController;
 
-    public void setFacultyDashboardController(FacultyDashboardController controller, String formatteName) {
+    public void setFacultyDashboardController(FacultyDashboardController controller, String formattedName) {
         this.facultyDashboardController = controller;
-        String[] nameParts = formatteName.split(", ");
-        String finalFormattedName = nameParts[1].trim() + " " + nameParts[0].trim();
-        this.facultyNameLabel.setText(finalFormattedName);
+        if (formattedName != null && !formattedName.isEmpty()) {
+            String[] nameParts = formattedName.split(", ");
+            if (nameParts.length == 2) {
+                String finalFormattedName = nameParts[1].trim() + " " + nameParts[0].trim();
+                this.facultyNameLabel.setText(finalFormattedName);
+            } else {
+                logger.warn("Formatted name '{}' was not in the expected 'LastName, FirstName' format.", formattedName);
+                this.facultyNameLabel.setText("Faculty Name Unavailable"); // Fallback
+            }
+        } else {
+            logger.warn("Faculty name (formattedName) is null or empty in setFacultyDashboardController.");
+            this.facultyNameLabel.setText("Faculty Name Unavailable"); // Fallback for null name
+        }
 
         if (inputGradesButton != null) {
             inputGradesButton.setOnAction(this::inputGradesButtonClick);
