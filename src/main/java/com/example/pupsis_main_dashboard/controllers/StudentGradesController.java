@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -150,61 +151,66 @@ public class StudentGradesController {
             SELECT DISTINCT ON (s.student_id, sub.subject_id)
             s.student_id,
             s.student_number,
-            s.year_section,
-            s.scholastic_status,
+            s.current_year_section_id,
+            scs.status_name AS scholastic_status_name,
             sub.subject_id,
             sub.subject_code,
-            sub.description,
+            sub.description AS subject_description,
             sub.units,
             fac.faculty_id,
             fac.faculty_number,
             fac.firstname || ' ' || fac.lastname AS faculty_name,
             g.grade_id,
             g.final_grade,
-            g.gradestat
+            gs.status_name AS grade_status_name
             FROM student_load sl
-            JOIN students s ON sl.student_id = s.student_id
-            JOIN faculty_load fl ON sl.load_id = fl.load_id
+            JOIN students s ON sl.student_pk_id = s.student_id
+            JOIN faculty_load fl ON sl.faculty_load = fl.load_id
             JOIN faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN subjects sub ON fl.subject_id = sub.subject_id
-            JOIN schedule sch ON fl.load_id = sl.load_id
+            JOIN schedule sch ON sch.faculty_load_id = fl.load_id
             JOIN room r ON sch.room_id = r.room_id
-            LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_id = s.student_number
-            WHERE s.student_id = ? AND fl.year_section = ?
-            ORDER BY s.student_id, sub.subject_id;
+            LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_pk_id = s.student_id
+            LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
+            LEFT JOIN scholastic_statuses scs ON s.scholastic_status_id = scs.scholastic_status_id
+            WHERE s.student_id = ? AND s.current_year_section_id = ?
+            ORDER BY s.student_id, sub.subject_id, g.grade_id DESC;
             """;
 
-        String query2 = "SELECT student_id, year_section FROM students WHERE student_number = ?";
+        String query2 = "SELECT student_id, current_year_section_id FROM students WHERE student_number = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              PreparedStatement stmt2 = conn.prepareStatement(query2)) {
 
             if (sessionStudentID == null || sessionStudentID.isEmpty()) {
-                logger.error("Session faculty ID is null or empty");
+                logger.error("Session student number is null or empty");
                 return;
             }
             int studentID = 0;
-            String studentYearSection = "";
+            int studentYearSectionId = 0; 
             stmt2.setString(1, sessionStudentID);
             try (ResultSet rs = stmt2.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) { 
                     studentID = rs.getInt("student_id");
-                    studentYearSection = rs.getString("year_section");
+                    studentYearSectionId = rs.getInt("current_year_section_id"); 
+                } else {
+                    logger.warn("No student found with student_number: {}", sessionStudentID);
+                    return;
                 }
             }
             stmt.setInt(1, studentID);
-            stmt.setString(2, studentYearSection);
+            stmt.setObject(2, studentYearSectionId, Types.INTEGER); 
             try (ResultSet rs = stmt.executeQuery()) {
+                studentsList.clear(); 
                 while (rs.next()) {
-                    // Get values first
-                    String scholasticStatus = rs.getString("scholastic_status");
+                    String scholasticStatus = rs.getString("scholastic_status_name");
                     String subCode = rs.getString("subject_code");
-                    String subDescription = rs.getString("description");
+                    String subDescription = rs.getString("subject_description");
                     String facultyName = rs.getString("faculty_name");
                     String units = rs.getString("units");
-                    String sectionCode = rs.getString("year_section");
+                    String sectionCode = rs.getString("current_year_section_id"); 
                     String finGrade = rs.getString("final_grade");
-                    String gradeStatus = rs.getString("gradestat");
+                    String gradeStatus = rs.getString("grade_status_name");
 
                     Grades grades = new Grades(
                         scholasticStatus,
@@ -220,11 +226,17 @@ public class StudentGradesController {
                     studentsList.add(grades);
                     determineScholasticStatus(grades.getScholasticStatus());
                     determineYearLevel(grades.getSectionCode());
-                    computeSemesterGPA();
+                }
+                computeSemesterGPA(); 
+                if (studentsList.isEmpty()) {
+                    studentsTable.setPlaceholder(new Label("No grades available for the current configuration."));
+                } else {
+                    studentsTable.setItems(studentsList);
                 }
             }
         } catch (SQLException ex) {
-            logger.error("Error loading school events", ex);
+            logger.error("Error loading grades", ex);
+            studentsTable.setPlaceholder(new Label("Error loading grades."));
         }
     }
 
@@ -310,38 +322,38 @@ public class StudentGradesController {
 
     private void filterGrades() {
         String selectedSemester = semesterComboBox.getValue();
-        String selectedYearSection = yearSectionComboBox.getValue();
-        String yearPrefix = selectedYearSection.substring(0, 1);
+        String selectedYearSectionString = yearSectionComboBox.getValue();
         ObservableList<Grades> filteredGrades = FXCollections.observableArrayList();
-
-        String query = "SELECT year_section FROM students WHERE student_number = ? AND year_section LIKE ?";
 
         String searchGrades = """
             SELECT DISTINCT ON (s.student_id, sub.subject_id)
             s.student_id,
             s.student_number,
-            s.year_section,
-            s.scholastic_status,
+            s.current_year_section_id,
+            scs.status_name AS scholastic_status_name,
             sub.subject_id,
             sub.subject_code,
-            sub.description,
+            sub.description AS subject_description,
             sub.units,
             fac.faculty_id,
             fac.faculty_number,
             fac.firstname || ' ' || fac.lastname AS faculty_name,
             g.grade_id,
             g.final_grade,
-            g.gradestat
+            gs.status_name AS grade_status_name
             FROM student_load sl
-            JOIN students s ON sl.student_id = s.student_id
-            JOIN faculty_load fl ON sl.load_id = fl.load_id
+            JOIN students s ON sl.student_pk_id = s.student_id
+            JOIN faculty_load fl ON sl.faculty_load = fl.load_id
             JOIN faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN subjects sub ON fl.subject_id = sub.subject_id
-            JOIN schedule sch ON fl.load_id = sl.load_id
+            JOIN schedule sch ON sch.faculty_load_id = fl.load_id
             JOIN room r ON sch.room_id = r.room_id
-            LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_id = s.student_number
-            WHERE s.student_id = ? AND fl.year_section = ? AND sl.semester = ?
-            ORDER BY s.student_id, sub.subject_id
+            LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_pk_id = s.student_id
+            LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
+            LEFT JOIN scholastic_statuses scs ON s.scholastic_status_id = scs.scholastic_status_id
+            JOIN semesters sem ON sl.semester_id = sem.semester_id
+            WHERE s.student_id = ? AND s.current_year_section_id = ? AND sem.semester_name = ?
+            ORDER BY s.student_id, sub.subject_id, g.grade_id DESC;
            """;
 
         String searchStudentID = """
@@ -351,61 +363,81 @@ public class StudentGradesController {
             LIMIT 1
             """;
 
+        String sessionStudentNumber = SessionData.getInstance().getStudentNumber();
+        if (sessionStudentNumber == null || sessionStudentNumber.isEmpty()) {
+            logger.error("Session student number is null or empty for filtering grades.");
+            studentsTable.setPlaceholder(new Label("User session error."));
+            return;
+        }
+        if (selectedSemester == null || selectedYearSectionString == null) {
+            logger.info("Semester or Year Section not selected for filtering.");
+            loadGrades(); 
+            return;
+        }
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt1 = conn.prepareStatement(searchStudentID);
-             PreparedStatement stmt2 = conn.prepareStatement(query);
-             PreparedStatement stmt3 = conn.prepareStatement(searchGrades)) {
-            stmt1.setString(1, SessionData.getInstance().getStudentNumber());
-            stmt2.setString(1, SessionData.getInstance().getStudentNumber());
-            stmt2.setString(2, yearPrefix + "-%");
+             PreparedStatement stmt1_searchStudentId = conn.prepareStatement(searchStudentID);
+             PreparedStatement stmt3_searchGrades = conn.prepareStatement(searchGrades)) {
+
+            stmt1_searchStudentId.setString(1, sessionStudentNumber);
             int studentID = 0;
-            try (ResultSet rs = stmt1.executeQuery()) {
-                while (rs.next()) {
+            try (ResultSet rs = stmt1_searchStudentId.executeQuery()) {
+                if (rs.next()) {
                     studentID = rs.getInt("student_id");
+                } else {
+                    logger.warn("No student found with student_number: {} for filtering.", sessionStudentNumber);
+                    studentsTable.setPlaceholder(new Label("Student not found."));
+                    return;
                 }
             }
 
-            String studentYearSection = null;
-            try (ResultSet rs = stmt2.executeQuery()) {
-                while (rs.next()) {
-                    studentYearSection = rs.getString("year_section");
-                }
+            int selectedYearSectionId;
+            try {
+                selectedYearSectionId = Integer.parseInt(selectedYearSectionString);
+            } catch (NumberFormatException e) {
+                logger.error("Invalid year section format in ComboBox: {}", selectedYearSectionString, e);
+                studentsTable.setPlaceholder(new Label("Invalid year/section filter value."));
+                return;
             }
 
-            stmt3.setInt(1, studentID);
-            stmt3.setString(2, studentYearSection);
-            stmt3.setString(3, selectedSemester);
+            stmt3_searchGrades.setInt(1, studentID);
+            stmt3_searchGrades.setObject(2, selectedYearSectionId, Types.INTEGER); 
+            stmt3_searchGrades.setString(3, selectedSemester);    
 
             boolean hasResults = false;
 
-            try (ResultSet rs = stmt3.executeQuery()) {
+            try (ResultSet rs = stmt3_searchGrades.executeQuery()) {
                 while (rs.next()) {
                     hasResults = true;
 
-                    String scholasticStatus = rs.getString("scholastic_status");
+                    String scholasticStatus = rs.getString("scholastic_status_name");
                     String subCode = rs.getString("subject_code");
-                    String subDescription = rs.getString("description");
+                    String subDescription = rs.getString("subject_description");
                     String facultyName = rs.getString("faculty_name");
                     String units = rs.getString("units");
-                    String sectionCode = rs.getString("year_section");
+                    String sectionCode = rs.getString("current_year_section_id"); 
                     String finGrade = rs.getString("final_grade");
-                    String gradeStatus = rs.getString("gradestat");
+                    String gradeStatus = rs.getString("grade_status_name");
 
                     Grades grade = new Grades(scholasticStatus, subCode, subDescription, facultyName, units, sectionCode, finGrade, gradeStatus);
                     filteredGrades.add(grade);
                 }
             }
-            studentsList.clear();
             if (!hasResults) {
-                // Assuming studentsTable is a Label or Text UI component
-                studentsTable.setItems(FXCollections.observableArrayList());
-                studentsTable.setPlaceholder(new Label("No grades available"));
+                studentsTable.setItems(FXCollections.observableArrayList()); 
+                studentsTable.setPlaceholder(new Label("No grades available for the selected filters."));
             } else {
-                // If you want, clear the text or set it back to something else when grades exist
                 studentsTable.setItems(filteredGrades);
+                if (!filteredGrades.isEmpty()) {
+                     Grades firstGrade = filteredGrades.get(0);
+                     determineScholasticStatus(firstGrade.getScholasticStatus());
+                     determineYearLevel(firstGrade.getSectionCode());
+                }
+                computeSemesterGPA(); 
             }
         } catch (SQLException e) {
-            logger.error("Failed to load student year section", e);
+            logger.error("Failed to filter grades", e);
+            studentsTable.setPlaceholder(new Label("Error filtering grades."));
         }
     }
 }
