@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.util.converter.DoubleStringConverter;
 import org.slf4j.Logger;
@@ -229,7 +230,7 @@ public class EditGradesPageController implements Initializable {
 
                     if (gradeIdToUpdate != null) { // Grade exists, UPDATE it
                         logger.debug("Updating existing grade_id: {} for student_pk_id: {}, faculty_load: {}", gradeIdToUpdate, studentPkIdForGrade, facultyLoadIdForGrade);
-                        upsertSql[0] = "UPDATE grade SET final_grade = ?, grade_status_id = NULL, date_modified = CURRENT_TIMESTAMP " +
+                        upsertSql[0] = "UPDATE grade SET final_grade = ?, grade_status_id = NULL " +
                                     "WHERE grade_id = ?";
                         try (PreparedStatement pstmt = conn.prepareStatement(upsertSql[0])) {
                             if (gradeValue != null) {
@@ -243,8 +244,8 @@ public class EditGradesPageController implements Initializable {
                         }
                     } else { // Grade does not exist, INSERT it
                         logger.debug("Inserting new grade for student_pk_id: {}, faculty_load: {}", studentPkIdForGrade, facultyLoadIdForGrade);
-                        upsertSql[0] = "INSERT INTO grade (student_pk_id, faculty_load, subject_id, final_grade, grade_status_id, academic_year_id, date_recorded, date_modified) " +
-                                    "VALUES (?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+                        upsertSql[0] = "INSERT INTO grade (student_pk_id, faculty_load, subject_id, final_grade, grade_status_id, academic_year_id) " +
+                                    "VALUES (?, ?, ?, ?, NULL, ?)";
                         
                         int currentAcademicYearId = SessionData.getInstance().getCurrentAcademicYearId(); 
 
