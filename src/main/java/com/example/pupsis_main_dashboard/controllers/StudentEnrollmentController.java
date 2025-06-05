@@ -304,17 +304,32 @@ public class StudentEnrollmentController implements Initializable {
 
         if (subjectLists.availableSubjects != null && !subjectLists.availableSubjects.isEmpty()) {
             for (SubjectData subject : subjectLists.availableSubjects()) {
-                HBox subjectBox = new HBox(10);
-                subjectBox.setPadding(new Insets(5));
+                HBox subjectBox = new HBox(10); // spacing from FXML
                 subjectBox.setAlignment(Pos.CENTER_LEFT);
+                subjectBox.getStyleClass().add("subject-row"); // Style class from FXML example HBox
+                // Padding is likely handled by the 'subject-row' style class or can be set if needed:
+                // subjectBox.setPadding(new Insets(5.0, 0, 5.0, 0)); // Matches FXML example HBox padding
 
                 CheckBox checkBox = new CheckBox();
-                Label subjectLabel = new Label(String.format("%s - %s (%d units)",
-                        subject.subjectCode(), subject.description(), subject.units()));
-                subjectLabel.setMinWidth(300); 
-                subjectLabel.setWrapText(true);
+                checkBox.getStyleClass().add("custom-checkbox"); // Style class from FXML
+                HBox.setMargin(checkBox, new Insets(0, 0, 0, 5.0)); // Margin from FXML
+
+                Label codeLabel = new Label(subject.subjectCode());
+                codeLabel.setPrefWidth(200.0); // prefWidth from FXML
+                codeLabel.getStyleClass().add("subject-code"); // Style class from FXML
+
+                // Include units in the description label as it's not a separate column in FXML header
+                Label descriptionLabel = new Label(String.format("%s (%d units)", subject.description(), subject.units()));
+                descriptionLabel.setPrefWidth(300.0); // prefWidth from FXML
+                descriptionLabel.setWrapText(true); // From FXML
+                descriptionLabel.getStyleClass().add("subject-description"); // Style class from FXML
 
                 ComboBox<String> scheduleComboBox = new ComboBox<>();
+                scheduleComboBox.setPrefWidth(180.0); // prefWidth from FXML
+                scheduleComboBox.setPrefHeight(30.0); // prefHeight from FXML
+                scheduleComboBox.getStyleClass().add("modern-combo"); // Style class from FXML
+                scheduleComboBox.setPromptText("Select Schedule"); // From FXML
+
                 if (subject.availableSchedules() != null && !subject.availableSchedules().isEmpty()) {
                     scheduleComboBox.getItems().addAll(subject.availableSchedules());
                     scheduleComboBox.setValue(subject.availableSchedules().get(0)); 
@@ -323,7 +338,6 @@ public class StudentEnrollmentController implements Initializable {
                     scheduleComboBox.setValue("No schedules available");
                     scheduleComboBox.setDisable(true);
                 }
-                scheduleComboBox.setMinWidth(150); 
 
                 subjectCheckboxes.add(checkBox);
                 checkboxSubjectMap.put(checkBox, subject);
@@ -334,7 +348,7 @@ public class StudentEnrollmentController implements Initializable {
                     updateSelectAllButtonState();
                 });
 
-                subjectBox.getChildren().addAll(checkBox, subjectLabel, scheduleComboBox);
+                subjectBox.getChildren().addAll(checkBox, codeLabel, descriptionLabel, scheduleComboBox);
                 subjectListContainer.getChildren().add(subjectBox);
             }
         } else {
