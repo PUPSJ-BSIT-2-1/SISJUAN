@@ -364,7 +364,7 @@ public class StudentEnrollmentController implements Initializable {
         }
     }
 
-    private record StudentEnrollmentContext(String yearLevelString, String semesterString, int studentId, String studentYearSection) {}
+    private record StudentEnrollmentContext(String yearLevelString, String semesterString, int studentId, String studentYearSection, int sectionId, int semesterId, int academicYearId) {}
 
     private void refreshEnrollmentView() {
         logger.debug("refreshEnrollmentView: Starting data refresh.");
@@ -430,7 +430,6 @@ public class StudentEnrollmentController implements Initializable {
     private EnrollmentSubjectLists fetchEnrollmentSubjectLists(StudentEnrollmentContext context) throws SQLException {
         List<SubjectData> enrolledSubjects = new ArrayList<>();
         List<SubjectData> availableSubjects = new ArrayList<>();
-        String academicYear = getCurrentAcademicYear();
 
         // Query for ENROLLED subjects
         String enrolledQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, fl.load_id AS faculty_load_id, " +
@@ -440,17 +439,17 @@ public class StudentEnrollmentController implements Initializable {
                              "JOIN student_load sl ON fl.load_id = sl.faculty_load " +
                              "LEFT JOIN schedule sch ON fl.load_id = sch.faculty_load_id " +
                              "LEFT JOIN room r ON sch.room_id = r.room_id " +
-                             "WHERE sl.student_id = ? AND fl.year_section = ? AND fl.semester = ? AND sl.academic_year = ?";
+                             "WHERE sl.student_pk_id = ? AND fl.section_id = ? AND fl.semester_id = ? AND sl.academic_year_id = ?";
 
-        logger.debug("fetchEnrollmentSubjectLists: Enrolled Query: {}, Params: [studentId={}, yearSection={}, semester={}, academicYear={}]", 
-            enrolledQuery, context.studentId(), context.studentYearSection(), context.semesterString(), academicYear);
+        logger.debug("fetchEnrollmentSubjectLists: Enrolled Query: {}, Params: [studentId={}, sectionId={}, semesterId={}, academicYearId={}]", 
+            enrolledQuery, context.studentId(), context.sectionId(), context.semesterId(), context.academicYearId());
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmtEnrolled = conn.prepareStatement(enrolledQuery)) {
             pstmtEnrolled.setInt(1, context.studentId());
-            pstmtEnrolled.setString(2, context.studentYearSection());
-            pstmtEnrolled.setString(3, context.semesterString());
-            pstmtEnrolled.setString(4, academicYear);
+            pstmtEnrolled.setInt(2, context.sectionId());
+            pstmtEnrolled.setInt(3, context.semesterId());
+            pstmtEnrolled.setInt(4, context.academicYearId());
 
             try (ResultSet rs = pstmtEnrolled.executeQuery()) {
                 while (rs.next()) {
@@ -479,77 +478,61 @@ public class StudentEnrollmentController implements Initializable {
         logger.debug("fetchEnrollmentSubjectLists: Found {} enrolled subjects.", enrolledSubjects.size());
 
         // Query for AVAILABLE subjects
-        String availableQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, fl.load_id AS faculty_load_id " +
-                              "FROM subjects s " +
-                              "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
-                              "WHERE fl.year_section = ? AND fl.semester = ? AND fl.load_id NOT IN (" +
-                              "  SELECT sl.faculty_load FROM student_load sl WHERE sl.student_id = ? AND sl.semester = ?" +
-                              ")";
-        logger.debug("fetchEnrollmentSubjectLists: Available Query: {}, Params: [yearSection={}, semester={}, academicYear={}, studentId={}, semester={}, academicYear={}]", 
-            availableQuery, context.studentYearSection(), context.semesterString(), academicYear, context.studentId(), context.semesterString(), academicYear);
+        // Fetches subjects from faculty_load for the student's section and semester,
+        // excluding those the student is already enrolled in for that semester (regardless of academic year of enrollment).
+        // Offerings from any academic year matching section and semester will be considered.
+        String availableQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, " +
+                                "fl.load_id AS faculty_load_id, " +
+                                "(SELECT COUNT(*) FROM student_load sl_count WHERE sl_count.faculty_load = fl.load_id AND sl_count.academic_year_id = fl.academic_year_id AND sl_count.semester_id = fl.semester_id) AS current_enrollees " +
+                                "FROM subjects s " +
+                                "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
+                                "WHERE fl.section_id = ? AND fl.semester_id = ? " +
+                                "AND fl.load_id NOT IN (" +
+                                "  SELECT sl_inner.faculty_load FROM student_load sl_inner " +
+                                "  WHERE sl_inner.student_pk_id = ? AND sl_inner.semester_id = ?" +
+                                ")";
+
+        logger.debug("fetchEnrollmentSubjectLists: Available Query: {}, Params: [sectionId={}, semesterId={}, studentId={}, semesterIdSubQuery={}]", 
+            availableQuery, context.sectionId(), context.semesterId(), 
+            context.studentId(), context.semesterId());
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmtAvailable = conn.prepareStatement(availableQuery)) {
-            pstmtAvailable.setString(1, context.studentYearSection());
-            pstmtAvailable.setString(2, context.semesterString());
-            pstmtAvailable.setInt(3, context.studentId());
-            pstmtAvailable.setString(4, context.semesterString());
+            
+            pstmtAvailable.setInt(1, context.sectionId());       // for fl.section_id
+            pstmtAvailable.setInt(2, context.semesterId());      // for fl.semester_id
+            // Parameter for fl.academic_year_id removed
+            pstmtAvailable.setInt(3, context.studentId());       // for sl_inner.student_pk_id in subquery (was 4)
+            pstmtAvailable.setInt(4, context.semesterId());      // for sl_inner.semester_id in subquery (was 5)
+            // Parameter for sl_inner.academic_year_id removed (was 6)
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
                 while (rs.next()) {
-                    String subjectIdStr = String.valueOf(rs.getInt("subject_id"));
-                    String facultyLoadIdStr = String.valueOf(rs.getInt("faculty_load_id"));
-                    List<String> schedulesForThisSubject = fetchSchedulesForOffering(facultyLoadIdStr); // N+1 query, potential future optimization
+                    // For available subjects, current_enrollees is fetched by the query.
+                    // MAX_ENROLLEES is a class constant.
+                    // These are not part of the SubjectData record itself, so they are not passed to its constructor.
+                    // They can be used when building the UI row for this subject if needed.
+                    // int currentEnrollees = rs.getInt("current_enrollees"); // Value is available here
+
                     availableSubjects.add(new SubjectData(
                             rs.getString("subject_code"),
                             rs.getString("description"),
                             rs.getInt("units"),
-                            subjectIdStr,
-                            schedulesForThisSubject,
-                            facultyLoadIdStr,
-                            null // No single enrolled schedule for available subjects
+                            String.valueOf(rs.getInt("subject_id")),
+                            java.util.Collections.emptyList(), // availableSchedules
+                            String.valueOf(rs.getInt("faculty_load_id")) // offeringId
                     ));
                 }
             }
         }
         logger.debug("fetchEnrollmentSubjectLists: Found {} available subjects.", availableSubjects.size());
+
+        List<SubjectData> allSubjects = new ArrayList<>(enrolledSubjects);
+        allSubjects.addAll(availableSubjects);
         return new EnrollmentSubjectLists(enrolledSubjects, availableSubjects);
     }
 
     private record EnrollmentPageData(StudentEnrollmentContext context, EnrollmentSubjectLists subjectLists) {}
-
-    private List<String> fetchSchedulesForOffering(String facultyLoadIdStr) throws SQLException {
-        List<String> schedules = new ArrayList<>();
-        // facultyLoadIdStr needs to be parsed to int for the query as faculty_load.load_id is int2
-        int facultyLoadId = Integer.parseInt(facultyLoadIdStr);
-
-        String query = "SELECT sch.days, sch.start_time, sch.end_time, r.room_name " +
-                     "FROM schedule sch " +
-                     "LEFT JOIN room r ON sch.room_id = r.room_id " +
-                     "WHERE sch.faculty_load_id = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, facultyLoadId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    String scheduleStr = "Schedule TBD";
-                     if (rs.getString("days") != null && rs.getTime("start_time") != null && rs.getTime("end_time") != null) {
-                        scheduleStr = String.format("%s %s-%s", 
-                                              rs.getString("days"), 
-                                              rs.getTime("start_time").toLocalTime().format(DateTimeFormatter.ofPattern("hh:mma")), 
-                                              rs.getTime("end_time").toLocalTime().format(DateTimeFormatter.ofPattern("hh:mma")));
-                        if (rs.getString("room_name") != null) {
-                            scheduleStr += " - " + rs.getString("room_name");
-                        }
-                    }
-                    schedules.add(scheduleStr);
-                }
-            }
-        }
-        if (schedules.isEmpty()) {
-            schedules.add("No specific schedules listed"); // Placeholder if no schedules found
-        }
-        return schedules;
-    }
 
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         if (Platform.isFxApplicationThread()) {
@@ -579,70 +562,60 @@ public class StudentEnrollmentController implements Initializable {
         }
     }
 
-    private StudentEnrollmentContext fetchStudentEnrollmentContext() {
-        String currentUserIdentifier = RememberMeHandler.getCurrentUserStudentNumber();
+    private StudentEnrollmentContext fetchStudentEnrollmentContext() throws SQLException {
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
         logger.debug("fetchStudentEnrollmentContext: currentUserIdentifier from RememberMeHandler: {}", currentUserIdentifier);
 
         if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
-            logger.warn("fetchStudentEnrollmentContext: No user logged in or identifier is empty.");
-            Platform.runLater(() -> showAlert("Error", "No user logged in. Cannot load enrollment details.","error"));
-            return null;
+            logger.warn("fetchStudentEnrollmentContext: Current user identifier is null or empty.");
+            throw new SQLException("Current user identifier not found.");
         }
 
-        String sql;
-        boolean isEmail = currentUserIdentifier.contains("@");
-        if (isEmail) {
-            sql = "SELECT s.year_section AS student_year_section, ys.semester AS section_semester, s.student_id " +
-                  "FROM students s " +
-                  "LEFT JOIN year_section ys ON s.year_section = ys.year_section " +
-                  "WHERE LOWER(s.email) = LOWER(?)";
-        } else {
-            sql = "SELECT s.year_section AS student_year_section, ys.semester AS section_semester, s.student_id " +
-                  "FROM students s " +
-                  "LEFT JOIN year_section ys ON s.year_section = ys.year_section " +
-                  "WHERE s.student_number = ?";
-        }
+        String sql = """
+            SELECT
+                ys.year_section AS student_year_section,
+                sem.semester_name AS section_semester,
+                s.student_id,
+                ys.section_id,
+                sem.semester_id,
+                ay.academic_year_id
+            FROM
+                public.students s
+            LEFT JOIN
+                public.year_section ys ON s.current_year_section_id = ys.section_id
+            LEFT JOIN
+                public.semesters sem ON ys.semester_id = sem.semester_id
+            LEFT JOIN
+                public.academic_years ay ON ys.academic_year_id = ay.academic_year_id
+            WHERE
+                s.student_number = ?
+            """;
+
         logger.debug("fetchStudentEnrollmentContext: SQL query: {}", sql);
         logger.debug("fetchStudentEnrollmentContext: Parameter: {}", currentUserIdentifier);
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, currentUserIdentifier);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                String studentYearSection = rs.getString("student_year_section");
-                String sectionSemester = rs.getString("section_semester");
-                int studentId = rs.getInt("student_id");
-                logger.debug("fetchStudentEnrollmentContext: Retrieved from DB - studentYearSection: {}, sectionSemester: {}, studentId: {}", studentYearSection, sectionSemester, studentId);
-
-                if (studentYearSection == null || studentYearSection.trim().isEmpty()) {
-                    logger.warn("fetchStudentEnrollmentContext: studentYearSection is null or empty.");
-                    Platform.runLater(() -> showAlert("Information", "Your section information is not set. Please contact admin.","info"));
-                    return null;
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String yearSection = rs.getString("student_year_section");
+                    String semester = rs.getString("section_semester");
+                    int studentId = rs.getInt("student_id");
+                    int sectionId = rs.getInt("section_id");
+                    int semesterId = rs.getInt("semester_id");
+                    int academicYearId = rs.getInt("academic_year_id");
+                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearSection, semester, studentId, yearSection, sectionId, semesterId, academicYearId);
+                    logger.debug("fetchStudentEnrollmentContext: Fetched context: {}", context);
+                    return context;
+                } else {
+                    logger.warn("fetchStudentEnrollmentContext: No enrollment context found for student identifier: {}", currentUserIdentifier);
+                    return null; // Or throw specific exception
                 }
-
-                String yearLevelString = convertYearSectionToYearLevel(studentYearSection);
-                String semesterString = standardizeSemesterFormat(sectionSemester);
-                logger.debug("fetchStudentEnrollmentContext: Converted - yearLevelString: {}, semesterString: {}", yearLevelString, semesterString);
-
-                if (yearLevelString == null || semesterString == null) {
-                     logger.warn("fetchStudentEnrollmentContext: yearLevelString or semesterString is null after conversion.");
-                     Platform.runLater(() -> showAlert("Error", "Could not determine year level or semester from your section: " + studentYearSection + ". Please contact admin.","error"));
-                    return null;
-                }
-                StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelString, semesterString, studentId, studentYearSection);
-                logger.debug("fetchStudentEnrollmentContext: Returning context: {}", context);
-                return context;
-            } else {
-                logger.warn("fetchStudentEnrollmentContext: No records found for user identifier: {}", currentUserIdentifier);
-                Platform.runLater(() -> showAlert("Error", "Could not find enrollment context for the current user.","error"));
-                return null;
             }
         } catch (SQLException e) {
             logger.error("SQL Error fetching student enrollment context: ", e);
-            Platform.runLater(() -> showAlert("Database Error", "Failed to load student enrollment context: " + e.getMessage(),"error"));
-            return null;
+            throw e;
         }
     }
 

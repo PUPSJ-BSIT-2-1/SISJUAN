@@ -50,12 +50,12 @@ public class FacultyManagementController {
 
     private final ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
     private FacultyDAO facultyDAO;
-    private FacultyLoadDAO facultyLoadDAO;  // <-- Added declaration here
+    private FacultyLoadDAO facultyLoadDAO;  
 
     public void initialize() {
         try {
             facultyDAO = new FacultyDAO();
-            facultyLoadDAO = new FacultyLoadDAO();  // <-- Initialize here
+            facultyLoadDAO = new FacultyLoadDAO();  
         } catch (SQLException e) {
             showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR);
             return;
@@ -73,7 +73,7 @@ public class FacultyManagementController {
             String fullName = faculty.getFirstName() + " " + mi + " " + faculty.getLastName();
             return new SimpleStringProperty(fullName.trim());
         });
-        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
+        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("departmentName")); 
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         contactColumn.setCellValueFactory(new PropertyValueFactory<>("contactNumber"));
 
@@ -115,7 +115,7 @@ public class FacultyManagementController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Faculty Details - " + faculty.getFirstName() + " " + faculty.getLastName());
             stage.setScene(new Scene(root));
-            controller.setDialogStage(stage);  // so the close button can close this window
+            controller.setDialogStage(stage);  
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,22 +148,18 @@ public class FacultyManagementController {
 
             AssignSubjectDialogController controller = loader.getController();
 
-            // Load subjects from your database or DAO
             List<String> subjects = loadSubjectCodes();
-            System.out.println("Loaded subjects: " + subjects);  // DEBUG
+            System.out.println("Loaded subjects: " + subjects);  
 
-            // Set subjects in dialog
             controller.setSubjects(subjects);
 
-            // Use actual year_section values matching DB foreign key constraint
             List<String> yearLevels = List.of("1-1", "1-2", "2-1", "2-2", "3-1", "3-2");
             controller.setYearLevels(yearLevels);
-            System.out.println("Set year levels: " + yearLevels);  // DEBUG
+            System.out.println("Set year levels: " + yearLevels);  
 
-            // Hardcoded semesters, replace with actual if needed
             List<String> semesters = List.of("1st Semester", "2nd Semester");
             controller.setSemesters(semesters);
-            System.out.println("Set semesters: " + semesters);  // DEBUG
+            System.out.println("Set semesters: " + semesters);  
 
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -177,10 +173,10 @@ public class FacultyManagementController {
                 String yearSection = controller.getSelectedYearLevel();
                 String semester = controller.getSelectedSemester();
 
-                int facultyId = Integer.parseInt(selectedFaculty.getFacultyId());
+                int facultyId = selectedFaculty.getActualFacultyId(); 
                 SubjectDAO subjectDAO = new SubjectDAO();
                 int subjectId = subjectDAO.getSubjectIdByCode(subjectCode);
-                String academicYear = "2023-2024";  // Or retrieve dynamically
+                String academicYear = "2023-2024";  
 
                 boolean success = facultyLoadDAO.addFacultyLoad(
                         facultyId,
@@ -202,45 +198,35 @@ public class FacultyManagementController {
         }
     }
 
-    /**
-     * Loads subject codes from the database.
-     */
     private List<String> loadSubjectCodes() {
         try {
             SubjectDAO subjectDAO = new SubjectDAO();
             List<String> subjectCodes = subjectDAO.getAllSubjectCodes();
-            System.out.println("Fetching subject codes from DB: " + subjectCodes);  // DEBUG
+            System.out.println("Fetching subject codes from DB: " + subjectCodes);  
             return subjectCodes;
         } catch (SQLException e) {
             e.printStackTrace();
-            return List.of();  // Return an empty list on error
+            return List.of();  
         }
     }
 
     @FXML
     private void handleBackToDashboard() {
         try {
-            // Find the ScrollPane with fx:id "contentPane" in the current scene
             ScrollPane contentPane = (ScrollPane) facultyTable.getScene().lookup("#contentPane");
 
-            // If the ScrollPane exists, proceed
             if (contentPane != null) {
-                // Create an FXMLLoader to load the FacultyTab.fxml layout
                 FXMLLoader loader = new FXMLLoader(
                         getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyTab.fxml")
                 );
 
-                // Load the FXML content as a Parent node
                 Parent newContent = loader.load();
 
-                // Get the controller associated with the loaded FXML (FacultyTabController)
                 FacultyTabController controller = loader.getController();
 
-                // Replace the current content of the ScrollPane with the new view
                 contentPane.setContent(newContent);
             }
         } catch (IOException e) {
-            // Print the stack trace if loading the FXML fails
             e.printStackTrace();
         }
     }
@@ -260,40 +246,66 @@ public class FacultyManagementController {
 
     @FXML
     private void handleEditFaculty() {
-        Faculty selected = facultyTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Faculty updatedFaculty = showFacultyDialog(selected);
-            if (updatedFaculty != null) {
-                boolean success = facultyDAO.updateFaculty(updatedFaculty);
-                if (success) {
-                    showAlert("Success", "Faculty updated. Click Refresh to update view.", Alert.AlertType.INFORMATION);
-                } else {
-                    showAlert("Error", "Failed to update faculty.", Alert.AlertType.ERROR);
+        Faculty selectedFaculty = facultyTable.getSelectionModel().getSelectedItem();
+        if (selectedFaculty == null) {
+            showAlert("No Selection", "Please select a faculty member to edit.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyDialog.fxml"));
+            Parent root = loader.load();
+            FacultyDialogController controller = loader.getController();
+            controller.setFaculty(selectedFaculty);
+            controller.setFacultyDAO(facultyDAO); 
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Faculty");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            controller.setDialogStage(dialogStage);
+
+            dialogStage.showAndWait();
+
+            if (controller.isSaveClicked()) { 
+                loadFacultyData(); 
+                showAlert("Success", "Faculty details updated successfully.", Alert.AlertType.INFORMATION);
+            } else {
+                 if (controller.getErrorMessage() != null && !controller.getErrorMessage().isEmpty()) {
+                    showAlert("Error", controller.getErrorMessage(), Alert.AlertType.ERROR);
                 }
             }
-        } else {
-            showAlert("Warning", "Please select a faculty member to edit.", Alert.AlertType.WARNING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to open edit dialog: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
+
     @FXML
     private void handleDeleteFaculty() {
-        Faculty selected = facultyTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this record?", ButtonType.YES, ButtonType.NO);
-            confirm.showAndWait();
+        Faculty selectedFaculty = facultyTable.getSelectionModel().getSelectedItem();
+        if (selectedFaculty == null) {
+            showAlert("No Selection", "Please select a faculty member to delete.", Alert.AlertType.WARNING);
+            return;
+        }
 
-            if (confirm.getResult() == ButtonType.YES) {
-                boolean success = facultyDAO.deleteFaculty(selected.getFacultyId());
+        Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationDialog.setTitle("Confirm Deletion");
+        confirmationDialog.setHeaderText("Delete Faculty Member");
+        confirmationDialog.setContentText("Are you sure you want to delete " + selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName() + "?");
+
+        confirmationDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                boolean success = facultyDAO.deleteFaculty(selectedFaculty.getActualFacultyId());
                 if (success) {
-                    showAlert("Deleted", "Faculty successfully deleted. Click Refresh to update view.", Alert.AlertType.INFORMATION);
+                    facultyList.remove(selectedFaculty);
+                    showAlert("Success", "Faculty member deleted successfully.", Alert.AlertType.INFORMATION);
                 } else {
-                    showAlert("Error", "Failed to delete faculty.", Alert.AlertType.ERROR);
+                    showAlert("Error", "Failed to delete faculty member.", Alert.AlertType.ERROR);
                 }
             }
-        } else {
-            showAlert("Warning", "Please select a faculty member to delete.", Alert.AlertType.WARNING);
-        }
+        });
     }
 
     @FXML
@@ -316,8 +328,8 @@ public class FacultyManagementController {
                 for (Faculty f : facultyList) {
                     writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
                             escapeCsv(f.getFacultyId()), escapeCsv(f.getFirstName()), escapeCsv(f.getMiddleName()),
-                            escapeCsv(f.getLastName()), escapeCsv(f.getDepartment()), escapeCsv(f.getEmail()),
-                            escapeCsv(f.getContactNumber()), escapeCsv(f.getStatus()),
+                            escapeCsv(f.getLastName()), escapeCsv(f.getDepartmentName()), escapeCsv(f.getEmail()),
+                            escapeCsv(f.getContactNumber()), escapeCsv(f.getFacultyStatusName()),
                             Objects.toString(f.getBirthdate(), ""), Objects.toString(f.getDateJoined(), "")));
                 }
                 showAlert("Export Complete", "Faculty data successfully exported.", Alert.AlertType.INFORMATION);
@@ -329,7 +341,6 @@ public class FacultyManagementController {
 
     @FXML
     private void handlePrintReport() {
-        // Pass the currently displayed items (filtered or full list)
         ObservableList<Faculty> itemsToPrint = facultyTable.getItems();
 
         PrintableReportController.showPrintableView(new ArrayList<>(itemsToPrint));
@@ -337,27 +348,21 @@ public class FacultyManagementController {
 
     @FXML
     private void handleSearch() {
-        String keyword = searchField.getText() != null ? searchField.getText().toLowerCase().trim() : "";
-
-        if (keyword.isEmpty()) {
-            facultyTable.setItems(facultyList);  // Reset to full list if empty
-            return;
+        String query = searchField.getText().toLowerCase();
+        if (query.isEmpty()) {
+            facultyTable.setItems(facultyList);
+        } else {
+            ObservableList<Faculty> filteredList = facultyList.stream()
+                    .filter(faculty -> faculty.getFirstName().toLowerCase().contains(query) ||
+                            faculty.getLastName().toLowerCase().contains(query) ||
+                            faculty.getFacultyId().toLowerCase().contains(query) ||
+                            (faculty.getDepartmentName() != null && faculty.getDepartmentName().toLowerCase().contains(query)) || 
+                            (faculty.getEmail() != null && faculty.getEmail().toLowerCase().contains(query)) ||
+                            (faculty.getContactNumber() != null && faculty.getContactNumber().toLowerCase().contains(query)) ||
+                            (faculty.getFacultyStatusName() != null && faculty.getFacultyStatusName().toLowerCase().contains(query))) 
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList));
+            facultyTable.setItems(filteredList);
         }
-
-        List<Faculty> filtered = facultyList.stream()
-                .filter(f ->
-                        (f.getFacultyId() != null && f.getFacultyId().toLowerCase().contains(keyword)) ||
-                                (f.getFirstName() != null && f.getFirstName().toLowerCase().contains(keyword)) ||
-                                (f.getMiddleName() != null && f.getMiddleName().toLowerCase().contains(keyword)) ||
-                                (f.getLastName() != null && f.getLastName().toLowerCase().contains(keyword)) ||
-                                (f.getDepartment() != null && f.getDepartment().toLowerCase().contains(keyword)) ||
-                                (f.getEmail() != null && f.getEmail().toLowerCase().contains(keyword)) ||
-                                (f.getContactNumber() != null && f.getContactNumber().toLowerCase().contains(keyword)) ||
-                                (f.getStatus() != null && f.getStatus().toLowerCase().contains(keyword))
-                )
-                .collect(Collectors.toList());
-
-        facultyTable.setItems(FXCollections.observableArrayList(filtered));
     }
 
     private Faculty showFacultyDialog(Faculty faculty) {
@@ -375,7 +380,7 @@ public class FacultyManagementController {
 
             dialogStage.showAndWait();
 
-            if (controller.isOkClicked()) {
+            if (controller.isSaveClicked()) {
                 return controller.getFaculty();
             }
         } catch (IOException e) {

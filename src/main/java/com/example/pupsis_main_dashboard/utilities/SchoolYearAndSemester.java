@@ -1,5 +1,9 @@
 package com.example.pupsis_main_dashboard.utilities;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class SchoolYearAndSemester {
@@ -45,5 +49,42 @@ public class SchoolYearAndSemester {
         } else {
             return "Out of Academic Calendar";
         }
+    }
+
+    public static int getSemesterId(String semesterName) {
+        if (semesterName == null) {
+            return -1;
+        }
+        switch (semesterName) {
+            case "1st Semester":
+                return 1;
+            case "2nd Semester":
+                return 2;
+            case "Summer Term":
+                return 3;
+            default:
+                return -1; // Or throw an IllegalArgumentException
+        }
+    }
+
+    public static int getCurrentAcademicYearId() {
+        String academicYearName = getCurrentAcademicYear();
+        String query = "SELECT academic_year_id FROM public.academic_years WHERE academic_year_name = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, academicYearName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("academic_year_id");
+                }
+            }
+        } catch (SQLException e) {
+            // Consider logging this error
+            System.err.println("Error fetching current academic year ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // Return a sensible default or throw an exception if not found/error
     }
 }

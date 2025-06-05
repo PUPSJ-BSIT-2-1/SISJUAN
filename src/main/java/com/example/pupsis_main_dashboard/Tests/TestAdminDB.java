@@ -4,7 +4,7 @@
  * It serves as a test entry point for the application.
  */
 
-package com.example.pupsis_main_dashboard;
+package com.example.pupsis_main_dashboard.Tests;
 
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Application;
@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Objects;
 
-public class TestFacultyDB extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(TestFacultyDB.class);
+public class TestAdminDB extends Application {
+    private static final Logger logger = LoggerFactory.getLogger(TestAdminDB.class);
 
     @Override
     public void start(Stage stage) {
@@ -24,7 +24,7 @@ public class TestFacultyDB extends Application {
 
         try {
             Stage initializedStage = utility.loadStage(
-                    "fxml/FacultyDashboard.fxml",
+                    "fxml/AdminDashboard.fxml",
                     "PUPSIS",
                     Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/PUPSJ Logo.png")).toExternalForm(),
                     StageAndSceneUtils.WindowSize.MEDIUM

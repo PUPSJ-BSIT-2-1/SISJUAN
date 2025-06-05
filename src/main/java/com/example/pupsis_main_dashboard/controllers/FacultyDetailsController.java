@@ -31,12 +31,12 @@ public class FacultyDetailsController {
         firstNameLabel.setText(faculty.getFirstName());
         middleNameLabel.setText(faculty.getMiddleName());
         lastNameLabel.setText(faculty.getLastName());
-        departmentLabel.setText(faculty.getDepartment());
+        departmentLabel.setText(faculty.getDepartmentName());
         emailLabel.setText(faculty.getEmail());
         contactLabel.setText(faculty.getContactNumber());
         birthdateLabel.setText(faculty.getBirthdate() != null ? faculty.getBirthdate().toString() : "");
         dateJoinedLabel.setText(faculty.getDateJoined() != null ? faculty.getDateJoined().toString() : "");
-        statusLabel.setText(faculty.getStatus());
+        statusLabel.setText(faculty.getFacultyStatusName());
     }
 
     // Close button handler, closes the modal window

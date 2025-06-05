@@ -20,7 +20,9 @@ public class AuthenticationService {
     public static boolean authenticate(String input, String password) { // 'input' is now always student_number
         boolean isAuthenticated = false;
 
-        String query = "SELECT password, status FROM students WHERE student_number = ?"; // Always use student_number
+        String query = "SELECT s.password, ss.status_name FROM students s " +
+                       "JOIN student_statuses ss ON s.student_status_id = ss.student_status_id " +
+                       "WHERE s.student_number = ?";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -30,14 +32,14 @@ public class AuthenticationService {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String storedPassword = resultSet.getString("password");
-                String status = resultSet.getString("status");
+                String statusName = resultSet.getString("status_name");
                 
                 // Verify password and check if status is "Enrolled"
                 if (PasswordHandler.verifyPassword(password, storedPassword)) {
-                    if ("Enrolled".equalsIgnoreCase(status)) {
+                    if ("Enrolled".equalsIgnoreCase(statusName)) {
                         isAuthenticated = true;
                     } else {
-                        logger.info("Student login attempt for '{}' failed: Status is '{}', not 'Enrolled'.", input, status);
+                        logger.info("Student login attempt for '{}' failed: Status is '{}', not 'Enrolled'.", input, statusName);
                     }
                 } else {
                     logger.warn("Student login attempt for '{}' failed: Invalid password.", input);

@@ -208,7 +208,21 @@ public class AdminDashboardController {
     
     // Load faculty data from the database using faculty_id
     private void getFacultyData(String facultyIdStr) {
-        String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ? AND admin_type = TRUE";
+        String query = """
+            SELECT f.faculty_id, 
+                   COALESCE(f.faculty_number, '') AS faculty_number, 
+                   f.firstname, 
+                   COALESCE(f.middlename, '') AS middlename, 
+                   f.lastname,
+                   f.email, 
+                   COALESCE(f.contactnumber, '') AS contactnumber, 
+                   COALESCE(d.department_name, 'N/A') AS department_name, 
+                   COALESCE(fs.status_name, 'N/A') AS status
+            FROM public.faculty f
+            LEFT JOIN public.departments d ON f.department_id = d.department_id
+            LEFT JOIN public.faculty_statuses fs ON f.faculty_status_id = fs.faculty_status_id
+            WHERE f.faculty_id = ? AND f.admin_type = TRUE
+            """;
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -247,17 +261,15 @@ public class AdminDashboardController {
     
     // Update the UI with faculty data
     private void updateFacultyUI(ResultSet rs) throws SQLException {
-        String facultyId = rs.getString("faculty_id");
         String firstName = rs.getString("firstname");
         String lastName = rs.getString("lastname");
-        String department = rs.getString("department");
-        
-        String formattedName = formatFacultyName(firstName, lastName);
-        
+        String departmentName = rs.getString("department_name");
+        String facultyId = rs.getString("faculty_id");
+
         Platform.runLater(() -> {
-            studentNameLabel.setText(formattedName);
-            studentIdLabel.setText(facultyId);
-            departmentLabel.setText(department != null ? department : "Department not set");
+            studentNameLabel.setText(formatFacultyName(firstName, lastName));
+            studentIdLabel.setText("ID: " + facultyId);
+            departmentLabel.setText(departmentName);
         });
     }
     

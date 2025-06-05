@@ -63,7 +63,15 @@ public class AdminStudentManagementController implements Initializable {
     private void loadPendingStudents() {
         new Thread(() -> {
             List<StudentData> pendingStudents = new ArrayList<>();
-            String sql = "SELECT student_id, firstname, lastname, status, year_section FROM students WHERE status = 'Pending' ORDER BY lastname, firstname";
+            String sql = """
+                SELECT s.student_id, s.firstname, s.lastname, ss.status_name AS status,
+                       COALESCE(ys.year_section, 'Unknown Year - Section') AS year_section
+                FROM public.students s
+                JOIN public.student_statuses ss ON s.student_status_id = ss.student_status_id
+                    LEFT JOIN public.year_section ys ON s.current_year_section_id = ys.section_id
+                WHERE ss.status_name = 'Pending'
+                ORDER BY s.lastname, s.firstname
+            """;
 
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -157,40 +165,69 @@ public class AdminStudentManagementController implements Initializable {
         return gridPane;
     }
 
+    private int getStudentStatusIdByName(String statusName) throws SQLException {
+        String query = "SELECT student_status_id FROM public.student_statuses WHERE status_name = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, statusName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("student_status_id");
+                }
+            }
+        }
+        logger.warn("Status ID not found for status name: {}", statusName);
+        throw new SQLException("Status ID not found for name: " + statusName); // Or return a specific value like -1
+    }
+
     private void handleAcceptStudent(int studentId) {
         new Thread(() -> {
-            String sql = "UPDATE students SET status = 'Enrolled' WHERE student_id = ?";
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, studentId);
-                int affectedRows = pstmt.executeUpdate();
-                if (affectedRows > 0) {
-                    Platform.runLater(this::loadPendingStudents); 
-                } else {
-                     Platform.runLater(() -> showAlert("Update Failed", "Could not accept student. Student not found or status already updated."));
+            try {
+                int enrolledStatusId = getStudentStatusIdByName("Enrolled");
+                String sql = "UPDATE public.students SET student_status_id = ? WHERE student_id = ?";
+                try (Connection conn = DBConnection.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setInt(1, enrolledStatusId);
+                    pstmt.setInt(2, studentId);
+                    int affectedRows = pstmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        Platform.runLater(() -> {
+                            showAlert("Success", "Student accepted and status updated to Enrolled.");
+                            loadPendingStudents(); // Refresh the list
+                        });
+                    } else {
+                        Platform.runLater(() -> showAlert("Error", "Failed to update student status."));
+                    }
                 }
             } catch (SQLException e) {
-                logger.error("Failed to update student status", e);
-                Platform.runLater(() -> showAlert("Database Error", "Failed to update student status."));
+                logger.error("Error accepting student {}: ", studentId, e);
+                Platform.runLater(() -> showAlert("Database Error", "Failed to accept student: " + e.getMessage()));
             }
         }).start();
     }
 
     private void handleRejectStudent(int studentId) {
         new Thread(() -> {
-            String sql = "DELETE FROM students WHERE student_id = ?";
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, studentId);
-                int affectedRows = pstmt.executeUpdate();
-                if (affectedRows > 0) {
-                    Platform.runLater(this::loadPendingStudents); 
-                } else {
-                    Platform.runLater(() -> showAlert("Deletion Failed", "Could not reject student. Student not found."));
+            try {
+                int rejectedStatusId = getStudentStatusIdByName("Rejected"); // Assuming 'Rejected' is the status name
+                String sql = "UPDATE public.students SET student_status_id = ? WHERE student_id = ?";
+                try (Connection conn = DBConnection.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setInt(1, rejectedStatusId);
+                    pstmt.setInt(2, studentId);
+                    int affectedRows = pstmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        Platform.runLater(() -> {
+                            showAlert("Success", "Student rejected and status updated.");
+                            loadPendingStudents(); // Refresh the list
+                        });
+                    } else {
+                        Platform.runLater(() -> showAlert("Error", "Failed to update student status."));
+                    }
                 }
             } catch (SQLException e) {
-                logger.error("Failed to delete student record", e);
-                Platform.runLater(() -> showAlert("Database Error", "Failed to delete student record."));
+                logger.error("Error rejecting student {}: ", studentId, e);
+                Platform.runLater(() -> showAlert("Database Error", "Failed to reject student: " + e.getMessage()));
             }
         }).start();
     }
