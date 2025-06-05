@@ -60,11 +60,13 @@ public class FacultyDashboardController {
         homeHBox.getStyleClass().add("selected");
 
         String identifier = RememberMeHandler.getCurrentUserFacultyNumber();
+        logger.info("FacultyDashboardController.initialize: Retrieved faculty identifier: '{}'", identifier);
         if (identifier != null && !identifier.isEmpty()) {
             // Get faculty info from the database
             loadFacultyInfo(identifier);
         } else {
             // Handle case when no user is logged in
+            logger.warn("FacultyDashboardController.initialize: Faculty identifier is null or empty. Skipping faculty info load.");
             studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
             departmentLabel.setText("");
@@ -162,9 +164,13 @@ public class FacultyDashboardController {
     
     // Load faculty data from the database
     private void getFacultyData(String identifier) {
+        logger.info("FacultyDashboardController.getFacultyData: Attempting to load data for faculty identifier: '{}'", identifier);
         try (Connection connection = DBConnection.getConnection()) {
             // Query directly by faculty_number
-            String query = "SELECT faculty_number, firstname, lastname, department FROM faculty WHERE faculty_number = ?";
+            String query = "SELECT f.faculty_number, f.firstname, f.lastname, d.department_name AS department " +
+                           "FROM faculty f " +
+                           "LEFT JOIN departments d ON f.department_id = d.department_id " +
+                           "WHERE f.faculty_number = ?";
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setString(1, identifier);
                 ResultSet rs = stmt.executeQuery();
@@ -172,6 +178,8 @@ public class FacultyDashboardController {
                 if (rs.next()) {
                     updateFacultyUI(rs);
                     return;
+                } else {
+                    logger.warn("FacultyDashboardController.getFacultyData: No faculty record found for identifier: '{}'", identifier);
                 }
             }
             
@@ -184,6 +192,7 @@ public class FacultyDashboardController {
             
         } catch (SQLException e) {
             // Handle database error
+            logger.error("FacultyDashboardController.getFacultyData: SQLException while loading data for identifier: '{}'. Error: {}", identifier, e.getMessage(), e);
             Platform.runLater(() -> {
                 studentNameLabel.setText("Error loading data");
                 studentIdLabel.setText("");
@@ -200,6 +209,8 @@ public class FacultyDashboardController {
         SessionData.getInstance().setFacultyId(facultyId);
         
         formattedName = formatFacultyName(firstName, lastName);
+
+        logger.info("FacultyDashboardController.updateFacultyUI: Successfully retrieved faculty data. Formatted name: '{}', Faculty ID: '{}'", formattedName, facultyId);
 
         Platform.runLater(() -> {
             // Set the faculty ID first to ensure it's available
