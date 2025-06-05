@@ -205,6 +205,19 @@ public class StudentGradesController {
             try (ResultSet rs = stmt.executeQuery()) {
                 studentsList.clear();
                 while (rs.next()) {
+                    // Logic for final grade display
+                    Object finalGradeObj = rs.getObject("final_grade");
+                    String finalGradeDisplay = ""; // Default to blank
+                    if (finalGradeObj != null) {
+                        String finalGradeStr = finalGradeObj.toString();
+                        try {
+                            Double.parseDouble(finalGradeStr); // Check if numeric
+                            finalGradeDisplay = finalGradeStr; // It's numeric, so display it
+                        } catch (NumberFormatException e) {
+                            // Non-numeric, keep finalGradeDisplay as "" (blank)
+                        }
+                    }
+
                     studentsList.add(new Grades(
                             rs.getString("scholastic_status_name"),
                             rs.getString("subject_code"),
@@ -212,7 +225,7 @@ public class StudentGradesController {
                             rs.getString("faculty_name"),
                             rs.getString("units"),
                             rs.getString("section_code"), 
-                            rs.getObject("final_grade") != null ? rs.getString("final_grade") : "NG",
+                            finalGradeDisplay, // Use the processed display string
                             rs.getString("grade_status_name") != null ? rs.getString("grade_status_name") : "No Grade"
                     ));
                 }
@@ -402,17 +415,29 @@ public class StudentGradesController {
                 while (rs.next()) {
                     hasResults = true;
 
-                    String scholasticStatus = rs.getString("scholastic_status_name");
-                    String subCode = rs.getString("subject_code");
-                    String subDescription = rs.getString("subject_description");
-                    String facultyName = rs.getString("faculty_name");
-                    String units = rs.getString("units");
-                    String sectionCode = rs.getString("current_year_section_id"); 
-                    String finGrade = rs.getString("final_grade");
-                    String gradeStatus = rs.getString("grade_status_name");
+                    // Logic for final grade display
+                    Object finalGradeObj = rs.getObject("final_grade");
+                    String finalGradeDisplay = ""; // Default to blank
+                    if (finalGradeObj != null) {
+                        String finalGradeStr = finalGradeObj.toString();
+                        try {
+                            Double.parseDouble(finalGradeStr); // Check if numeric
+                            finalGradeDisplay = finalGradeStr; // It's numeric, so display it
+                        } catch (NumberFormatException e) {
+                            // Non-numeric, keep finalGradeDisplay as "" (blank)
+                        }
+                    }
 
-                    Grades grade = new Grades(scholasticStatus, subCode, subDescription, facultyName, units, sectionCode, finGrade, gradeStatus);
-                    filteredGrades.add(grade);
+                    studentsList.add(new Grades(
+                            rs.getString("scholastic_status_name"),
+                            rs.getString("subject_code"),
+                            rs.getString("subject_description"),
+                            rs.getString("faculty_name"),
+                            rs.getString("units"),
+                            rs.getString("section_code"),
+                            finalGradeDisplay, // Use the processed display string
+                            rs.getString("grade_status_name") != null ? rs.getString("grade_status_name") : "No Grade"
+                    ));
                 }
             }
             if (!hasResults) {
