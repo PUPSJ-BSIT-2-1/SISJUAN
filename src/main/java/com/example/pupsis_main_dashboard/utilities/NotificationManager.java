@@ -93,46 +93,34 @@ public class NotificationManager {
     }
     
     private String getCurrentUserEmail() {
-        // Get current user identifier using RememberMeHandler's static method
-        String identifier = RememberMeHandler.getCurrentUserIdentifier();
-        if (identifier == null || identifier.isEmpty()) {
-            System.err.println("NotificationManager: User identifier not found.");
+        // Get current user email using RememberMeHandler's static method
+        String email = RememberMeHandler.getCurrentUserEmail();
+        if (email == null || email.isEmpty()) {
             return null;
         }
         
-        // Otherwise, query the database for the email from students or faculty table
-        String email = null;
-        // Try students table
-        String studentQuery = "SELECT email FROM students WHERE student_number = ?";
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(studentQuery)) {
-            statement.setString(1, identifier);
-            ResultSet result = statement.executeQuery();
-            if (result.next()) {
-                email = result.getString("email");
-                if (email != null && !email.isEmpty()) return email;
-            }
-        } catch (SQLException e) {
-            System.err.println("NotificationManager: Error querying students table for email: " + e.getMessage());
+        boolean isEmail = email.contains("@");
+        
+        // If identifier is already an email, return it
+        if (isEmail) {
+            return email;
         }
         
-        // Try faculty table if not found in students
-        String facultyQuery = "SELECT email FROM faculty WHERE faculty_number = ?";
+        // Otherwise, query the database for the email
+        String query = "SELECT email FROM students WHERE student_id = ?";
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(facultyQuery)) {
-            statement.setString(1, identifier);
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
             ResultSet result = statement.executeQuery();
+            
             if (result.next()) {
-                email = result.getString("email");
+                return result.getString("email");
             }
         } catch (SQLException e) {
-            System.err.println("NotificationManager: Error querying faculty table for email: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        if (email == null) {
-            System.err.println("NotificationManager: Email not found in DB for identifier: " + identifier);
-        }
-        return email;
+        
+        return null;
     }
     
     private void showEmailErrorPopup(String errorMessage) {

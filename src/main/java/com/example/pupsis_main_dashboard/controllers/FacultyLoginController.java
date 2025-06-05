@@ -3,7 +3,6 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.EmailService;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
-import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -38,9 +37,6 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.pupsis_main_dashboard.PUPSIS;
-import com.example.pupsis_main_dashboard.controllers.SettingsController;
-
 public class FacultyLoginController {
     @FXML private VBox leftSide;
     @FXML private ImageView closeButton;
@@ -54,7 +50,6 @@ public class FacultyLoginController {
     private EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(FacultyLoginController.class.getName());
     private static final ExecutorService loginExecutor = Executors.newFixedThreadPool(4);
-    private static final String USER_TYPE = "FACULTY"; // User type constant
     
     static {Runtime.getRuntime().addShutdownHook(new Thread(loginExecutor::shutdownNow));}
 
@@ -64,27 +59,17 @@ public class FacultyLoginController {
         loginButton.setOnAction(_ -> handleLogin(leftSide));
         setupInitialState();
         requestInitialFocus();
+        Platform.runLater(this::applyInitialTheme);
     }
     
     // Sets up the initial state of the UI components, including loading saved credentials
     private void setupInitialState() {
-        String lastFacultyId = RememberMeHandler.getLastUsedUsername(USER_TYPE);
-        boolean rememberMe = RememberMeHandler.wasRememberMeSelected(USER_TYPE);
-
-        if (lastFacultyId != null && !lastFacultyId.isEmpty()) {
-            facultyIdField.setText(lastFacultyId);
-            rememberMeCheckBox.setSelected(rememberMe);
-            if (rememberMe) {
-                String savedPassword = RememberMeHandler.getSavedPassword(USER_TYPE);
-                if (savedPassword != null) {
-                    passwordField.setText(savedPassword);
-                }
-                Platform.runLater(() -> passwordField.requestFocus());
-            } else {
-                Platform.runLater(() -> facultyIdField.requestFocus());
-            }
-        } else {
-            Platform.runLater(() -> facultyIdField.requestFocus());
+        RememberMeHandler rememberMeHandler = new RememberMeHandler();
+        String[] credentials = rememberMeHandler.loadCredentials();
+        if (credentials != null) {
+            facultyIdField.setText(credentials[0]);
+            passwordField.setText(credentials[1]);
+            rememberMeCheckBox.setSelected(true);
         }
     }
 
@@ -114,8 +99,16 @@ public class FacultyLoginController {
         String identifier = facultyIdField.getText().trim();
         String password = passwordField.getText().trim();
         
+        boolean isEmail = identifier.contains("@");
+        boolean isValidId = !isEmail && identifier.matches("[A-Za-z0-9-]+");
+        
         if (identifier.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please fill in all fields");
+            return;
+        }
+        
+        if (!isEmail && !isValidId) {
+            errorLabel.setText("Invalid faculty ID format");
             return;
         }
         
@@ -134,18 +127,14 @@ public class FacultyLoginController {
                     animateBlur(mainLoginPane, false);
 
                     if (isAuthenticated) {
-                        RememberMeHandler.savePreference(USER_TYPE, identifier, password, rememberMeCheckBox.isSelected());
-                        RememberMeHandler.setCurrentUserFacultyNumber(identifier); // Changed from setCurrentUserEmail
-
-                        getFacultyFullName(identifier); // Removed isEmail parameter
+                        RememberMeHandler.saveCredentials(identifier, password, rememberMeCheckBox.isSelected());
+                        getFacultyFullName(identifier, isEmail);
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/FacultyDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                             if (stage.getScene() != null) {
-                                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-                                PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
+                                com.example.pupsis_main_dashboard.PUPSIS.applyGlobalTheme(stage.getScene());
                             }
                         } catch (IOException e) {
                             showAlert(
@@ -171,12 +160,19 @@ public class FacultyLoginController {
 
     // Faculty authentication method
     private boolean authenticateFaculty(String identifier, String password) {
-        String query = "SELECT faculty_id, password FROM faculty WHERE faculty_number = ?"; // Always use faculty_number
+        boolean isEmail = identifier.contains("@");
+        String query;
+        
+        if (isEmail) {
+            query = "SELECT faculty_id, password FROM faculty WHERE LOWER(email) = LOWER(?)";
+        } else {
+            query = "SELECT faculty_id, password FROM faculty WHERE faculty_id = ?";
+        }
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
              
-            statement.setString(1, identifier); // Always set as string for faculty_number
+            statement.setString(1, identifier);
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -188,65 +184,58 @@ public class FacultyLoginController {
                         return false;
                     }
                     
-                    // Storing faculty_number in global session via RememberMeHandler.setCurrentUserFacultyNumber
+                    // Store the faculty_id in preferences
+                    Preferences prefs = Preferences.userNodeForPackage(FacultyLoginController.class);
+                    prefs.put("faculty_id", resultSet.getString("faculty_id"));
+                    
                     return password.equals(storedPassword);
                 }
             }
         } catch (SQLException e) {
-            logger.error("Database error during faculty authentication for identifier: {}", identifier, e);
-            // Do not expose detailed SQL error to user, but log it.
+            logger.error("Database error during faculty authentication", e);
         }
-        return false; // Default to authentication failure
+        
+        return false;
     }
 
     // Retrieves and returns the full name of a faculty member
-    public static String getFacultyFullName(String identifier) { // Removed isEmail parameter
+    public static String getFacultyFullName(String identifier, boolean isEmail) {
         String fullName = "";
-        String query = "SELECT f.faculty_id, f.firstname, f.lastname, f.middlename, d.department_name, f.contactnumber, fs.status_name " +
-                       "FROM faculty f " +
-                       "LEFT JOIN departments d ON f.department_id = d.department_id " +
-                       "LEFT JOIN faculty_statuses fs ON f.faculty_status_id = fs.faculty_status_id " +
-                       "WHERE f.faculty_number = ?";
-
+        String query;
+        
+        if (isEmail) {
+            query = "SELECT faculty_id, firstname, lastname, middlename, department, contactnumber, status FROM faculty WHERE LOWER(email) = LOWER(?)";
+        } else {
+            query = "SELECT faculty_id, firstname, lastname, middlename, department, contactnumber, status FROM faculty WHERE faculty_id = ?";
+        }
+        
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
              
-            statement.setString(1, identifier); // Always set as string for faculty_number
+            statement.setString(1, identifier);
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     String firstName = resultSet.getString("firstname");
                     String lastName = resultSet.getString("lastname");
                     String middleName = resultSet.getString("middlename");
-                    String departmentName = resultSet.getString("department_name");
+                    String department = resultSet.getString("department");
                     String contactNumber = resultSet.getString("contactnumber");
-                    String statusName = resultSet.getString("status_name");
+                    String status = resultSet.getString("status");
                     String facultyId = resultSet.getString("faculty_id");
-                    
-                    logger.info("Retrieved faculty_id from DB for identifier {}: '{}'", identifier, facultyId);
                     
                     fullName = firstName + " " + (middleName != null ? middleName + " " : "") + lastName;
                     
                     // Store faculty information in preferences for use across the application
                     Preferences prefs = Preferences.userNodeForPackage(FacultyLoginController.class);
                     prefs.put("faculty_name", fullName);
-                    prefs.put("faculty_id", facultyId); // Storing in Preferences
+                    prefs.put("faculty_id", facultyId);
                     prefs.put("faculty_firstname", firstName);
                     prefs.put("faculty_lastname", lastName);
                     prefs.put("faculty_middlename", middleName != null ? middleName : "");
-                    prefs.put("faculty_department", departmentName != null ? departmentName : "");
+                    prefs.put("faculty_department", department != null ? department : "");
                     prefs.put("faculty_contactnumber", contactNumber != null ? contactNumber : "");
-                    prefs.put("faculty_status", statusName != null ? statusName : "");
-
-                    // Also set the faculty_id in SessionData
-                    if (facultyId != null && !facultyId.trim().isEmpty()) {
-                        String trimmedFacultyId = facultyId.trim();
-                        logger.info("Attempting to set SessionData.facultyId for identifier {} with: '{}'", identifier, trimmedFacultyId);
-                        SessionData.getInstance().setFacultyId(trimmedFacultyId);
-                        logger.info("SessionData.facultyId after set (retrieved immediately for verification): '{}'", SessionData.getInstance().getFacultyId());
-                    } else {
-                        logger.warn("Retrieved faculty_id ('{}') is null or effectively empty for identifier: {}. SessionData.facultyId will not be set.", facultyId, identifier);
-                    }
+                    prefs.put("faculty_status", status != null ? status : "");
                 }
             }
         } catch (SQLException e) {
@@ -258,18 +247,20 @@ public class FacultyLoginController {
 
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
-        if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-            Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-            boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-            PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
+        // Use the same preference node as the global theme system
+        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
+        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+
+        // Use the PUPSIS global theme mechanism instead of managing styles manually
+        Scene scene = mainLoginPane.getScene();
+        if (scene != null) {
+            com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(scene, isDarkMode);
         } else {
+            // If a scene isn't available yet, try again after a delay
             Platform.runLater(() -> {
-                if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-                    PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
-                } else {
-                    logger.warn("FacultyLoginController: Scene still not available for theme application.");
+                Scene delayedScene = mainLoginPane.getScene();
+                if (delayedScene != null) {
+                    com.example.pupsis_main_dashboard.PUPSIS.applyThemeToSingleScene(delayedScene, isDarkMode);
                 }
             });
         }

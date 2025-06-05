@@ -144,114 +144,92 @@ public class RoomAssignmentController {
 
     // Method to load schedules from the database
     private void loadSchedules() {
-        String sessionStudentNumber = SessionData.getInstance().getStudentNumber();
-        logger.debug("loadSchedules: Attempting to load schedules for student_number: {}", sessionStudentNumber);
-
+        String sessionStudentID = SessionData.getInstance().getStudentNumber();
+        System.out.println("STUDENT_ID:" + sessionStudentID);
+        
         // SQL query to fetch schedules for the student
-        String queryMainSchedule = """
+        String query = """
             SELECT
                 s.student_id,
                 s.student_number,
+                s.year_section,
                 sub.subject_id,
                 sub.subject_code,
                 sub.description,
                 sub.units,
                 sch.days,
-                TO_CHAR(sch.start_time, 'HH12:MI AM') AS start_time,
-                TO_CHAR(sch.end_time, 'HH12:MI AM') AS end_time,
-                COALESCE(r.room_name, 'TBA') AS room,
+                TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
+                TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time,
+                r.room_name AS room,
                 fl.load_id,
                 fac.faculty_id,
                 fac.faculty_number,
                 fac.firstname || ' ' || fac.lastname AS faculty_name,
                 sch.lecture_hour,
                 sch.laboratory_hour
-            FROM public.student_load sl
-            JOIN public.students s ON sl.student_pk_id = s.student_id
-            JOIN public.subjects sub ON sl.subject_id = sub.subject_id
-            JOIN public.faculty_load fl ON sl.faculty_load = fl.load_id
-            JOIN public.faculty fac ON fl.faculty_id = fac.faculty_id
-            LEFT JOIN public.schedule sch ON fl.load_id = sch.faculty_load_id
-            LEFT JOIN public.room r ON sch.room_id = r.room_id
-            WHERE sl.student_pk_id = ? AND fl.section_id = ?
-            ORDER BY sub.subject_code, sch.start_time;
+            FROM student_load sl
+            JOIN students s ON sl.student_id = s.student_id
+            JOIN subjects sub ON sl.subject_id = sub.subject_id
+            JOIN faculty_load fl ON sl.faculty_load = fl.load_id
+            JOIN faculty fac ON fl.faculty_id = fac.faculty_id
+            LEFT JOIN schedule sch ON fl.load_id = sch.faculty_load_id
+            LEFT JOIN room r ON sch.room_id = r.room_id
+            WHERE s.student_id = ? AND fl.year_section = ?
+            ORDER BY s.student_id, sub.subject_id, sch.start_time;
             """;
 
-        // SQL query to get student ID and their current_year_section_id
-        String queryStudentInfo = "SELECT student_id, current_year_section_id FROM public.students WHERE student_number = ?";
-
-        if (sessionStudentNumber == null || sessionStudentNumber.isEmpty()) {
-            logger.error("loadSchedules: Student number from session is null or empty. Cannot load schedules.");
-            javafx.application.Platform.runLater(() -> studentTable.setPlaceholder(new Label("Could not identify student.")));
-            return;
-        }
-
+        // SQL query to get student ID and year section based on student number
+        String query2 = "SELECT student_id, year_section FROM students WHERE student_number = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmtStudentInfo = conn.prepareStatement(queryStudentInfo);
-             PreparedStatement stmtMainSchedule = conn.prepareStatement(queryMainSchedule)) {
+             PreparedStatement stmt = conn.prepareStatement(query);
+             PreparedStatement stmt2 = conn.prepareStatement(query2)) {
 
-            int studentPkId = 0;
-            int studentCurrentYearSectionId = 0;
-
-            stmtStudentInfo.setString(1, sessionStudentNumber);
-            logger.debug("loadSchedules: Executing student info query with student_number: {}", sessionStudentNumber);
-            try (ResultSet rsStudentInfo = stmtStudentInfo.executeQuery()) {
-                if (rsStudentInfo.next()) {
-                    studentPkId = rsStudentInfo.getInt("student_id");
-                    studentCurrentYearSectionId = rsStudentInfo.getInt("current_year_section_id");
-                    logger.debug("loadSchedules: Found student_id: {}, current_year_section_id: {}", studentPkId, studentCurrentYearSectionId);
-                } else {
-                    logger.warn("loadSchedules: No student found with student_number: {}. Cannot load schedules.", sessionStudentNumber);
-                    javafx.application.Platform.runLater(() -> studentTable.setPlaceholder(new Label("Student record not found.")));
-                    return;
-                }
-            }
-
-            if (studentPkId == 0 || studentCurrentYearSectionId == 0) {
-                logger.error("loadSchedules: studentPkId or studentCurrentYearSectionId is 0, which is invalid. Aborting schedule load.");
-                javafx.application.Platform.runLater(() -> studentTable.setPlaceholder(new Label("Student section info missing.")));
+            if (sessionStudentID == null || sessionStudentID.isEmpty()) {
+                logger.error("Session faculty ID is null or empty");
                 return;
             }
-
-            stmtMainSchedule.setInt(1, studentPkId);
-            stmtMainSchedule.setInt(2, studentCurrentYearSectionId);
-            logger.debug("loadSchedules: Executing main schedule query with student_id: {} and section_id: {}", studentPkId, studentCurrentYearSectionId);
-
-            ObservableList<Schedule> localScheduleList = FXCollections.observableArrayList();
-            try (ResultSet rsMain = stmtMainSchedule.executeQuery()) {
-                while (rsMain.next()) {
-                    String subjectCode = rsMain.getString("subject_code");
-                    String subjectDescription = rsMain.getString("description");
-                    int units = rsMain.getInt("units");
-                    String days = rsMain.getString("days");
-                    String startTime = rsMain.getString("start_time");
-                    String endTime = rsMain.getString("end_time");
-                    String room = rsMain.getString("room");
-                    String facultyName = rsMain.getString("faculty_name");
-                    int lectureHour = rsMain.getInt("lecture_hour");
-                    int laboratoryHour = rsMain.getInt("laboratory_hour");
-
-                    Schedule schedule = new Schedule(subjectCode, subjectDescription, units, days, startTime, endTime, room, facultyName, lectureHour, laboratoryHour);
-                    localScheduleList.add(schedule);
+            int studentID = 0;
+            String studentYearSection = "";
+            stmt2.setString(1, sessionStudentID);
+            try (ResultSet rs = stmt2.executeQuery()) {
+                while (rs.next()) {
+                    studentID = rs.getInt("student_id");
+                    studentYearSection = rs.getString("year_section");
                 }
             }
-            logger.debug("loadSchedules: Found {} schedule entries.", localScheduleList.size());
+            stmt.setInt(1, studentID);
+            stmt.setString(2, studentYearSection);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Get values first
+                    int loadID = rs.getInt("load_id");
+                    String subjectID = rs.getString("subject_id");
+                    String facultyNumber = rs.getString("faculty_number");
+                    String subCode = rs.getString("subject_code");
+                    String description = rs.getString("description");
+                    String facultyName = rs.getString("faculty_name");
+                    String facultyID = rs.getString("faculty_id");
+                    String yearSection = rs.getString("year_section");
+                    String days = rs.getString("days");
+                    String startTime = rs.getString("start_time");
+                    String endTime = rs.getString("end_time");
+                    String room = rs.getString("room");
+                    int units = rs.getInt("units");
+                    int lectureHour = rs.getInt("lecture_hour");
+                    int labHour = rs.getInt("laboratory_hour");
 
-            javafx.application.Platform.runLater(() -> {
-                scheduleList.setAll(localScheduleList);
-                if (scheduleList.isEmpty()) {
-                    studentTable.setPlaceholder(new Label("No schedule available for your section."));
-                } else {
-                    studentTable.setPlaceholder(null); // Remove placeholder if data is loaded
+                    Schedule schedule = new Schedule(
+                            loadID, null, subjectID, facultyNumber, subCode, description, facultyName, facultyID, yearSection, days,
+                            startTime, endTime, room, units, lectureHour, labHour, null
+                    );
+
+                    scheduleList.add(schedule);
                 }
-            });
-
-        } catch (SQLException e) {
-            logger.error("loadSchedules: SQL Error loading schedules for student {}: ", sessionStudentNumber, e);
-            javafx.application.Platform.runLater(() -> studentTable.setPlaceholder(new Label("Error loading schedule.")));
-        } catch (Exception e) {
-            logger.error("loadSchedules: Unexpected error loading schedules for student {}: ", sessionStudentNumber, e);
-            javafx.application.Platform.runLater(() -> studentTable.setPlaceholder(new Label("Unexpected error.")));
+            }
+        } catch (SQLException ex) {
+            logger.error("Error loading school events", ex);
         }
     }
 }
+
+

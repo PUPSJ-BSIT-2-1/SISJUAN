@@ -57,7 +57,7 @@ public class FacultyTabController {
             Faculty f = cellData.getValue();
             return new SimpleStringProperty(f.getFirstName() + " " + f.getLastName());
         });
-        deptColumn.setCellValueFactory(new PropertyValueFactory<>("departmentName"));
+        deptColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
         joinedColumn.setCellValueFactory(cellData -> {
             LocalDate date = cellData.getValue().getDateJoined();
             return new SimpleStringProperty(date != null ? date.toString() : "");
@@ -107,11 +107,11 @@ public class FacultyTabController {
             List<Faculty> allFaculty = facultyDAO.getAllFaculty();
             int total = allFaculty.size();
             long fullTimeCount = allFaculty.stream()
-                    .filter(f -> f.getFacultyStatusName() != null && "Full-time".equalsIgnoreCase(f.getFacultyStatusName()))
+                    .filter(f -> "Fulltime".equalsIgnoreCase(f.getStatus()))
                     .count();
 
             long partTimeCount = allFaculty.stream()
-                    .filter(f -> f.getFacultyStatusName() != null && "Part-time".equalsIgnoreCase(f.getFacultyStatusName()))
+                    .filter(f -> "Part time".equalsIgnoreCase(f.getStatus()))
                     .count();
 
             totalFacultyLabel.setText("👨‍🏫 Total Faculty: " + total);
@@ -145,7 +145,7 @@ public class FacultyTabController {
                     .filter(f ->
                             (f.getFirstName() != null && f.getFirstName().toLowerCase().contains(keyword.toLowerCase())) ||
                                     (f.getLastName() != null && f.getLastName().toLowerCase().contains(keyword.toLowerCase())) ||
-                                    (f.getDepartmentName() != null && f.getDepartmentName().toLowerCase().contains(keyword.toLowerCase())) ||
+                                    (f.getDepartment() != null && f.getDepartment().toLowerCase().contains(keyword.toLowerCase())) ||
                                     (f.getFacultyId() != null && f.getFacultyId().toLowerCase().contains(keyword.toLowerCase()))
                     )
                     .collect(Collectors.toList());

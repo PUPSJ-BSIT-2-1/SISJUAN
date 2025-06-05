@@ -217,11 +217,8 @@ public class ADMINSubjectController implements Initializable {
 
         // Fetch subjects from Supabase
         try (Connection connection = DBConnection.getConnection()) {
-            String query = "SELECT s.subject_code, s.pre_requisites, s.description, s.units, yl.year_level_name AS year_level, sem.semester_name AS semester " +
-                           "FROM public.subjects s " +
-                           "JOIN public.year_levels yl ON s.year_level_id = yl.year_level_id " +
-                           "JOIN public.semesters sem ON s.semester_id = sem.semester_id " +
-                           "ORDER BY yl.year_level_name, sem.semester_name, s.subject_code";
+            String query = "SELECT subject_code, pre_requisites, description, units, year_level, semester " +
+                    "FROM subjects ORDER BY year_level, semester, subject_code";
 
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
@@ -231,8 +228,8 @@ public class ADMINSubjectController implements Initializable {
                     String preRequisites = resultSet.getString("pre_requisites");
                     String description = resultSet.getString("description");
                     double units = resultSet.getDouble("units");
-                    String yearLevel = resultSet.getString("year_level"); // Already aliased from yl.year_level_name
-                    String semester = resultSet.getString("semester"); // Now aliased from sem.semester_name
+                    String yearLevel = resultSet.getString("year_level");
+                    String semester = resultSet.getString("semester");
 
                     // Using subjectCode for equivSubjectCode as specified
                     SubjectManagement subject = new SubjectManagement(

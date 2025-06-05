@@ -1,6 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.PUPSIS;
+//import com.example.pupsis_main_dashboard.utility.ControllerUtils;
+
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
@@ -45,7 +46,11 @@ public class AdminDashboardController {
     @FXML private Node fade1;
     @FXML private Node fade2;
 
-    private static final String USER_TYPE = "ADMIN";
+    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
+    private final Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
+    private final Map<String, Parent> contentCache = new HashMap<>();
+    
+    // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
     private static final String USERS_FXML = null;
     private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/ADMINSubjectModule.fxml";
@@ -56,23 +61,17 @@ public class AdminDashboardController {
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
     private static final String STUDENT_MANAGEMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentManagement.fxml";
 
-    private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
-    private final Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
-    private final Map<String, Parent> contentCache = new HashMap<>();
-    
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class); // Use AdminLoginController's preferences node
-        String facultyId = prefs.get("admin_id", null); // Retrieve stored faculty_id
-
-        if (facultyId != null && !facultyId.isEmpty()) {
-            loadFacultyInfo(facultyId);
+        String identifier = RememberMeHandler.getCurrentUserEmail();
+        if (identifier != null && !identifier.isEmpty()) {
+            // Get faculty info from the database
+            loadFacultyInfo(identifier);
         } else {
-            // Handle case when no user is logged in or faculty_id is not found
-            logger.warn("Admin faculty_id not found in preferences. Cannot load admin info.");
-            studentNameLabel.setText("User not identified");
+            // Handle a case when no user is logged in
+            studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
             departmentLabel.setText("");
         }
@@ -90,16 +89,6 @@ public class AdminDashboardController {
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
 
-        // Apply theme to the main dashboard scene
-        Platform.runLater(() -> {
-            if (contentPane != null && contentPane.getScene() != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
-            } else {
-                logger.warn("AdminDashboardController: Scene not available for initial theme application.");
-            }
-        });
     }
 
     // Set up click handlers for all sidebar menu items
@@ -180,8 +169,8 @@ public class AdminDashboardController {
                 Parent content = loader.load();
 
                 // Apply theme to this loaded content
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                Preferences prefs = Preferences.userNodeForPackage(SettingsController.class);
+                boolean darkModeEnabled = prefs.getBoolean("darkMode", false);
 
                 if (content != null) {
                     // Apply appropriate CSS classes based on the current theme
@@ -201,58 +190,53 @@ public class AdminDashboardController {
     }
     
     // Load faculty information from a database
-    private void loadFacultyInfo(String facultyId) {
+    private void loadFacultyInfo(String identifier) {
         // Get and display faculty name and ID
-        getFacultyData(facultyId);
+        getFacultyData(identifier);
     }
     
-    // Load faculty data from the database using faculty_id
-    private void getFacultyData(String facultyIdStr) {
-        String query = """
-            SELECT f.faculty_id, 
-                   COALESCE(f.faculty_number, '') AS faculty_number, 
-                   f.firstname, 
-                   COALESCE(f.middlename, '') AS middlename, 
-                   f.lastname,
-                   f.email, 
-                   COALESCE(f.contactnumber, '') AS contactnumber, 
-                   COALESCE(d.department_name, 'N/A') AS department_name, 
-                   COALESCE(fs.status_name, 'N/A') AS status
-            FROM public.faculty f
-            LEFT JOIN public.departments d ON f.department_id = d.department_id
-            LEFT JOIN public.faculty_statuses fs ON f.faculty_status_id = fs.faculty_status_id
-            WHERE f.faculty_id = ? AND f.admin_type = TRUE
-            """;
+    // Load faculty data from the database
+    private void getFacultyData(String identifier) {
+        boolean isEmail = identifier.contains("@");
         
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-            
-            stmt.setInt(1, Integer.parseInt(facultyIdStr)); // faculty_id is int2, so parse and set as int
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    updateFacultyUI(rs);
-                } else {
-                    // Faculty with this ID not found or is not an admin
-                    logger.warn("Admin data not found for faculty_id: {} or user is not admin_type=TRUE", facultyIdStr);
-                    Platform.runLater(() -> {
-                        studentNameLabel.setText("Admin Not Found");
-                        studentIdLabel.setText("ID: " + facultyIdStr);
-                        departmentLabel.setText("-");
-                    });
+        try (Connection connection = DBConnection.getConnection()) {
+            // First, try by ID if the identifier is not an email
+            if (!isEmail) {
+                String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                    stmt.setString(1, identifier);
+                    ResultSet rs = stmt.executeQuery();
+                    
+                    if (rs.next()) {
+                        updateFacultyUI(rs);
+                        return;
+                    }
                 }
             }
+            
+            // If not found by ID or is an email, try with email (case-insensitive)
+            String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE LOWER(email) = LOWER(?)";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, identifier);
+                ResultSet rs = stmt.executeQuery();
+                
+                if (rs.next()) {
+                    updateFacultyUI(rs);
+                    return;
+                }
+            }
+            
+            // If we get here, faculty not found
+            Platform.runLater(() -> {
+                studentNameLabel.setText("Unknown Faculty");
+                studentIdLabel.setText("ID not found");
+                departmentLabel.setText("Department not found");
+            });
+            
         } catch (SQLException e) {
-            logger.error("Database error while fetching admin data for faculty_id: " + facultyIdStr, e);
+            // Handle database error
             Platform.runLater(() -> {
                 studentNameLabel.setText("Error loading data");
-                studentIdLabel.setText("");
-                departmentLabel.setText("");
-            });
-        } catch (NumberFormatException e) {
-            logger.error("Error parsing faculty_id from preferences: " + facultyIdStr, e);
-            Platform.runLater(() -> {
-                studentNameLabel.setText("Invalid Admin ID format");
                 studentIdLabel.setText("");
                 departmentLabel.setText("");
             });
@@ -261,35 +245,33 @@ public class AdminDashboardController {
     
     // Update the UI with faculty data
     private void updateFacultyUI(ResultSet rs) throws SQLException {
+        String facultyId = rs.getString("faculty_id");
         String firstName = rs.getString("firstname");
         String lastName = rs.getString("lastname");
-        String departmentName = rs.getString("department_name");
-        String facultyId = rs.getString("faculty_id");
-
+        String department = rs.getString("department");
+        
+        String formattedName = formatFacultyName(firstName, lastName);
+        
         Platform.runLater(() -> {
-            studentNameLabel.setText(formatFacultyName(firstName, lastName));
-            studentIdLabel.setText("ID: " + facultyId);
-            departmentLabel.setText(departmentName);
+            studentNameLabel.setText(formattedName);
+            studentIdLabel.setText(facultyId);
+            departmentLabel.setText(department != null ? department : "Department not set");
         });
     }
     
-    // Format the faculty name as "FirstName LastName"
+    // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
-        
-        // Add first name
-        if (firstName != null && !firstName.trim().isEmpty()) {
-            formattedName.append(firstName.trim());
-        }
-        
-        // Add a space if both names are present
-        if (formattedName.length() > 0 && lastName != null && !lastName.trim().isEmpty()) {
-            formattedName.append(" ");
-        }
         
         // Add last name
         if (lastName != null && !lastName.trim().isEmpty()) {
             formattedName.append(lastName.trim());
+            formattedName.append(", ");
+        }
+        
+        // Add first name
+        if (firstName != null && !firstName.trim().isEmpty()) {
+            formattedName.append(firstName.trim());
         }
         
         return formattedName.toString().trim();
@@ -352,14 +334,6 @@ public class AdminDashboardController {
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
-            // Ensure the content has the correct theme applied before displaying
-            if (content != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-                content.getStyleClass().removeAll("light-theme", "dark-theme");
-                content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
-            }
-
             contentPane.setContent(content);
             resetScrollPosition();
         } catch (IOException e) {
@@ -399,7 +373,7 @@ public class AdminDashboardController {
         StageAndSceneUtils.clearCache();
         if (logoutHBox.getScene() != null && logoutHBox.getScene().getWindow() != null) {
             Stage currentStage = (Stage) logoutHBox.getScene().getWindow();
-            stageUtils.loadStage(currentStage, "/com/example/pupsis_main_dashboard/fxml/AdminLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            stageUtils.loadStage(currentStage, "fxml/FacultyLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         }
     }
 

@@ -11,9 +11,6 @@ import javafx.scene.control.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.event.ActionEvent;
-import javafx.concurrent.Task;
-import java.util.List;
-import java.util.ArrayList;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -79,105 +76,53 @@ public class StudentHomeContentController {
     // If an error occurs, it sets the label to a default value ("Student").
     @FXML
     public void initialize() {
-        // Set initial placeholder text for all labels that will be loaded
+        // Set placeholder while loading
         studentNameLabel.setText("Loading...");
-        yearLevel.setText("Loading...");
-        semester.setText("Loading...");
-        status.setText("Loading...");
-        semGPA.setText("Loading...");
-        totalSubjects.setText("Loading...");
-        numAnnouncements.setText("Loading...");
-        listAnnouncements.getItems().clear(); // Clear previous items
-        // Consider adding a ProgressIndicator as well
 
-        Task<HomeContentData> loadHomeDataTask = new Task<>() {
-            @Override
-            protected HomeContentData call() throws Exception {
-                String identifier = RememberMeHandler.getCurrentUserStudentNumber();
-                if (identifier == null || identifier.isEmpty()) {
-                    throw new IllegalStateException("No user logged in.");
+        // Create a background task to load student info
+        Thread thread = new Thread(() -> {
+            try {
+                String identifier = RememberMeHandler.getCurrentUserEmail();
+
+                if (identifier != null && !identifier.isEmpty()) {
+                    String fullName = StudentLoginController.getStudentFullName(identifier, identifier.contains("@"));
+
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        determineCurrentYearLevel();
+                        determineCurrentSemester();
+                        determineCurrentStatus();
+                        calculateTotalSubjects();
+                        calculateCurrentGWA();
+                        populateAnnouncements();
+                        calculateNumAnnouncements();
+                        if (fullName.contains(",")) {
+                            String[] nameParts = fullName.split(",");
+                            String firstName = nameParts.length > 1 ?
+                                    nameParts[1].trim().split(" ")[0] : nameParts[0].trim();
+                            firstName = firstName.substring(0, 1).toUpperCase() +
+                                    firstName.substring(1).toLowerCase();
+                            studentNameLabel.setText(firstName);
+
+                            // Log the student name in home content
+                            logger.info("Home content loaded for student: {} (identifier: {})",
+                                    fullName, identifier);
+                        } else {
+                            studentNameLabel.setText("Student");
+                            logger.warn("Could not parse student name from: {}", fullName);
+                        }
+                    });
+                } else {
+                    Platform.runLater(() -> studentNameLabel.setText("Student"));
                 }
-
-                // Fetch all data in the background
-                String fullStudentName = StudentLoginController.getStudentFullName(identifier);
-                String studentFirstName = "Student"; // Default
-                if (fullStudentName != null && fullStudentName.contains(",")) {
-                    String[] nameParts = fullStudentName.split(",");
-                    studentFirstName = nameParts.length > 1 ? nameParts[1].trim().split(" ")[0] : nameParts[0].trim();
-                    studentFirstName = studentFirstName.substring(0, 1).toUpperCase() + studentFirstName.substring(1).toLowerCase();
-                } else if (fullStudentName != null) {
-                    studentFirstName = fullStudentName; // Use full name if parsing fails
-                }
-
-                String studentNumberForQueries = SessionData.getInstance().getStudentNumber();
-                if (studentNumberForQueries == null || studentNumberForQueries.isEmpty()) {
-                    studentNumberForQueries = fetchStudentNumber(identifier);
-                    if (studentNumberForQueries != null) {
-                        SessionData.getInstance().setStudentNumber(studentNumberForQueries);
-                    } else {
-                        throw new SQLException("Could not determine student number for queries.");
-                    }
-                }
-
-                String yearLevelText = determineCurrentYearLevelLogic(studentNumberForQueries);
-                SemesterInfo semesterInfo = determineCurrentSemesterInfoLogic(studentNumberForQueries);
-                String statusText = determineCurrentStatusLogic(studentNumberForQueries);
-                int currentAcademicYearId = com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester.getCurrentAcademicYearId();
-                String totalSubjectsText = calculateTotalSubjectsLogic(studentNumberForQueries, currentAcademicYearId, semesterInfo.id());
-                String gwaText = calculateCurrentGWALogic(studentNumberForQueries);
-                List<String> announcements = populateAnnouncementsLogic();
-                String numAnnouncementsText = String.valueOf(announcements.size());
-
-                return new HomeContentData(studentFirstName, fullStudentName, yearLevelText, semesterInfo, statusText, gwaText, totalSubjectsText, announcements, numAnnouncementsText);
+            } catch (Exception e) {
+                logger.error("Error initializing home content: {}", e.getMessage(), e);
+                Platform.runLater(() -> studentNameLabel.setText("Student"));
             }
-        };
-
-        loadHomeDataTask.setOnSucceeded(event -> {
-            HomeContentData data = loadHomeDataTask.getValue();
-
-            studentNameLabel.setText(data.studentFirstName);
-            yearLevel.setText(data.yearLevelText);
-            semester.setText(data.semesterInfo.name()); // Use name from SemesterInfo
-            status.setText(data.statusText);
-            semGPA.setText(data.gwaText);
-            totalSubjects.setText(data.totalSubjectsText);
-            listAnnouncements.getItems().setAll(data.announcements);
-            numAnnouncements.setText(data.numAnnouncementsText);
-
-            logger.info("Home content loaded for student: {} (identifier: {})", 
-                        data.fullStudentName, RememberMeHandler.getCurrentUserStudentNumber());
         });
 
-        loadHomeDataTask.setOnFailed(event -> {
-            Throwable ex = loadHomeDataTask.getException();
-            logger.error("Error initializing home content: {}", ex.getMessage(), ex);
-            // Set labels to error or default state
-            studentNameLabel.setText("Error");
-            yearLevel.setText("N/A");
-            semester.setText("N/A");
-            status.setText("N/A");
-            semGPA.setText("N/A");
-            totalSubjects.setText("N/A");
-            numAnnouncements.setText("N/A");
-            listAnnouncements.getItems().setAll("Failed to load announcements.");
-        });
-
-        new Thread(loadHomeDataTask).start();
-    }
-
-    // Helper method to fetch student number if not in session (implement if needed)
-    private String fetchStudentNumber(String identifier) throws SQLException {
-        String query = "SELECT student_number FROM students WHERE student_number = ?";
-        
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, identifier);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("student_number");
-            }
-        }
-        return null;
+        thread.setDaemon(true);
+        thread.start();
     }
 
     // Handler for viewGradesButton click
@@ -204,205 +149,174 @@ public class StudentHomeContentController {
 
     // Handler for seeEnrollmentButton click
     private void seeEnrollmentButtonClick(ActionEvent event) {
-        if (studentDashboardController != null) {
-            logger.info("See Enrollment button clicked, loading enrollment content");
-            studentDashboardController.loadContent(ENROLLMENT_FXML);
-            studentDashboardController.handleQuickActionClicks(ENROLLMENT_FXML);
-        } else {
-            logger.error("StudentDashboardController reference is null, cannot load enrollment content");
+        logger.info("See Enrollment button clicked, loading enrollment content");
+        studentDashboardController.loadContent(ENROLLMENT_FXML);
+        studentDashboardController.handleQuickActionClicks(ENROLLMENT_FXML);
+    }
+
+    private void determineCurrentYearLevel() {
+        String identifier = SessionData.getInstance().getStudentNumber();
+
+        String query = "SELECT year_section FROM students WHERE student_number = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, identifier);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String yearSection = rs.getString("year_section");
+                determineYearLevel(yearSection);
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving year level", e);
         }
     }
 
-    // Method to determine current year level
-    private String determineCurrentYearLevelLogic(String studentNumber) {
-        String query = """
-            SELECT ys.year_section
-            FROM public.students s
-            JOIN public.year_section ys ON s.current_year_section_id = ys.section_id
-            WHERE s.student_number = ?;
-            """;
+    private void determineYearLevel(String yearSection) {
+        String[] splitYearLevel = yearSection.split("-");
+        switch (splitYearLevel[0]) {
+            case "1":
+                yearLevel.setText("1st Year");
+                break;
+            case "2":
+                yearLevel.setText("2nd Year");
+                break;
+            case "3":
+                yearLevel.setText("3rd Year");
+                break;
+            case "4":
+                yearLevel.setText("4th Year");
+                break;
+        }
+    }
+
+    private void determineCurrentSemester() {
+        String identifier = SessionData.getInstance().getStudentNumber();
+
+        String query = "SELECT semester FROM year_section JOIN students ON year_section.year_section = students.year_section WHERE student_number = ?";
+
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, studentNumber);
+
+            stmt.setString(1, identifier);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
-                String yearSectionText = rs.getString("year_section"); // e.g., "BSIT 1-1"
-                if (yearSectionText != null && !yearSectionText.isEmpty()) {
-                    // Basic parsing: Assumes format like "COURSE X-Y"
-                    // More robust parsing might be needed depending on actual year_section formats
-                    String[] parts = yearSectionText.split(" ");
-                    if (parts.length > 1) {
-                        String yearPart = parts[1].split("-")[0]; // Takes the 'X' from "X-Y"
-                        switch (yearPart) {
-                            case "1": return "1st Year";
-                            case "2": return "2nd Year";
-                            case "3": return "3rd Year";
-                            case "4": return "4th Year";
-                            // Add more cases if needed (e.g., 5th year for some courses)
-                            default: return yearPart + "th Year"; // Fallback
-                        }
-                    }
-                    return yearSectionText; // Fallback to full text if parsing fails
+                String currentSemester = rs.getString("semester");
+                semester.setText(currentSemester);
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving semester", e);
+        }
+    }
+
+    private void determineCurrentStatus() {
+        String identifier = SessionData.getInstance().getStudentNumber();
+
+        String query = "SELECT status FROM students WHERE student_number = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, identifier);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String currentStatus = rs.getString("status");
+                determineStatus(currentStatus);
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving status", e);
+        }
+    }
+
+    private void determineStatus(String currentStatus) {
+        switch (currentStatus) {
+            case "Pending":
+                status.setText("Pending");
+                break;
+            case "Enrolled":
+                status.setText("Enrolled");
+                break;
+        }
+    }
+
+    private void calculateTotalSubjects() {
+        String identifier = SessionData.getInstance().getStudentNumber();
+
+        String getStudentID = "SELECT student_id FROM students WHERE student_number = ?";
+        String query = """  
+            SELECT COUNT(*) AS total_subjects
+            FROM student_load sl
+            JOIN year_section yr ON sl.year_section = yr.year_section
+                AND sl.semester = yr.semester\s
+                AND sl.academic_year = yr.academic_year\s
+            WHERE sl.student_id = ?;
+            """;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt1 = connection.prepareStatement(getStudentID);
+             PreparedStatement stmt2 = connection.prepareStatement(query)) {
+
+            stmt1.setString(1, identifier);
+            ResultSet rs1 = stmt1.executeQuery();
+
+            if (rs1.next()) {
+                int studentID = rs1.getInt("student_id");
+                stmt2.setInt(1, studentID);
+                ResultSet rs2 = stmt2.executeQuery();
+
+                if (rs2.next()) {
+                    int subjects = rs2.getInt("total_subjects");
+                    totalSubjects.setText(String.valueOf(subjects));
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error retrieving year level for student {}: {}", studentNumber, e.getMessage());
+            logger.error("Error retrieving total subjects", e);
+            totalSubjects.setText("0");
         }
-        return "N/A";
     }
 
-    // Helper record for semester information
-    private record SemesterInfo(String name, int id) {
-        // Default values for safety, though actual logic should prevent their direct use if DB call fails.
-        public static final SemesterInfo DEFAULT = new SemesterInfo("N/A", 0);
+    private void calculateCurrentGWA() {
+        double currentGWA = StudentGradesController.getGWA();
+        if (currentGWA != 0.00) {
+            semGPA.setText(String.format("%.2f", currentGWA));
+        }
+        else {
+            semGPA.setText("N/A");
+        }
     }
 
-    // Placeholder method for determining current semester
-    private SemesterInfo determineCurrentSemesterInfoLogic(String studentNumber) {
-        String query = """
-            SELECT sem.semester_name, sem.semester_id
-            FROM public.students s
-            JOIN public.year_section ys ON s.current_year_section_id = ys.section_id
-            JOIN public.semesters sem ON ys.semester_id = sem.semester_id
-            WHERE s.student_number = ?;
-            """;
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, studentNumber);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                String name = rs.getString("semester_name");
-                int id = rs.getInt("semester_id");
-                return new SemesterInfo(name, id);
-            }
-        } catch (SQLException e) {
-            logger.error("Error retrieving semester info for student {}: {}", studentNumber, e.getMessage());
-        }
-        return SemesterInfo.DEFAULT; // Return default N/A, 0 if error or not found
-    }
+    private void populateAnnouncements() {
+        listAnnouncements.getItems().clear();
+        String query = "SELECT announcement || '( || date || )' as announcement FROM announcement ORDER BY date DESC LIMIT 5";
 
-    // Placeholder method for determining current status
-    private String determineCurrentStatusLogic(String studentNumber) {
-        // Using scholastic_status_id as requested
-        String query = """
-            SELECT ss.status_name
-            FROM public.students s
-            JOIN public.scholastic_statuses ss ON s.scholastic_status_id = ss.scholastic_status_id
-            WHERE s.student_number = ?;
-            """;
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, studentNumber);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("status_name");
-            }
-        } catch (SQLException e) {
-            logger.error("Error retrieving status for student {}: {}", studentNumber, e.getMessage());
-        }
-        return "N/A";
-    }
-
-    // Placeholder method for calculating total subjects
-    private String calculateTotalSubjectsLogic(String studentNumber, int academicYearId, int semesterId) {
-        // First get student_id (PK) from student_number
-        int studentPkId = -1;
-        String studentIdQuery = "SELECT student_id FROM public.students WHERE student_number = ?;";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmtStudentId = conn.prepareStatement(studentIdQuery)) {
-            pstmtStudentId.setString(1, studentNumber);
-            try (ResultSet rsStudentId = pstmtStudentId.executeQuery()) {
-                if (rsStudentId.next()) {
-                    studentPkId = rsStudentId.getInt("student_id");
-                }
-            }
-        } catch (SQLException e) {
-            logger.error("Error fetching student_pk_id for {}: {}", studentNumber, e.getMessage());
-            return "N/A";
-        }
-
-        if (studentPkId == -1) {
-            logger.warn("Could not find student_pk_id for student_number: {}", studentNumber);
-            return "N/A";
-        }
-
-        // academicYearId and semesterId are now passed as parameters
-        if (academicYearId == 0 || semesterId == 0) { // Assuming 0 is an invalid/default ID
-             logger.warn("Invalid academic year/semester ID (academicYearId: {}, semesterId: {}) for subject count.", academicYearId, semesterId);
-             return "N/A";
-        }
-
-        String query = """
-            SELECT COUNT(*) AS subject_count
-            FROM public.student_load sl
-            WHERE sl.student_pk_id = ?
-              AND sl.academic_year_id = ?
-              AND sl.semester_id = ?;
-            """;
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, studentPkId);
-            stmt.setInt(2, academicYearId);
-            stmt.setInt(3, semesterId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return String.valueOf(rs.getInt("subject_count"));
-            }
-        } catch (SQLException e) {
-            logger.error("Error calculating total subjects for student {}: {}", studentNumber, e.getMessage());
-        }
-        return "N/A";
-    }
-
-    // Placeholder method for calculating current GWA
-    private String calculateCurrentGWALogic(String studentNumber) {
-        // GWA calculation can be complex and might involve joining grades, subjects (for units).
-        // This is a placeholder.
-        logger.warn("GWA calculation logic is a placeholder for student {}.", studentNumber);
-        return "N/A"; // Placeholder
-    }
-
-    // Method to populate announcements
-    private List<String> populateAnnouncementsLogic() {
-        List<String> announcements = new ArrayList<>();
-        String query = "SELECT announcement FROM public.announcement ORDER BY date DESC LIMIT 5;"; // Corrected table name
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                announcements.add(rs.getString("announcement"));
+
+            if (rs.isBeforeFirst()) {
+                while (rs.next()) {
+                    String announcement = rs.getString("announcement");
+                    listAnnouncements.getItems().add("• " + announcement);
+                }
+            } else {
+                listAnnouncements.getItems().clear();
+                listAnnouncements.getItems().add("• No announcements available");
             }
+
         } catch (SQLException e) {
-            logger.error("Error populating announcements: {}", e.getMessage());
-            announcements.add("Failed to load announcements.");
+            logger.error("Error retrieving announcements", e);
         }
-        return announcements;
     }
 
-    // Static inner class to hold data for the home content UI
-    private static class HomeContentData {
-        final String studentFirstName;
-        final String fullStudentName;
-        final String yearLevelText;
-        final SemesterInfo semesterInfo; // Changed from String to SemesterInfo
-        final String statusText;
-        final String gwaText;
-        final String totalSubjectsText;
-        final List<String> announcements;
-        final String numAnnouncementsText;
-
-        public HomeContentData(String studentFirstName, String fullStudentName, String yearLevelText, 
-                               SemesterInfo semesterInfo, String statusText, String gwaText, 
-                               String totalSubjectsText, List<String> announcements, String numAnnouncementsText) {
-            this.studentFirstName = studentFirstName;
-            this.fullStudentName = fullStudentName;
-            this.yearLevelText = yearLevelText;
-            this.semesterInfo = semesterInfo;
-            this.statusText = statusText;
-            this.gwaText = gwaText;
-            this.totalSubjectsText = totalSubjectsText;
-            this.announcements = announcements;
-            this.numAnnouncementsText = numAnnouncementsText;
+    private void calculateNumAnnouncements() {
+        int numberOfAnnouncements = listAnnouncements.getItems().size();
+        if (listAnnouncements.getItems().contains("• No announcements available")) {
+            numberOfAnnouncements--;
         }
+        numAnnouncements.setText(String.valueOf(numberOfAnnouncements));
     }
 }

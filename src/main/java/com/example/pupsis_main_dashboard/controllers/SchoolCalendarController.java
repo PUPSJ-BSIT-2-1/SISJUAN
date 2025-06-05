@@ -68,10 +68,9 @@ public class SchoolCalendarController {
         eventsMap.clear(); // Clear old data before loading new
 
         String query = """
-                    SELECT ed.event_date, e.event_description, et.type_name AS event_type
-                    FROM public.school_dates ed
-                    JOIN public.school_events e ON ed.event_id = e.event_id
-                    JOIN public.event_types et ON e.event_type_id = et.event_type_id
+                    SELECT ed.event_date, e.event_description, e.event_type
+                    FROM school_dates ed
+                    JOIN school_events e ON ed.event_id = e.event_id
                 """;
 
         try (Connection conn = DBConnection.getConnection();

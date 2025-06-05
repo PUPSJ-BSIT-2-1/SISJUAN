@@ -11,9 +11,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.concurrent.Task;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -25,12 +22,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.example.pupsis_main_dashboard.PUPSIS;
 
 public class StudentDashboardController {
 
@@ -48,13 +42,11 @@ public class StudentDashboardController {
     @FXML private ScrollPane contentPane;
     @FXML private Node fade1;
     @FXML private Node fade2;
-    @FXML private ProgressIndicator loadingIndicator;
 
-    private static final String USER_TYPE = "STUDENT";
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
-    // private final String identifier = RememberMeHandler.getCurrentUserEmail(); // Changed & moved to initialize
+    private final String identifier = RememberMeHandler.getCurrentUserEmail();
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
@@ -66,9 +58,6 @@ public class StudentDashboardController {
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
-        long startTime = System.currentTimeMillis();
-        logger.info("StudentDashboardController.initialize() - START");
-
         homeHBox.getStyleClass().add("selected");
 
         // Initialize fade1 as fully transparent and fade2 as visible
@@ -81,29 +70,17 @@ public class StudentDashboardController {
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
         
-        // Load student info using getCurrentUserStudentNumber
-        String identifier = RememberMeHandler.getCurrentUserStudentNumber(); // Changed
+        // Load student info using getCurrentUserEmail
+        String identifier = RememberMeHandler.getCurrentUserEmail();
         if (identifier != null && !identifier.isEmpty()) {
-            logger.info("StudentDashboardController.initialize() - Calling loadStudentInfoWithTask for identifier: {}", identifier);
-            loadStudentInfoWithTask(identifier); // identifier is now student number
+            // Get student info from a database
+            loadStudentInfo(identifier);
         } else {
             logger.error("No user is currently logged in");
+            // Set default or error values
             studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
         }
-
-        // Apply theme to the main dashboard scene
-        Platform.runLater(() -> {
-            if (contentPane != null && contentPane.getScene() != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
-            } else {
-                logger.warn("StudentDashboardController: Scene not available for initial theme application.");
-            }
-        });
-
-        logger.info("StudentDashboardController.initialize() - END. Duration: {} ms", (System.currentTimeMillis() - startTime));
     }
     
     // Set up scroll pane fade effects based on scroll position
@@ -127,11 +104,7 @@ public class StudentDashboardController {
     
     // Preload and cache all FXML content
     private void preloadAllContent() {
-        long startTime = System.currentTimeMillis();
-        logger.info("preloadAllContent() - START");
-
         // Load and cache Home content first (already shown)
-        logger.info("Preloading Home content (initial display)");
         loadHomeContent();
         
         // Preload and cache other content
@@ -141,31 +114,17 @@ public class StudentDashboardController {
         preloadFxmlContent(ENROLLMENT_FXML);
         preloadFxmlContent(ABOUT_FXML);
         preloadFxmlContent(SCHEDULE_FXML);
-
-        logger.info("preloadAllContent() - END. Duration: {} ms", (System.currentTimeMillis() - startTime));
     }
     
     // Preload and cache a specific FXML file
     private void preloadFxmlContent(String fxmlPath) {
-        long startTime = System.currentTimeMillis();
-        logger.info("preloadFxmlContent({}) - START", fxmlPath);
         try {
             if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) {
                 // Check if a resource exists before trying to load it
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
                     Parent content = FXMLLoader.load(resource);
-                    // Apply theme to this loaded content
-                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
-
-                    if (content != null) {
-                        // Apply appropriate CSS classes based on the current theme
-                        content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
-                        content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
-                    }
                     contentCache.put(fxmlPath, content);
-                    logger.info("preloadFxmlContent({}) - LOADED and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - startTime));
                 } else {
                     logger.warn("Resource not found: {}", fxmlPath);
                 }
@@ -175,91 +134,81 @@ public class StudentDashboardController {
         }
     }
     
-    // Record to hold student info
-    private record StudentInfoData(String name, String formattedId) {}
-
-    // Load student information from a database using a Task
-    private void loadStudentInfoWithTask(String identifier) {
-        long taskCreationTime = System.currentTimeMillis();
-        logger.info("loadStudentInfoWithTask({}) - Task CREATED", identifier);
-
-        if (loadingIndicator != null) loadingIndicator.setVisible(true);
+    // Load student information from a database
+    private void loadStudentInfo(String identifier) {
+        // Set placeholders while loading
         studentNameLabel.setText("Loading...");
         studentIdLabel.setText("Loading...");
-
-        Task<StudentInfoData> loadTask = new Task<>() {
-            @Override
-            protected StudentInfoData call() throws Exception {
-                long callStartTime = System.currentTimeMillis();
-                logger.info("loadStudentInfoWithTask.call() - START");
-                String finalName = null;
-                String finalStudentFormattedNumber = null;
-
+        
+        // Create a background task
+        Thread thread = new Thread(() -> {
+            try {
                 // Get student name
-                String nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
+                boolean isEmail = identifier.contains("@");
+                String nameQuery = getNameQuery(isEmail);
+
+                String finalName = null;
                 
-                long dbNameQueryStartTime = System.currentTimeMillis();
-                logger.info("loadStudentInfoWithTask.call() - Fetching name - START");
                 try (Connection connection = DBConnection.getConnection();
                      PreparedStatement statement = connection.prepareStatement(nameQuery)) {
-                    statement.setString(1, identifier); 
-                    try (ResultSet result = statement.executeQuery()) {
-                        if (result.next()) {
-                            String firstName = result.getString("firstname");
-                            String middleName = result.getString("middlename");
-                            String lastName = result.getString("lastname");
-                            finalName = formatStudentName(firstName, middleName, lastName);
-                        }
+                    if (isEmail) {
+                        statement.setString(1, identifier.toLowerCase()); // Ensure email is lowercased for comparison
+                    } else {
+                        // Identifier is treated as the formatted student_number (String)
+                        statement.setString(1, identifier);
                     }
-                } // Connection and statement are auto-closed here
-                logger.info("loadStudentInfoWithTask.call() - Fetching name - END. Duration: {} ms", (System.currentTimeMillis() - dbNameQueryStartTime));
-                logger.info("Student logged in: {} (identifier: {})", finalName, identifier); // Moved log here
+                    ResultSet result = statement.executeQuery();
+                    
+                    if (result.next()) {
+                        String firstName = result.getString("firstname");
+                        String middleName = result.getString("middlename");
+                        String lastName = result.getString("lastname");
+                        
+                        finalName = formatStudentName(firstName, middleName, lastName);
 
-                // Get student formatted number (this also makes a DB call)
-                long dbIdQueryStartTime = System.currentTimeMillis();
-                logger.info("loadStudentInfoWithTask.call() - Fetching formatted ID - START");
-                finalStudentFormattedNumber = getStudentFormattedNumber(identifier); // This method needs to handle its own connection
-                logger.info("loadStudentInfoWithTask.call() - Fetching formatted ID - END. Duration: {} ms", (System.currentTimeMillis() - dbIdQueryStartTime));
-
-                // Store student number in SessionData if not already there or different
-                if (finalStudentFormattedNumber != null && !finalStudentFormattedNumber.equals(SessionData.getInstance().getStudentNumber())) {
-                    SessionData.getInstance().setStudentNumber(finalStudentFormattedNumber);
-                    logger.info("Stored/Updated student_number in SessionData: {}", finalStudentFormattedNumber);
+                        // Log the student name
+                        logger.info("Student logged in: {} (identifier: {})", finalName, identifier);
+                    }
                 }
+                
+                // Get student formatted number
+                String finalStudentFormattedNumber = getStudentFormattedNumber(identifier);
 
-                logger.info("loadStudentInfoWithTask.call() - END. Duration: {} ms", (System.currentTimeMillis() - callStartTime));
-                return new StudentInfoData(finalName, finalStudentFormattedNumber);
+                // Update UI on JavaFX Application Thread
+                String nameToDisplay = finalName;
+                Platform.runLater(() -> {
+                    studentNameLabel.setText(Objects.requireNonNullElse(nameToDisplay, "Name not found"));
+                    studentIdLabel.setText(Objects.requireNonNullElse(finalStudentFormattedNumber, "ID not found"));
+                });
+                
+            } catch (SQLException e) {
+                logger.error("Error loading student information", e);
+                Platform.runLater(() -> {
+                    studentNameLabel.setText("Error loading name");
+                    studentIdLabel.setText("Error loading ID");
+                });
             }
-        };
-
-        loadTask.setOnSucceeded(event -> {
-            StudentInfoData studentInfo = loadTask.getValue();
-            studentNameLabel.setText(studentInfo.name());
-            studentIdLabel.setText(studentInfo.formattedId());
-            if (loadingIndicator != null) loadingIndicator.setVisible(false);
-            logger.info("loadStudentInfoWithTask.setOnSucceeded() - Student info loaded: Name='{}', ID='{}'", studentInfo.name(), studentInfo.formattedId());
         });
-
-        loadTask.setOnFailed(event -> {
-            Throwable ex = loadTask.getException();
-            logger.error("Failed to load student information: {}", ex.getMessage(), ex);
-            studentNameLabel.setText("Error loading name");
-            studentIdLabel.setText("Error loading ID");
-            if (loadingIndicator != null) loadingIndicator.setVisible(false);
-        });
-
-        // Start the task on a new thread
-        new Thread(loadTask).start();
-        logger.info("loadStudentInfoWithTask({}) - Task STARTED. Duration to start: {} ms", identifier, (System.currentTimeMillis() - taskCreationTime));
+        
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    // Method to get student's formatted number (e.g., 2023-00001-SJ-0)
-    // Simplified: identifier is now always the student_number.
-    private String getStudentFormattedNumber(String identifier) throws SQLException { 
-        return identifier; // If identifier is already the student_number, just return it.
+    private String getNameQuery(boolean isEmail) {
+        String nameQuery;
+
+        if (isEmail) {
+            // Case-insensitive email comparison
+            nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            // Assumes 'identifier' is the formatted student_number
+            // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
+            nameQuery = "SELECT firstname, middlename, lastname FROM students WHERE student_number = ?";
+        }
+        return nameQuery;
     }
 
-    // Format student name for display
+    // Format student name as "LastName, FirstName MiddleInitial."
     private String formatStudentName(String firstName, String middleName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
         
@@ -284,78 +233,101 @@ public class StudentDashboardController {
         return formattedName.toString().trim();
     }
 
+    // Renamed and reimplemented to get the formatted student_number
+    private String getStudentFormattedNumber(String identifier) {
+        String query;
+        boolean isEmail = identifier.contains("@");
+
+        if (isEmail) {
+            // Query by email to get the student_number
+            // USER: Confirm 'student_number' is the correct column name.
+            query = "SELECT student_number FROM students WHERE LOWER(email) = LOWER(?)";
+        } else {
+            // Assume identifier is already a student_number, verify its existence and get it
+            // USER: Confirm 'student_number' is the correct column name.
+            query = "SELECT student_number FROM students WHERE student_number = ?";
+        }
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, isEmail ? identifier.toLowerCase() : identifier);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("student_number"); // Directly return the formatted student_number
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving student formatted number", e);
+        }
+        return null; // Return null if not found or on error
+    }
+
     // Handle sidebar item clicks and load the corresponding content
     @FXML public void handleSidebarItemClick(MouseEvent event) {
-        long clickStartTime = System.currentTimeMillis();
         HBox clickedHBox = (HBox) event.getSource();
-        String fxmlPath = getFxmlPathForHBox(clickedHBox);
-        logger.info("handleSidebarItemClick() - Clicked on HBox associated with FXML: {}. Duration to identify FXML: {} ms", fxmlPath, (System.currentTimeMillis() - clickStartTime));
+        clearAllSelections();
+        clickedHBox.getStyleClass().add("selected");
 
-        if (fxmlPath != null) {
-            long loadContentStartTime = System.currentTimeMillis();
-            logger.info("handleSidebarItemClick() - Calling loadContent({}) - START", fxmlPath);
-            loadContent(fxmlPath);
-            logger.info("handleSidebarItemClick() - loadContent({}) - END. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadContentStartTime));
-            updateSelectedSidebarItem(clickedHBox);
+        if (clickedHBox == settingsHBox) {
+            loadContent(SETTINGS_FXML);
+        } else if (clickedHBox == homeHBox) {
+            loadContent(HOME_FXML);
         } else {
-            logger.warn("No FXML path associated with the clicked HBox.");
-        }
-        logger.info("handleSidebarItemClick() - Total processing duration: {} ms", (System.currentTimeMillis() - clickStartTime));
-    }
-
-    // Method to update the visual selection in the sidebar
-    private void updateSelectedSidebarItem(HBox selectedBox) {
-        List<HBox> sidebarItems = Arrays.asList(
-            homeHBox, registrationHBox, paymentInfoHBox, gradesHBox, 
-            scheduleHBox, schoolCalendarHBox, settingsHBox, aboutHBox
-            // logoutHBox is usually handled differently (e.g., direct action) and might not need selection state
-        );
-
-        for (HBox item : sidebarItems) {
-            if (item != null) { // Add null check for safety, though FXML injection should handle this
-                item.getStyleClass().remove("selected");
+            try {
+                contentPane.setContent(null);
+                String fxmlPath = getFxmlPathFromHBox(clickedHBox);
+                
+                if (fxmlPath != null) {
+                    loadContent(fxmlPath);
+                }
+            } catch (IOException e) {
+                logger.error("Error while loading content", e);
             }
         }
-
-        if (selectedBox != null) {
-            selectedBox.getStyleClass().add("selected");
-        }
-        logger.info("Updated selected sidebar item to: {}", selectedBox != null ? selectedBox.getId() : "none");
     }
-
-    // Get the FXML path associated with the clicked HBox
-    private String getFxmlPathForHBox(HBox clickedHBox) {
+    
+    // Get FXML path based on clicked HBox
+    private String getFxmlPathFromHBox(HBox clickedHBox) throws IOException {
         return switch (clickedHBox.getId()) {
             case "registrationHBox" -> ENROLLMENT_FXML;
             case "paymentInfoHBox" ->null;
+            case "subjectsHBox" -> null;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" ->SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
-            case "settingsHBox" -> SETTINGS_FXML;
             case "aboutHBox" -> ABOUT_FXML;
             default -> HOME_FXML;
         };
     }
 
-    // Load content into the contentPane
-    void loadContent(String fxmlPath) {
+    // Load content into the ScrollPane based on the provided FXML path
+    public void loadContent(String fxmlPath) {
         try {
-            Parent contentNode;
-            long loadStartTime = System.currentTimeMillis();
-            if (contentCache.containsKey(fxmlPath)) {
-                contentNode = contentCache.get(fxmlPath);
-                logger.info("loadContent({}) - Loaded from CACHE. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadStartTime));
-            } else {
-                logger.info("loadContent({}) - Cache MISS. Loading from FXML...", fxmlPath);
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-                contentNode = loader.load();
-                contentCache.put(fxmlPath, contentNode); // Cache after loading
-                logger.info("loadContent({}) - Loaded from FXML and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadStartTime));
+            Parent content = contentCache.get(fxmlPath);
+            if (content == null) {
+                FXMLLoader loader = new FXMLLoader(
+                        Objects.requireNonNull(getClass().getResource(fxmlPath))
+                );
+                content = loader.load();
+                
+                // If loading home content, pass reference to this controller
+                if (fxmlPath.equals(HOME_FXML)) {
+                    StudentHomeContentController homeController = loader.getController();
+                    homeController.setStudentDashboardController(this);
+                    logger.info("Reference to StudentDashboardController passed to HomeContentController");
+                    assert identifier != null;
+                    String studentNumber = getStudentFormattedNumber(identifier);
+                    SessionData.getInstance().setStudentNumber(studentNumber);
+                }
+
+                contentCache.put(fxmlPath, content);
+                addLayoutChangeListener(content);
             }
-            contentPane.setContent(contentNode);
+            contentPane.setContent(content);
             resetScrollPosition();
         } catch (IOException e) {
-            logger.error("Error while loading content: {}", fxmlPath, e);
+            logger.error("Error while loading content", e);
         }
     }
     

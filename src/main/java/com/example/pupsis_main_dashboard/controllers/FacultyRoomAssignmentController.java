@@ -135,64 +135,40 @@ public class FacultyRoomAssignmentController {
 
     // Method to load schedules from the database for the current faculty
     private void loadSchedules() {
-        String sessionFacultyNumber = SessionData.getInstance().getFacultyId();
-        logger.info("FacultyRoomAssignmentController: Retrieved SessionData.facultyId (faculty_number): '{}'", sessionFacultyNumber);
-
-        if (sessionFacultyNumber == null || sessionFacultyNumber.trim().isEmpty()) {
-            logger.error("FacultyRoomAssignmentController: Session faculty number is null or empty. Cannot load schedules.");
-            scheduleTable.setPlaceholder(new Label("Unable to load schedule: Faculty identifier not found in session."));
-            return; // Exit if no ID
-        }
-
-        int facultyIdInt = getIntegerFacultyIdByFacultyNumber(sessionFacultyNumber);
-
-        if (facultyIdInt == 0) { // Assuming 0 indicates not found or error
-            logger.error("FacultyRoomAssignmentController: Could not retrieve a valid integer faculty_id for faculty_number: '{}'. Cannot load schedules.", sessionFacultyNumber);
-            scheduleTable.setPlaceholder(new Label("Unable to load schedule: Invalid faculty identifier."));
-            return; // Exit if faculty_id is not valid
-        }
-
+        String sessionFacultyID = SessionData.getInstance().getFacultyId();
         String query = """
-            SELECT CONCAT(s.subject_code, ' - ', s.description, ' (', ys.year_section, ')') AS faculty_description_section,
-                   fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number,
-                   fl.load_id, s.subject_id, s.subject_code, s.description AS subject_description,
-                   ys.year_section AS year_section, sch.days,
-                   TO_CHAR(sch.start_time, 'HH12:MI AM') AS start_time,
-                   TO_CHAR(sch.end_time, 'HH12:MI AM') AS end_time,
-                   r.room_name AS room, s.units, sch.lecture_hour, sch.laboratory_hour,
-                   sem.semester_name
-            FROM schedule sch
-            JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id
-            JOIN faculty fac ON fl.faculty_id = fac.faculty_id
-            JOIN subjects s ON fl.subject_id = s.subject_id
-            JOIN room r ON sch.room_id = r.room_id
-            JOIN year_section ys ON fl.section_id = ys.section_id
-            JOIN semesters sem ON fl.semester_id = sem.semester_id
-            WHERE fac.faculty_id = ? AND fl.semester_id = ?;
-        """;
+                    SELECT CONCAT(faculty_number, ' - ', description, ' (', year_section, ')') AS faculty, fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number, fl.load_id, sub.subject_id, sub.subject_code, sub.description,
+                           fl.year_section, sch.days, TO_CHAR(sch.start_time, 'HH:MI AM') AS start_time,
+                           TO_CHAR(sch.end_time, 'HH:MI AM') AS end_time, r.room_name AS room, sub.units, sch.lecture_hour, sch.laboratory_hour
+                    FROM schedule sch
+                    JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id
+                    JOIN faculty fac ON fl.faculty_id = fac.faculty_id
+                    JOIN subjects sub ON fl.subject_id = sub.subject_id
+                    JOIN room r ON sch.room_id = r.room_id
+                    WHERE fac.faculty_id = ? AND fl.semester = ?;
+                """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, facultyIdInt);
-            int currentSemesterId = SchoolYearAndSemester.getCurrentSemesterId(); 
-            if (currentSemesterId == 0) { 
-                logger.error("FacultyRoomAssignmentController: Could not determine current semester ID.");
-                scheduleTable.setPlaceholder(new Label("Unable to load schedule: Current semester ID not found."));
+            if (sessionFacultyID == null || sessionFacultyID.isEmpty()) {
+                logger.error("Session faculty ID is null or empty");
                 return;
             }
-            stmt.setInt(2, currentSemesterId);
 
+            stmt.setInt(1, Integer.parseInt(sessionFacultyID));
+            stmt.setString(2, SchoolYearAndSemester.determineCurrentSemester());
             try (ResultSet rs = stmt.executeQuery()) {
-                schedules.clear(); // Clear previous data
                 while (rs.next()) {
+                    Button editBtn = new Button("Edit");
+                    editBtn.getStyleClass().add("edit-button");
                     // Get values first
                     int loadID = rs.getInt("load_id");
-                    String facultyDescriptionSection = rs.getString("faculty_description_section"); // Using the new alias
+                    String faculty = rs.getString("faculty");
                     String subjectID = rs.getString("subject_id");
                     String facultyNumber = rs.getString("faculty_number");
                     String subCode = rs.getString("subject_code");
-                    String subjectDescription = rs.getString("subject_description"); // Using the new alias
+                    String description = rs.getString("description");
                     String facultyName = rs.getString("faculty_name");
                     String facultyID = rs.getString("faculty_id");
                     String yearSection = rs.getString("year_section");
@@ -200,56 +176,24 @@ public class FacultyRoomAssignmentController {
                     String startTime = rs.getString("start_time");
                     String endTime = rs.getString("end_time");
                     String room = rs.getString("room");
-                    String units = rs.getString("units"); // units is text in subjects table
+                    int units = rs.getInt("units");
                     int lectureHour = rs.getInt("lecture_hour");
                     int labHour = rs.getInt("laboratory_hour");
 
-                    // The Schedule constructor expects 'faculty' (which was a concat) and 'description'.
-                    // We now have 'facultyDescriptionSection' for the concat, and 'subjectDescription' for the subject's description.
-                    // Adjust the Schedule object creation based on its constructor's needs.
-                    // For now, I'll pass facultyDescriptionSection as 'faculty' and subjectDescription as 'subDesc'.
                     Schedule schedule = new Schedule(
-                            loadID, facultyDescriptionSection, subjectID, facultyNumber, subCode, subjectDescription, 
-                            facultyName, facultyID, yearSection, days,
-                            startTime, endTime, room, units, lectureHour, labHour,
-                            null // Added null for the editButton parameter
+                            loadID, faculty, subjectID, facultyNumber, subCode, description, facultyName, facultyID, yearSection, days,
+                            startTime, endTime, room, units, lectureHour, labHour, editBtn
                     );
+
                     schedules.add(schedule);
                 }
             }
-        } catch (SQLException e) {
-            logger.error("SQL Error loading schedules: ", e);
-            scheduleTable.setPlaceholder(new Label("Error loading schedule data from database."));
-        } catch (Exception e) {
-            logger.error("Unexpected error loading schedules: ", e);
-            scheduleTable.setPlaceholder(new Label("An unexpected error occurred."));
-        }
-
-        if (schedules.isEmpty()) {
-            scheduleTable.setPlaceholder(new Label("No schedule available for the current semester."));
+        } catch (SQLException ex) {
+            logger.error("Error loading school events", ex);
         }
     }
 
-    // Helper method to get integer faculty_id from faculty_number string
-    private int getIntegerFacultyIdByFacultyNumber(String facultyNumber) {
-        String sql = "SELECT faculty_id FROM faculty WHERE faculty_number = ?";
-        logger.debug("Attempting to fetch integer faculty_id for faculty_number: {}", facultyNumber);
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, facultyNumber);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int facultyId = rs.getInt("faculty_id");
-                    logger.info("Successfully fetched integer faculty_id: {} for faculty_number: {}", facultyId, facultyNumber);
-                    return facultyId;
-                } else {
-                    logger.warn("No faculty record found for faculty_number: {}", facultyNumber);
-                    return 0; // Or throw a custom exception
-                }
-            }
-        } catch (SQLException e) {
-            logger.error("SQL error while fetching faculty_id for faculty_number: {}. Error: {}", facultyNumber, e.getMessage(), e);
-            return 0; // Or throw
-        }
-    }
 }
+
+
+

@@ -3,48 +3,38 @@ package com.example.pupsis_main_dashboard.models;
 import java.time.LocalDate;
 
 public class Faculty {
-    private String facultyId; // This is likely faculty_number (text), PK is an int in DB
-    private Integer actualFacultyId; // Assuming the DB primary key 'faculty_id' is an int
+    private String facultyId;
     private String firstName;
     private String middleName;
     private String lastName; // Corresponds to DB column: 'lastname'
-    private Integer departmentId; // Changed from String department
-    private String departmentName; // Added for display
+    private String department;
     private String email;
     private String contactNumber;
     private LocalDate birthdate;
-    private Integer facultyStatusId; // Changed from String status
-    private String facultyStatusName; // Added for display
+    private String status;
     private LocalDate dateJoined;
 
     public Faculty() {}
 
-    // Full constructor - updated for new ID fields
-    public Faculty(String facultyId, Integer actualFacultyId, String firstName, String middleName, String lastName,
-                   Integer departmentId, String departmentName, String email, String contactNumber,
-                   LocalDate birthdate, Integer facultyStatusId, String facultyStatusName, LocalDate dateJoined) {
-        this.facultyId = facultyId; // This might be the textual faculty_number
-        this.actualFacultyId = actualFacultyId; // The integer primary key from DB
+    // Full constructor
+    public Faculty(String facultyId, String firstName, String middleName, String lastName,
+                   String department, String email, String contactNumber,
+                   LocalDate birthdate, String status, LocalDate dateJoined) {
+        this.facultyId = facultyId;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.departmentId = departmentId;
-        this.departmentName = departmentName;
+        this.department = department;
         this.email = email;
         this.contactNumber = contactNumber;
         this.birthdate = birthdate;
-        this.facultyStatusId = facultyStatusId;
-        this.facultyStatusName = facultyStatusName;
+        this.status = status;
         this.dateJoined = dateJoined;
     }
 
     // Getters
-    public String getFacultyId() { // This is likely faculty_number
+    public String getFacultyId() {
         return facultyId;
-    }
-
-    public Integer getActualFacultyId() {
-        return actualFacultyId;
     }
 
     public String getFirstName() {
@@ -59,12 +49,8 @@ public class Faculty {
         return lastName;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
+    public String getDepartment() {
+        return department;
     }
 
     public String getEmail() {
@@ -79,12 +65,8 @@ public class Faculty {
         return birthdate;
     }
 
-    public Integer getFacultyStatusId() {
-        return facultyStatusId;
-    }
-
-    public String getFacultyStatusName() {
-        return facultyStatusName;
+    public String getStatus() {
+        return status;
     }
 
     public LocalDate getDateJoined() {
@@ -92,12 +74,8 @@ public class Faculty {
     }
 
     // Setters
-    public void setFacultyId(String facultyId) { // This is likely faculty_number
+    public void setFacultyId(String facultyId) {
         this.facultyId = facultyId;
-    }
-
-    public void setActualFacultyId(Integer actualFacultyId) {
-        this.actualFacultyId = actualFacultyId;
     }
 
     public void setFirstName(String firstName) {
@@ -112,12 +90,8 @@ public class Faculty {
         this.lastName = lastName;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
-    }
-
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public void setEmail(String email) {
@@ -132,12 +106,8 @@ public class Faculty {
         this.birthdate = birthdate;
     }
 
-    public void setFacultyStatusId(Integer facultyStatusId) {
-        this.facultyStatusId = facultyStatusId;
-    }
-
-    public void setFacultyStatusName(String facultyStatusName) {
-        this.facultyStatusName = facultyStatusName;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setDateJoined(LocalDate dateJoined) {
@@ -147,7 +117,7 @@ public class Faculty {
     // Optional: Useful for debugging/logging
     @Override
     public String toString() {
-        return String.format("Faculty[actualId=%d, facultyNumber=%s, name=%s %s %s, deptId=%d (%s), statusId=%d (%s), email=%s]",
-                actualFacultyId, facultyId, firstName, middleName, lastName, departmentId, departmentName, facultyStatusId, facultyStatusName, email);
+        return String.format("Faculty[id=%s, name=%s %s %s, dept=%s, email=%s]",
+                facultyId, firstName, middleName, lastName, department, email);
     }
 }
