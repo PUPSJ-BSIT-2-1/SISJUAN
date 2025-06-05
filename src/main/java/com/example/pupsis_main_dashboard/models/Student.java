@@ -31,6 +31,7 @@ public class Student {
     private final StringProperty finalGrade; 
     private final StringProperty subjectCodeForGrade; // Added for EditGradesPageController
     private final StringProperty gradeStatusName; // Added for EditGradesPageController
+    private final ObjectProperty<Integer> studentLoadId; // Added for EditGradesPageController to link to grade table
 
     // Default constructor
     public Student() {
@@ -55,6 +56,7 @@ public class Student {
         this.finalGrade = new SimpleStringProperty("");
         this.subjectCodeForGrade = new SimpleStringProperty("");
         this.gradeStatusName = new SimpleStringProperty("");
+        this.studentLoadId = new SimpleObjectProperty<>(); // Initialize new field
     }
 
     // Full constructor with all new properties
@@ -64,12 +66,13 @@ public class Student {
                    Integer departmentId, String departmentName, // departmentId is for program
                    Integer yearLevelId, String yearLevelName,
                    Integer scholasticStatusId, String scholasticStatusName,
-                   String finalGrade, String subjectCodeForGrade, String gradeStatusName) {
+                   String finalGrade, String subjectCodeForGrade, String gradeStatusName, ObjectProperty<Integer> studentLoadId) {
         this.studentId = new SimpleObjectProperty<>(studentId);
         this.studentNo = new SimpleStringProperty(studentNo);
         this.firstName = new SimpleStringProperty(firstName);
         this.middleName = new SimpleStringProperty(middleName != null ? middleName : "");
         this.lastName = new SimpleStringProperty(lastName);
+        this.studentLoadId = studentLoadId;
         this.studentFullName = new ReadOnlyStringWrapper();
         this.studentFullName.bind(Bindings.createStringBinding(() -> buildFullName(), this.firstName, this.middleName, this.lastName));
         this.email = new SimpleStringProperty(email);
@@ -86,6 +89,24 @@ public class Student {
         this.finalGrade = new SimpleStringProperty(finalGrade);
         this.subjectCodeForGrade = new SimpleStringProperty(subjectCodeForGrade);
         this.gradeStatusName = new SimpleStringProperty(gradeStatusName);
+    }
+
+    // Constructor for EditGradesPageController
+    public Student(String studentNo, String studentFullNameDisplay, String subjectCode, String finalGrade, String gradeStatusName, Integer studentLoadId) {
+        this(); // Call default constructor to initialize all properties
+
+        this.studentNo.set(studentNo);
+        // For studentFullName, which is bound, set its constituent parts.
+        // Assuming studentFullNameDisplay is the complete name, we can set firstName to it.
+        this.firstName.set(studentFullNameDisplay);
+        // Middle and Last name can be empty for this specific constructor if not provided separately
+        this.middleName.set(""); 
+        this.lastName.set("");
+
+        this.subjectCodeForGrade.set(subjectCode);
+        this.finalGrade.set(finalGrade);
+        this.gradeStatusName.set(gradeStatusName);
+        this.studentLoadId.set(studentLoadId); // Set the new field
     }
 
     private String buildFullName() {
@@ -200,15 +221,20 @@ public class Student {
     public void setGradeStatusName(String name) { this.gradeStatusName.set(name); }
     public StringProperty gradeStatusNameProperty() { return gradeStatusName; }
 
+    // Student Load ID (for EditGradesPageController)
+    public Integer getStudentLoadId() { return studentLoadId.get(); }
+    public void setStudentLoadId(Integer id) { this.studentLoadId.set(id); }
+    public ObjectProperty<Integer> studentLoadIdProperty() { return studentLoadId; }
+
     // toString for debugging
     @Override
     public String toString() {
-        return String.format("Student[id=%d, no=%s, name=%s, email=%s, statusId=%d (%s), deptId=%d (%s), yearId=%d (%s), scholasticId=%d (%s), gradeSubj=%s, finalGrade=%s, gradeStatus=%s]",
+        return String.format("Student[id=%d, no=%s, name=%s, email=%s, statusId=%d (%s), deptId=%d (%s), yearId=%d (%s), scholasticId=%d (%s), gradeSubj=%s, finalGrade=%s, gradeStatus=%s, studentLoadId=%d]",
                 getStudentId(), getStudentNo(), getStudentFullName(), getEmail(),
                 getStudentStatusId(), getStudentStatusName(),
                 getDepartmentId(), getDepartmentName(),
                 getYearLevelId(), getYearLevelName(),
                 getScholasticStatusId(), getScholasticStatusName(),
-                getSubjectCodeForGrade(), getFinalGrade(), getGradeStatusName());
+                getSubjectCodeForGrade(), getFinalGrade(), getGradeStatusName(), getStudentLoadId());
     }
 }
