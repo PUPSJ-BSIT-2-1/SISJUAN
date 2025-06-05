@@ -135,14 +135,28 @@ public class FacultyRoomAssignmentController {
 
     // Method to load schedules from the database for the current faculty
     private void loadSchedules() {
-        String sessionFacultyID = SessionData.getInstance().getFacultyId();
-        logger.info("FacultyRoomAssignmentController: Retrieved SessionData.facultyId: '{}'", sessionFacultyID);
+        String sessionFacultyNumber = SessionData.getInstance().getFacultyId();
+        logger.info("FacultyRoomAssignmentController: Retrieved SessionData.facultyId (faculty_number): '{}'", sessionFacultyNumber);
+
+        if (sessionFacultyNumber == null || sessionFacultyNumber.trim().isEmpty()) {
+            logger.error("FacultyRoomAssignmentController: Session faculty number is null or empty. Cannot load schedules.");
+            scheduleTable.setPlaceholder(new Label("Unable to load schedule: Faculty identifier not found in session."));
+            return; // Exit if no ID
+        }
+
+        int facultyIdInt = getIntegerFacultyIdByFacultyNumber(sessionFacultyNumber);
+
+        if (facultyIdInt == 0) { // Assuming 0 indicates not found or error
+            logger.error("FacultyRoomAssignmentController: Could not retrieve a valid integer faculty_id for faculty_number: '{}'. Cannot load schedules.", sessionFacultyNumber);
+            scheduleTable.setPlaceholder(new Label("Unable to load schedule: Invalid faculty identifier."));
+            return; // Exit if faculty_id is not valid
+        }
 
         String query = """
-            SELECT CONCAT(s.subject_code, ' - ', s.description, ' (', cs.year_section, ')') AS faculty_description_section,
+            SELECT CONCAT(s.subject_code, ' - ', s.description, ' (', ys.year_section, ')') AS faculty_description_section,
                    fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number,
                    fl.load_id, s.subject_id, s.subject_code, s.description AS subject_description,
-                   cs.year_section AS year_section, sch.days,
+                   ys.year_section AS year_section, sch.days,
                    TO_CHAR(sch.start_time, 'HH12:MI AM') AS start_time,
                    TO_CHAR(sch.end_time, 'HH12:MI AM') AS end_time,
                    r.room_name AS room, s.units, sch.lecture_hour, sch.laboratory_hour,
@@ -152,7 +166,7 @@ public class FacultyRoomAssignmentController {
             JOIN faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN subjects s ON fl.subject_id = s.subject_id
             JOIN room r ON sch.room_id = r.room_id
-            JOIN year_section cs ON fl.section_id = cs.section_id
+            JOIN year_section ys ON fl.section_id = ys.section_id
             JOIN semesters sem ON fl.semester_id = sem.semester_id
             WHERE fac.faculty_id = ? AND fl.semester_id = ?;
         """;
@@ -160,26 +174,9 @@ public class FacultyRoomAssignmentController {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            if (sessionFacultyID == null || sessionFacultyID.trim().isEmpty()) {
-                logger.error("FacultyRoomAssignmentController: Session faculty ID is critically null or empty. Cannot load schedules. Value was: '{}'", sessionFacultyID);
-                scheduleTable.setPlaceholder(new Label("Unable to load schedule: Faculty ID not found in session."));
-                return; // Exit if no ID
-            }
-
-            int facultyIdInt;
-            try {
-                facultyIdInt = Integer.parseInt(sessionFacultyID);
-            } catch (NumberFormatException e) {
-                logger.error("FacultyRoomAssignmentController: Session faculty ID is not a valid integer. Cannot load schedules. Value was: '{}'", sessionFacultyID);
-                scheduleTable.setPlaceholder(new Label("Unable to load schedule: Faculty ID is not a valid integer."));
-                return; // Exit if not an integer
-            }
-
             stmt.setInt(1, facultyIdInt);
-            // Assuming SchoolYearAndSemester.getCurrentSemesterId() returns the current semester's integer ID
-            // This method might need to be created if it doesn't exist.
             int currentSemesterId = SchoolYearAndSemester.getCurrentSemesterId(); 
-            if (currentSemesterId == 0) { // Or some other indicator of an invalid/unfetchable ID
+            if (currentSemesterId == 0) { 
                 logger.error("FacultyRoomAssignmentController: Could not determine current semester ID.");
                 scheduleTable.setPlaceholder(new Label("Unable to load schedule: Current semester ID not found."));
                 return;
@@ -230,6 +227,29 @@ public class FacultyRoomAssignmentController {
 
         if (schedules.isEmpty()) {
             scheduleTable.setPlaceholder(new Label("No schedule available for the current semester."));
+        }
+    }
+
+    // Helper method to get integer faculty_id from faculty_number string
+    private int getIntegerFacultyIdByFacultyNumber(String facultyNumber) {
+        String sql = "SELECT faculty_id FROM faculty WHERE faculty_number = ?";
+        logger.debug("Attempting to fetch integer faculty_id for faculty_number: {}", facultyNumber);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, facultyNumber);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int facultyId = rs.getInt("faculty_id");
+                    logger.info("Successfully fetched integer faculty_id: {} for faculty_number: {}", facultyId, facultyNumber);
+                    return facultyId;
+                } else {
+                    logger.warn("No faculty record found for faculty_number: {}", facultyNumber);
+                    return 0; // Or throw a custom exception
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("SQL error while fetching faculty_id for faculty_number: {}. Error: {}", facultyNumber, e.getMessage(), e);
+            return 0; // Or throw
         }
     }
 }
