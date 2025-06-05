@@ -151,3 +151,27 @@
     -fx-text-fill: #000000;
 }
 
+/* Styles for TableView selected rows */
+.table-view:focused .table-row-cell:selected .text {
+    -fx-fill: black; /* Text color for selected, non-hovered items */
+}
+
+/* Optional: Styles for hovered selected rows, if you want them to differ */
+.table-view:focused .table-row-cell:selected:hover .text {
+    -fx-fill: white; /* Example: white text on hover, assuming a darker background */
+}
+
+/* Ensure the table itself has some base styling if needed */
+#studentsTable {
+    /* You can add specific styles for the studentsTable if necessary */
+}
+
+/* Style for selected cells to ensure background contrast if default is not good */
+.table-row-cell:selected {
+    /* -fx-background-color: #007bff; */ /* Example: blue background for selection */
+    /* If you set a background color, ensure the .text -fx-fill above provides good contrast */
+}
+
+.table-row-cell:selected:hover {
+    /* -fx-background-color: #0056b3; */ /* Example: darker blue for hovered selection */
+}
