@@ -50,7 +50,22 @@ public class SettingsController {
     private NotificationManager notificationManager;
 
     @FXML public void initialize() {
-        prefs = Preferences.userNodeForPackage(SettingsController.class); // Initialize user preferences storage
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
+        String userType = "UNKNOWN"; // Default / fallback
+
+        if (currentUserIdentifier != null && !currentUserIdentifier.isEmpty()) {
+            userType = RememberMeHandler.getUserTypeFromIdentifier(currentUserIdentifier);
+        }
+
+        if (userType != null && !userType.equals("UNKNOWN") && !userType.isEmpty()) {
+            prefs = Preferences.userNodeForPackage(SettingsController.class).node(userType.toUpperCase()); // Ensure consistent casing for node name
+            logger.info("SettingsController initialized for userType: {}", userType);
+        } else {
+            // Fallback to a general node if user type cannot be determined or is invalid
+            prefs = Preferences.userNodeForPackage(SettingsController.class);
+            logger.warn("SettingsController could not determine a valid user type for identifier: '{}'. Falling back to general preferences.", currentUserIdentifier);
+        }
+
         notificationManager = NotificationManager.getInstance();
         
         loadUserSettings(); // Load saved user settings into the UI
@@ -69,8 +84,8 @@ public class SettingsController {
 
     // Load user settings from preferences and set them in the UI components
     private void loadUserSettings() {
-        // Try to get user email - first try to getCurrentUserEmail, which works regardless of remembered me status
-        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
+        // Try to get user email using the current user identifier (student_number or faculty_number)
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
 
         // Load non-database dependent settings immediately
         phoneField.setText(prefs.get(PHONE_FIELD_PREF, "")); // Load phone from prefs 
@@ -97,34 +112,70 @@ public class SettingsController {
     private String getUserEmailFromDB(String identifier) {
         if (identifier == null || identifier.isEmpty()) return null;
 
-        boolean isEmailIdentifier = identifier.contains("@");
-        String query;
-        if (isEmailIdentifier) {
-            query = "SELECT email FROM students WHERE LOWER(email) = LOWER(?)";
-        } else {
-            // Assumes 'identifier' is the formatted student_number
-            // USER: Please confirm 'student_number' is the correct column name for formatted student IDs.
-            query = "SELECT email FROM students WHERE student_number = ?";
-        }
+        String email = null;
 
+        // Try to find in students table first
+        String studentQuery = "SELECT email FROM students WHERE student_number = ?";
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            if (isEmailIdentifier) {
-                statement.setString(1, identifier.toLowerCase());
-            } else {
-                // Identifier is treated as the formatted student_number (String)
-                statement.setString(1, identifier);
-            }
+             PreparedStatement statement = connection.prepareStatement(studentQuery)) {
+            statement.setString(1, identifier);
             ResultSet rs = statement.executeQuery();
-
             if (rs.next()) {
-                return rs.getString("email");
+                email = rs.getString("email");
+                if (email != null) return email;
             }
         } catch (SQLException e) {
-            logger.error("Error retrieving email from DB: {}", e.getMessage());
+            logger.error("Error retrieving email from students table for identifier {}: {}", identifier, e.getMessage());
         }
-        return null; // Return null if not found or on error
+
+        // If not found in students, try faculty table
+        String facultyQuery = "SELECT email FROM faculty WHERE faculty_number = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(facultyQuery)) {
+            statement.setString(1, identifier);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                email = rs.getString("email");
+                // No need to check for null again, just return what's found or null if not found
+            }
+        } catch (SQLException e) {
+            logger.error("Error retrieving email from faculty table for identifier {}: {}", identifier, e.getMessage());
+        }
+        
+        return email; // Return email found (could be null if not in either table or DB error)
+    }
+
+    // Helper method to determine user type based on identifier
+    private String determineUserType(String identifier) {
+        if (identifier == null || identifier.isEmpty()) return null;
+
+        // Check students table
+        String studentQuery = "SELECT student_number FROM students WHERE student_number = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(studentQuery)) {
+            statement.setString(1, identifier);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return "student"; // Identifier found in students table
+            }
+        } catch (SQLException e) {
+            logger.error("Error checking students table for identifier {}: {}", identifier, e.getMessage());
+        }
+
+        // Check faculty table
+        String facultyQuery = "SELECT faculty_number FROM faculty WHERE faculty_number = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(facultyQuery)) {
+            statement.setString(1, identifier);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return "faculty"; // Identifier found in faculty table
+            }
+        } catch (SQLException e) {
+            logger.error("Error checking faculty table for identifier {}: {}", identifier, e.getMessage());
+        }
+
+        return null; // Identifier not found in either table or error occurred
     }
 
     private void setupThemeToggleListener() {
@@ -187,8 +238,7 @@ public class SettingsController {
         String confirmPass = confirmNewPasswordField.getText();
 
         // Get user identifier using RememberMeHandler
-        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
-
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
 
         if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
             // Handle case where credentials couldn't be loaded (e.g., user not logged in or 'Remember Me' was off)
@@ -233,42 +283,72 @@ public class SettingsController {
         try {
             String hashedNewPassword = PasswordHandler.hashPassword(newPass);
 
-            String updateQuery = "UPDATE students SET password = ? WHERE LOWER(email) = LOWER(?)";
-
-            try (Connection connection = DBConnection.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-
-                preparedStatement.setString(1, hashedNewPassword);
-                preparedStatement.setString(2, currentUserIdentifier.toLowerCase()); // Use lowercase for email consistency
-
-                int rowsAffected = preparedStatement.executeUpdate();
-
-                if (rowsAffected > 0) {
-                    showAlert("Password Changed", "Password successfully changed.", Alert.AlertType.INFORMATION);
-                    currentPasswordField.clear();
-                    newPasswordField.clear();
-                    confirmNewPasswordField.clear();
-                    
-                    // Send a notification about the password change
-                    notificationManager.addNotification(
-                        "Password Changed",
-                        "Your password was successfully changed.",
-                        NotificationManager.NotificationType.SYSTEM
-                    );
-                } else {
-                    // This case might happen if the user identifier became invalid between check and update
-                    showAlert("Password Change Failed", "Could not update password. User not found?", Alert.AlertType.ERROR);
-                }
+            if (!updatePasswordInDB(currentUserIdentifier, hashedNewPassword)) {
+                // If update fails, show an error message
+                showAlert("Password Change Failed", "Failed to update password in the database.", Alert.AlertType.ERROR);
+                return;
             }
-        } catch (SQLException e) {
-            System.err.println("SQL error during password update: " + e.getMessage());
-            logger.error("SQL error during password update: {}", e.getMessage());
-            showAlert("Database Error", "An error occurred while updating the password in the database.", Alert.AlertType.ERROR);
+
+            showAlert("Password Changed", "Password successfully changed.", Alert.AlertType.INFORMATION);
+            currentPasswordField.clear();
+            newPasswordField.clear();
+            confirmNewPasswordField.clear();
+            
+            // Send a notification about the password change
+            notificationManager.addNotification(
+                "Password Changed",
+                "Your password was successfully changed.",
+                NotificationManager.NotificationType.SYSTEM
+            );
         } catch (Exception e) {
             // Catch potential exceptions from hashing or other logic
             System.err.println("Error changing password: " + e.getMessage());
             logger.error("Error changing password: {}", e.getMessage());
             showAlert("Error", "An unexpected error occurred while changing the password.", Alert.AlertType.ERROR);
+        }
+    }
+
+    // This method is called by handleChangePassword
+    private boolean updatePasswordInDB(String identifier, String newPasswordHash) {
+        // This method needs to determine if the identifier is for a student or faculty
+        // and then update the password in the appropriate table.
+        String userType = determineUserType(identifier); // Call once
+
+        if (userType == null) {
+            logger.error("Cannot update password. Unknown user type for identifier: {}", identifier);
+            showAlert("Error", "Could not determine user type to update password.", Alert.AlertType.ERROR);
+            return false;
+        }
+
+        String tableName;
+        String idColumnName;
+
+        if ("student".equalsIgnoreCase(userType)) {
+            tableName = "students";
+            idColumnName = "student_number";
+        } else if ("faculty".equalsIgnoreCase(userType)) {
+            tableName = "faculty";
+            idColumnName = "faculty_number";
+        } else {
+            // Should not happen if determineUserType is correct, but as a safeguard:
+            logger.error("Unknown user type '{}' returned by determineUserType for identifier: {}", userType, identifier);
+            showAlert("Error", "Invalid user type for password update.", Alert.AlertType.ERROR);
+            return false;
+        }
+
+        String query = String.format("UPDATE %s SET password_hash = ? WHERE %s = ?", tableName, idColumnName);
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, newPasswordHash);
+            statement.setString(2, identifier);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            logger.error("Error updating password in DB for identifier {}: {}", identifier, e.getMessage());
+            showAlert("Database Error", "Could not update password. Please try again later.", Alert.AlertType.ERROR);
+            return false;
         }
     }
 
@@ -280,7 +360,7 @@ public class SettingsController {
         }
 
         // Get user identifier using RememberMeHandler
-        String currentUserIdentifier = RememberMeHandler.getCurrentUserEmail();
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
 
         if (currentUserIdentifier == null || currentUserIdentifier.isEmpty()) {
             // Handle case where no user is currently logged in

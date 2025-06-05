@@ -49,18 +49,37 @@
          </VBox.margin>
          <children>
             <Label styleClass="semester-label" text="Current Semester:" />
-            <Label styleClass="value-label" text="1st Semester" />
+            <Label fx:id="currentSemesterDisplayLabel" styleClass="value-label" text="1st Semester" />
             <Label styleClass="semester-label" text="Year Level:">
                <HBox.margin>
                   <Insets left="30.0" />
                </HBox.margin>
             </Label>
-            <Label styleClass="value-label" text="2nd Year" />
+            <Label fx:id="currentYearLevelDisplayLabel" styleClass="value-label" text="2nd Year" />
          </children>
       </HBox>
       
+      <!-- Enrolled Subjects Section -->
+      <VBox fx:id="enrolledSubjectsDisplayContainer" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="5" styleClass="cards">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="0.0" right="0.0" top="0.0" />
+         </VBox.margin>
+         <children>
+            <Label styleClass="subjects-header" text="Currently Enrolled Subjects">
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Label>
+            <!-- Enrolled subjects will be populated here by the controller -->
+            <Label text="Loading enrolled subjects..." />
+         </children>
+      </VBox>
+
       <!-- Subject List Section -->
-      <VBox maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10" styleClass="cards">
+      <VBox fx:id="AvailableSub" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" spacing="10" styleClass="cards">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
@@ -122,8 +141,8 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </CheckBox>
-                     <Label prefWidth="200.0" styleClass="subject-code" text="CS101" />
-                     <Label prefWidth="300.0" styleClass="subject-description" text="Introduction to Computer Science" wrapText="true" />
+                     <Label prefWidth="200.0" styleClass="subject-code" text="Loading..." />
+                     <Label prefWidth="300.0" styleClass="subject-description" text="Loading..." wrapText="true" />
                      <ComboBox prefHeight="30.0" prefWidth="180.0" promptText="Select Schedule" styleClass="modern-combo">
                         <items>
                            <javafx.collections.FXCollections fx:factory="observableArrayList">
@@ -168,7 +187,7 @@
                   <Insets right="5.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="enrollButton" mnemonicParsing="false" styleClass="action-button" text="Enroll in Selected Subjects">
+            <Button fx:id="enrollButton" mnemonicParsing="false" onAction="#handleEnrollment" styleClass="action-button" text="Enroll in Selected Subjects">
                <padding>
                   <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
                </padding>

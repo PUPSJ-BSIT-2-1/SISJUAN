@@ -62,3 +62,49 @@
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-font-size: 14px;
 }
+
+/* === Modern Button Styles === */
+
+/* Base style for accept and reject buttons */
+.accept-button, .reject-button {
+    -fx-background-radius: 5px; /* Rounded corners */
+    -fx-padding: 5px 10px;      /* Padding around text */
+    -fx-font-size: 14px;        /* Font size */
+    -fx-font-weight: bold;      /* Bold text, matches FXML */
+    -fx-text-fill: white;       /* White text color */
+    -fx-border-width: 0;        /* No border by default */
+    -fx-cursor: hand;           /* Hand cursor on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0.0, 0, 1); /* Subtle shadow */
+    -fx-min-width: 30px;        /* Ensure buttons have some width for the symbols */
+    -fx-alignment: CENTER;
+}
+
+/* Accept Button - Green */
+.accept-button {
+    -fx-background-color: #28a745; /* Green background (Bootstrap success green) */
+}
+
+.accept-button:hover {
+    -fx-background-color: #218838; /* Darker green on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.0, 0, 2);
+}
+
+.accept-button:pressed {
+    -fx-background-color: #1e7e34; /* Even darker green when pressed */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.0, 0, 1);
+}
+
+/* Reject Button - Red */
+.reject-button {
+    -fx-background-color: #dc3545; /* Red background (Bootstrap danger red) */
+}
+
+.reject-button:hover {
+    -fx-background-color: #c82333; /* Darker red on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.0, 0, 2);
+}
+
+.reject-button:pressed {
+    -fx-background-color: #bd2130; /* Even darker red when pressed */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.0, 0, 1);
+}
