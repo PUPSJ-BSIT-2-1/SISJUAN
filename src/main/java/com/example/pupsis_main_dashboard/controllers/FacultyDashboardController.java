@@ -213,6 +213,9 @@ public class FacultyDashboardController {
         logger.info("FacultyDashboardController.updateFacultyUI: Successfully retrieved faculty data. Formatted name: '{}', Faculty ID: '{}'", formattedName, facultyId);
 
         Platform.runLater(() -> {
+
+            SessionData.getInstance().setFacultyId(facultyId);
+
             // Set the faculty ID first to ensure it's available
             studentNameLabel.setText(formattedName);
             studentIdLabel.setText(facultyId);

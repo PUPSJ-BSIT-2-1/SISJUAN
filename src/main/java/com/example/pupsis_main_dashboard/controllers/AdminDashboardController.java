@@ -344,7 +344,7 @@ public class AdminDashboardController {
                 );
                 content = loader.load();
 
-                if (fxmlPath.equals(null)) {// Set faculty ID in SessionData when loading grading module
+                if (fxmlPath.equals(HOME_FXML)) {// Set faculty ID in SessionData when loading grading module
                     String facultyId = studentIdLabel.getText();
                     SessionData.getInstance().setStudentId(facultyId);
                 }

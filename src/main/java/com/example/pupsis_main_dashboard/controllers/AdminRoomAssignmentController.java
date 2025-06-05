@@ -303,6 +303,8 @@ public class AdminRoomAssignmentController {
         int semesterId = SchoolYearAndSemester.getSemesterId(currentSemesterName);
         int academicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
 
+        facultyIDComboBox.getItems().clear();
+      
         String query = """
                 SELECT CONCAT(fac.faculty_number, ' - ', sub.description, ' (', ys.year_section, ')') AS faculty_load_display
                 FROM public.faculty_load fl
@@ -621,6 +623,8 @@ public class AdminRoomAssignmentController {
                 StageAndSceneUtils.showAlert("Database Error", "Failed to update schedule. It might conflict or violate constraints.", Alert.AlertType.ERROR);
             }
             scheduleTable.refresh();
+          
+            handleCancelSchedule(); // Return to the previous view
         });
     }
 
@@ -650,9 +654,16 @@ public class AdminRoomAssignmentController {
                     schedules.remove(schedule);
                     allSchedules.remove(schedule);
                     scheduleTable.refresh();
+
                     populateFacultyIDComboBox(); 
                     StageAndSceneUtils.showAlert("Success", "Schedule deleted successfully!", Alert.AlertType.INFORMATION);
                     handleCancelSchedule(); 
+
+                    populateFacultyIDComboBox();
+                    
+                    // Show a success message
+                    StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.INFORMATION), "Schedule deleted successfully!");
+
                 } else {
                     StageAndSceneUtils.showAlert("Deletion Warning", "No schedule was deleted. The record may have been removed by another user or an error occurred.", Alert.AlertType.WARNING);
                 }
@@ -661,6 +672,61 @@ public class AdminRoomAssignmentController {
                 StageAndSceneUtils.showAlert("Database Error", "Failed to delete schedule due to a database error.", Alert.AlertType.ERROR);
             }
         }
+    }
+
+        } catch (SQLException e) {
+            logger.error("Failed to delete schedule", e);
+            StageAndSceneUtils.showAlert(String.valueOf(Alert.AlertType.ERROR), "Failed to delete schedule.");
+        }
+    }
+
+    // This method checks if the proposed schedule is free in the specified room.
+    private boolean isScheduleFree(String room, String proposedStart, String proposedEnd, String proposedDays, int facultyLoadId) {
+        String query = """
+        SELECT s.days
+        FROM schedule s
+        JOIN room r ON s.room_id = r.room_id
+        WHERE (
+            TO_TIMESTAMP(?, 'HH12:MI AM')::time < s.end_time
+            AND TO_TIMESTAMP(?, 'HH12:MI AM')::time > s.start_time
+            AND (r.room_name = ? OR s.faculty_load_id = ?)
+            AND s.faculty_load_id != ?
+        )
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, proposedStart);
+            statement.setString(2, proposedEnd);
+            statement.setString(3, room);
+            statement.setInt(4, facultyLoadId);
+            statement.setInt(5, facultyLoadId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                String scheduledDays = rs.getString("days");
+                if (daysOverlap(scheduledDays, proposedDays)) {
+                    return false; // conflict found
+                }
+            }
+            return true; // no conflict
+        } catch (SQLException e) {
+            logger.error("Failed to check schedule conflicts", e);
+            return false;
+        }
+    }
+
+    // This method checks if the existing days overlap with the proposed days.
+    private boolean daysOverlap(String existingDays, String proposedDays) {
+        // example: existing = "TTh", proposed = "Th"
+        // check if any of the proposed substrings exist in the scheduled days
+        List<String> dayTokens = Arrays.asList("M", "T", "W", "Th", "F", "Su", "S"); // adjust as needed
+
+        for (String token : dayTokens) {
+            if (existingDays.contains(token) && proposedDays.contains(token)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // This method handles the cancellation of the schedule creation or update.

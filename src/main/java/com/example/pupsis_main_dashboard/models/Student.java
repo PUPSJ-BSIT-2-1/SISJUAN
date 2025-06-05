@@ -7,6 +7,8 @@ import java.time.LocalDate;
 public class Student {
     private final ObjectProperty<Integer> studentId; // Actual DB primary key
     private final StringProperty studentNo; // Textual student number (e.g., "2021-00001-MN-0")
+    private final StringProperty studentId;
+    private StringProperty studentNa;
     private final StringProperty firstName;
     private final StringProperty middleName;
     private final StringProperty lastName;
@@ -37,6 +39,17 @@ public class Student {
     public Student() {
         this.studentId = new SimpleObjectProperty<>();
         this.studentNo = new SimpleStringProperty("");
+      
+    private final StringProperty status;
+    private final StringProperty program;
+    private final StringProperty yearLevel;
+    private final StringProperty studentNo; // Added for EditGradesPageController
+    private final StringProperty finalGrade; // Added for EditGradesPageController
+
+    // Constructor for the old properties (maintained for backward compatibility)
+    public Student(String no, String id, String studentNa, String code, String grade, String status) {
+        this.studentId = new SimpleStringProperty(id);
+        this.studentNa = new SimpleStringProperty(studentNa);
         this.firstName = new SimpleStringProperty("");
         this.middleName = new SimpleStringProperty("");
         this.lastName = new SimpleStringProperty("");
@@ -245,5 +258,63 @@ public class Student {
                 getYearLevelId(), getYearLevelName(),
                 getScholasticStatusId(), getScholasticStatusName(),
                 getSubjectCodeForGrade(), getFinalGrade(), getGradeStatusName(), getStudentLoadId());
+        fullName.append(" ").append(lastName.get());
+        return fullName.toString();
+    }
+    
+    // Added getters and setters for compatibility with EditGradesPageController
+    
+    public String getStudentNo() {
+        return studentNo.get();
+    }
+    
+    public StringProperty studentNoProperty() {
+        return studentNo;
+    }
+    
+    public void setStudentNo(String no) {
+        this.studentNo.set(no);
+    }
+
+    public String getStudentNa() {
+        return studentNa.get();
+    }
+
+    public StringProperty studentNaProperty() {
+        return studentNa;
+    }
+
+    public void setStudentNa(String no) {
+        this.studentNa.set(no);
+    }
+    
+    public String getSubjCode() {
+        return program.get();
+    }
+    
+    public void setSubjCode(String code) {
+        this.program.set(code);
+    }
+    
+    public String getFinalGrade() {
+        return finalGrade.get();
+    }
+    
+    public StringProperty finalGradeProperty() {
+        return finalGrade;
+    }
+    
+    public void setFinalGrade(String grade) {
+        this.finalGrade.set(grade);
+        // Also update yearLevel for consistency
+        this.yearLevel.set(grade);
+    }
+    
+    public String getGradeStatus() {
+        return status.get();
+    }
+    
+    public void setGradeStatus(String status) {
+        this.status.set(status);
     }
 }

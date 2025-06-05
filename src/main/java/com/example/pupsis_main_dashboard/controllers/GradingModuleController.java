@@ -62,6 +62,7 @@ public class GradingModuleController implements Initializable {
         subjCodeCol.setReorderable(false);
         subjDescCol.setReorderable(false);
 
+        // Set up the search icon click handler
         if (searchIconContainer != null) {
             searchIconContainer.setOnMouseClicked(event -> {
                 logger.debug("Search icon clicked.");
@@ -87,12 +88,32 @@ public class GradingModuleController implements Initializable {
                     subjectsTable.setPlaceholder(new Label("Error: Invalid faculty identifier."));
                     validationLabel.setText("Error: Invalid Faculty ID");
                 }
+            facultyId = SessionData.getInstance().getFacultyId();
+            if (facultyId != null && !facultyId.isEmpty()) {
+                // Load data asynchronously
+                Task<ObservableList<Subject>> loadTask = getObservableListTask();
+                new Thread(loadTask).start();
             } else {
                 logger.warn("Faculty_number is null or empty from SessionData. Cannot load subjects.");
                 subjectsTable.setPlaceholder(new Label("No faculty identifier available."));
                 validationLabel.setText("Faculty ID not available");
             }
         });
+    }
+
+    private String attemptToRetrieveStudentId() {
+        // Try to get student ID from a label if available
+        Node studentIdLabel = subjectsTable.getScene() != null ?
+                subjectsTable.getScene().lookup("#studentIdLabel") : null;
+
+        if (studentIdLabel instanceof Label) {
+            String id = ((Label) studentIdLabel).getText();
+            if (id != null && !id.isEmpty()) {
+                SessionData.getInstance().setStudentId(id);
+                return id;
+            }
+        }
+        return null;
     }
 
     private Task<ObservableList<Subject>> getObservableListTask() {
@@ -242,6 +263,10 @@ public class GradingModuleController implements Initializable {
             logger.trace("Search filter applied with text: '{}'. Filtered count: {}", newValue, filteredData.size());
         });
 
+        // Make the search field responsive to an ENTER key
+        searchBar.setOnAction(event -> performSearch());
+
+        // Wrap the FilteredList in a SortedList
         SortedList<Subject> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(subjectsTable.comparatorProperty());
         subjectsTable.setItems(sortedData);
@@ -249,6 +274,35 @@ public class GradingModuleController implements Initializable {
              subjectsTable.setPlaceholder(new Label("No subjects assigned or found for the current semester."));
         }
         logger.debug("Search functionality set up.");
+    }
+    
+    // Method to apply filter logic - extracted for reuse
+    private void applyFilter(FilteredList<Subject> filteredData, String newValue) {
+        filteredData.setPredicate(subject -> {
+            // If a search text is empty, display all subjects
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
+            }
+
+            // Convert search text to lower case
+            String lowerCaseFilter = newValue.toLowerCase();
+
+            // Match against all fields
+            if (subject.getYearSection().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            if (subject.getSemester().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            if (subject.getSubjectCode().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+
+            if (subject.getSubjectDescription().toLowerCase().contains(lowerCaseFilter)){
+                return true;
+            }
+            return false; // Does not match
+        });
     }
 
     private int getIntegerFacultyIdByFacultyNumber(String facultyNumber) {

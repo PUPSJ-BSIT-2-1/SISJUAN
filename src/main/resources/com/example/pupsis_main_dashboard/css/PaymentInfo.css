@@ -1,0 +1,145 @@
+/* Font base style */
+.font {
+    -fx-font-family: "Inter 16pt Medium";  /* Reduced font size */
+}
+
+/* Updated Section header style with bold, larger font, and black color */
+.section-header-bold-black {
+    -fx-font-size: 24px;  /* Slightly increased font size */
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-weight: bold;
+    -fx-text-fill: black;  /* Set color to black */
+    -fx-padding: 0 0 4 0;  /* Reduced padding */
+}
+
+/* Section header style for the other sections */
+.section-header {
+    -fx-font-size: 18px;  /* Slightly reduced font size */
+    -fx-font-family: "Inter 16pt SemiBold";
+    -fx-text-fill: #212529;
+    -fx-padding: 0 0 4 0;
+}
+
+/* Adjusted Balance label with semi-transparent yellow background */
+.balance-label-highlight {
+    -fx-font-size: 14px;  /* Font size */
+    -fx-font-weight: bold;
+    -fx-text-fill: #a80000;
+    -fx-background-color: rgba(255, 235, 59, 0.3);  /* Semi-transparent yellow */
+    -fx-padding: 8 12;
+    -fx-background-radius: 6;
+}
+
+/* Card container */
+.cards {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 4, 0, 0, 3);
+}
+
+/* Action buttons */
+.action-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;  /* Reduced font size */
+    -fx-padding: 8 16;  /* Reduced padding */
+    -fx-background-radius: 7;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.3, 0, 2);
+}
+
+.action-button:hover {
+    -fx-background-color: #5e0000;
+}
+
+/* TableView base */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Table headers */
+.table-view .column-header-background {
+    -fx-background-color: #f1f3f5;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8 8 0 0;
+}
+
+.table-view .label {
+    -fx-font-size: 12px;  /* Reduced font size */
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+/* Table cells */
+.table-view .table-cell {
+    -fx-padding: 8;
+    -fx-font-size: 12px;  /* Reduced font size */
+    -fx-text-fill: #212529;
+}
+
+/* Optional: smoother scrollbars */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.table-view .increment-button,
+.table-view .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.table-view .thumb {
+    -fx-background-color: #ced4da;
+    -fx-background-radius: 8;
+}
+
+/* Payment Method Card Styling */
+.payment-card {
+    -fx-padding: 12 18;
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 4, 0, 0, 1);
+    -fx-transition: all 0.3s ease;
+}
+
+.payment-card:hover {
+    -fx-border-color: #800000;
+    -fx-effect: dropshadow(three-pass-box, rgba(128,0,0,0.3), 6, 0, 0, 2);
+}
+
+.payment-card-selected {
+    -fx-border-color: #800000;
+    -fx-background-color: #fff5f5;
+    -fx-effect: dropshadow(three-pass-box, rgba(128,0,0,0.25), 5, 0, 0, 2);
+}
+
+
+.outlined-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #c62828;
+    -fx-text-fill: #c62828;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6 14;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 2, 0, 0, 1);
+}
+.outlined-button:hover {
+    -fx-background-color: #ffcdd2;
+}
+
+
+
