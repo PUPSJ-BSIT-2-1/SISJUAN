@@ -3,6 +3,7 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.EmailService;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -201,8 +202,12 @@ public class FacultyLoginController {
     // Retrieves and returns the full name of a faculty member
     public static String getFacultyFullName(String identifier) { // Removed isEmail parameter
         String fullName = "";
-        String query = "SELECT faculty_id, firstname, lastname, middlename, department, contactnumber, status FROM faculty WHERE faculty_number = ?"; // Always use faculty_number
-        
+        String query = "SELECT f.faculty_id, f.firstname, f.lastname, f.middlename, d.department_name, f.contactnumber, fs.status_name " +
+                       "FROM faculty f " +
+                       "LEFT JOIN departments d ON f.department_id = d.department_id " +
+                       "LEFT JOIN faculty_statuses fs ON f.faculty_status_id = fs.faculty_status_id " +
+                       "WHERE f.faculty_number = ?";
+
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
              
@@ -213,23 +218,35 @@ public class FacultyLoginController {
                     String firstName = resultSet.getString("firstname");
                     String lastName = resultSet.getString("lastname");
                     String middleName = resultSet.getString("middlename");
-                    String department = resultSet.getString("department");
+                    String departmentName = resultSet.getString("department_name");
                     String contactNumber = resultSet.getString("contactnumber");
-                    String status = resultSet.getString("status");
+                    String statusName = resultSet.getString("status_name");
                     String facultyId = resultSet.getString("faculty_id");
+                    
+                    logger.info("Retrieved faculty_id from DB for identifier {}: '{}'", identifier, facultyId);
                     
                     fullName = firstName + " " + (middleName != null ? middleName + " " : "") + lastName;
                     
                     // Store faculty information in preferences for use across the application
                     Preferences prefs = Preferences.userNodeForPackage(FacultyLoginController.class);
                     prefs.put("faculty_name", fullName);
-                    prefs.put("faculty_id", facultyId);
+                    prefs.put("faculty_id", facultyId); // Storing in Preferences
                     prefs.put("faculty_firstname", firstName);
                     prefs.put("faculty_lastname", lastName);
                     prefs.put("faculty_middlename", middleName != null ? middleName : "");
-                    prefs.put("faculty_department", department != null ? department : "");
+                    prefs.put("faculty_department", departmentName != null ? departmentName : "");
                     prefs.put("faculty_contactnumber", contactNumber != null ? contactNumber : "");
-                    prefs.put("faculty_status", status != null ? status : "");
+                    prefs.put("faculty_status", statusName != null ? statusName : "");
+
+                    // Also set the faculty_id in SessionData
+                    if (facultyId != null && !facultyId.trim().isEmpty()) {
+                        String trimmedFacultyId = facultyId.trim();
+                        logger.info("Attempting to set SessionData.facultyId for identifier {} with: '{}'", identifier, trimmedFacultyId);
+                        SessionData.getInstance().setFacultyId(trimmedFacultyId);
+                        logger.info("SessionData.facultyId after set (retrieved immediately for verification): '{}'", SessionData.getInstance().getFacultyId());
+                    } else {
+                        logger.warn("Retrieved faculty_id ('{}') is null or effectively empty for identifier: {}. SessionData.facultyId will not be set.", facultyId, identifier);
+                    }
                 }
             }
         } catch (SQLException e) {

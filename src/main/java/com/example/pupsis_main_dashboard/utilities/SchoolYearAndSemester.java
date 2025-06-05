@@ -67,6 +67,11 @@ public class SchoolYearAndSemester {
         }
     }
 
+    public static int getCurrentSemesterId() {
+        String currentSemesterName = determineCurrentSemester();
+        return getSemesterId(currentSemesterName);
+    }
+
     public static int getCurrentAcademicYearId() {
         String academicYearName = getCurrentAcademicYear();
         String query = "SELECT academic_year_id FROM public.academic_years WHERE academic_year_name = ?";

@@ -35,7 +35,7 @@ public class Schedule {
     public Schedule(int loadID, String faculty, String subjectID, String facultyNumber,
                     String subCode, String subDesc, String facultyName, String facultyID,
                     String yearSection, String days, String startTime, String endTime,
-                    String room, Integer units, Integer lectureHour, Integer laboratoryHour,
+                    String room, String units, Integer lectureHour, Integer laboratoryHour,
                     Button editButton) {
 
         this.loadID = new SimpleIntegerProperty(loadID);
@@ -51,12 +51,12 @@ public class Schedule {
         this.startTime = new SimpleStringProperty(nonNull(startTime));
         this.endTime = new SimpleStringProperty(nonNull(endTime));
         this.room = new SimpleStringProperty(nonNull(room));
-        this.units = new SimpleIntegerProperty(nonNullInt(units));
+        this.units = new SimpleIntegerProperty(nonNullInt(Integer.valueOf(units)));
         this.lectureHour = new SimpleIntegerProperty(nonNullInt(lectureHour));
         this.laboratoryHour = new SimpleIntegerProperty(nonNullInt(laboratoryHour));
         this.stringLectureHour = new SimpleStringProperty(String.valueOf(nonNullInt(lectureHour)));
         this.stringLaboratoryHour = new SimpleStringProperty(String.valueOf(nonNullInt(laboratoryHour)));
-        this.stringUnits = new SimpleStringProperty(String.valueOf(nonNullInt(units)));
+        this.stringUnits = new SimpleStringProperty(String.valueOf(nonNullInt(Integer.valueOf(units))));
 
         // Calculated properties
         // Ensure yearSection is non-null before using in concatenation for scheduleWithFaculty

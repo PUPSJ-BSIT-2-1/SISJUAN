@@ -109,7 +109,7 @@ public class AdminRoomAssignmentController {
     @FXML
     private TableColumn<Schedule, String> roomCell;
     @FXML
-    private TableColumn<Schedule, Integer> unitsCell;
+    private TableColumn<Schedule, String> unitsCell;
     @FXML
     private TableColumn<Schedule, Button> editCell;
 
@@ -262,22 +262,14 @@ public class AdminRoomAssignmentController {
                     String startTime = (startTimeSql != null) ? new SimpleDateFormat("hh:mm a").format(startTimeSql) : "";
                     String endTime = (endTimeSql != null) ? new SimpleDateFormat("hh:mm a").format(endTimeSql) : "";
                     String room = rs.getString("room_name");
-                    int units = 0;
                     String unitsStr = rs.getString("units");
-                     try {
-                        if (unitsStr != null && !unitsStr.trim().isEmpty()) {
-                            units = Integer.parseInt(unitsStr.trim());
-                        }
-                    } catch (NumberFormatException e) {
-                        logger.warn("Could not parse units value: '{}' for load_id: {}", unitsStr, loadId);
-                    }
                     int lectureHour = rs.getInt("lecture_hour");
                     int laboratoryHour = rs.getInt("laboratory_hour");
 
                     // Constructing facultyValue for display consistency if needed, or use facultyName directly
                     String facultyDisplayValue = facultyName + " (" + facultyNumber + ")";
 
-                    Schedule schedule = new Schedule(loadId, facultyDisplayValue, subjectCode, facultyNumber, subjectCode, subDesc, facultyName, facultyNumber, yearSection, days, startTime, endTime, room, units, lectureHour, laboratoryHour, editButton);
+                    Schedule schedule = new Schedule(loadId, facultyDisplayValue, subjectCode, facultyNumber, subjectCode, subDesc, facultyName, facultyNumber, yearSection, days, startTime, endTime, room, unitsStr, lectureHour, laboratoryHour, editButton);
                     editButton.setOnAction(_ -> handleEditSchedule(schedule, borderPane, scheduleContainer));
                     schedules.add(schedule);
                     allSchedules.add(schedule);

@@ -488,7 +488,7 @@ public class FacultyHomeContentController {
                     
                     while (rs.next()) {
                         hasEvents = true;
-                        String eventName = rs.getString("event_type");
+                        String eventName = rs.getString("event_description");
                         LocalDate eventDate = rs.getDate("first_date").toLocalDate();
                         String description = rs.getString("event_description");
                         
