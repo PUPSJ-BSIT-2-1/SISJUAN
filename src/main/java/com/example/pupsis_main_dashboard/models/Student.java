@@ -28,7 +28,7 @@ public class Student {
     private final StringProperty scholasticStatusName;
 
     // Fields for specific views like EditGradesPageController
-    private final StringProperty finalGrade; 
+    private final ObjectProperty<Double> finalGrade; 
     private final StringProperty subjectCodeForGrade; // Added for EditGradesPageController
     private final StringProperty gradeStatusName; // Added for EditGradesPageController
     private final ObjectProperty<Integer> studentLoadId; // Added for EditGradesPageController to link to grade table
@@ -53,7 +53,7 @@ public class Student {
         this.yearLevelName = new SimpleStringProperty("");
         this.scholasticStatusId = new SimpleObjectProperty<>();
         this.scholasticStatusName = new SimpleStringProperty("");
-        this.finalGrade = new SimpleStringProperty("");
+        this.finalGrade = new SimpleObjectProperty<>(); 
         this.subjectCodeForGrade = new SimpleStringProperty("");
         this.gradeStatusName = new SimpleStringProperty("");
         this.studentLoadId = new SimpleObjectProperty<>(); // Initialize new field
@@ -66,13 +66,13 @@ public class Student {
                    Integer departmentId, String departmentName, // departmentId is for program
                    Integer yearLevelId, String yearLevelName,
                    Integer scholasticStatusId, String scholasticStatusName,
-                   String finalGrade, String subjectCodeForGrade, String gradeStatusName, ObjectProperty<Integer> studentLoadId) {
+                   String finalGradeString, String subjectCodeForGrade, String gradeStatusName, ObjectProperty<Integer> studentLoadId) {
         this.studentId = new SimpleObjectProperty<>(studentId);
         this.studentNo = new SimpleStringProperty(studentNo);
         this.firstName = new SimpleStringProperty(firstName);
         this.middleName = new SimpleStringProperty(middleName != null ? middleName : "");
         this.lastName = new SimpleStringProperty(lastName);
-        this.studentLoadId = studentLoadId;
+        this.studentLoadId = studentLoadId; // Ensure this is initialized; assuming it's passed in correctly
         this.studentFullName = new ReadOnlyStringWrapper();
         this.studentFullName.bind(Bindings.createStringBinding(() -> buildFullName(), this.firstName, this.middleName, this.lastName));
         this.email = new SimpleStringProperty(email);
@@ -86,27 +86,36 @@ public class Student {
         this.yearLevelName = new SimpleStringProperty(yearLevelName);
         this.scholasticStatusId = new SimpleObjectProperty<>(scholasticStatusId);
         this.scholasticStatusName = new SimpleStringProperty(scholasticStatusName);
-        this.finalGrade = new SimpleStringProperty(finalGrade);
+
+        // Initialize finalGrade once
+        Double parsedGrade = null;
+        if (finalGradeString != null && !finalGradeString.trim().isEmpty()) {
+            try {
+                parsedGrade = Double.parseDouble(finalGradeString);
+            } catch (NumberFormatException e) {
+                // parsedGrade remains null, handled by SimpleObjectProperty constructor below
+            }
+        }
+        this.finalGrade = new SimpleObjectProperty<>(parsedGrade); // Initialize with parsedGrade (can be null)
+
         this.subjectCodeForGrade = new SimpleStringProperty(subjectCodeForGrade);
         this.gradeStatusName = new SimpleStringProperty(gradeStatusName);
     }
 
     // Constructor for EditGradesPageController
-    public Student(String studentNo, String studentFullNameDisplay, String subjectCode, String finalGrade, String gradeStatusName, Integer studentLoadId) {
+    public Student(String studentNo, String firstName, String middleName, String lastName, String subjectCode, Double finalGradeValue, String derivedGradeStatusName, Integer studentLoadId) {
         this(); // Call default constructor to initialize all properties
 
         this.studentNo.set(studentNo);
-        // For studentFullName, which is bound, set its constituent parts.
-        // Assuming studentFullNameDisplay is the complete name, we can set firstName to it.
-        this.firstName.set(studentFullNameDisplay);
-        // Middle and Last name can be empty for this specific constructor if not provided separately
-        this.middleName.set(""); 
-        this.lastName.set("");
+        this.firstName.set(firstName);
+        this.middleName.set(middleName != null ? middleName : "");
+        this.lastName.set(lastName);
+        // studentFullName is bound and will update automatically
 
         this.subjectCodeForGrade.set(subjectCode);
-        this.finalGrade.set(finalGrade);
-        this.gradeStatusName.set(gradeStatusName);
-        this.studentLoadId.set(studentLoadId); // Set the new field
+        this.finalGrade.set(finalGradeValue); // Set the Double value
+        this.gradeStatusName.set(derivedGradeStatusName); // Set the derived status
+        this.studentLoadId.set(studentLoadId); 
     }
 
     private String buildFullName() {
@@ -207,9 +216,9 @@ public class Student {
     public StringProperty scholasticStatusNameProperty() { return scholasticStatusName; }
 
     // Final Grade
-    public String getFinalGrade() { return finalGrade.get(); }
-    public void setFinalGrade(String grade) { this.finalGrade.set(grade); }
-    public StringProperty finalGradeProperty() { return finalGrade; }
+    public Double getFinalGrade() { return finalGrade.get(); }
+    public void setFinalGrade(Double grade) { this.finalGrade.set(grade); }
+    public ObjectProperty<Double> finalGradeProperty() { return finalGrade; }
 
     // Subject Code for Grade (for EditGradesPageController)
     public String getSubjectCodeForGrade() { return subjectCodeForGrade.get(); }

@@ -1,10 +1,9 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Student;
-import com.example.pupsis_main_dashboard.utilities.DBConnection; // Assuming DBConnection, adjust if needed
-// import com.example.pupsis_main_dashboard.utilities.StudentCache; // Temporarily commented out
+import com.example.pupsis_main_dashboard.utilities.DBConnection;import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -14,7 +13,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
+import javafx.util.converter.DoubleStringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class EditGradesPageController implements Initializable {
     @FXML private TableColumn<Student, String> studIDCol;
     @FXML private TableColumn<Student, String> studNameCol;
     @FXML private TableColumn<Student, String> subjCodeCol;
-    @FXML private TableColumn<Student, String> finGradeCol;
+    @FXML private TableColumn<Student, Double> finGradeCol; // Changed to Double
     @FXML private TableColumn<Student, String> gradeStatCol;
 
     private final ObservableList<Student> studentsList = FXCollections.observableArrayList();
@@ -70,130 +71,71 @@ public class EditGradesPageController implements Initializable {
         studIDCol.setCellValueFactory(new PropertyValueFactory<>("studentNo")); // Displaying studentNo as ID as well
         studNameCol.setCellValueFactory(new PropertyValueFactory<>("studentFullName"));
         subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjectCodeForGrade"));
-        finGradeCol.setCellValueFactory(new PropertyValueFactory<>("finalGrade"));
+        finGradeCol.setCellValueFactory(new PropertyValueFactory<>("finalGrade")); // Changed to Double
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatusName"));
         logger.debug("Table columns initialized with PropertyValueFactory.");
 
         // Make final grade column editable with custom cell factory
-        finGradeCol.setCellFactory(tc -> new TableCell<Student, String>() {
-            private TextField textField;
-
+        finGradeCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter() {
             @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                // logger.trace("updateItem called for cell. Item: {}, Empty: {}", item, empty); // Can be too verbose
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    try {
-                        float gradeValue = Float.parseFloat(item);
-                        setText(gradeFormat.format(gradeValue));
-                    } catch (NumberFormatException e) {
-                        setText(item); 
-                        logger.warn("NumberFormatException while formatting grade for display: {}", item, e);
-                    }
-                    setGraphic(null);
+            public String toString(Double object) {
+                if (object == null) {
+                    return "NGS"; // Display NGS if grade is null
                 }
+                return gradeFormat.format(object); // Format to two decimal places
             }
 
             @Override
-            public void startEdit() {
-                super.startEdit();
-
-                logger.debug("startEdit called for grade cell.");
-                if (textField == null) {
-                    createTextField();
+            public Double fromString(String string) {
+                if (string == null || string.trim().isEmpty() || "NGS".equalsIgnoreCase(string.trim())) {
+                    return null; // Allow clearing the grade or entering NGS
                 }
-                setText(null);
-                setGraphic(textField);
-                textField.requestFocus();
-            }
-
-            @Override
-            public void cancelEdit() {
-                super.cancelEdit();
-                logger.debug("cancelEdit called for grade cell. Current item: {}", getItem());
                 try {
-                    float gradeValue = Float.parseFloat(getItem());
-                    setText(gradeFormat.format(gradeValue));
-                } catch (NumberFormatException e) {
-                    setText(getItem());
-                    logger.warn("NumberFormatException during cancelEdit formatting: {}", getItem(), e);
-                }
-                setGraphic(null);
-            }
-
-            private void createTextField() {
-                logger.debug("Creating TextField for grade editing. Initial item: {}", getItem());
-                String initialValue = getItem();
-                try {
-                    float gradeValue = Float.parseFloat(initialValue);
-                    initialValue = gradeFormat.format(gradeValue);
-                } catch (NumberFormatException e) {
-                    logger.warn("NumberFormatException creating TextField, using original value: {}", initialValue, e);
-                }
-
-                textField = new TextField(initialValue);
-                textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-
-                textField.setOnKeyPressed(e -> {
-                    if (e.getCode() == KeyCode.ENTER) {
-                        logger.debug("Enter key pressed in grade TextField. Value: {}", textField.getText());
-                        if (isValidGrade(textField.getText())) {
-                            String formattedGrade = formatGradeInput(textField.getText());
-                            logger.debug("Committing edit with formatted grade: {}", formattedGrade);
-                            commitEdit(formattedGrade);
-                        } else {
-                            logger.warn("Invalid grade entered: {}. Cancelling edit.", textField.getText());
-                            cancelEdit();
-                            showError("Invalid Grade", "Please enter a valid grade between 1.00 and 5.00");
-                        }
-                    } else if (e.getCode() == KeyCode.ESCAPE) {
-                        logger.debug("Escape key pressed in grade TextField. Cancelling edit.");
-                        cancelEdit();
+                    // Attempt to parse, if it fails, super.fromString will throw NumberFormatException
+                    double val = Double.parseDouble(string);
+                    if (val < 1.0 || (val > 3.0 && val < 5.0) || val > 5.0) { // Basic validation for typical 1.0-3.0, 5.0 scale
+                         // Or handle more complex validation if needed, e.g., specific allowed values
+                        // For now, let's allow it and let the logic decide status
                     }
-                });
-
-                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                    // logger.trace("TextField focus changed. WasFocused: {}, IsNowFocused: {}", wasFocused, isNowFocused); // Can be verbose
-                    if (!isNowFocused && wasFocused) { // Commit only if it was focused and now lost focus
-                        logger.debug("TextField lost focus. Value: {}", textField.getText());
-                        if (isValidGrade(textField.getText())) {
-                            String formattedGrade = formatGradeInput(textField.getText());
-                            logger.debug("Committing edit due to focus loss with formatted grade: {}", formattedGrade);
-                            commitEdit(formattedGrade);
-                        } else {
-                            logger.warn("Invalid grade on focus loss: {}. Cancelling edit.", textField.getText());
-                            cancelEdit();
-                            // Avoid showing error on every focus loss if invalid, could be annoying.
-                            // Consider if error should only be shown on explicit commit (Enter key).
-                        }
-                    }
-                });
+                    return val;
+                } catch (NumberFormatException e) {
+                    // Handle invalid input, e.g., show an error or return a specific value
+                    // For now, rethrow or let the TableView handle it by not committing the edit.
+                    // Platform.runLater(() -> showError("Invalid Input", "Please enter a valid number for grade or NGS."));
+                    // To prevent commit on invalid format, we can throw an exception that the table can catch
+                    // or return the old value if we had access to it here.
+                    // For simplicity, we'll let it try to parse and potentially fail if not a double.
+                    logger.warn("Invalid grade input: {}", string);
+                    // Returning null or throwing an exception might be options depending on desired UX
+                    // For now, let DoubleStringConverter handle the exception if not parsable.
+                    return super.fromString(string); 
+                }
             }
-        });
-        logger.debug("Final grade column CellFactory set up for editing.");
+        }));
 
-        // Handle the commit of edits
         finGradeCol.setOnEditCommit(event -> {
             Student student = event.getRowValue();
-            String newGrade = event.getNewValue();
-            logger.info("Final grade edit committed for student: {} (ID: {}), New Grade: {}", student.getStudentFullName(), student.getStudentNo(), newGrade);
-            student.setFinalGrade(newGrade);
+            Double newValue = event.getNewValue();
+            student.setFinalGrade(newValue);
+            // Derive and set status immediately
+            String derivedStatus;
+            if (newValue == null) {
+                derivedStatus = "NGS";
+            } else if (newValue >= 1.0 && newValue <= 3.0) {
+                derivedStatus = "Passed";
+            } else if (newValue == 5.0) {
+                derivedStatus = "Failed";
+            } else {
+                derivedStatus = "Inc."; // Or some other status for grades like 4.0 or invalid ones
+            }
+            student.setGradeStatusName(derivedStatus);
             updateGradeInDatabase(student);
+            studentsTable.refresh(); // Refresh to show updated status if necessary
         });
 
-        // Make other columns non-editable
-        noStudCol.setEditable(false);
-        studIDCol.setEditable(false);
-        studNameCol.setEditable(false);
-        subjCodeCol.setEditable(false);
-        gradeStatCol.setEditable(false);
-
-        // Prevent column reordering
-        studentsTable.getColumns().forEach(column -> column.setReorderable(false));
-        logger.debug("Column reordering disabled.");
+        // Grade Status Column (Display only, derived)
+        gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatusName"));
+        gradeStatCol.setEditable(false); // Status is derived, not directly editable
 
         // Populate the subject codes dropdown
         populateSubjectCodes();
@@ -208,20 +150,6 @@ public class EditGradesPageController implements Initializable {
             logger.debug("No pre-selected subject. Waiting for user selection.");
         }
         logger.info("EditGradesPageController initialized successfully.");
-    }
-
-    // Add method to format grade input
-    private String formatGradeInput(String input) {
-        logger.trace("Formatting grade input: {}", input);
-        try {
-            float gradeValue = Float.parseFloat(input);
-            String formatted = gradeFormat.format(gradeValue);
-            logger.trace("Formatted grade output: {}", formatted);
-            return formatted;
-        } catch (NumberFormatException e) {
-            logger.warn("NumberFormatException while formatting grade input: {}, returning original.", input, e);
-            return input;
-        }
     }
 
     private void setupRowHoverEffect() {
@@ -253,125 +181,108 @@ public class EditGradesPageController implements Initializable {
         });
     }
 
-    private boolean isValidGrade(String grade) {
-        logger.trace("Validating grade string: '{}'", grade);
-        if (grade == null || grade.trim().isEmpty()) {
-            logger.warn("Grade validation failed: Input is null or empty.");
-            return false;
-        }
-        try {
-            float gradeValue = Float.parseFloat(grade);
-            return gradeValue >= 1.0 && gradeValue <= 5.0;
-        } catch (NumberFormatException e) {
-            logger.warn("Grade validation failed: '{}' is not a valid number.", grade, e);
-            return false;
-        }
-    }
-
     private void updateGradeInDatabase(Student student) {
-        logger.info("Updating grade in database for student: {} (ID: {}), New Grade: {}", student.getStudentFullName(), student.getStudentNo(), student.getFinalGrade());
+        logger.info("Attempting to update grade for student via StudentLoadID: {} for subject: {}", student.getStudentLoadId(), student.getSubjectCodeForGrade());
 
-        Integer subjectId = getSubjectIdByCode(student.getSubjectCodeForGrade());
-        if (subjectId == null) {
-            logger.error("Could not find subject ID for {}", student.getSubjectCodeForGrade());
-            // Potentially revert the change in the TableView or reload data
-            loadStudentsBySubjectCode(selectedSubjectCode); // Reload to revert
+        String subjectCode = student.getSubjectCodeForGrade();
+        Integer subjectId = getSubjectIdByCode(subjectCode); // Helper method to get subject_id
+        if (subjectId == null) { // Check for null as getSubjectIdByCode can return null on error/not found
+            logger.error("Cannot update grade. Unknown subject code or DB error for: {}", subjectCode);
+            showError("Update Error", "Cannot update grade. Unknown subject code or DB error for: " + subjectCode);
             return;
         }
 
-        Float gradeValue = null;
-        try {
-            if (student.getFinalGrade() != null && !student.getFinalGrade().trim().isEmpty()) {
-                 gradeValue = Float.parseFloat(student.getFinalGrade());
-            }
-        } catch (NumberFormatException e) {
-            logger.error("Invalid grade format: {}", student.getFinalGrade(), e);
-            loadStudentsBySubjectCode(selectedSubjectCode); // Reload to revert
-            return;
-        }
+        Double gradeValue = student.getFinalGrade(); // Get Double grade from Student object
 
-        Integer gradeStatusId;
-        if (gradeValue != null) {
-            gradeStatusId = getGradeStatusId(gradeValue);
-            if (gradeStatusId == null) {
-                logger.error("Could not determine grade status ID for grade {}", gradeValue);
-                loadStudentsBySubjectCode(selectedSubjectCode); // Reload to revert
-                return;
-            }
-        } else {
-            gradeStatusId = null;
-        }
+        String checkSql = "SELECT g.grade_id, sl.student_pk_id, sl.faculty_load " +
+                        "FROM student_load sl " +
+                        "LEFT JOIN grade g ON g.student_pk_id = sl.student_pk_id AND g.faculty_load = sl.faculty_load " +
+                        "WHERE sl.load_id = ?";
 
-        // If gradeValue is null, it means the grade is being cleared.
-        // In this case, grade_status_id should also likely be null or a specific 'Not Graded' status.
-        // For simplicity, if gradeValue is null, we'll set grade_status_id to null.
+        final String[] upsertSql = new String[1];
 
-        String sql = "UPDATE grade SET grade_value = ?, grade_status_id = ? " +
-                     "WHERE student_load_id = ? AND subject_id = ?";
-
-        Float finalGradeValue = gradeValue;
         Task<Void> updateTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                try (Connection conn = DBConnection.getConnection();
-                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                try (Connection conn = DBConnection.getConnection()) {
+                    Integer gradeIdToUpdate = null;
+                    Integer studentPkIdForGrade = null;
+                    Integer facultyLoadIdForGrade = null;
 
-                    if (finalGradeValue != null) {
-                        pstmt.setFloat(1, finalGradeValue);
-                    } else {
-                        pstmt.setNull(1, Types.FLOAT);
+                    try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                        checkStmt.setInt(1, student.getStudentLoadId());
+                        ResultSet rs = checkStmt.executeQuery();
+                        if (rs.next()) {
+                            gradeIdToUpdate = rs.getObject("grade_id") != null ? rs.getInt("grade_id") : null;
+                            studentPkIdForGrade = rs.getInt("student_pk_id");
+                            facultyLoadIdForGrade = rs.getInt("faculty_load");
+                        } else {
+                            logger.error("Could not find student_load record for sl.load_id: {}", student.getStudentLoadId());
+                            throw new SQLException("Student load record not found, cannot update grade.");
+                        }
                     }
-                    
-                    if (gradeStatusId != null) {
-                        pstmt.setInt(2, gradeStatusId);
-                    } else {
-                        pstmt.setNull(2, Types.INTEGER);
-                    }
-                    
-                    pstmt.setInt(3, student.getStudentLoadId());
-                    pstmt.setInt(4, subjectId);
 
-                    int affectedRows = pstmt.executeUpdate();
-                    if (affectedRows == 0) {
-                        // This might happen if the grade record didn't exist, which implies an issue
-                        // or if the student is not enrolled in the subject (grades table might not have a row yet).
-                        // For an edit grades page, a row should typically exist.
-                        // Consider if an INSERT is needed if update fails (upsert logic), though less common for 'edit'.
-                        logger.error("No rows updated for student {}, subject {}. Grade record might not exist.", student.getStudentId(), subjectId);
-                        // Optionally, attempt to insert if that's the desired behavior for new grades.
-                        // For now, we assume the record must exist for an update.
-                        Platform.runLater(() -> {
-                            showError("Update Failed", "Grade record not found or not updated. Please ensure the student is enrolled.");
-                            loadStudentsBySubjectCode(selectedSubjectCode); // Refresh data
-                        });
-                    } else {
-                         // Update the student object's gradeStatusName for immediate UI reflection if not already done by binding
-                        Platform.runLater(() -> {
-                            if (gradeStatusId != null && finalGradeValue != null) { // only if grade was set
-                                String newStatusName = getGradeStatusNameById(gradeStatusId); // Helper needed
-                                student.setGradeStatusName(newStatusName != null ? newStatusName : "");
+                    if (studentPkIdForGrade == null || facultyLoadIdForGrade == null) {
+                        logger.error("Critical: student_pk_id or faculty_load_id is null from student_load for sl.load_id: {}", student.getStudentLoadId());
+                        throw new SQLException("Cannot determine student or faculty load for grade update.");
+                    }
+
+                    if (gradeIdToUpdate != null) { // Grade exists, UPDATE it
+                        logger.debug("Updating existing grade_id: {} for student_pk_id: {}, faculty_load: {}", gradeIdToUpdate, studentPkIdForGrade, facultyLoadIdForGrade);
+                        upsertSql[0] = "UPDATE grade SET final_grade = ?, grade_status_id = NULL, date_modified = CURRENT_TIMESTAMP " +
+                                    "WHERE grade_id = ?";
+                        try (PreparedStatement pstmt = conn.prepareStatement(upsertSql[0])) {
+                            if (gradeValue != null) {
+                                pstmt.setDouble(1, gradeValue);
                             } else {
-                                student.setGradeStatusName(""); // Cleared grade
+                                pstmt.setNull(1, Types.DOUBLE);
                             }
-                            // The table should refresh due to ObservableList nature, but sometimes a specific refresh is good.
-                            // studentsTable.refresh(); // If direct model update doesn't propagate well
-                        });
+                            pstmt.setInt(2, gradeIdToUpdate);
+                            pstmt.executeUpdate();
+                            logger.info("Successfully updated grade for student_pk_id: {}, faculty_load: {}", studentPkIdForGrade, facultyLoadIdForGrade);
+                        }
+                    } else { // Grade does not exist, INSERT it
+                        logger.debug("Inserting new grade for student_pk_id: {}, faculty_load: {}", studentPkIdForGrade, facultyLoadIdForGrade);
+                        upsertSql[0] = "INSERT INTO grade (student_pk_id, faculty_load, subject_id, final_grade, grade_status_id, academic_year_id, date_recorded, date_modified) " +
+                                    "VALUES (?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+                        
+                        int currentAcademicYearId = SessionData.getInstance().getCurrentAcademicYearId(); 
+
+                        try (PreparedStatement pstmt = conn.prepareStatement(upsertSql[0])) {
+                            pstmt.setInt(1, studentPkIdForGrade);
+                            pstmt.setInt(2, facultyLoadIdForGrade);
+                            pstmt.setInt(3, subjectId);
+                            if (gradeValue != null) {
+                                pstmt.setDouble(4, gradeValue);
+                            } else {
+                                pstmt.setNull(4, Types.DOUBLE);
+                            }
+                            pstmt.setInt(5, currentAcademicYearId);
+                            pstmt.executeUpdate();
+                            logger.info("Successfully inserted grade for student_pk_id: {}, faculty_load: {}", studentPkIdForGrade, facultyLoadIdForGrade);
+                        }
                     }
+                    return null;
                 } catch (SQLException e) {
-                    logger.error("Database Error: Failed to update grade: {}", e.getMessage(), e);
-                    Platform.runLater(() -> {
-                        showError("Database Error", "Failed to update grade: " + e.getMessage());
-                        loadStudentsBySubjectCode(selectedSubjectCode); // Revert UI on error
-                    });
-                    throw e;
+                    logger.error("Database error during grade update for student via StudentLoadID {}: ", student.getStudentLoadId(), e);
+                    throw e; // Re-throw to be caught by setOnFailed
                 }
-                return null;
             }
         };
-        
+
+        updateTask.setOnSucceeded(event -> {
+            logger.info("Grade update task succeeded for student via StudentLoadID: {}", student.getStudentLoadId());
+            // The UI (TableView cell and status) should have been updated by onEditCommit handler already.
+            // No need to update student.gradeStatusName here.
+            // studentsTable.refresh(); // Consider if refresh is needed for other reasons.
+        });
+
         updateTask.setOnFailed(event -> {
-            // Error already handled by Platform.runLater in task
-             logger.error("Task to update grade failed.");
+            Throwable ex = updateTask.getException();
+            logger.error("Grade update task failed for student via StudentLoadID: {}. Error: ", student.getStudentLoadId(), ex.getMessage(), ex);
+            showError("Update Error", "Failed to update grade: " + ex.getMessage());
+            // Consider reloading data or reverting UI changes on critical failure
+            // loadStudentsBySubjectCode(this.selectedSubjectCode); 
         });
 
         new Thread(updateTask).start();
@@ -389,56 +300,6 @@ public class EditGradesPageController implements Initializable {
         } catch (SQLException e) {
             logger.error("Database Error: Failed to get subject ID for {}: {}", subjectCode, e.getMessage(), e);
             Platform.runLater(() -> showError("DB Error", "Failed to get subject ID for " + subjectCode));
-        }
-        return null;
-    }
-
-    private Integer getGradeStatusId(double gradeValue) {
-        // Determine status name based on grade value
-        String statusName;
-        if (gradeValue >= 1.0 && gradeValue <= 3.0) {
-            statusName = "Passed";
-        } else if (gradeValue == 5.0) {
-            statusName = "Failed";
-        // Add other conditions for INC, DRP, etc. if applicable and present in grade_statuses table
-        } else if (gradeValue > 3.0 && gradeValue < 5.0) { // e.g. 4.0 could be conditional/failed
-            statusName = "Failed"; // Or a specific status like 'Conditional'
-        } else {
-             // For grades outside 1.0-3.0 and not 5.0 (e.g. 0 or invalid values if not caught before)
-            logger.error("Cannot determine grade status for value: {}", gradeValue);
-            return null; // Or a default/error status ID
-        }
-
-        String sql = "SELECT grade_status_id FROM grade_statuses WHERE status_name = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, statusName);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("grade_status_id");
-            } else {
-                logger.error("Grade status ID not found in DB for status: {}", statusName);
-                Platform.runLater(() -> showError("DB Error", "Grade status '" + statusName + "' not found."));
-            }
-        } catch (SQLException e) {
-            logger.error("Database Error: Failed to get grade status ID for {}: {}", statusName, e.getMessage(), e);
-            Platform.runLater(() -> showError("DB Error", "Failed to get grade status ID for " + statusName));
-        }
-        return null;
-    }
-    
-    private String getGradeStatusNameById(int gradeStatusId) {
-        String sql = "SELECT status_name FROM grade_statuses WHERE grade_status_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, gradeStatusId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("status_name");
-            }
-        } catch (SQLException e) {
-            logger.error("Database Error: Failed to get grade status name for ID: {}", gradeStatusId, e.getMessage(), e);
-            Platform.runLater(() -> showError("DB Error", "Failed to get grade status name for ID: " + gradeStatusId));
         }
         return null;
     }
@@ -539,17 +400,27 @@ public class EditGradesPageController implements Initializable {
                             String middleName = rs.getString("middlename");
                             String lastName = rs.getString("lastname");
                             String studentFullName = (firstName + " " + (middleName != null ? middleName + " " : "") + lastName).trim();
-                            double finalGradeDouble = rs.getDouble("grade_value");
-                            String finalGrade = rs.wasNull() ? "NGS" : gradeFormat.format(finalGradeDouble); // NGS = No Grade Submitted
-                            String gradeStatus = rs.getString("grade_status_name");
-                            if (gradeStatus == null) gradeStatus = "-"; // Default if no status
+                            Double finalGradeDouble = rs.getObject("grade_value") != null ? rs.getDouble("grade_value") : null;
+                            String derivedGradeStatusName;
+                            if (finalGradeDouble == null) {
+                                derivedGradeStatusName = "NGS";
+                            } else if (finalGradeDouble >= 1.0 && finalGradeDouble <= 3.0) {
+                                derivedGradeStatusName = "Passed";
+                            } else if (finalGradeDouble == 5.0) {
+                                derivedGradeStatusName = "Failed";
+                            } else {
+                                // Handle other cases, e.g., grades like 4.0, or out of expected range
+                                derivedGradeStatusName = "Inc."; // Or "Invalid", or based on specific rules
+                            }
+
                             int studentLoadId = rs.getInt("student_load_id");
 
-                            // The 'subjectCode' for the Student model is the one passed to this method.
-                            Student student = new Student(studentNo, studentFullName, subjectCode, finalGrade, gradeStatus, studentLoadId);
+                            Student student = new Student(studentNo, firstName, middleName, lastName, subjectCode, finalGradeDouble, derivedGradeStatusName, studentLoadId);
                             loadedStudents.add(student);
-                            // studentCache.addStudent(student); // Temporarily commented out
-                            logger.trace("Loaded student: {} - {}, Grade: {}, Status: {}", studentNo, studentFullName, finalGrade, gradeStatus);
+                            logger.trace("Loaded student: {} - {} {} {}, Grade: {}, Status: {}, StudentLoadID: {}", 
+                                studentNo, firstName, middleName, lastName, 
+                                finalGradeDouble == null ? "NGS" : gradeFormat.format(finalGradeDouble), 
+                                derivedGradeStatusName, studentLoadId);
                         }
                         logger.info("Found {} students for subject code: {}", count, subjectCode);
                     }
@@ -580,9 +451,7 @@ public class EditGradesPageController implements Initializable {
         new Thread(loadStudentsTask).start();
     }
 
-
-    private void setupSearch() {
-
+    private void setupSearchFunctionality() {
         // Create a filtered list wrapping the original list
         FilteredList<Student> filteredData = new FilteredList<>(studentsList, p -> true);
 
@@ -626,44 +495,6 @@ public class EditGradesPageController implements Initializable {
             subjCodeCombBox.setText(subjectCode);
             loadStudentsBySubjectCode(subjectCode);
         }
-    }
-
-    private void setupSearchFunctionality() {
-        // Create a filtered list wrapping the original list
-        FilteredList<Student> filteredData = new FilteredList<>(studentsList, p -> true);
-
-        // Add listener to searchBar text property
-        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(subject -> {
-                // If search text is empty, display all subjects
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                // Convert search text to lower case
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                // Match against all fields
-                if (subject.getStudentNo().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (subject.getStudentFullName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return subject.getSubjectCodeForGrade().toLowerCase().contains(lowerCaseFilter);
-            });
-        });
-
-        // Wrap the FilteredList in a SortedList
-        SortedList<Student> sortedData = new SortedList<>(filteredData);
-
-        // Bind the SortedList comparator to the TableView comparator
-        sortedData.comparatorProperty().bind(studentsTable.comparatorProperty());
-
-        // Add sorted (and filtered) data to the table
-        studentsTable.setItems(sortedData);
-
-        studentsTable.getColumns().forEach(column -> column.setReorderable(false));
     }
 
     public void setSubjectDesc(String subjectDesc) {
