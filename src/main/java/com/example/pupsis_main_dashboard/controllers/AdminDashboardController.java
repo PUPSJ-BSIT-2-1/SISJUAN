@@ -352,6 +352,14 @@ public class AdminDashboardController {
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
+            // Ensure the content has the correct theme applied before displaying
+            if (content != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                content.getStyleClass().removeAll("light-theme", "dark-theme");
+                content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+            }
+
             contentPane.setContent(content);
             resetScrollPosition();
         } catch (IOException e) {
