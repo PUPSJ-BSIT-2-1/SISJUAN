@@ -1,10 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utilities.DBConnection;
-import com.example.pupsis_main_dashboard.utilities.EmailService;
-import com.example.pupsis_main_dashboard.utilities.PasswordHandler;
-import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
-import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.*;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
@@ -374,6 +370,7 @@ public class StudentLoginController {
                     if (isAuthenticated) {
                         RememberMeHandler.savePreference(USER_TYPE, studentId, password, rememberMeCheckBox.isSelected());
                         RememberMeHandler.setCurrentUserStudentNumber(studentId); 
+                        SessionData.getInstance().setStudentNumber(studentId);
                         
                         StageAndSceneUtils u = new StageAndSceneUtils();
                         Stage stage = (Stage) leftSide.getScene().getWindow();
