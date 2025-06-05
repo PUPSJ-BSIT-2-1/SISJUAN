@@ -58,17 +58,20 @@ public class SchoolYearAndSemester {
         switch (semesterName) {
             case "1st Semester":
                 return 1;
-            case "2nd Semester":
+            case "Summer Semester": 
                 return 2;
-            case "Summer Term":
+            case "2nd Semester":  
                 return 3;
             default:
-                return -1; // Or throw an IllegalArgumentException
+                return -1; 
         }
     }
 
     public static int getCurrentSemesterId() {
         String currentSemesterName = determineCurrentSemester();
+        if ("Summer Term".equals(currentSemesterName)) {
+            currentSemesterName = "Summer Semester";
+        }
         return getSemesterId(currentSemesterName);
     }
 
@@ -86,10 +89,9 @@ public class SchoolYearAndSemester {
                 }
             }
         } catch (SQLException e) {
-            // Consider logging this error
             System.err.println("Error fetching current academic year ID: " + e.getMessage());
             e.printStackTrace();
         }
-        return -1; // Return a sensible default or throw an exception if not found/error
+        return -1; 
     }
 }
