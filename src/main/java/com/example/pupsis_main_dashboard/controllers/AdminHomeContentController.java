@@ -60,11 +60,6 @@ public class AdminHomeContentController {
 
         // TODO: Populate these labels with actual data from the database or services
         facultyNameLabel.setText("Admin User"); // Placeholder
-        // totalStudentsLabel.setText("0"); // Will be set by loadDashboardData()
-        // totalFacultyLabel.setText("0"); // Will be set by loadDashboardData()
-        // totalCoursesLabel.setText("0"); // Will be set by loadDashboardData()
-        enrollmentCountLabel.setText("0%");
-        pendingActionsLabel.setText("0");
         academicCalendarLabel.setText("N/A");
     }
 
@@ -74,7 +69,7 @@ public class AdminHomeContentController {
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            String studentSql = "SELECT COUNT(*) AS student_count FROM public.students";
+            String studentSql = "SELECT COUNT(*) AS student_count FROM public.students s JOIN public.student_statuses ss ON s.student_status_id = ss.student_status_id WHERE ss.status_name <> 'Pending'";
             ResultSet studentRs = stmt.executeQuery(studentSql);
 
             if (studentRs.next()) {
@@ -109,14 +104,40 @@ public class AdminHomeContentController {
             }
             coursesRs.close(); // Close ResultSet
 
+            // Calculate Enrollment Rate
+            String enrolledSql = "SELECT COUNT(*) AS count FROM public.students s JOIN public.student_statuses ss ON s.student_status_id = ss.student_status_id WHERE ss.status_name = 'Enrolled'";
+            ResultSet enrolledRs = stmt.executeQuery(enrolledSql);
+            double enrolledCount = 0;
+            if (enrolledRs.next()) {
+                enrolledCount = enrolledRs.getInt("count");
+            }
+            enrolledRs.close();
+
+            String pendingSql = "SELECT COUNT(*) AS count FROM public.students s JOIN public.student_statuses ss ON s.student_status_id = ss.student_status_id WHERE ss.status_name = 'Pending'";
+            ResultSet pendingRs = stmt.executeQuery(pendingSql);
+            double pendingCount = 0;
+            if (pendingRs.next()) {
+                pendingCount = pendingRs.getInt("count");
+            }
+            pendingRs.close();
+            pendingActionsLabel.setText(String.valueOf((int)pendingCount)); // Update pending actions label
+
+            double totalForRate = enrolledCount + pendingCount;
+            double enrollmentRate = 0.0;
+            if (totalForRate > 0) {
+                enrollmentRate = (enrolledCount / totalForRate) * 100.0;
+            }
+            enrollmentCountLabel.setText(String.format("%.0f%%", enrollmentRate));
+
         } catch (SQLException e) {
             e.printStackTrace(); // Consider more sophisticated error handling
             totalStudentsLabel.setText("Error");
             totalFacultyLabel.setText("Error");
             totalCoursesLabel.setText("Error");
+            enrollmentCountLabel.setText("Error");
+            pendingActionsLabel.setText("Error");
         }
 
-        // TODO: Load other data (enrollment count, etc.) here
     }
 
     // TODO: Add methods to handle actions for quick action buttons if they are interactive
