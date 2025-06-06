@@ -5,7 +5,6 @@ import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -89,7 +88,7 @@ public class AdminRoomAssignmentController {
     @FXML
     private ComboBox<String> filterRoomComboBox;
     @FXML
-    private Button addSchedule;
+    private HBox addSchedule;
 
     // Variables for the schedule table
     @FXML
@@ -166,9 +165,9 @@ public class AdminRoomAssignmentController {
 
         updateCancelButton.setOnAction(_ -> handleCancelSchedule());
         createCancelButton.setOnAction(_ -> handleCancelSchedule());
-        addSchedule.setOnAction(_ -> displayCreateScheduleForm());
+        addSchedule.setOnMouseClicked(_ -> displayCreateScheduleForm());
 
-        deleteButton.setOnAction(event -> {
+        deleteButton.setOnAction(_ -> {
             Schedule selectedSchedule = scheduleTable.getSelectionModel().getSelectedItem();
             if (selectedSchedule != null) {
                 handleDeleteSchedule(selectedSchedule);
@@ -265,6 +264,7 @@ public class AdminRoomAssignmentController {
                     String facultyDisplayValue = facultyName + " (" + facultyNumber + ")";
 
                     Schedule schedule = new Schedule(loadId, facultyDisplayValue, subjectCode, facultyNumber, subjectCode, subDesc, facultyName, facultyNumber, yearSection, days, startTime, endTime, room, unitsStr, lectureHour, laboratoryHour, editButton);
+                    createButton.setOnAction(_ -> handleCreateSchedule());
                     editButton.setOnAction(_ -> handleEditSchedule(schedule, borderPane, scheduleContainer));
                     schedules.add(schedule);
                     allSchedules.add(schedule);
@@ -342,7 +342,7 @@ public class AdminRoomAssignmentController {
     // This method populates the filter faculty combo box with distinct faculty names.
     private void populateFilterFacultyComboBox() {
         ObservableList<String> facultyNames = FXCollections.observableArrayList();
-        facultyNames.add("All Faculty"); // Add option for no filter
+        facultyNames.add("All Faculty"); // Add an option for no filter
         String query = "SELECT DISTINCT CONCAT(f.firstname, ' ', f.lastname) AS faculty_name FROM public.faculty f ORDER BY faculty_name";
 
         try (Connection conn = DBConnection.getConnection();
@@ -441,7 +441,7 @@ public class AdminRoomAssignmentController {
              PreparedStatement roomStmt = conn.prepareStatement(getRoomIDQuery)) {
             roomStmt.setString(1, roomName);
             ResultSet rsRoom = roomStmt.executeQuery();
-            int roomID = -1;
+            int roomID;
             if (rsRoom.next()) {
                 roomID = rsRoom.getInt("room_id");
             } else {
@@ -483,7 +483,7 @@ public class AdminRoomAssignmentController {
 
         String[] mainParts = facultyComboBoxValue.split(" - ", 2);
         if (mainParts.length < 2) {
-            logger.warn("Invalid format for facultyComboBoxValue (main split): " + facultyComboBoxValue);
+            logger.warn("Invalid format for facultyComboBoxValue (main split): {}", facultyComboBoxValue);
             return -1;
         }
         String facultyNumber = mainParts[0].trim();
@@ -491,7 +491,7 @@ public class AdminRoomAssignmentController {
         String subjectAndSectionPart = mainParts[1];
         int lastOpenParen = subjectAndSectionPart.lastIndexOf(" (");
         if (lastOpenParen == -1 || !subjectAndSectionPart.endsWith(")")) {
-            logger.warn("Invalid format for subject and section part (paren split): " + subjectAndSectionPart);
+            logger.warn("Invalid format for subject and section part (paren split): {}", subjectAndSectionPart);
             return -1;
         }
 
@@ -500,14 +500,14 @@ public class AdminRoomAssignmentController {
         
         String[] yearSectionParts = yearAndSectionFull.split(" - ", 2);
         if (yearSectionParts.length < 2) {
-            logger.warn("Invalid format for year and section (year-section split): " + yearAndSectionFull);
+            logger.warn("Invalid format for year and section (year-section split): {}", yearAndSectionFull);
             return -1;
         }
         String yearLevelName = yearSectionParts[0].trim();
         String sectionName = yearSectionParts[1].trim();
 
         String query = """
-            SELECT fl.load_id 
+            SELECT fl.load_id
             FROM public.faculty_load fl
             JOIN public.faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN public.subjects sub ON fl.subject_id = sub.subject_id
@@ -529,7 +529,7 @@ public class AdminRoomAssignmentController {
                 return -1; 
             }
         } catch (SQLException e) {
-            logger.error("Error searching faculty load ID for: " + facultyComboBoxValue, e);
+            logger.error("Error searching faculty load ID for: {}", facultyComboBoxValue, e);
             return -1; 
         }
     }
@@ -582,7 +582,7 @@ public class AdminRoomAssignmentController {
 
             String updateQuery = "UPDATE public.schedule SET room_id = ?, start_time = TO_TIMESTAMP(?, 'HH12:MI AM'), end_time = TO_TIMESTAMP(?, 'HH12:MI AM'), days = ?, lecture_hour = ?, laboratory_hour = ? WHERE faculty_load_id = ?";
             String getRoomIDQuery = "SELECT room_id FROM public.room WHERE room_name = ?";
-            int roomIDToUpdate = -1;
+            int roomIDToUpdate;
 
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement roomStmt = conn.prepareStatement(getRoomIDQuery)) {
@@ -659,7 +659,7 @@ public class AdminRoomAssignmentController {
                     StageAndSceneUtils.showAlert("Deletion Warning", "No schedule was deleted. The record may have been removed by another user or an error occurred.", Alert.AlertType.WARNING);
                 }
             } catch (SQLException e) {
-                logger.error("Failed to delete schedule with faculty_load_id: " + facultyLoadID, e);
+                logger.error("Failed to delete schedule with faculty_load_id: {}", facultyLoadID, e);
                 StageAndSceneUtils.showAlert("Database Error", "Failed to delete schedule due to a database error.", Alert.AlertType.ERROR);
             }
         }
