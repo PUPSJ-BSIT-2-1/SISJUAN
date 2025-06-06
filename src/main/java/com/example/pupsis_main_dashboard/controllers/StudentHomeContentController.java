@@ -3,7 +3,6 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -100,14 +99,7 @@ public class StudentHomeContentController {
 
                 // Fetch all data in the background
                 String fullStudentName = StudentLoginController.getStudentFullName(identifier);
-                String studentFirstName = "Student"; // Default
-                if (fullStudentName != null && fullStudentName.contains(",")) {
-                    String[] nameParts = fullStudentName.split(",");
-                    studentFirstName = nameParts.length > 1 ? nameParts[1].trim().split(" ")[0] : nameParts[0].trim();
-                    studentFirstName = studentFirstName.substring(0, 1).toUpperCase() + studentFirstName.substring(1).toLowerCase();
-                } else if (fullStudentName != null) {
-                    studentFirstName = fullStudentName; // Use full name if parsing fails
-                }
+                String studentFirstName = getStudentFirstName(fullStudentName);
 
                 String studentNumberForQueries = SessionData.getInstance().getStudentNumber();
                 if (studentNumberForQueries == null || studentNumberForQueries.isEmpty()) {
@@ -124,7 +116,7 @@ public class StudentHomeContentController {
                 String statusText = determineCurrentStatusLogic(studentNumberForQueries);
                 int currentAcademicYearId = com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester.getCurrentAcademicYearId();
                 String totalSubjectsText = calculateTotalSubjectsLogic(studentNumberForQueries, currentAcademicYearId, semesterInfo.id());
-                String gwaText = calculateCurrentGWALogic(studentNumberForQueries);
+                String gwaText = calculateCurrentGWALogic();
                 List<String> announcements = populateAnnouncementsLogic();
                 String numAnnouncementsText = String.valueOf(announcements.size());
 
@@ -132,7 +124,7 @@ public class StudentHomeContentController {
             }
         };
 
-        loadHomeDataTask.setOnSucceeded(event -> {
+        loadHomeDataTask.setOnSucceeded(_ -> {
             HomeContentData data = loadHomeDataTask.getValue();
 
             studentNameLabel.setText(data.studentFirstName);
@@ -148,7 +140,7 @@ public class StudentHomeContentController {
                         data.fullStudentName, RememberMeHandler.getCurrentUserStudentNumber());
         });
 
-        loadHomeDataTask.setOnFailed(event -> {
+        loadHomeDataTask.setOnFailed(_ -> {
             Throwable ex = loadHomeDataTask.getException();
             logger.error("Error initializing home content: {}", ex.getMessage(), ex);
             // Set labels to error or default state
@@ -163,6 +155,18 @@ public class StudentHomeContentController {
         });
 
         new Thread(loadHomeDataTask).start();
+    }
+
+    private String getStudentFirstName(String fullStudentName) {
+        String studentFirstName = "Student"; // Default
+        if (fullStudentName != null && fullStudentName.contains(",")) {
+            String[] nameParts = fullStudentName.split(",");
+            studentFirstName = nameParts.length > 1 ? nameParts[1].trim().split(" ")[0] : nameParts[0].trim();
+            studentFirstName = studentFirstName.substring(0, 1).toUpperCase() + studentFirstName.substring(1).toLowerCase();
+        } else if (fullStudentName != null) {
+            studentFirstName = fullStudentName; // Use the full name if parsing fails
+        }
+        return studentFirstName;
     }
 
     // Helper method to fetch student number if not in session (implement if needed)
@@ -228,21 +232,21 @@ public class StudentHomeContentController {
             if (rs.next()) {
                 String yearSectionText = rs.getString("year_section"); // e.g., "BSIT 1-1"
                 if (yearSectionText != null && !yearSectionText.isEmpty()) {
-                    // Basic parsing: Assumes format like "COURSE X-Y"
+                    // Basic parsing: Assumes a format like "COURSE X-Y"
                     // More robust parsing might be needed depending on actual year_section formats
                     String[] parts = yearSectionText.split(" ");
                     if (parts.length > 1) {
                         String yearPart = parts[1].split("-")[0]; // Takes the 'X' from "X-Y"
-                        switch (yearPart) {
-                            case "1": return "1st Year";
-                            case "2": return "2nd Year";
-                            case "3": return "3rd Year";
-                            case "4": return "4th Year";
+                        return switch (yearPart) {
+                            case "1" -> "1st Year";
+                            case "2" -> "2nd Year";
+                            case "3" -> "3rd Year";
+                            case "4" -> "4th Year";
                             // Add more cases if needed (e.g., 5th year for some courses)
-                            default: return yearPart + "th Year"; // Fallback
-                        }
+                            default -> yearPart + "th Year"; // Fallback
+                        };
                     }
-                    return yearSectionText; // Fallback to full text if parsing fails
+                    return yearSectionText; // Fallback to a full text if parsing fails
                 }
             }
         } catch (SQLException e) {
@@ -253,7 +257,7 @@ public class StudentHomeContentController {
 
     // Helper record for semester information
     private record SemesterInfo(String name, int id) {
-        // Default values for safety, though actual logic should prevent their direct use if DB call fails.
+        // Default values for safety, though actual logic should prevent their direct use if a DB call fails.
         public static final SemesterInfo DEFAULT = new SemesterInfo("N/A", 0);
     }
 
@@ -305,7 +309,7 @@ public class StudentHomeContentController {
 
     // Placeholder method for calculating total subjects
     private String calculateTotalSubjectsLogic(String studentNumber, int academicYearId, int semesterId) {
-        // First get student_id (PK) from student_number
+        // First, get student_id (PK) from student_number
         int studentPkId = -1;
         String studentIdQuery = "SELECT student_id FROM public.students WHERE student_number = ?;";
         try (Connection conn = DBConnection.getConnection();
@@ -355,11 +359,9 @@ public class StudentHomeContentController {
     }
 
     // Placeholder method for calculating current GWA
-    private String calculateCurrentGWALogic(String studentNumber) {
-        // GWA calculation can be complex and might involve joining grades, subjects (for units).
-        // This is a placeholder.
-        logger.warn("GWA calculation logic is a placeholder for student {}.", studentNumber);
-        return "N/A"; // Placeholder
+    private String calculateCurrentGWALogic() {
+        double gwa = StudentGradesController.getGWA();
+        return gwa == 0 ? "N/A" : String.format("%.2f", gwa);
     }
 
     // Method to populate announcements

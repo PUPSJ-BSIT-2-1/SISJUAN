@@ -300,8 +300,8 @@
                           <columns>
                               <TableColumn fx:id="facultyIDCell" editable="false" maxWidth="152.800048828125" minWidth="38.4000244140625" prefWidth="75.19998168945312" resizable="false" text="Fac ID" />
                               <TableColumn fx:id="facultyNameCell" editable="false" maxWidth="199.99993896484375" minWidth="112.800048828125" prefWidth="120.00003051757812" resizable="false" text="Faculty Name" />
-                              <TableColumn fx:id="subCodeCell" editable="false" maxWidth="140.0" minWidth="73.60001373291016" prefWidth="96.79998779296875" resizable="false" text="Subject Code" />
-                              <TableColumn fx:id="subDescriptionCell" editable="false" maxWidth="246.4000244140625" minWidth="155.99996948242188" prefWidth="172.0" resizable="false" text="Description" />
+                              <TableColumn fx:id="subCodeCell" editable="false" maxWidth="140.0" minWidth="73.60001373291016" prefWidth="100.0" resizable="false" text="Subject Code" />
+                              <TableColumn fx:id="subDescriptionCell" editable="false" maxWidth="246.4000244140625" minWidth="155.99996948242188" prefWidth="168.79998779296875" resizable="false" text="Description" />
                               <TableColumn fx:id="scheduleCell" editable="false" maxWidth="180.800048828125" minWidth="38.4000244140625" prefWidth="148.79998779296875" resizable="false" text="Schedule" />
                               <TableColumn fx:id="roomCell" editable="false" maxWidth="160.80002441406248" minWidth="38.4000244140625" prefWidth="84.0" resizable="false" text="Room" />
                         <TableColumn fx:id="editCell" editable="false" maxWidth="160.80002441406248" minWidth="38.4000244140625" prefWidth="84.800048828125" resizable="false" />
