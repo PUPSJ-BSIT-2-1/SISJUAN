@@ -68,7 +68,7 @@
 }
 
 .grades-table {
-    -fx-background-color: #f8fcfc;
+    -fx-background-color: transparent;
     -fx-background-radius: 10;
     -fx-border-color: #e3e5e6;
     -fx-border-width: 2;
@@ -80,6 +80,17 @@
     -fx-font-weight: bold;
     -fx-wrap-text: true;
     -fx-font-size: 13px;
+}
+
+.add-button-label {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.add-button-icon {
+    -fx-fill: white;
 }
 
 .add-button {
@@ -237,6 +248,11 @@
     -fx-fill: white;
 }
 
+.dark-theme .add-button-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
 /* =================STYLE FOR THE ADD SCHEDULE CONTAINER================== */
 
 .add-schedule-container {
@@ -272,7 +288,7 @@
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
     -fx-text-fill: #343a40;
-    -fx-padding: 3px;
+    -fx-padding: 3 3 3 10;
     -fx-font-weight: bold;
 }
 
@@ -311,6 +327,7 @@
 
 .combo-box:hover {
     -fx-border-color: #e0e0e0;
+    -fx-cursor: hand;
 }
 
 .combo-box .list-view {
@@ -343,7 +360,7 @@
 }
 
 .create-button:hover {
-    -fx-background-color: #008000; /* Lighter green */
+    -fx-background-color: #004d00; /* Darker green */
     -fx-cursor: hand;
 }
 
@@ -359,7 +376,7 @@
 }
 
 .cancel-button:hover {
-    -fx-background-color: #e0e0e0;
+    -fx-background-color: #a0a0a0;
     -fx-cursor: hand;
 }
 
@@ -474,7 +491,7 @@
 }
 
 .dark-theme .cancel-button:hover {
-    -fx-background-color: #3e8e3e;
+    -fx-background-color: #777777;
     -fx-cursor: hand;
 }
 
