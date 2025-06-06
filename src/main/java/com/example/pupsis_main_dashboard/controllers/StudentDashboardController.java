@@ -17,7 +17,6 @@ import javafx.concurrent.Task;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.scene.control.Label;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -64,6 +63,7 @@ public class StudentDashboardController {
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentEnrollmentContent.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
+    private static final String PAYMENT_INFO_FXML = "/com/example/pupsis_main_dashboard/fxml/PaymentInfoContent.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         long startTime = System.currentTimeMillis();
@@ -85,7 +85,7 @@ public class StudentDashboardController {
         String identifier = RememberMeHandler.getCurrentUserStudentNumber(); // Changed
         if (identifier != null && !identifier.isEmpty()) {
             logger.info("StudentDashboardController.initialize() - Calling loadStudentInfoWithTask for identifier: {}", identifier);
-            loadStudentInfoWithTask(identifier); // identifier is now student number
+            loadStudentInfoWithTask(identifier); // identifier is now a student number
         } else {
             logger.error("No user is currently logged in");
             studentNameLabel.setText("User not logged in");
@@ -141,6 +141,7 @@ public class StudentDashboardController {
         preloadFxmlContent(ENROLLMENT_FXML);
         preloadFxmlContent(ABOUT_FXML);
         preloadFxmlContent(SCHEDULE_FXML);
+        preloadFxmlContent(PAYMENT_INFO_FXML);
 
         logger.info("preloadAllContent() - END. Duration: {} ms", (System.currentTimeMillis() - startTime));
     }
@@ -215,13 +216,13 @@ public class StudentDashboardController {
                 logger.info("loadStudentInfoWithTask.call() - Fetching name - END. Duration: {} ms", (System.currentTimeMillis() - dbNameQueryStartTime));
                 logger.info("Student logged in: {} (identifier: {})", finalName, identifier); // Moved log here
 
-                // Get student formatted number (this also makes a DB call)
+                // Get a student formatted number (this also makes a DB call)
                 long dbIdQueryStartTime = System.currentTimeMillis();
                 logger.info("loadStudentInfoWithTask.call() - Fetching formatted ID - START");
                 finalStudentFormattedNumber = getStudentFormattedNumber(identifier); // This method needs to handle its own connection
                 logger.info("loadStudentInfoWithTask.call() - Fetching formatted ID - END. Duration: {} ms", (System.currentTimeMillis() - dbIdQueryStartTime));
 
-                // Store student number in SessionData if not already there or different
+                // Store student number in SessionData if not already there or differently
                 if (finalStudentFormattedNumber != null && !finalStudentFormattedNumber.equals(SessionData.getInstance().getStudentNumber())) {
                     SessionData.getInstance().setStudentNumber(finalStudentFormattedNumber);
                     logger.info("Stored/Updated student_number in SessionData: {}", finalStudentFormattedNumber);
@@ -232,7 +233,7 @@ public class StudentDashboardController {
             }
         };
 
-        loadTask.setOnSucceeded(event -> {
+        loadTask.setOnSucceeded(_ -> {
             StudentInfoData studentInfo = loadTask.getValue();
             studentNameLabel.setText(studentInfo.name());
             studentIdLabel.setText(studentInfo.formattedId());
@@ -253,10 +254,10 @@ public class StudentDashboardController {
         logger.info("loadStudentInfoWithTask({}) - Task STARTED. Duration to start: {} ms", identifier, (System.currentTimeMillis() - taskCreationTime));
     }
 
-    // Method to get student's formatted number (e.g., 2023-00001-SJ-0)
+    // Method to get a student's formatted number (e.g., 2023-00001-SJ-0)
     // Simplified: identifier is now always the student_number.
     private String getStudentFormattedNumber(String identifier) throws SQLException { 
-        return identifier; // If identifier is already the student_number, just return it.
+        return identifier; // If the identifier is already the student_number, just return it.
     }
 
     // Format student name for display
@@ -327,7 +328,7 @@ public class StudentDashboardController {
     private String getFxmlPathForHBox(HBox clickedHBox) {
         return switch (clickedHBox.getId()) {
             case "registrationHBox" -> ENROLLMENT_FXML;
-            case "paymentInfoHBox" ->null;
+            case "paymentInfoHBox" -> PAYMENT_INFO_FXML;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" ->SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
@@ -350,6 +351,8 @@ public class StudentDashboardController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 contentNode = loader.load();
                 contentCache.put(fxmlPath, contentNode); // Cache after loading
+                StudentHomeContentController controller = loader.getController();
+                controller.setStudentDashboardController(this);
                 logger.info("loadContent({}) - Loaded from FXML and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadStartTime));
             }
             contentPane.setContent(contentNode);
@@ -387,7 +390,6 @@ public class StudentDashboardController {
     // Load the home content into the ScrollPane
     private void loadHomeContent() {
         loadContent(HOME_FXML);
-
     }
 
     // Handle the logout button click event
@@ -396,7 +398,7 @@ public class StudentDashboardController {
         StageAndSceneUtils.clearCache();
         if (logoutHBox.getScene() != null && logoutHBox.getScene().getWindow() != null) {
             Stage currentStage = (Stage) logoutHBox.getScene().getWindow();
-            stageUtils.loadStage(currentStage, "fxml/StudentLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            StageAndSceneUtils.loadStage(currentStage, "fxml/StudentLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         }
     }
 
@@ -408,7 +410,7 @@ public class StudentDashboardController {
 
         if (fxmlPath.equals(GRADES_FXML)) {
             clearAllSelections();
-            schoolCalendarHBox.getStyleClass().add("selected");
+            gradesHBox.getStyleClass().add("selected");
         }
 
         if (fxmlPath.equals(ENROLLMENT_FXML)) {

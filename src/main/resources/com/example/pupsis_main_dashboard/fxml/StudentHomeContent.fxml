@@ -20,7 +20,7 @@
                                      <HBox alignment="CENTER_LEFT" spacing="15">
               <ImageView fitHeight="50" fitWidth="50">
                   <image>
-                      <Image url="@../Images/PUP Logo.png" />
+                      <Image url="@../Images/PUP%20Logos.png" />
                   </image>
               </ImageView>
               <VBox>

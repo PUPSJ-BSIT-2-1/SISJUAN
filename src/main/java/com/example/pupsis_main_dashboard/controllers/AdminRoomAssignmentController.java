@@ -81,8 +81,6 @@ public class AdminRoomAssignmentController {
 
     // Variables for the main container
     @FXML
-    private StackPane root;
-    @FXML
     private VBox vBox;
     @FXML
     private Label academicPeriod;
@@ -109,8 +107,6 @@ public class AdminRoomAssignmentController {
     @FXML
     private TableColumn<Schedule, String> roomCell;
     @FXML
-    private TableColumn<Schedule, String> unitsCell;
-    @FXML
     private TableColumn<Schedule, Button> editCell;
 
     private final ObservableList<Schedule> schedules = FXCollections.observableArrayList();
@@ -129,7 +125,7 @@ public class AdminRoomAssignmentController {
         Task<Void> task = getVoidTask();
         new Thread(task).start();
 
-        var columns = new TableColumn[]{subCodeCell, subDescriptionCell, facultyNameCell, facultyIDCell, scheduleCell, roomCell, unitsCell, editCell}; 
+        var columns = new TableColumn[]{subCodeCell, subDescriptionCell, facultyNameCell, facultyIDCell, scheduleCell, roomCell, editCell};
         for (var col : columns) {
             col.setReorderable(false);
         }
@@ -141,7 +137,6 @@ public class AdminRoomAssignmentController {
         subDescriptionCell.setCellValueFactory(new PropertyValueFactory<>("subDesc"));
         scheduleCell.setCellValueFactory(new PropertyValueFactory<>("schedule"));
         roomCell.setCellValueFactory(new PropertyValueFactory<>("room"));
-        unitsCell.setCellValueFactory(new PropertyValueFactory<>("units")); 
         editCell.setCellValueFactory(new PropertyValueFactory<>("editButton"));
 
         scheduleTable.setItems(schedules);
@@ -156,7 +151,7 @@ public class AdminRoomAssignmentController {
         String sem = SchoolYearAndSemester.determineCurrentSemester();
         academicPeriod.setText("Academic Year " + acadYear + " - " + sem);
 
-        for (TableColumn<Schedule, ?> col : Arrays.asList(subCodeCell, subDescriptionCell, facultyNameCell, facultyIDCell, scheduleCell, roomCell, unitsCell)) {
+        for (TableColumn<Schedule, ?> col : Arrays.asList(subCodeCell, subDescriptionCell, facultyNameCell, facultyIDCell, scheduleCell, roomCell)) {
             setWrappingHeaderCellFactory(col); 
         }
 
