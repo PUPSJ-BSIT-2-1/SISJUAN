@@ -116,7 +116,7 @@ public class FacultyHomeContentController {
     private void inputGradesButtonClick(javafx.event.ActionEvent actionEvent) {
         if (facultyDashboardController != null) {
             // Use the consistent FXML path for editing grades
-            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/EditGradesPage.fxml"; 
+            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
             facultyDashboardController.loadContent(GRADES_FXML);
             facultyDashboardController.handleQuickActionClicks(GRADES_FXML);
         }
@@ -258,7 +258,7 @@ public class FacultyHomeContentController {
      * Loads today's schedule and updates the UI.
      */
     private void loadTodaySchedule() {
-        // Get current day in short form (e.g., Mon, Tue)
+        // Get the current day in short form (e.g., Mon, Tue)
         String today = LocalDate.now().getDayOfWeek().toString().substring(0, 3);
         logger.info("loadTodaySchedule: Attempting to load today's ({}) schedule for facultyId: {}", today, facultyId);
         String sql = "SELECT s.subject_code, s.description, r.room_name, sch.start_time, sch.end_time, ys.year_section " +

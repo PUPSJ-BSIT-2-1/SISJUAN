@@ -177,7 +177,7 @@ public class StudentGradesController {
                 javafx.application.Platform.runLater(() -> studentsTable.setPlaceholder(new Label("Student session not found.")));
                 return;
             }
-            int studentID = 0;
+            int studentID;
             stmt2.setString(1, sessionStudentID);
             try (ResultSet rs2 = stmt2.executeQuery()) {
                 if (rs2.next()) { 
@@ -281,7 +281,7 @@ public class StudentGradesController {
     }
 
     private void determineScholasticStatus(String status) {
-        // Ensure UI update is on JavaFX Application Thread
+        // Ensure the UI update is on JavaFX Application Thread
         javafx.application.Platform.runLater(() -> {
             if (status != null && !status.isEmpty()) {
                 scholasticStatus.setText(status);
@@ -298,18 +298,28 @@ public class StudentGradesController {
 
         for (Grades grades : studentsList) {
             String finalGrade = grades.getFinalGrade();
-            if (finalGrade == null || finalGrade.isEmpty()) {
+            String unitStr = grades.getUnits();
+
+            if (finalGrade == null || finalGrade.isEmpty() ||
+                    unitStr == null || unitStr.isEmpty()) {
                 hasIncompleteGrades = true;
                 break;
             }
-            double gradePoints = Double.parseDouble(finalGrade);
-            int units = Integer.parseInt(grades.getUnits());
-            totalUnits += units;
-            totalGradePoints += gradePoints * units;
+
+            try {
+                double gradePoints = Double.parseDouble(finalGrade);
+                int units = Integer.parseInt(unitStr);
+                totalUnits += units;
+                totalGradePoints += gradePoints * units;
+            } catch (NumberFormatException e) {
+                hasIncompleteGrades = true;
+                break;
+            }
         }
 
-        if (hasIncompleteGrades) {
+        if (hasIncompleteGrades || totalUnits == 0) {
             semesterGPA.setText("N/A");
+            setGWA(0);
         } else {
             double semGPA = totalGradePoints / totalUnits;
             semesterGPA.setText(String.format("%.2f", semGPA));
@@ -385,7 +395,7 @@ public class StudentGradesController {
              PreparedStatement stmt3_searchGrades = conn.prepareStatement(searchGrades)) {
 
             stmt1_searchStudentId.setString(1, sessionStudentNumber);
-            int studentID = 0;
+            int studentID;
             try (ResultSet rs = stmt1_searchStudentId.executeQuery()) {
                 if (rs.next()) {
                     studentID = rs.getInt("student_id");
@@ -424,7 +434,7 @@ public class StudentGradesController {
                             Double.parseDouble(finalGradeStr); // Check if numeric
                             finalGradeDisplay = finalGradeStr; // It's numeric, so display it
                         } catch (NumberFormatException e) {
-                            // Non-numeric, keep finalGradeDisplay as "" (blank)
+                            // Non-numeric, keep the finalGradeDisplay as "" (blank)
                         }
                     }
 

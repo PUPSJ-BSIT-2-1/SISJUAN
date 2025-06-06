@@ -215,7 +215,7 @@ public class FacultyDashboardController {
                 logger.warn("No faculty data found for identifier: {}", identifier);
             }
         } catch (SQLException e) {
-            logger.error("SQL error fetching faculty data for identifier: " + identifier, e);
+            logger.error("SQL error fetching faculty data for identifier: {}", identifier, e);
         } catch (NumberFormatException e) {
             logger.error("NumberFormatException for identifier: {} when expecting numeric ID.", identifier, e);
         }
@@ -341,7 +341,7 @@ public class FacultyDashboardController {
         StageAndSceneUtils.clearCache();
         if (logoutHBox.getScene() != null && logoutHBox.getScene().getWindow() != null) {
             Stage currentStage = (Stage) logoutHBox.getScene().getWindow();
-            stageUtils.loadStage(currentStage, "fxml/FacultyLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            StageAndSceneUtils.loadStage(currentStage, "fxml/FacultyLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         }
     }
 
