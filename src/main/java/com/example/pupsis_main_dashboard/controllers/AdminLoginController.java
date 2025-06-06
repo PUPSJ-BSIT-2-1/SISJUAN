@@ -155,7 +155,7 @@ public class AdminLoginController {
                                 StageAndSceneUtils u = new StageAndSceneUtils();
                                 Stage stage = (Stage) leftSide.getScene().getWindow();
                                 try {
-                                    u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/AdminDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                                    StageAndSceneUtils.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/AdminDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                                     // Apply theme to new dashboard scene
                                     if (stage.getScene() != null) {
                                         Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);

@@ -65,8 +65,8 @@ public class AdminDashboardController {
         homeHBox.getStyleClass().add("selected");
 
         Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class); // Use AdminLoginController's preferences node
-        String facultyId = prefs.get("admin_id", null); // Retrieve stored faculty_id
-
+        String facultyId = prefs.get("faculty_id", null); // Retrieve stored faculty_id
+        System.out.println("Admin faculty_id: " + facultyId);
         if (facultyId != null && !facultyId.isEmpty()) {
             loadFacultyInfo(facultyId);
         } else {
