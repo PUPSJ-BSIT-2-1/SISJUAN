@@ -30,7 +30,7 @@
 .table-view .column-header {
     -fx-background-color: transparent;
     -fx-border-width: 0 0 1 0;
-    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-border-color: #cdd0d1;
     -fx-font-size: 12px; /* Ensures header text is 12px */
 }
 
@@ -57,12 +57,14 @@
     -fx-alignment: CENTER;
     -fx-padding: 10px 0px 10px 0px;
 }
+
 /* Hover effect for table rows */
 .table-row-cell:hover {
     -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
     -fx-text-fill: white;           /* White text */
     -fx-background-radius: 10px;
 }
+
 /* Make sure text inside cells changes color */
 .table-row-cell:hover .text {
     -fx-fill: white;
@@ -77,21 +79,113 @@
     -fx-background-color: transparent;
 }
 
+/* Menu Button Base Styling */
 .menu-button {
-    -fx-background-color: #f8fcfc;
-    -fx-border-color: #e3e5e6;
-    -fx-border-width: 1px;
-    -fx-border-style: solid;
-    -fx-border-radius: 10px;
-    -fx-text-fill: black;
+    -fx-background-color: #962323;
+    -fx-border-radius: 8px;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-padding: 2;
-    -fx-background-radius: 5;
+    -fx-background-radius: 8;
     -fx-pref-width: 116;
 }
 
 .menu-button .text {
-    -fx-fill: black;
+    -fx-fill: white;
+}
+
+.menu-button .arrow {
+    -fx-background-color: white;
+}
+
+.menu-button .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Menu Popup Container */
+.menu-button .context-menu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 2; /* Small padding for visual separation */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+.menu-button > .menu-popup {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Individual Menu Items */
+.menu-button .menu-item {
+    -fx-background-color: rgba(128, 0, 0, 0.50); /* maroon with 0.1 opacity */
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-background-insets: 1px; /* Small inset for visual separation */
+    -fx-border-color: rgba(128, 0, 0, 0.10);
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-button .menu-item:hover {
+    -fx-background-color: rgba(128, 0, 0, 1); /* maroon with 0.12 opacity on hover */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1), 4, 0, 0, 0);
+}
+
+/* Ensure text stays white and visible */
+.menu-button .menu-item .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold; /* Make text more visible */
+    -fx-font-family: 'Inter';
+}
+
+/* Note: JavaFX doesn't support :last-child, so we'll keep the border for all items */
+
+/* Alternative approach if the above doesn't work - force specific background */
+.menu-button .menu-item:focused {
+    -fx-background-color: rgba(128, 0, 0, 0.80);
+    -fx-text-fill: white;
+}
+
+.menu-button .menu-item:selected {
+    -fx-background-color: rgba(128, 0, 0, 1);
+    -fx-text-fill: white;
+}
+
+/* Disabled state for Menu Button */
+.menu-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #800000; /* Gray color when disabled */
+    -fx-cursor: default;
+}
+
+.menu-button:disabled .text {
+    -fx-fill: #ffffff; /* Lighter text color when disabled */
+}
+
+.menu-button:disabled .arrow {
+    -fx-background-color: #cccccc; /* Lighter arrow color when disabled */
+}
+
+/* Ensure disabled menu items are visually different */
+.menu-button .menu-item:disabled {
+    -fx-opacity: 0.7;
+    -fx-background-color: rgba(128, 128, 128, 0.5); /* Gray with transparency */
+}
+
+.menu-button .menu-item:disabled .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Remove hover effects for disabled items */
+.menu-button .menu-item:disabled:hover {
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-cursor: default;
+    -fx-effect: none;
+    -fx-background-color: rgba(128, 128, 128, 0.5);
 }
 
 .small-cards {
@@ -117,6 +211,7 @@
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
+
 #gradesHeaderLbl {
     -fx-min-height: 50;
     -fx-max-height: 50;
@@ -138,40 +233,18 @@
     -fx-max-height: 50 !important;
     -fx-pref-height: 50 !important;
 }
+
 #subDesclbl {
     -fx-font-size: 9px;
     -fx-text-fill: #6c757d;
 }
+
 #subDesclbl:focused {
     -fx-font-size: 9px;
     -fx-text-fill: #6c757d;
 }
+
 #subjDescLbl{
     -fx-font-size: 14px;
     -fx-text-fill: #000000;
-}
-
-/* Styles for TableView selected rows */
-.table-view:focused .table-row-cell:selected .text {
-    -fx-fill: black; /* Text color for selected, non-hovered items */
-}
-
-/* Optional: Styles for hovered selected rows, if you want them to differ */
-.table-view:focused .table-row-cell:selected:hover .text {
-    -fx-fill: white; /* Example: white text on hover, assuming a darker background */
-}
-
-/* Ensure the table itself has some base styling if needed */
-#studentsTable {
-    /* You can add specific styles for the studentsTable if necessary */
-}
-
-/* Style for selected cells to ensure background contrast if default is not good */
-.table-row-cell:selected {
-    /* -fx-background-color: #007bff; */ /* Example: blue background for selection */
-    /* If you set a background color, ensure the .text -fx-fill above provides good contrast */
-}
-
-.table-row-cell:selected:hover {
-    /* -fx-background-color: #0056b3; */ /* Example: darker blue for hovered selection */
 }
