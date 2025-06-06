@@ -1,60 +1,166 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-    <?import javafx.scene.control.*?>
-    <?import javafx.scene.image.Image?>
-    <?import javafx.scene.image.ImageView?>
-    <?import javafx.geometry.Insets?>
-    <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-    <VBox spacing="6" maxWidth="810.0" minWidth="810.0" prefWidth="810.0"
-          styleClass="font-compact" stylesheets="@../css/PaymentInfo.css"
-          xmlns="http://javafx.com/javafx/23.0.1"
-          xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="com.example.pupsis_main_dashboard.controllers.PaymentTrailController">
+<BorderPane prefHeight="680.0" prefWidth="800.0" style="-fx-background-color: #f5f6fa;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.PaymentTrailController">
 
-        <!-- Header Section -->
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <ImageView fitHeight="45" fitWidth="45">
-                <image>
-                    <Image url="@../Images/PUP Logo.png" />
-                </image>
-            </ImageView>
+    <!-- Header -->
+    <top>
+        <VBox spacing="4.0" style="-fx-background-color: #8A1F1F; -fx-background-radius: 12;">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <children>
+                <Label style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;" text="Payment Info" />
+                <Label style="-fx-text-fill: white; -fx-font-size: 14px;" text="Student Fee Management System" />
+            </children>
+        </VBox>
+    </top>
 
-            <VBox spacing="2">
-                <Label styleClass="section-header-bold-black" text="Payment Info" />
-                <Label fx:id="balanceLabel" styleClass="balance-label-highlight" text="Current Balance: ₱0.00" />
-            </VBox>
+    <!-- Main Content -->
+    <center>
+        <HBox alignment="TOP_CENTER" spacing="20">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <children>
+
+                <!-- Left Column -->
+                <VBox spacing="20">
+
+                    <!-- Student Info Card -->
+                    <VBox prefHeight="182" prefWidth="559" spacing="12.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);">
+                        <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                        <children>
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Student Information" />
+                            <GridPane hgap="10" vgap="10">
+                                <columnConstraints>
+                                    <ColumnConstraints /><ColumnConstraints />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints /><RowConstraints /><RowConstraints /><RowConstraints />
+                                </rowConstraints>
+                            </GridPane>
+                        </children>
+                    </VBox>
+
+                    <!-- Payment Breakdown -->
+                    <VBox prefHeight="317" prefWidth="419" spacing="12.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);">
+                        <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                        <children>
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Payment Breakdown" />
+
+                            <GridPane fx:id="feeBreakdownGrid" hgap="10" vgap="10">
+                                <columnConstraints>
+                                    <ColumnConstraints halignment="LEFT" />
+                                    <ColumnConstraints halignment="RIGHT" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints /><RowConstraints /><RowConstraints /><RowConstraints />
+                                    <RowConstraints /><RowConstraints /><RowConstraints />
+                                </rowConstraints>
+
+                                <Label text="Tuition Fee" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+
+                                <Label text="Laboratory Fee" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                                <Label text="Library Fee" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+
+                                <Label text="Registration Fee" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+
+                                <Label text="ID Fee" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+
+                                <Label text="Miscellaneous Fee" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+
+                                <Label style="-fx-font-weight: bold;" text="Total Amount Due" GridPane.columnIndex="0" GridPane.rowIndex="6">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font></Label>
+                            </GridPane>
+                        </children>
+                    </VBox>
+                </VBox>
+
+                <!-- Right Column -->
+                <VBox prefHeight="544" prefWidth="361" spacing="20">
+
+                    <!-- Payment Method -->
+                    <VBox prefHeight="220" prefWidth="253" spacing="12.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);">
+                        <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                        <children>
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Payment Method" />
+
+                            <!-- Grouped Radio Buttons -->
+                            <VBox spacing="12">
+                                <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <ImageView fitHeight="24" fitWidth="24">
+                                            <image><Image url="@../Images/Card.png" /></image>
+                                        </ImageView>
+                                        <RadioButton fx:id="cardRadio" text="Credit / Debit Card" />
+                                    </HBox>
+
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <ImageView fitHeight="24" fitWidth="24">
+                                            <image><Image url="@../Images/Bank.png" /></image>
+                                        </ImageView>
+                                        <RadioButton fx:id="bankRadio" text="Bank Transfer" />
+                                    </HBox>
+
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <ImageView fitHeight="24" fitWidth="24">
+                                            <image><Image url="@../Images/Gcash.png" /></image>
+                                        </ImageView>
+                                        <RadioButton fx:id="gcashRadio" text="GCash" />
+                                    </HBox>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <!-- Payment Summary -->
+                    <VBox prefWidth="480" spacing="14.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);">
+                        <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                        <children>
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Payment Summary" />
+                            <GridPane hgap="12" vgap="14">
+                                <children>
+                                    <Label text="Total Fees:" />
+                                    <TextField fx:id="totalFeesField" editable="false" GridPane.columnIndex="1" />
+
+                                    <Label text="Amount Paid:" GridPane.rowIndex="1" />
+                                    <TextField fx:id="amountPaidField" promptText="₱0.00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                    <Label text="Change Due:" GridPane.rowIndex="2" />
+                                    <TextField fx:id="changeDueField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                </children>
+                                <columnConstraints>
+                                    <ColumnConstraints /><ColumnConstraints />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints /><RowConstraints /><RowConstraints />
+                                </rowConstraints>
+                            </GridPane>
+
+                            <Button fx:id="submitPaymentButton" maxWidth="Infinity" style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-weight: bold;" text="Submit Payment" />
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </children>
         </HBox>
-
-        <!-- Content Area that stretches -->
-        <StackPane fx:id="contentPane" prefWidth="810" VBox.vgrow="ALWAYS">
-            <!-- Default content is the VBox below -->
-            <VBox spacing="6" styleClass="cards" prefWidth="810" VBox.vgrow="ALWAYS">
-                <padding>
-                    <Insets top="6" right="12" bottom="6" left="12" />
-                </padding>
-
-                <Label styleClass="section-header" text="Payment Trail" />
-
-                <TableView fx:id="chargesTable" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="subjectCodeColumn" text="Subject Code" prefWidth="100"/>
-                        <TableColumn fx:id="subjectTitleColumn" text="Subject Title" prefWidth="200"/>
-                        <TableColumn fx:id="sectionCodeColumn" text="Section Code" prefWidth="100"/>
-                        <TableColumn fx:id="creditedUnitsColumn" text="Credited Units" prefWidth="120"/>
-                        <TableColumn fx:id="tuitionUnitsColumn" text="Tuition Units" prefWidth="120"/>
-                        <TableColumn fx:id="chargeColumn" text="Charge (₱)" prefWidth="120"/>
-                    </columns>
-                </TableView>
-
-                <Label fx:id="totalChargesLabel" text="Total Summary Charges: —" />
-            </VBox>
-        </StackPane>
-
-        <!-- Action Buttons: Positioned outside the table and below everything -->
-        <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
-            <Button fx:id="viewPaymentHistoryBtn" text="View Payment History" styleClass="action-button"/>
-            <Button fx:id="payBalanceBtn" text="Pay Balance" styleClass="action-button"/>
-        </HBox>
-
-    </VBox>
+    </center>
+</BorderPane>
