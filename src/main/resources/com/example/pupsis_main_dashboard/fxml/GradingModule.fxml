@@ -14,9 +14,9 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/GradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GradingModuleController">
+<AnchorPane prefWidth="810.0" styleClass="root" stylesheets="@../css/GradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GradingModuleController">
    <children>
-      <BorderPane prefHeight="800.0" prefWidth="810.0">
+      <BorderPane prefWidth="810.0">
          <top>
             <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
@@ -47,9 +47,9 @@
             </Pane>
          </top>
          <center>
-            <Pane prefHeight="650.0" prefWidth="750.0" BorderPane.alignment="CENTER">
+            <HBox BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefHeight="650.0" prefWidth="750.0" spacing="10.0">
+                  <VBox prefWidth="810.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="10.0" styleClass="small-cards">
                            <children>
@@ -82,18 +82,12 @@
                         </HBox>
                      </children>
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets bottom="10.0" top="10.0" />
                      </padding>
                   </VBox>
                </children>
-            </Pane>
+            </HBox>
          </center>
-         <left>
-            <Pane prefHeight="200.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
-         </left>
-         <right>
-            <Pane prefHeight="200.0" prefWidth="30.0" BorderPane.alignment="CENTER" />
-         </right>
          <bottom>
             <Pane prefHeight="80.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <padding>

@@ -60,15 +60,27 @@ public class FacultyDashboardController {
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        String identifier = RememberMeHandler.getCurrentUserEmail();
+        String identifier = SessionData.getInstance().getFacultyId();
         if (identifier != null && !identifier.isEmpty()) {
             // Get faculty info from the database
             loadFacultyInfo(identifier);
+            // Ensure facultyId is in SessionData if successfully loaded
+            if (SessionData.getInstance().getFacultyId() == null || SessionData.getInstance().getFacultyId().isEmpty()) {
+                 // Assuming 'identifier' is the faculty_number or email used to fetch, 
+                 // and loadFacultyInfo might populate SessionData or we use the identifier directly.
+                 // If loadFacultyInfo internally sets it, this might be redundant or need adjustment
+                 // based on how loadFacultyInfo and getFacultyData work.
+                 // For now, let's assume 'identifier' is what we want to ensure is in SessionData as facultyId.
+                 // A better place might be within loadFacultyInfo or getFacultyData after successful fetch.
+                 // However, to ensure it's set if 'identifier' was valid:
+                 SessionData.getInstance().setFacultyId(identifier); 
+            }
         } else {
             // Handle case when no user is logged in
             studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
             departmentLabel.setText("");
+            this.formattedName = "N/A, N/A"; // Initialize formattedName to prevent NullPointerException
         }
         
         // Initialize fade1 as fully transparent and fade2 as visible
@@ -134,79 +146,82 @@ public class FacultyDashboardController {
     
     // Load faculty information from a database
     private void loadFacultyInfo(String identifier) {
-        // Get and display faculty name and ID
-        getFacultyData(identifier);
-    }
-    
-    // Load faculty data from the database
-    private void getFacultyData(String identifier) {
-        boolean isEmail = identifier.contains("@");
-        
-        try (Connection connection = DBConnection.getConnection()) {
-            // First, try by ID if the identifier is not an email
-            if (!isEmail) {
-                String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, identifier);
-                    ResultSet rs = stmt.executeQuery();
-                    
-                    if (rs.next()) {
-                        updateFacultyUI(rs);
-                        return;
-                    }
-                }
+        Map<String, String> facultyData = getFacultyData(identifier);
+        if (facultyData != null && !facultyData.isEmpty()) {
+            this.formattedName = facultyData.getOrDefault("formattedName", "N/A, N/A");
+            studentNameLabel.setText(this.formattedName.replace(", ", "\n")); // Display with newline
+            studentIdLabel.setText(facultyData.getOrDefault("facultyNumber", "N/A"));
+            departmentLabel.setText(facultyData.getOrDefault("departmentName", "N/A"));
 
+            // Ensure facultyId is set in SessionData after successful retrieval
+            String facultyIdFromDB = facultyData.get("facultyId");
+            if (facultyIdFromDB != null && !facultyIdFromDB.isEmpty()) {
+                SessionData.getInstance().setFacultyId(facultyIdFromDB);
+            } else {
+                // Fallback if facultyId itself isn't in facultyData but identifier was used
+                // This part might need refinement based on what 'identifier' represents (e.g. email vs faculty_number vs actual ID)
+                // If 'identifier' is the actual faculty_id or faculty_number that SessionData expects, use it.
+                // For now, assuming facultyData should contain the definitive 'facultyId'.
+                logger.warn("Faculty ID not found in facultyData after loading info for identifier: {}", identifier);
             }
-            
-            // If not found by ID or is an email, try with email (case-insensitive)
-            String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE LOWER(email) = LOWER(?)";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, identifier);
-                ResultSet rs = stmt.executeQuery();
-                
-                if (rs.next()) {
-                    updateFacultyUI(rs);
-                    return;
-                }
-            }
-            
-            // If we get here, faculty not found
-            Platform.runLater(() -> {
-                studentNameLabel.setText("Unknown Faculty");
-                studentIdLabel.setText("ID not found");
-                departmentLabel.setText("Department not found");
-            });
-            
-        } catch (SQLException e) {
-            // Handle database error
-            Platform.runLater(() -> {
-                studentNameLabel.setText("Error loading data");
-                studentIdLabel.setText("");
-                departmentLabel.setText("");
-            });
+
+        } else {
+            studentNameLabel.setText("Faculty not found");
+            studentIdLabel.setText("");
+            departmentLabel.setText("");
+            this.formattedName = "Unknown, User"; // Default if faculty data is not found
         }
     }
-    
-private void updateFacultyUI(ResultSet rs) throws SQLException {
-    String facultyId = rs.getString("faculty_id");
-    String firstName = rs.getString("firstname");
-    String lastName = rs.getString("lastname");
-    String department = rs.getString("department");
-    SessionData.getInstance().setFacultyId(facultyId);
-    
-    formattedName = formatFacultyName(firstName, lastName);
 
-    Platform.runLater(() -> {
+    // Load faculty data from the database
+    private Map<String, String> getFacultyData(String identifier) {
+        String query;
+        Map<String, String> facultyData = new HashMap<>();
+        boolean isNumericId = identifier.matches("\\d+");
 
-        SessionData.getInstance().setFacultyId(facultyId);
+        if (isNumericId) {
+            query = "SELECT f.faculty_id, f.faculty_number, f.firstname, f.lastname, d.department_name " +
+                    "FROM faculty f JOIN departments d ON f.department_id = d.department_id " +
+                    "WHERE f.faculty_id = ?";
+        } else {
+            query = "SELECT f.faculty_id, f.faculty_number, f.firstname, f.lastname, d.department_name " +
+                    "FROM faculty f JOIN departments d ON f.department_id = d.department_id " +
+                    "WHERE f.faculty_number = ? OR LOWER(f.email) = LOWER(?)";
+        }
+        
+        logger.info("Executing getFacultyData with query: {} and identifier: {}", query, identifier);
 
-        // Set the faculty ID first to ensure it's available
-        studentNameLabel.setText(formattedName);
-        studentIdLabel.setText(facultyId);
-        departmentLabel.setText(department != null ? department : "Department not set");
-    });
-}
-    
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            if (isNumericId) {
+                pstmt.setInt(1, Integer.parseInt(identifier));
+            } else {
+                pstmt.setString(1, identifier);
+                pstmt.setString(2, identifier.toLowerCase());
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String firstName = rs.getString("firstname");
+                String lastName = rs.getString("lastname");
+                facultyData.put("formattedName", formatFacultyName(firstName, lastName));
+                facultyData.put("facultyNumber", rs.getString("faculty_number"));
+                facultyData.put("departmentName", rs.getString("department_name"));
+                facultyData.put("facultyId", rs.getString("faculty_id")); // Ensure facultyId from DB is included
+                logger.info("Faculty data found for identifier '{}': Name={}, Number={}, Dept={}, DB_ID={}", 
+                    identifier, facultyData.get("formattedName"), facultyData.get("facultyNumber"), facultyData.get("departmentName"), facultyData.get("facultyId"));
+            } else {
+                logger.warn("No faculty data found for identifier: {}", identifier);
+            }
+        } catch (SQLException e) {
+            logger.error("SQL error fetching faculty data for identifier: " + identifier, e);
+        } catch (NumberFormatException e) {
+            logger.error("NumberFormatException for identifier: {} when expecting numeric ID.", identifier, e);
+        }
+        return facultyData;
+    }
+
     // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
