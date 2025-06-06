@@ -4,9 +4,9 @@ import com.example.pupsis_main_dashboard.models.Faculty;
 import com.example.pupsis_main_dashboard.utilities.SubjectDAO;
 import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
 import com.example.pupsis_main_dashboard.utilities.FacultyLoadDAO;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,10 +23,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
 
 public class FacultyManagementController {
 
@@ -50,7 +48,8 @@ public class FacultyManagementController {
 
     private final ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
     private FacultyDAO facultyDAO;
-    private FacultyLoadDAO facultyLoadDAO;  
+    private FacultyLoadDAO facultyLoadDAO;  // <-- Added declaration here
+    private ScrollPane contentPane;
 
     public void initialize() {
         try {
@@ -63,7 +62,10 @@ public class FacultyManagementController {
 
 
         // Go back to the dashboard when the back button is clicked
-        backButton.setOnAction(_ -> handleBackToDashboard());
+        backButton.setOnAction(_ -> {
+            handleBackToDashboard();
+            resetScrollPosition();
+        });
 
         idColumn.setCellValueFactory(new PropertyValueFactory<>("facultyId"));
         nameColumn.setCellValueFactory(cellData -> {
@@ -213,7 +215,8 @@ public class FacultyManagementController {
     @FXML
     private void handleBackToDashboard() {
         try {
-            ScrollPane contentPane = (ScrollPane) facultyTable.getScene().lookup("#contentPane");
+            // Find the ScrollPane with fx:id "contentPane" in the current scene
+            contentPane = (ScrollPane) facultyTable.getScene().lookup("#contentPane");
 
             if (contentPane != null) {
                 FXMLLoader loader = new FXMLLoader(
@@ -229,6 +232,18 @@ public class FacultyManagementController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void resetScrollPosition() {
+        Platform.runLater(() -> {
+            contentPane.setVvalue(0);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> contentPane.setVvalue(0));
+                }
+            }, 100); // 100ms delay for final layout
+        });
     }
 
     @FXML
