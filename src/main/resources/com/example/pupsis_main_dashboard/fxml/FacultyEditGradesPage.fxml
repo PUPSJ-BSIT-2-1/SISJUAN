@@ -77,21 +77,25 @@
                                 </HBox>
                         <VBox alignment="TOP_CENTER" prefHeight="820.0" prefWidth="740.0" styleClass="small-cards">
                            <children>
-                              <VBox prefHeight="120.0" prefWidth="100.0">
+                              <HBox alignment="CENTER_LEFT" maxHeight="35.0" minHeight="55.0" prefHeight="35.0" prefWidth="200.0">
                                  <children>
-                                                  <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
-                                                      <font>
-                                                          <Font size="9.0" />
-                                                      </font>
-                                                  </Label>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                    <VBox prefHeight="200.0" prefWidth="380.0">
                                        <children>
+                                                        <Label fx:id="subDesclbl" alignment="BOTTOM_CENTER" text="Subject Description: " textFill="#5d5d5d">
+                                                            <font>
+                                                                <Font size="9.0" />
+                                                            </font>
+                                                        </Label>
                                                         <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" text="Object Oriented Programming" wrapText="true">
                                              <padding>
-                                                <Insets left="20.0" />
+                                                <Insets left="20.0" top="5.0" />
                                              </padding>
                                           </Label>
-                                          <Label fx:id="NoOfStudentsDesc" alignment="TOP_RIGHT" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="388.0" text="No. of Students: " wrapText="true">
+                                       </children>
+                                    </VBox>
+                                    <HBox alignment="TOP_CENTER" maxHeight="30.0" minHeight="10.0" prefHeight="40.0" prefWidth="150.0" styleClass="mini-cards">
+                                       <children>
+                                          <Label fx:id="NoOfStudentsDesc" alignment="TOP_RIGHT" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="130.0" text="Total Students:" wrapText="true">
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
@@ -99,17 +103,23 @@
                                                 <Insets right="10.0" />
                                              </padding>
                                           </Label>
-                                          <Label fx:id="numStudLbl" alignment="TOP_LEFT" contentDisplay="CENTER" prefHeight="30.0" prefWidth="49.0" text="0" wrapText="true" />
+                                          <Label fx:id="numStudLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="49.0" text="0" wrapText="true" />
                                        </children>
                                        <padding>
                                           <Insets top="6.0" />
                                        </padding>
+                                       <HBox.margin>
+                                          <Insets left="250.0" />
+                                       </HBox.margin>
                                     </HBox>
-                                    <Region prefHeight="30.0" prefWidth="786.0" styleClass="region" />
-                                    <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" VBox.vgrow="ALWAYS" />
                                  </children>
-                              </VBox>
-                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0">
+                                 <padding>
+                                    <Insets top="6.0" />
+                                 </padding>
+                              </HBox>
+                              <Region prefHeight="10.0" prefWidth="786.0" styleClass="region" />
+                              <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" />
+                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="730.0" prefWidth="750.0">
                                             <columns>
                                                 <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
                                                 <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student ID" />

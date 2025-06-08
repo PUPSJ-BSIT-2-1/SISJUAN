@@ -1,14 +1,16 @@
 .root {
     -fx-font-family: "Inter";
     -fx-background-radius: 20;
-    -fx-background-color: white; /* or your desired background color */
+    -fx-background-color: white;
     -fx-border-radius: 10;
 }
 
+/*changes all labels on the root level to "Inter"*/
 .label {
     -fx-font-family: 'Inter';
 }
 
+/*rounds the root border*/
 .rounded-border-pane {
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
@@ -60,7 +62,7 @@
 
 /* Hover effect for table rows */
 .table-row-cell:hover {
-    -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
+    -fx-background-color: #a03030; /* maroon for hover */
     -fx-text-fill: white;        /* White text */
     -fx-background-radius: 10px;
 }
@@ -212,6 +214,14 @@
     -fx-border-width: 2;
     -fx-border-radius: 10;
     -fx-padding: 10;
+}
+
+.mini-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
 }
 
 .cards {
