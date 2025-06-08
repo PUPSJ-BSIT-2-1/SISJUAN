@@ -61,7 +61,7 @@
 /* Hover effect for table rows */
 .table-row-cell:hover {
     -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
-    -fx-text-fill: white;           /* White text */
+    -fx-text-fill: white;        /* White text */
     -fx-background-radius: 10px;
 }
 
@@ -307,6 +307,10 @@
     -fx-max-width: 20px;
     -fx-text-fill: white; !important;
     -fx-content-display: center;
+}
+
+.table-row-cell:hover .grade-status-passed.label{
+    -fx-text-fill: white; !important;
 }
 
 .table-row-cell:hover .grade-status-failed {
