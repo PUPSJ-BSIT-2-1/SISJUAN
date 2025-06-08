@@ -18,9 +18,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -95,6 +100,8 @@ public class AdminClassScheduleController {
     private ComboBox<String> filterRoomComboBox;
     @FXML
     private HBox addSchedule;
+    @FXML
+    private HBox importRooms;
 
     // Variables for the schedule table
     @FXML
@@ -176,6 +183,7 @@ public class AdminClassScheduleController {
         updateCancelButton.setOnAction(_ -> handleCancelSchedule());
         createCancelButton.setOnAction(_ -> handleCancelSchedule());
         addSchedule.setOnMouseClicked(_ -> displayCreateScheduleForm());
+        importRooms.setOnMouseClicked(_ -> handleImportRoomCSV());
     }
 
     private void displayCreateScheduleForm() {
@@ -227,7 +235,7 @@ public class AdminClassScheduleController {
             JOIN public.faculty_load fl ON s.faculty_load_id = fl.load_id
             JOIN public.subjects sub ON fl.subject_id = sub.subject_id
             JOIN public.faculty f ON fl.faculty_id = f.faculty_id
-            JOIN public.room r ON s.room_id = r.room_id
+            LEFT JOIN public.room r ON s.room_id = r.room_id
             JOIN public.year_section ys ON fl.section_id = ys.section_id
             WHERE fl.semester_id = ? AND fl.academic_year_id = ?
             ORDER BY s.schedule_id;
@@ -399,11 +407,14 @@ public class AdminClassScheduleController {
                 filterRoomNames.add(roomName);
                 selectionRoomNames.add(roomName);
             }
-            filterRoomComboBox.setItems(filterRoomNames);
-            roomComboBox.setItems(selectionRoomNames); 
-            if (!filterRoomNames.isEmpty()) {
-                filterRoomComboBox.getSelectionModel().selectFirst(); // Default to "All Rooms"
-            }
+
+            Platform.runLater(() -> {
+                filterRoomComboBox.setItems(filterRoomNames);
+                roomComboBox.setItems(selectionRoomNames);
+                if (!filterRoomNames.isEmpty()) {
+                    filterRoomComboBox.getSelectionModel().selectFirst(); // Default to "All Rooms"
+                }
+            });
         } catch (SQLException e) {
             logger.error("Failed to populate filter/selection room combo box", e);
         }
@@ -896,6 +907,70 @@ public class AdminClassScheduleController {
             scheduleTable.setPlaceholder(new Text("No schedules match the current filters."));
         } else {
             scheduleTable.setPlaceholder(null);
+        }
+    }
+
+    private void handleImportRoomCSV() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Room CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            // Show a loading alert
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Importing");
+            alert.setHeaderText(null);
+            alert.setContentText("Importing Rooms from CSV. Please wait...");
+            alert.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+            alert.show();
+
+            Task<Void> importTask = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
+                        String line;
+                        boolean firstRow = true;
+                        while ((line = reader.readLine()) != null) {
+                            if (firstRow) {
+                                firstRow = false;
+                                continue;
+                            }
+
+                            String[] columns = line.split(",");
+                            if (columns.length == 2) {
+                                String roomId = columns[0].trim();
+                                String roomName = columns[1].trim();
+
+                                String query = "INSERT INTO public.room (room_id, room_name) VALUES (?, ?)";
+                                try (Connection conn = DBConnection.getConnection();
+                                     PreparedStatement pstmt = conn.prepareStatement(query)) {
+                                    pstmt.setInt(1, Integer.parseInt(roomId));
+                                    pstmt.setString(2, roomName);
+                                    pstmt.executeUpdate();
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    alert.close();
+                    StageAndSceneUtils.showAlert("Success", "Room CSV imported successfully.", Alert.AlertType.INFORMATION);
+                    Platform.runLater(() -> populateFilterRoomComboBox());
+                }
+
+                @Override
+                protected void failed() {
+                    alert.close();
+                    logger.error("CSV import failed", getException());
+                    StageAndSceneUtils.showAlert("Error", "Failed to import CSV file.", Alert.AlertType.ERROR);
+                }
+            };
+
+            new Thread(importTask).start();
         }
     }
 }

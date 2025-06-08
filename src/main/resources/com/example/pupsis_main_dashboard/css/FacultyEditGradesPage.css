@@ -20,6 +20,7 @@
     -fx-font-size: 12px;
     -fx-background-color: transparent;
     -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+    -fx-text-fill: black;
 }
 
 /* Column headers */
@@ -32,6 +33,7 @@
     -fx-border-width: 0 0 1 0;
     -fx-border-color: #cdd0d1;
     -fx-font-size: 12px; /* Ensures header text is 12px */
+    -fx-text-fill: black;
 }
 
 .table-view .column-header .label {
@@ -39,6 +41,7 @@
     -fx-font-family: 'Inter';
     -fx-font-style: italic;
     -fx-padding: 15px, 10px, 0px, 10px;
+    -fx-text-fill: black;
 }
 
 /* Table cells */
@@ -47,6 +50,7 @@
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
+    -fx-text-fill: black;
 }
 
 /* Rows */
@@ -56,6 +60,7 @@
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
     -fx-padding: 10px 0px 10px 0px;
+    -fx-text-fill: black;
 }
 
 /* Hover effect for table rows */
@@ -230,10 +235,10 @@
 }
 
 #gradesHeaderLbl {
-    -fx-min-height: 50;
-    -fx-max-height: 50;
-    -fx-pref-height: 50;
-    -fx-font-size: 30px;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+    -fx-pref-height: 40;
+    -fx-font-size: 24px;
     -fx-text-fill: white;
 }
 
@@ -241,14 +246,7 @@
     -fx-min-height: 50;
     -fx-max-height: 50;
     -fx-pref-height: 50;
-    -fx-font-size: 30px;
-}
-
-.red-card .label {
-    -fx-font-size: 30px !important;
-    -fx-min-height: 50 !important;
-    -fx-max-height: 50 !important;
-    -fx-pref-height: 50 !important;
+    -fx-font-size: 24px;
 }
 
 #subDesclbl {
@@ -343,4 +341,127 @@
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+}
+
+.icon {
+    -fx-fill: black;
+}
+
+.search-text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+/* =============== DARK THEME STYLES =============== */
+
+.dark-theme .root {
+    -fx-background-color: transparent;
+}
+
+.dark-theme .small-cards {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
+.dark-theme .icon {
+    -fx-fill: white;
+}
+
+.dark-theme .text {
+    -fx-fill: white;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cccccc;
+}
+
+.dark-theme .search-text-field {
+    -fx-background-color: #3a3a3a;
+    -fx-border-width: 1px;
+    -fx-border-color: #555;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .table-view {
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(255, 255, 255, 0.25);
+    -fx-text-fill: #e6e6e6;
+}
+
+.dark-theme .table-view .column-header {
+    -fx-background-color: transparent;
+
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Table cells in dark theme */
+.dark-theme .table-view .table-cell {
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Rows in dark theme */
+.dark-theme .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Selection color in dark theme */
+.dark-theme .table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #a03030; /* Darker red for selection in dark mode */
+    -fx-text-fill: white;
+}
+
+/* Hover effect for table rows in dark theme */
+.dark-theme .table-row-cell:hover {
+    -fx-background-color: #b22222; /* Consistent with other dark theme hover colors */
+    -fx-text-fill: white;
+}
+
+/* Make sure text inside cells changes color in dark theme */
+.dark-theme .table-row-cell:hover .text {
+    -fx-fill: white;
 }

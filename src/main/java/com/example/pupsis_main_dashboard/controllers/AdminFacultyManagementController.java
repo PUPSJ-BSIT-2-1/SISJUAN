@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,7 +27,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FacultyManagementController {
+public class AdminFacultyManagementController {
 
     @FXML private TableView<Faculty> facultyTable;
     @FXML private TableColumn<Faculty, String> idColumn;
@@ -35,15 +36,7 @@ public class FacultyManagementController {
     @FXML private TableColumn<Faculty, String> emailColumn;
     @FXML private TableColumn<Faculty, String> contactColumn;
     @FXML private TableColumn<Faculty, Void> detailsColumn;
-    @FXML private Button addButton;
-    @FXML private Button editButton;
-    @FXML private Button deleteButton;
-    @FXML private Button refreshButton;
-    @FXML private Button assignSubjectButton;
-
-    @FXML private Button exportCSVButton;
-    @FXML private Button printReportButton;
-    @FXML private Button backButton;
+    @FXML private HBox backButton;
     @FXML private TextField searchField;
 
     private final ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
@@ -60,9 +53,8 @@ public class FacultyManagementController {
             return;
         }
 
-
         // Go back to the dashboard when the back button is clicked
-        backButton.setOnAction(_ -> {
+        backButton.setOnMouseClicked(_ -> {
             handleBackToDashboard();
             resetScrollPosition();
         });
@@ -87,6 +79,7 @@ public class FacultyManagementController {
             private final Button btn = new Button("➕");
 
             {
+                btn.getStyleClass().add("details-button");
                 btn.setOnAction(event -> {
                     Faculty faculty = getTableView().getItems().get(getIndex());
                     showFacultyDetailsModal(faculty);
@@ -103,6 +96,12 @@ public class FacultyManagementController {
                 }
             }
         });
+
+        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn, detailsColumn};
+        for (var col : columns) {
+            col.setReorderable(false);
+            col.setSortable(false);
+        }
     }
 
     private void showFacultyDetailsModal(Faculty faculty) {
@@ -268,7 +267,7 @@ public class FacultyManagementController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyRegistrationDialog.fxml"));
             Parent root = loader.load();
             AdminFacultyDialogController controller = loader.getController();
             controller.setFaculty(selectedFaculty);

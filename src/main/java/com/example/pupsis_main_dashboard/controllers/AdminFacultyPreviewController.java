@@ -97,8 +97,8 @@ public class AdminFacultyPreviewController {
                 // Load the FXML content into a Parent node
                 Parent newContent = loader.load();
 
-                // Retrieve the controller for the loaded FXML (FacultyManagementController)
-                FacultyManagementController controller = loader.getController();
+                // Retrieve the controller for the loaded FXML (AdminFacultyManagementController)
+                AdminFacultyManagementController controller = loader.getController();
 
                 // Replace the current content of the ScrollPane with the newly loaded content
                 contentPane.setContent(newContent);

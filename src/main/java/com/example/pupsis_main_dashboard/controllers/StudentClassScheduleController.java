@@ -75,7 +75,11 @@ public class StudentClassScheduleController {
         var columns = new TableColumn[]{subjCodeCell, subjDescriptionCell, lecHourCell, labHourCell, unitsCell, scheduleCell, roomCell};
         for (var col : columns) {
             col.setReorderable(false);
+            col.setSortable(false);
         }
+
+        studentTable.setSelectionModel(null);
+
         if (scheduleList.isEmpty()) {
             studentTable.setPlaceholder(new Label("No schedule available."));
         } else {
@@ -102,26 +106,16 @@ public class StudentClassScheduleController {
     }
 
     // Method to set a custom cell factory for wrapping text in header cells
+    // Method to set a custom cell factory for wrapping text in header cells
     private void setWrappingHeaderCellFactory(TableColumn<Schedule, String> column) {
 
-        AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
-        root.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                isDarkTheme.set(newScene.getRoot().getStyleClass().contains("dark-theme"));
-                newScene.getRoot().getStyleClass().addListener((ListChangeListener<String>) change ->
-                        isDarkTheme.set(change.getList().contains("dark-theme")));
-            }
-        });
-
-        // Set the cell factory for the column to wrap text and center it
         column.setCellFactory(_ -> new TableCell<>() {
             private final Label label = new Label();
 
             {
-                String textColor = isDarkTheme.get() ? "#e0e0e0" : "#000000";
                 label.setWrapText(true);
                 label.setMaxWidth(Double.MAX_VALUE);
-                label.setStyle("-fx-alignment: center; -fx-text-alignment: center; -fx-text-fill: " + textColor + ";");
+                label.setStyle("-fx-alignment: center; -fx-text-alignment: center;");
 
                 StackPane pane = new StackPane(label);
                 pane.setPrefHeight(Control.USE_COMPUTED_SIZE);
@@ -136,7 +130,7 @@ public class StudentClassScheduleController {
                     setGraphic(null);
                 } else {
                     label.setText(item);
-                    setGraphic(label);
+                    setGraphic(label);  // StackPane as parent
                 }
             }
         });

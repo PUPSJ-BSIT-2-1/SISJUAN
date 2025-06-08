@@ -28,32 +28,32 @@ public class AdminAssignSubjectDialogController {
     private Stage dialogStage;
     private boolean assigned = false;
 
-    // Called by FacultyManagementController to provide subject list
+    // Called by AdminFacultyManagementController to provide subject list
     public void setSubjects(List<String> subjects) {
         subjectComboBox.setItems(FXCollections.observableArrayList(subjects));
     }
 
-    // Called by FacultyManagementController to provide year levels (hardcoded or fetched)
+    // Called by AdminFacultyManagementController to provide year levels (hardcoded or fetched)
     public void setYearLevels(List<String> yearLevels) {
         yearLevelComboBox.setItems(FXCollections.observableArrayList(yearLevels));
     }
 
-    // Called by FacultyManagementController to provide semesters (hardcoded or fetched)
+    // Called by AdminFacultyManagementController to provide semesters (hardcoded or fetched)
     public void setSemesters(List<String> semesters) {
         semesterComboBox.setItems(FXCollections.observableArrayList(semesters));
     }
 
-    // For FacultyManagementController to get selected subject ID
+    // For AdminFacultyManagementController to get selected subject ID
     public String getSelectedSubjectId() {
         return subjectComboBox.getValue();
     }
 
-    // For FacultyManagementController to get selected year level
+    // For AdminFacultyManagementController to get selected year level
     public String getSelectedYearLevel() {
         return yearLevelComboBox.getValue();
     }
 
-    // For FacultyManagementController to get selected semester
+    // For AdminFacultyManagementController to get selected semester
     public String getSelectedSemester() {
         return semesterComboBox.getValue();
     }

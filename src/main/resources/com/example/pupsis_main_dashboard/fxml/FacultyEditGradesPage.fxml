@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -10,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -21,33 +19,36 @@
     <children>
         <BorderPane prefWidth="810.0">
             <top>
-                <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                    <BorderPane.margin>
-                        <Insets />
-                    </BorderPane.margin>
-                    <padding>
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                    </padding>
-                    <children>
-                        <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
-                            <children>
-                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="373.0" text="Grades" textFill="WHITE">
-                                    <font>
-                                        <Font size="30.0" />
-                                    </font>
-                                </Label>
-                                <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0" />
-                            </children>
-                            <padding>
-                                <Insets bottom="16.0" left="30.0" right="16.0" top="16.0" />
-                            </padding>
-                        </HBox>
-                    </children>
-                    <styleClass>
-                        <String fx:value="cards" />
-                        <String fx:value="red-card" />
-                    </styleClass>
-                </Pane>
+            <HBox prefHeight="100.0" prefWidth="811.0" styleClass="red-card" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <children>
+                  <VBox prefHeight="84.0" prefWidth="502.0">
+                     <children>
+                        <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Grade Entry Interface" textFill="WHITE">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="30.0" prefWidth="502.0" styleClass="sub-header" text="Input and Submit Student Grades" textFill="WHITE">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="3.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+            </HBox>
             </top>
             <center>
             <HBox BorderPane.alignment="CENTER">
@@ -56,8 +57,8 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
                                     <children>
-                              <SVGPath content="M6.62988 0.25C10.1566 0.250057 13.0098 3.06925 13.0098 6.53906C13.0095 10.0087 10.1564 12.8271 6.62988 12.8271C3.10331 12.8271 0.25025 10.0087 0.25 6.53906C0.25 3.06921 3.10316 0.25 6.62988 0.25ZM15.6533 18.5059L13.7832 19.6572L9.54688 12.9697L11.416 11.8174L15.6533 18.5059Z        M6.62988 2.25C4.20788 2.25 2.25 4.20788 2.25 6.53906C2.25 8.87024 4.20788 10.8271 6.62988 10.8271C9.05188 10.8271 11.0098 8.87024 11.0098 6.53906C11.0098 4.20788 9.05188 2.25 6.62988 2.25Z" fill="#b7b7b7" fillRule="EVEN_ODD" styleClass="shape-with-hole" />
-                                        <TextField fx:id="searchBar" promptText="Search..." />
+                              <SVGPath content="M15.25 12c.966 0 1.75.784 1.75 1.75v4a1.75 1.75 0 0 1-1.75 1.75h-4.775l-.05-.05c.368-.737.575-1.57.575-2.45c0-1.177-.37-2.268-1-3.163V13.5h-.257a5.523 5.523 0 0 0-1.672-1.363c.209-.088.438-.137.679-.137h6.5Zm-3.75 4.5V18h3.75a.25.25 0 0 0 .25-.25V16.5h-4Zm4-1.5v-1.25a.25.25 0 0 0-.25-.25H11.5V15h4Zm2.5 6h-6.025l.512.513c.278.277.443.626.495.987H18a2 2 0 0 0 2-2V10.328a2 2 0 0 0-.586-1.414l-5.829-5.828a.491.491 0 0 0-.049-.04a.63.63 0 0 1-.036-.03a2.072 2.072 0 0 0-.219-.18a.652.652 0 0 0-.08-.044l-.048-.024l-.05-.029c-.054-.031-.109-.063-.166-.087a1.977 1.977 0 0 0-.624-.138a.56.56 0 0 1-.059-.007a.605.605 0 0 0-.082-.007H6a2 2 0 0 0-2 2v7.207a5.5 5.5 0 0 1 1.5-.207v-7A.5.5 0 0 1 6 4h6v4.5a2 2 0 0 0 2 2h4.5v10a.5.5 0 0 1-.5.5Zm-.622-12H14a.5.5 0 0 1-.5-.5V5.121L17.378 9ZM5.5 21.5a4.48 4.48 0 0 0 2.607-.832l2.613 2.612a.75.75 0 1 0 1.06-1.06l-2.612-2.613A4.5 4.5 0 1 0 5.5 21.5Zm0-1.5a3 3 0 1 1 0-6a3 3 0 0 1 0 6Z" styleClass="icon" />
+                                        <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="224.0" promptText="Search..." styleClass="search-text-field" />
                                         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="525.0" spacing="20.0">
                                             <children>
                                                 <MenuButton fx:id="subjCodeCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="23.0" prefWidth="100.0" text="Subject Code" textFill="WHITE" />
@@ -81,7 +82,7 @@
                                                           <Font size="9.0" />
                                                       </font>
                                                   </Label>
-                                                  <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" text="Object Oriented Programming" wrapText="true">
+                                                  <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" styleClass="text" text="Object Oriented Programming" wrapText="true">
                                        <padding>
                                           <Insets left="20.0" />
                                        </padding>
