@@ -79,6 +79,23 @@
     -fx-background-color: transparent;
 }
 
+.table-view .grade-status-cell {
+    -fx-padding: 8px;
+    -fx-alignment: center;
+}
+
+.table-row-cell:hover .grade-status-passed {
+    -fx-background-color: #218838; /* Darker green on hover */
+}
+
+.table-row-cell:hover .grade-status-failed {
+    -fx-background-color: #c82333; /* Darker red on hover */
+}
+
+.table-row-cell:hover .grade-status-other {
+    -fx-background-color: #5a6268; /* Darker gray on hover */
+}
+
 /* Menu Button Base Styling */
 .menu-button {
     -fx-background-color: #962323;
@@ -247,4 +264,35 @@
 #subjDescLbl{
     -fx-font-size: 14px;
     -fx-text-fill: #000000;
+}
+
+.grade-status-passed {
+    -fx-background-color: #28a745;
+    -fx-background-radius: 12px;
+    -fx-min-width: 20px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-failed {
+    -fx-background-color: #dc3545;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-other {
+    -fx-background-color: #6c757d;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
 }

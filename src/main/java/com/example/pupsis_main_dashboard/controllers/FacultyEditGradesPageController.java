@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.control.TableCell;
 
 import java.net.URL;
 import java.sql.*;
@@ -84,6 +85,40 @@ public class FacultyEditGradesPageController implements Initializable {
         subjCodeCol.setCellValueFactory(new PropertyValueFactory<>("subjCode"));
         finGradeCol.setCellValueFactory(new PropertyValueFactory<>("finalGrade"));
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
+
+        gradeStatCol.setCellFactory(tc -> new TableCell<Student, String>() {
+            @Override
+            protected void updateItem(String gradeStatus, boolean empty) {
+                super.updateItem(gradeStatus, empty);
+
+                // Clear all previous style classes
+                getStyleClass().removeAll("grade-status-passed", "grade-status-failed", "grade-status-other");
+
+                if (empty || gradeStatus == null || gradeStatus.trim().isEmpty()) {
+                    setText(null);
+                } else {
+                    setText(gradeStatus);
+
+                    // Apply CSS class based on grade status
+                    switch (gradeStatus.toLowerCase()) {
+                        case "passed":
+                            getStyleClass().add("grade-status-passed");
+                            break;
+                        case "failed":
+                            getStyleClass().add("grade-status-failed");
+                            break;
+                        case "incomplete":
+                        case "withdrawn":
+                        case "dropped":
+                            getStyleClass().add("grade-status-other");
+                            break;
+                        default:
+                            // No special styling for unknown statuses
+                            break;
+                    }
+                }
+            }
+        });
 
         // Make final grade column editable with custom cell factory
         finGradeCol.setCellFactory(tc -> new TableCell<Student, String>() {
@@ -211,6 +246,11 @@ public class FacultyEditGradesPageController implements Initializable {
                 return "5.00";
             }
 
+            // NEW RULE: If grade is below 3.01, automatically set to 5.0 (failing)
+            if (gradeValue > 3.0f) {
+                return "5.00";
+            }
+
             // Round to nearest quarter, but always round up within each quarter range
             // Get the whole number part
             int wholePart = (int) gradeValue;
@@ -314,7 +354,7 @@ public class FacultyEditGradesPageController implements Initializable {
     // Updated method to provide comprehensive validation message
     private String getGradeValidationMessage() {
         return "Please enter a valid grade:\n" +
-                "• Numeric grade between 1.00 and 5.00\n" +
+                "• Numeric grade between 1.00 and 3.00 (grades above 3.00 will be set to 5.00)\n" +
                 "• 'W' for withdrawn\n" +
                 "• 'D' for dropped";
     }
@@ -345,14 +385,12 @@ public class FacultyEditGradesPageController implements Initializable {
 
             // Per user: 3.0 is Passed.
             // Grades <3.0 (and >=1.0) or >3.0 (and <=5.0) are Failed.
-            if (gradeValue == 3.0f) {
+            if (gradeValue >= 1.0f && gradeValue <= 3.0f) {
                 return "Passed";
-            } else if (gradeValue >= 1.0f && gradeValue <= 5.0f) {
-                // This covers valid grades from 1.0 to 5.0 that are not 3.0 and not 0.0
-                // e.g., 1.0, 2.75, 3.25, 5.0 are all Failed according to this logic.
+            } else if (gradeValue > 3.0f && gradeValue <= 5.0f) {
                 return "Failed";
             } else {
-                // For numeric grades outside the 0.0-5.0 range (e.g., 0.5, 7.0, negative values)
+                // For numeric grades outside the 1.0-5.0 range
                 return "Incomplete";
             }
         } catch (NumberFormatException e) {
@@ -363,21 +401,25 @@ public class FacultyEditGradesPageController implements Initializable {
 
     private void updateGradeInDatabase(Student student) {
         logger.info("Updating grade for grade_id: " + student.getStudentNo() +
-                    ", Student Number: " + student.getStudentId() +
-                    ", New Grade: " + student.getFinalGrade() + ", Status: " + student.getGradeStatus());
+                ", Student Number: " + student.getStudentId() +
+                ", New Grade: " + student.getFinalGrade() + ", Status: " + student.getGradeStatus());
         try (Connection conn = DBConnection.getConnection()) {
-            // Update both final grade and grade status using grade_id
-            String query = "UPDATE grade SET final_grade = ?, gradestat = ? WHERE grade_id = ?";
+            // First, determine the grade_status_id based on the final grade
+            String newGradeStatus = determineGradeStatus(student.getFinalGrade());
+            int gradeStatusId = getGradeStatusId(newGradeStatus, conn);
+
+            // Update both final grade and grade_status_id using grade_id
+            String query = "UPDATE grade SET final_grade = ?, grade_status_id = ? WHERE grade_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, student.getFinalGrade());
-                pstmt.setString(2, student.getGradeStatus());
-                pstmt.setInt(3, Integer.parseInt(student.getStudentNo())); // Corrected: getStudentNo() for grade_id
+                pstmt.setInt(2, gradeStatusId);  // Use the actual ID from grade_status table
+                pstmt.setInt(3, Integer.parseInt(student.getStudentNo()));
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    // Update the student object's grade status
-                    student.setGradeStatus(determineGradeStatus(student.getFinalGrade()));
+                    // Update the student object's grade status with the text value
+                    student.setGradeStatus(newGradeStatus);
 
                     // Refresh the specific row in the table
                     int rowIndex = studentsList.indexOf(student);
@@ -418,7 +460,7 @@ public class FacultyEditGradesPageController implements Initializable {
                            s.student_id,
                            su.subject_code,
                            g.final_grade,
-                           g.grade_status_id,
+                           gs.status_name as grade_status,  -- Join to get actual status text
                            s.firstname,
                            s.lastname,
                            CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS "Student Name",
@@ -428,9 +470,10 @@ public class FacultyEditGradesPageController implements Initializable {
                     JOIN subjects su ON f.subject_id = su.subject_id
                     JOIN year_section ys ON f.section_id = ys.section_id 
                     JOIN grade g ON g.faculty_load = f.load_id
-                    JOIN students s ON g.student_pk_id = s.student_id /* Corrected join: grade.student_pk_id to students.student_id */
+                    JOIN students s ON g.student_pk_id = s.student_id
+                    LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
                     WHERE su.subject_code = ?
-                    AND CAST(f.faculty_id AS TEXT) = ? /* Cast SMALLINT column to TEXT to compare with String param */
+                    AND CAST(f.faculty_id AS TEXT) = ?
                     """);
 
                     if (selectedYearSection != null && !selectedYearSection.equals("All")) {
@@ -462,7 +505,7 @@ public class FacultyEditGradesPageController implements Initializable {
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
                                         formattedGrade != null ? formattedGrade : "",
-                                        rs.getString("grade_status_id") != null ? rs.getString("grade_status_id") : ""
+                                        rs.getString("grade_status") != null ? rs.getString("grade_status") : ""
                                 );
                                 tempList.add(student);
                             }
@@ -499,6 +542,20 @@ public class FacultyEditGradesPageController implements Initializable {
         });
 
         new Thread(loadTask).start();
+    }
+    private int getGradeStatusId(String statusName, Connection conn) throws SQLException {
+        String query = "SELECT grade_status_id FROM grade_statuses WHERE status_name = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, statusName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("grade_status_id");
+                } else {
+                    // If status not found, you might want to create it or use a default
+                    throw new SQLException("Grade status '" + statusName + "' not found in database");
+                }
+            }
+        }
     }
 
     private void populateSubjectCodes() {
