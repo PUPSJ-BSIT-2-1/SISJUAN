@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class DBConnection {
     // Original credentials that were previously working
-    public static final String URL = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres";
+    public static final String URL = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?prepareThreshold=0";
     public static final String USER = "postgres.odyfrnuddvhbedvjfnhw";
     public static final String PASSWORD = "HelloWorld123!";
 

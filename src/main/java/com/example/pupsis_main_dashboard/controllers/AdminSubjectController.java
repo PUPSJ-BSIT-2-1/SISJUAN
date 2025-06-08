@@ -206,11 +206,12 @@ public class AdminSubjectController implements Initializable {
 
         // Fetch subjects from Supabase
         try (Connection connection = DBConnection.getConnection()) {
-            String query = "SELECT s.subject_code, s.pre_requisites, s.description, s.units, yl.year_level_name AS year_level, sem.semester_name AS semester " +
+            String query = "SELECT s.subject_code, s.pre_requisites, s.description, s.units, sec.section_name AS year_level, sem.semester_name AS semester " +
                     "FROM public.subjects s " +
-                    "JOIN public.year_levels yl ON s.year_level_id = yl.year_level_id " +
+                    "JOIN public.section sec ON s.year_level_id = sec.year_level AND s.semester_id = sec.semester_id " +
                     "JOIN public.semesters sem ON s.semester_id = sem.semester_id " +
-                    "ORDER BY yl.year_level_name, sem.semester_name, s.subject_code";
+                    "GROUP BY s.subject_code, s.pre_requisites, s.description, s.units, sec.section_name, sem.semester_name " +
+                    "ORDER BY sec.section_name, sem.semester_name, s.subject_code";
 
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
