@@ -5,14 +5,12 @@ import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +19,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class FacultyRoomAssignmentController {
+public class FacultyClassScheduleController {
 
-    // FXML components 
-    @FXML
-    private VBox root;
+    // FXML components
     @FXML
     private TableView<Schedule> scheduleTable;
     @FXML
@@ -46,7 +41,7 @@ public class FacultyRoomAssignmentController {
     private Label semester;
 
     private final ObservableList<Schedule> schedules = FXCollections.observableArrayList();
-    private static final Logger logger = LoggerFactory.getLogger(FacultyRoomAssignmentController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacultyClassScheduleController.class);
 
     // Initialize method to set up the table and load data
     @FXML 
@@ -59,7 +54,10 @@ public class FacultyRoomAssignmentController {
         var columns = new TableColumn[]{subjCodeCell, subjDescriptionCell, sectionCell, scheduleCell, dayCell, roomCell};
         for (var col : columns) {
             col.setReorderable(false);
+            col.setSortable(false);
         }
+
+        scheduleTable.setSelectionModel(null);
 
         subjCodeCell.setCellValueFactory(new PropertyValueFactory<>("subCode"));
         subjDescriptionCell.setCellValueFactory(new PropertyValueFactory<>("subDesc"));
@@ -91,27 +89,16 @@ public class FacultyRoomAssignmentController {
         });
     }
 
-
     // Method to set a custom cell factory for wrapping text in header cells
     private void setWrappingHeaderCellFactory(TableColumn<Schedule, String> column) {
-
-        AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
-        root.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                isDarkTheme.set(newScene.getRoot().getStyleClass().contains("dark-theme"));
-                newScene.getRoot().getStyleClass().addListener((ListChangeListener<String>) change ->
-                        isDarkTheme.set(change.getList().contains("dark-theme")));
-            }
-        });
 
         column.setCellFactory(_ -> new TableCell<>() {
             private final Label label = new Label();
 
             {
-                String textColor = isDarkTheme.get() ? "#e0e0e0" : "#000000";
                 label.setWrapText(true);
                 label.setMaxWidth(Double.MAX_VALUE);
-                label.setStyle("-fx-alignment: center; -fx-text-alignment: center; -fx-text-fill: " + textColor + ";");
+                label.setStyle("-fx-alignment: center; -fx-text-alignment: center;");
 
                 StackPane pane = new StackPane(label);
                 pane.setPrefHeight(Control.USE_COMPUTED_SIZE);
@@ -119,7 +106,6 @@ public class FacultyRoomAssignmentController {
                 setGraphic(pane);
             }
 
-            // Override the updateItem method to set the text of the label
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -136,10 +122,10 @@ public class FacultyRoomAssignmentController {
     // Method to load schedules from the database for the current faculty
     private void loadSchedules() {
         String facultyIdString = SessionData.getInstance().getFacultyId();
-        logger.info("FacultyRoomAssignmentController: Retrieved SessionData.facultyId: '{}'", facultyIdString);
+        logger.info("FacultyClassScheduleController: Retrieved SessionData.facultyId: '{}'", facultyIdString);
 
         if (facultyIdString == null || facultyIdString.trim().isEmpty()) {
-            logger.error("FacultyRoomAssignmentController: Session faculty_id is null or empty. Cannot load schedules.");
+            logger.error("FacultyClassScheduleController: Session faculty_id is null or empty. Cannot load schedules.");
             scheduleTable.setPlaceholder(new Label("Unable to load schedule: Faculty identifier not found in session."));
             return; // Exit if no ID
         }
@@ -148,13 +134,13 @@ public class FacultyRoomAssignmentController {
         try {
             facultyIdInt = Integer.parseInt(facultyIdString);
         } catch (NumberFormatException e) {
-            logger.error("FacultyRoomAssignmentController: Could not parse faculty_id '{}' to an integer.", facultyIdString, e);
+            logger.error("FacultyClassScheduleController: Could not parse faculty_id '{}' to an integer.", facultyIdString, e);
             scheduleTable.setPlaceholder(new Label("Unable to load schedule: Invalid faculty identifier format."));
             return;
         }
 
         if (facultyIdInt == 0) { // Assuming 0 might still be an invalid ID if parsing succeeded but was '0'
-            logger.error("FacultyRoomAssignmentController: faculty_id is 0, which is considered invalid. Cannot load schedules.");
+            logger.error("FacultyClassScheduleController: faculty_id is 0, which is considered invalid. Cannot load schedules.");
             scheduleTable.setPlaceholder(new Label("Unable to load schedule: Invalid faculty identifier."));
             return; 
         }
@@ -184,7 +170,7 @@ public class FacultyRoomAssignmentController {
             stmt.setInt(1, facultyIdInt);
             int currentSemesterId = SchoolYearAndSemester.getCurrentSemesterId(); 
             if (currentSemesterId == 0) { 
-                logger.error("FacultyRoomAssignmentController: Could not determine current semester ID.");
+                logger.error("FacultyClassScheduleController: Could not determine current semester ID.");
                 scheduleTable.setPlaceholder(new Label("Unable to load schedule: Current semester ID not found."));
                 return;
             }
@@ -207,7 +193,7 @@ public class FacultyRoomAssignmentController {
                     String startTime = rs.getString("start_time");
                     String endTime = rs.getString("end_time");
                     String room = rs.getString("room");
-                    String units = rs.getString("units"); // units are text in subjects table
+                    String units = rs.getString("units"); // units are text in the subjects table
                     int lectureHour = rs.getInt("lecture_hour");
                     int labHour = rs.getInt("laboratory_hour");
 

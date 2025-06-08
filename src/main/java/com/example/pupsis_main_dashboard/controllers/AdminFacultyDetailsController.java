@@ -20,12 +20,12 @@ public class AdminFacultyDetailsController {
 
     private Stage dialogStage;
 
-    // Called from FacultyManagementController to pass the Stage reference
+    // Called from AdminFacultyManagementController to pass the Stage reference
     public void setDialogStage(Stage stage) {
         this.dialogStage = stage;
     }
 
-    // Called from FacultyManagementController to pass the Faculty data to display
+    // Called from AdminFacultyManagementController to pass the Faculty data to display
     public void setFaculty(Faculty faculty) {
         idLabel.setText(faculty.getFacultyId());
         firstNameLabel.setText(faculty.getFirstName());

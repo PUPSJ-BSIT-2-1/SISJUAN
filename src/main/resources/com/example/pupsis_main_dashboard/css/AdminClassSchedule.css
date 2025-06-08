@@ -21,7 +21,7 @@
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
     -fx-alignment: center-left;
-    -fx-padding : 20px;
+    -fx-padding : 15px;
 }
 
 .red-card .label {
@@ -127,6 +127,25 @@
     -fx-fill: black;
 }
 
+.utility-button {
+    -fx-background-color: #3c5888;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.utility-button:hover {
+    -fx-background-color: #4d6ea6; /* lighter blue */
+    -fx-cursor: hand;
+}
+
+.utility-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
 /* DARK THEME STYLES */
 
 .dark-theme .cards {
@@ -144,7 +163,7 @@
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
     -fx-alignment: center-left;
-    -fx-padding: 20px;
+    -fx-padding: 15px;
 }
 
 .dark-theme .red-card .label {
@@ -249,6 +268,25 @@
 }
 
 .dark-theme .add-button-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.dark-theme .utility-button {
+    -fx-background-color: #3c5888;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 18;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.dark-theme .utility-button:hover {
+    -fx-background-color: #4a6aa3; /* slightly lighter */
+    -fx-cursor: hand;
+}
+.dark-theme .utility-label {
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }

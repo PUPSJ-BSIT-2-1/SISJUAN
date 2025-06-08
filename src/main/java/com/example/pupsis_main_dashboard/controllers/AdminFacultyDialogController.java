@@ -15,7 +15,7 @@ public class AdminFacultyDialogController {
     @FXML private TextField firstNameField;
     @FXML private TextField middleNameField;
     @FXML private TextField lastNameField;
-    @FXML private ComboBox<String> departmentComboBox;
+    @FXML private TextField departmentField;
     @FXML private TextField emailField;
     @FXML private TextField contactField;
     @FXML private DatePicker birthdatePicker;
@@ -30,7 +30,6 @@ public class AdminFacultyDialogController {
 
     @FXML
     private void initialize() {
-        departmentComboBox.setItems(FXCollections.observableArrayList("Department A", "Department B"));
         statusComboBox.setItems(FXCollections.observableArrayList("Full-time", "Part-time"));
         dateJoinedPicker.setValue(LocalDate.now());
     }
@@ -51,7 +50,7 @@ public class AdminFacultyDialogController {
             firstNameField.setText(faculty.getFirstName());
             middleNameField.setText(faculty.getMiddleName());
             lastNameField.setText(faculty.getLastName());
-            departmentComboBox.setValue(faculty.getDepartmentName());
+            departmentField.setText(faculty.getDepartmentName());
             emailField.setText(faculty.getEmail());
             contactField.setText(faculty.getContactNumber());
             birthdatePicker.setValue(faculty.getBirthdate());
@@ -87,7 +86,7 @@ public class AdminFacultyDialogController {
 
             try {
                 // Get IDs for selected department and status
-                String selectedDepartmentName = departmentComboBox.getValue();
+                String selectedDepartmentName = departmentField.getText();
                 // TODO: Uncomment and ensure FacultyDAO.getDepartmentIdByName is implemented
                 // Integer departmentId = facultyDAO.getDepartmentIdByName(selectedDepartmentName); 
                 // if (departmentId == null) {
@@ -145,7 +144,7 @@ public class AdminFacultyDialogController {
         if (lastNameField.getText() == null || lastNameField.getText().isEmpty()) {
             errorContent.append("Last Name is required.\n");
         }
-        if (departmentComboBox.getValue() == null || departmentComboBox.getValue().isEmpty()) {
+        if (departmentField.getText() == null || departmentField.getText().isEmpty()) {
             errorContent.append("Department must be selected.\n");
         }
         if (emailField.getText() == null || !emailField.getText().contains("@")) {

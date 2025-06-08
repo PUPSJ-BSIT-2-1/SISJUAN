@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.control.TableCell;
+import javafx.scene.layout.Region;
 
 import java.net.URL;
 import java.sql.*;
@@ -87,35 +88,45 @@ public class FacultyEditGradesPageController implements Initializable {
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
 
         gradeStatCol.setCellFactory(tc -> new TableCell<Student, String>() {
+            private final Label label = new Label();
+
+            {
+                label.setPrefHeight(25);
+                label.setMinWidth(Region.USE_PREF_SIZE);
+                label.setMaxWidth(Region.USE_PREF_SIZE);
+            }
+
             @Override
             protected void updateItem(String gradeStatus, boolean empty) {
                 super.updateItem(gradeStatus, empty);
 
                 // Clear all previous style classes
-                getStyleClass().removeAll("grade-status-passed", "grade-status-failed", "grade-status-other");
+                label.getStyleClass().removeAll("grade-status-passed", "grade-status-failed", "grade-status-other");
 
                 if (empty || gradeStatus == null || gradeStatus.trim().isEmpty()) {
-                    setText(null);
+                    setGraphic(null);
                 } else {
-                    setText(gradeStatus);
+                    label.setText(gradeStatus);
 
                     // Apply CSS class based on grade status
                     switch (gradeStatus.toLowerCase()) {
                         case "passed":
-                            getStyleClass().add("grade-status-passed");
+                            label.getStyleClass().add("grade-status-passed");
                             break;
                         case "failed":
-                            getStyleClass().add("grade-status-failed");
+                            label.getStyleClass().add("grade-status-failed");
                             break;
                         case "incomplete":
                         case "withdrawn":
                         case "dropped":
-                            getStyleClass().add("grade-status-other");
+                            label.getStyleClass().add("grade-status-other");
                             break;
                         default:
                             // No special styling for unknown statuses
                             break;
                     }
+
+                    setGraphic(label);
                 }
             }
         });
@@ -327,6 +338,7 @@ public class FacultyEditGradesPageController implements Initializable {
     private void setupRowHoverEffect() {
 
         studentsTable.getColumns().forEach(column -> column.setReorderable(false));
+        studentsTable.getColumns().forEach(column -> column.setSortable(false));
     }
 
     // Updated validation method to handle both numeric grades and special text values
