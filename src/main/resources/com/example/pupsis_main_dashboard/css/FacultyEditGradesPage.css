@@ -304,26 +304,40 @@
 
 .table-row-cell:hover .grade-status-passed {
     -fx-background-color: #218838; /* Darker green on hover */
+    -fx-max-width: 20px;
+    -fx-text-fill: white; !important;
+    -fx-content-display: center;
 }
 
 .table-row-cell:hover .grade-status-failed {
     -fx-background-color: #c82333; /* Darker red on hover */
+    -fx-max-width: 20px;
+    -fx-text-fill: white; !important;
+    -fx-content-display: center;
 }
 
 .table-row-cell:hover .grade-status-other {
     -fx-background-color: #5a6268; /* Darker gray on hover */
+    -fx-max-width: 20px;
+    -fx-text-fill: white; !important;
+    -fx-content-display: center;
 }
 
 .grade-status-passed {
     -fx-background-color: #28a745;
     -fx-background-radius: 12px;
-    -fx-min-width: 20px;
+    -fx-max-width: 20px;
     -fx-text-fill: white;
-    -fx-padding: 6px 12px;
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+    -fx-content-display: center;
 }
+
+.grade-status-passed .label {
+    -fx-text-fill: white;
+}
+
 
 .grade-status-failed {
     -fx-background-color: #dc3545;
@@ -333,6 +347,7 @@
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+    -fx-content-display: center;
 }
 
 .grade-status-other {
@@ -343,4 +358,5 @@
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+    -fx-content-display: center;
 }
