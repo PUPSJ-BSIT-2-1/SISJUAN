@@ -215,28 +215,50 @@ public class StudentEnrollmentController implements Initializable {
 
     private void updateSelectAllButtonState() {
         if (selectAllButton != null) {
-            boolean allSelected = !subjectCheckboxes.isEmpty() && subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-            selectAllButton.setText(allSelected ? "Deselect All" : "Select All");
-            selectAllButton.setDisable(subjectCheckboxes.isEmpty()); // Disable if no subjects to select
+            List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
+                                                              .filter(cb -> !cb.isDisabled())
+                                                              .collect(Collectors.toList());
+
+            if (enabledCheckboxes.isEmpty()) {
+                selectAllButton.setText("Select All");
+                selectAllButton.setDisable(true);
+            } else {
+                boolean allEnabledSelected = enabledCheckboxes.stream().allMatch(CheckBox::isSelected);
+                selectAllButton.setText(allEnabledSelected ? "Deselect All" : "Select All");
+                selectAllButton.setDisable(false);
+            }
         }
     }
 
     @FXML
     private void handleSelectAll(ActionEvent event) {
-        boolean allCurrentlySelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-        boolean targetState = !allCurrentlySelected;
+        List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
+                                                          .filter(cb -> !cb.isDisabled())
+                                                          .collect(Collectors.toList());
 
-        for (CheckBox cb : subjectCheckboxes) {
+        if (enabledCheckboxes.isEmpty()) {
+            return; // No enabled checkboxes to act upon
+        }
+
+        // Determine target state based on whether all *enabled* checkboxes are currently selected
+        boolean allCurrentlyEnabledSelected = enabledCheckboxes.stream().allMatch(CheckBox::isSelected);
+        boolean targetState = !allCurrentlyEnabledSelected;
+
+        for (CheckBox cb : enabledCheckboxes) {
             cb.setSelected(targetState);
         }
-        updateSelectAllButtonState(); // Update button text
-        updateEnrollButtonState(); // Update enroll button based on new selection
+        updateSelectAllButtonState(); // Update button text and state
+        updateEnrollButtonState();    // Update enroll button based on new selection
     }
 
     private void updateEnrollButtonState() {
         if (enrollButton != null) {
-            boolean anySelected = subjectCheckboxes.stream().anyMatch(CheckBox::isSelected);
-            enrollButton.setDisable(!anySelected);
+            List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
+                                                              .filter(cb -> !cb.isDisabled())
+                                                              .collect(Collectors.toList());
+
+            boolean anyEnabledSelected = enabledCheckboxes.stream().anyMatch(CheckBox::isSelected);
+            enrollButton.setDisable(!anyEnabledSelected);
         }
     }
 
@@ -335,13 +357,49 @@ public class StudentEnrollmentController implements Initializable {
                 scheduleComboBox.getStyleClass().add("modern-combo"); // Style class from FXML
                 scheduleComboBox.setPromptText("Select Schedule"); // From FXML
 
-                if (subject.availableSchedules() != null && !subject.availableSchedules().isEmpty()) {
-                    scheduleComboBox.getItems().addAll(subject.availableSchedules());
-                    scheduleComboBox.setValue(subject.availableSchedules().get(0)); 
-                } else {
+                List<String> schedules = subject.availableSchedules();
+                boolean hasActualSelectableSchedules = false;
+
+                if (schedules != null && !schedules.isEmpty()) {
+                    hasActualSelectableSchedules = schedules.stream().anyMatch(s ->
+                        !s.equalsIgnoreCase("No schedules available") &&
+                        !s.equalsIgnoreCase("No schedules available for this offering") &&
+                        !s.equalsIgnoreCase("No specific schedules listed") &&
+                        !s.equalsIgnoreCase("Schedule TBD")
+                    );
+                }
+
+                if (hasActualSelectableSchedules) {
+                    // Filter out placeholders if they might coexist, though current backend logic suggests they won't.
+                    List<String> actualScheduleEntries = schedules.stream().filter(s ->
+                        !s.equalsIgnoreCase("No schedules available") &&
+                        !s.equalsIgnoreCase("No schedules available for this offering") &&
+                        !s.equalsIgnoreCase("No specific schedules listed") &&
+                        !s.equalsIgnoreCase("Schedule TBD")
+                    ).collect(Collectors.toList());
+
+                    if (!actualScheduleEntries.isEmpty()) {
+                        scheduleComboBox.getItems().addAll(actualScheduleEntries);
+                        scheduleComboBox.setValue(actualScheduleEntries.get(0));
+                    } else {
+                        // This case implies only placeholders were present, despite hasActualSelectableSchedules being true due to a logic flaw or unexpected data.
+                        // Fallback to no schedules available.
+                        scheduleComboBox.getItems().add("No schedules available");
+                        scheduleComboBox.setValue("No schedules available");
+                        hasActualSelectableSchedules = false; // Correct the flag
+                    }
+                } 
+                // This 'else' covers cases where schedules list was null, empty, or only contained placeholders from the start.
+                if (!hasActualSelectableSchedules) {
+                    scheduleComboBox.getItems().clear(); // Ensure it's clean
                     scheduleComboBox.getItems().add("No schedules available");
                     scheduleComboBox.setValue("No schedules available");
                     scheduleComboBox.setDisable(true);
+                    checkBox.setSelected(false); // Unselect if it was somehow selected
+                    checkBox.setDisable(true);   // Disable the checkbox
+                } else {
+                    scheduleComboBox.setDisable(false);
+                    checkBox.setDisable(false); // Ensure checkbox is enabled if schedules are present
                 }
 
                 subjectCheckboxes.add(checkBox);
@@ -362,8 +420,11 @@ public class StudentEnrollmentController implements Initializable {
         updateEnrollButtonState(); 
         updateSelectAllButtonState();
         if (selectAllButton != null) {
-            selectAllButton.setDisable(this.availableSubjects.isEmpty()); // Corrected variable name
-            updateSelectAllButtonState(); // Ensure button text is correct
+            // updateSelectAllButtonState already handles disabling if no enabled checkboxes exist.
+            // So, this specific line might be redundant or can be simplified.
+            // For now, let updateSelectAllButtonState handle the logic.
+            // selectAllButton.setDisable(this.availableSubjects.isEmpty()); // Original line
+            updateSelectAllButtonState(); // Ensure button text and state are correct after population
         }
         if (loadingIndicator != null) loadingIndicator.setVisible(false);
     }
