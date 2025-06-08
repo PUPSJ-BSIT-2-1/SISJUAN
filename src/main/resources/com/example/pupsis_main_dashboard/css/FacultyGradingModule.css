@@ -58,6 +58,7 @@
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
     -fx-font-style: italic;
+    -fx-padding: 15px, 10px, 0px, 10px;
 }
 
 /* Table cells */
@@ -66,6 +67,7 @@
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
+    -fx-padding: 10px 0px 10px 0px;
 }
 
 /* Rows */
@@ -258,7 +260,7 @@
     -fx-background-radius: 30;
     -fx-border-radius: 30;
     -fx-background-color: #f8fcfc;
-    -fx-border-color: #e3e5e6;
+    -fx-border-color: #b7b7b7;
     -fx-border-width: 1;
 }
 
@@ -367,7 +369,7 @@
 .search-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #b7b7b7;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
