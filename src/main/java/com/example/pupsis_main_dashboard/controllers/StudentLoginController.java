@@ -569,6 +569,7 @@ public class StudentLoginController {
         String studentNumber = generateStudentNumber(); 
         String status = "Pending"; 
 
+        // Removed year_level_id from the SQL query
         String sql = "INSERT INTO students (firstname, middlename, lastname, email, password, birthday, address, status, student_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
 
         try (Connection conn = DBConnection.getConnection();

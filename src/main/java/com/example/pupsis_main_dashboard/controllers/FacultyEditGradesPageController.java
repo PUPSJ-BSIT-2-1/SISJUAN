@@ -463,33 +463,34 @@ public class FacultyEditGradesPageController implements Initializable {
             @Override
             protected ObservableList<Student> call() throws Exception {
                 ObservableList<Student> tempList = FXCollections.observableArrayList();
+                int rowNum = 1; // Initialize counter for auto-incrementing numbers
 
                 try (Connection conn = DBConnection.getConnection()) {
                     StringBuilder queryBuilder = new StringBuilder();
                     queryBuilder.append("""
-                    SELECT DISTINCT
-                           g.grade_id as id,
-                           s.student_id,
-                           su.subject_code,
-                           g.final_grade,
-                           gs.status_name as grade_status,  -- Join to get actual status text
-                           s.firstname,
-                           s.lastname,
-                           CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS "Student Name",
-                           ys.year_section,  
-                           f.load_id
-                    FROM faculty_load f
-                    JOIN subjects su ON f.subject_id = su.subject_id
-                    JOIN year_section ys ON f.section_id = ys.section_id 
-                    JOIN grade g ON g.faculty_load = f.load_id
-                    JOIN students s ON g.student_pk_id = s.student_id
-                    LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
-                    WHERE su.subject_code = ?
-                    AND CAST(f.faculty_id AS TEXT) = ?
-                    """);
+                SELECT DISTINCT
+                       g.grade_id as id,
+                       s.student_id,
+                       su.subject_code,
+                       g.final_grade,
+                       gs.status_name as grade_status,
+                       s.firstname,
+                       s.lastname,
+                       CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS "Student Name",
+                       ys.year_section,  
+                       f.load_id
+                FROM faculty_load f
+                JOIN subjects su ON f.subject_id = su.subject_id
+                JOIN year_section ys ON f.section_id = ys.section_id 
+                JOIN grade g ON g.faculty_load = f.load_id
+                JOIN students s ON g.student_pk_id = s.student_id
+                LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
+                WHERE su.subject_code = ?
+                AND CAST(f.faculty_id AS TEXT) = ?
+                """);
 
                     if (selectedYearSection != null && !selectedYearSection.equals("All")) {
-                        queryBuilder.append(" AND CAST(ys.year_section AS TEXT) = ?"); /* Explicitly TEXT = TEXT comparison */
+                        queryBuilder.append(" AND CAST(ys.year_section AS TEXT) = ?");
                     }
                     queryBuilder.append(" ORDER BY s.lastname, s.firstname");
 
@@ -500,10 +501,10 @@ public class FacultyEditGradesPageController implements Initializable {
 
                         pstmt.setFetchSize(100);
                         pstmt.setString(1, subjectCode);
-                        pstmt.setString(2, String.valueOf(SessionData.getInstance().getFacultyId()));    // faculty_id (assuming TEXT in live DB, was SMALLINT)
+                        pstmt.setString(2, String.valueOf(SessionData.getInstance().getFacultyId()));
 
                         if (selectedYearSection != null && !selectedYearSection.equals("All")) {
-                            pstmt.setString(3, selectedYearSection); // year_section (TEXT)
+                            pstmt.setString(3, selectedYearSection);
                         }
 
                         try (ResultSet rs = pstmt.executeQuery()) {
@@ -512,7 +513,7 @@ public class FacultyEditGradesPageController implements Initializable {
                                 String formattedGrade = formatGradeFromDB(finalGradeFromDB);
 
                                 Student student = new Student(
-                                        rs.getString("id"),
+                                        String.valueOf(rowNum++), // Use auto-incrementing number instead of grade_id
                                         rs.getString("student_id"),
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
@@ -526,35 +527,34 @@ public class FacultyEditGradesPageController implements Initializable {
                     return tempList;
                 }
             }
-        };
+    };
 
-        loadTask.setOnSucceeded(e -> {
-            ObservableList<Student> result = loadTask.getValue();
-            studentCache.put(subjectCode, result);
-            updateTableView(result);
-            setupSearch();
+    loadTask.setOnSucceeded(e -> {
+        ObservableList<Student> result = loadTask.getValue();
+        studentCache.put(subjectCode, result);
+        updateTableView(result);
+        setupSearch();
 
-            Platform.runLater(() -> {
-                // Add null check for gradesHeaderLbl
-                if (gradesHeaderLbl != null) {
-                    String headerText = selectedYearSection != null && !selectedYearSection.equals("All")
-                            ? String.format("%s - %s", subjectCode, selectedYearSection)
-                            : subjectCode;
-                } else {
-                    logger.severe("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
-                    System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
-                }
-            });
+        Platform.runLater(() -> {
+            if (gradesHeaderLbl != null) {
+                String headerText = selectedYearSection != null && !selectedYearSection.equals("All")
+                        ? String.format("%s - %s", subjectCode, selectedYearSection)
+                        : subjectCode;
+            } else {
+                logger.severe("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
+                System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
+            }
         });
+    });
 
-        loadTask.setOnFailed(e -> {
-            Throwable ex = loadTask.getException();
-            logger.log(Level.SEVERE, "Error loading students by subject code: " + subjectCode, ex);
-            showError("Database Error", "Failed to load data: " + ex.getMessage());
-        });
+    loadTask.setOnFailed(e -> {
+        Throwable ex = loadTask.getException();
+        logger.log(Level.SEVERE, "Error loading students by subject code: " + subjectCode, ex);
+        showError("Database Error", "Failed to load data: " + ex.getMessage());
+    });
 
-        new Thread(loadTask).start();
-    }
+    new Thread(loadTask).start();
+}
     private int getGradeStatusId(String statusName, Connection conn) throws SQLException {
         String query = "SELECT grade_status_id FROM grade_statuses WHERE status_name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -632,7 +632,6 @@ public class FacultyEditGradesPageController implements Initializable {
     }
 
     private void setupSearch() {
-
         // Create a filtered list wrapping the original list
         FilteredList<Student> filteredData = new FilteredList<>(studentsList, p -> true);
 
@@ -654,8 +653,14 @@ public class FacultyEditGradesPageController implements Initializable {
                 if (subject.getStudentNa().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
-                return subject.getSubjCode().toLowerCase().contains(lowerCaseFilter);// Does not match
+                return subject.getSubjCode().toLowerCase().contains(lowerCaseFilter);
             });
+
+            // Update row numbers for filtered results
+            int rowNum = 1;
+            for (Student student : filteredData) {
+                student.setStudentNo(String.valueOf(rowNum++));
+            }
         });
 
         // Wrap the FilteredList in a SortedList
