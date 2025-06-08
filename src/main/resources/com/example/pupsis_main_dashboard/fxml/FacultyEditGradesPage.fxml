@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyEditGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyEditGradesPageController">
+    <children>
+        <BorderPane prefWidth="810.0">
+            <top>
+                <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets />
+                    </BorderPane.margin>
+                    <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
+                            <children>
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="373.0" text="Grades" textFill="WHITE">
+                                    <font>
+                                        <Font size="30.0" />
+                                    </font>
+                                </Label>
+                                <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0" />
+                            </children>
+                            <padding>
+                                <Insets bottom="16.0" left="30.0" right="16.0" top="16.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                    <styleClass>
+                        <String fx:value="cards" />
+                        <String fx:value="red-card" />
+                    </styleClass>
+                </Pane>
+            </top>
+            <center>
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                        <VBox alignment="TOP_CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
+                                    <children>
+                              <SVGPath content="M6.62988 0.25C10.1566 0.250057 13.0098 3.06925 13.0098 6.53906C13.0095 10.0087 10.1564 12.8271 6.62988 12.8271C3.10331 12.8271 0.25025 10.0087 0.25 6.53906C0.25 3.06921 3.10316 0.25 6.62988 0.25ZM15.6533 18.5059L13.7832 19.6572L9.54688 12.9697L11.416 11.8174L15.6533 18.5059Z        M6.62988 2.25C4.20788 2.25 2.25 4.20788 2.25 6.53906C2.25 8.87024 4.20788 10.8271 6.62988 10.8271C9.05188 10.8271 11.0098 8.87024 11.0098 6.53906C11.0098 4.20788 9.05188 2.25 6.62988 2.25Z" fill="#b7b7b7" fillRule="EVEN_ODD" styleClass="shape-with-hole" />
+                                        <TextField fx:id="searchBar" promptText="Search..." />
+                                        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="525.0" spacing="20.0">
+                                            <children>
+                                                <MenuButton fx:id="subjCodeCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="23.0" prefWidth="100.0" text="Subject Code" textFill="WHITE" />
+                                                <MenuButton fx:id="yrSecCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Yr &amp; Section" textFill="WHITE" />
+                                            </children>
+                                            <padding>
+                                                <Insets left="30.0" />
+                                            </padding>
+                                        </HBox>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                </HBox>
+                        <VBox alignment="TOP_CENTER" prefHeight="820.0" prefWidth="740.0" styleClass="small-cards">
+                           <children>
+                              <VBox prefHeight="120.0" prefWidth="100.0">
+                                 <children>
+                                                  <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
+                                                      <font>
+                                                          <Font size="9.0" />
+                                                      </font>
+                                                  </Label>
+                                                  <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" text="Object Oriented Programming" wrapText="true">
+                                       <padding>
+                                          <Insets left="20.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets top="4.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Region prefHeight="30.0" prefWidth="786.0" styleClass="region" />
+                                    <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                                        <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0">
+                                            <columns>
+                                                <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
+                                                <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student ID" />
+                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" resizable="false" text="Student Name" />
+                                                <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
+                                                <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
+                                                <TableColumn fx:id="gradeStatCol" maxWidth="183.20004882812498" minWidth="120.0" prefWidth="183.20004882812498" resizable="false" text="Grade Status" />
+                                            </columns>
+                                        </TableView>
+                           </children>
+                        </VBox>
+                            </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                        </VBox>
+               </children>
+            </HBox>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>

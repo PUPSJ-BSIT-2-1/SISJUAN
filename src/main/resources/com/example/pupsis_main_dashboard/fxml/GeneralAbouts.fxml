@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2438.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/GeneralAbouts.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GeneralAboutsController">
+   <children>
+      <Label prefWidth="77.0" styleClass="title" text="About" />
+      <Region layoutX="10.0" layoutY="236.0" prefHeight="20.0" prefWidth="810.0" />
+      <VBox prefHeight="209.0" prefWidth="810.0" spacing="10.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="System Introduction" />
+            <HBox>
+               <children>
+                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/pupsj-logo.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="117.0" prefWidth="666.0" styleClass="description" text="Welcome to PUPSIS Replica - a comprehensive student information system designed for the Polytechnic University of the Philippines. This system is designed to simplify access to student services and academic records, providing a seamless experience for students throughout their academic journey.">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Region prefHeight="20.0" prefWidth="810.0" />
+      <VBox prefHeight="737.0" prefWidth="810.0" spacing="1.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="System Overview" />
+            <Label prefHeight="173.0" prefWidth="755.0" styleClass="description" text="The PUPSJ Student Portal is a desktop-based academic management system developed for the Polytechnic University of the Philippines – San Juan Campus. Designed using JavaFX and powered by PostgreSQL via Supabase, the system streamlines essential academic operations for students, faculty, and administrative staff.The portal provides centralized access to enrollment processes, class schedules, grades, payments, and faculty assignments. Each user role—Student, Faculty, and Admin—is given a tailored interface to ensure efficient and secure interaction with the system." textAlignment="CENTER" />
+            <VBox spacing="15.0" styleClass="dev-containers">
+               <children>
+                  <Label prefHeight="43.0" prefWidth="790.0" styleClass="about-headers" text="Main Features" />
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label styleClass="description" text="PUPSIS Replica provides the following key modules:" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• Enrollment / Registration: Manage your enrollment status and course registration." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• Class Schedule: View your current class schedule and room assignments." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• Grades: Access your academic performance and grade reports." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• Payments: Monitor your financial obligations and payment history." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• Profile Management: Update and maintain your student profile information." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• School Calendar: Stay updated with important academic dates and events." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Region prefWidth="10.0" />
+                              <Label styleClass="description" text="• Settings &amp; Dashboard: Customize your experience and access quick information." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+      <Region layoutX="10.0" layoutY="256.0" prefHeight="20.0" prefWidth="810.0" />
+      <VBox spacing="15.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="43.0" prefWidth="776.0" styleClass="about-headers" text="Technical Information" />
+            <Label styleClass="description" text="PUPSIS Replica is a student project built using modern technologies:" wrapText="true" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Region prefWidth="10.0" />
+                  <Label styleClass="description" text="• Frontend: JavaFX framework for the user interface" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Region prefWidth="10.0" />
+                  <Label styleClass="description" text="• Backend: PostgreSQL database hosted on Supabase" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Region prefWidth="10.0" />
+                  <Label styleClass="description" text="• Architecture: Model-View-Controller (MVC) pattern" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+         </padding>
+      </VBox>
+      <Region prefHeight="20.0" prefWidth="810.0" />
+      <VBox prefHeight="460.0" prefWidth="810.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="Developers Credits" />
+            <HBox prefHeight="34.0" prefWidth="766.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+               <children>
+                  <ComboBox fx:id="modulePicker" prefHeight="38.0" prefWidth="160.0" promptText="Modules" styleClass="modules" />
+                  <Region prefHeight="9.0" prefWidth="519.0" />
+                  <ImageView fx:id="previous" fitHeight="36.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" styleClass="buttons" />
+                  <Region prefHeight="33.0" prefWidth="14.0" />
+                  <ImageView fx:id="next" fitHeight="36.0" fitWidth="35.0" layoutX="692.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" styleClass="buttons" />
+               </children>
+            </HBox>
+            <BorderPane prefHeight="287.0" prefWidth="734.0" styleClass="dev-containers">
+               <left>
+                  <StackPane fx:id="stackPane" prefHeight="221.0" prefWidth="210.0" styleClass="image" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fx:id="image" fitHeight="235.0" fitWidth="201.0" pickOnBounds="true" preserveRatio="true" styleClass="image">
+                           <image>
+                              <Image url="@../Images/pupsj-logo.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </StackPane>
+               </left>
+               <right>
+                  <VBox prefHeight="238.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label fx:id="name" prefHeight="43.0" prefWidth="330.0" styleClass="dev-name" text="Ning Ning">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Label>
+                              <Label fx:id="role" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="46.0" prefWidth="164.0" styleClass="dev-role" text="Main Dashboard">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label fx:id="description" prefHeight="144.0" prefWidth="492.0" styleClass="dev-description" text="The PUPSJ Student Portal is a desktop-based academic management system developed for the Polytechnic University of the Philippines – San Juan Campus. Designed using JavaFX and powered by PostgreSQL via Supabase, the system streamlines essential academic operations for students, faculty, and administrative staff.The portal provides centralized access to enrollment processes, class schedules, grades, payments, and faculty assignments." textAlignment="CENTER" />
+                     </children>
+                     <padding>
+                        <Insets top="40.0" />
+                     </padding>
+                  </VBox>
+               </right>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </BorderPane>
+         </children>
+      </VBox>
+      <Region layoutX="10.0" layoutY="1369.0" prefHeight="20.0" prefWidth="810.0" />
+      <VBox spacing="15.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="43.0" prefWidth="824.0" styleClass="about-headers" text="Professor Recognition" />
+            <Label prefHeight="70.0" prefWidth="766.0" styleClass="description" text="We would like to express our sincere gratitude to our supervising professor for their guidance and support throughout the development of this project:" wrapText="true" />
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <Region prefWidth="10.0" />
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label styleClass="dev-name" text="Prof. Elias Austria" />
+                        <Label styleClass="description" text="For providing expert guidance on system architecture, database design, and overall project management. His insights and feedback were invaluable to the success of this project." wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+         </padding>
+      </VBox>
+      <Region layoutX="10.0" layoutY="1849.0" prefHeight="20.0" prefWidth="810.0" />
+      <VBox spacing="15.0" styleClass="about-containers">
+         <children>
+            <Label prefHeight="43.0" prefWidth="785.0" styleClass="about-headers" text="Version Information" />
+            <HBox spacing="10.0">
+               <children>
+                  <Label styleClass="description" text="Version:" />
+                  <Label styleClass="description" text="1.0.0" />
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Label styleClass="description" text="Release Date:" />
+                  <Label styleClass="description" text="2025" />
+               </children>
+            </HBox>
+            <Label styleClass="description" text=" 2025 BSIT Students, Polytechnic University of the Philippines - San Juan Campus. All rights reserved." wrapText="true" />
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+         </padding>
+      </VBox>
+   </children>
+</VBox>

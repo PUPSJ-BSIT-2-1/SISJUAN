@@ -42,7 +42,7 @@ public class SchoolCalendarController {
     protected double xOffset = 0;
     protected double yOffset = 0;
 
-    private final String stylesheetPath = Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm();
+    private final String stylesheetPath = Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/GeneralSchoolCalendar.css")).toExternalForm();
 
     private static final Logger logger = LoggerFactory.getLogger(SchoolCalendarController.class);
 
@@ -123,7 +123,7 @@ public class SchoolCalendarController {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.getDialogPane().setPrefSize(370, 320);  // Increased size
         dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/SchoolCalendar.css")).toExternalForm());
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/GeneralSchoolCalendar.css")).toExternalForm());
 
         if (root.getStyleClass().contains("dark-theme")) {
             // Apply the dark theme to the root scene of the dialog

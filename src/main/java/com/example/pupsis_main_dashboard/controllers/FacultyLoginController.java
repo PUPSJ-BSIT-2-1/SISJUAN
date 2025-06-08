@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.pupsis_main_dashboard.PUPSIS;
-import com.example.pupsis_main_dashboard.controllers.SettingsController;
 
 public class FacultyLoginController {
     @FXML private VBox leftSide;
@@ -103,7 +102,7 @@ public class FacultyLoginController {
         StageAndSceneUtils u = new StageAndSceneUtils();
         Stage stage = (Stage) closeButton.getScene().getWindow();
         try {
-            u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/FrontPage.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            u.loadStage(stage, "/com/example/pupsis_main_dashboard/fxml/GeneralFrontPage.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -143,8 +142,8 @@ public class FacultyLoginController {
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/FacultyDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                             if (stage.getScene() != null) {
-                                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                                 PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
                             }
                         } catch (IOException e) {
@@ -259,14 +258,14 @@ public class FacultyLoginController {
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
         if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-            Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-            boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+            Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+            boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
             PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
         } else {
             Platform.runLater(() -> {
                 if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                     PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
                 } else {
                     logger.warn("FacultyLoginController: Scene still not available for theme application.");
@@ -409,8 +408,8 @@ public class FacultyLoginController {
         alert.setContentText(content);
         
         // Apply theme to the alert dialog using the global theme preference
-        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean isDarkMode = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+        Preferences settingsPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class);
+        boolean isDarkMode = settingsPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
         if (isDarkMode && alert.getDialogPane().getScene() != null) {
             alert.getDialogPane().getScene().getRoot().getStyleClass().add("dark-theme");
         }

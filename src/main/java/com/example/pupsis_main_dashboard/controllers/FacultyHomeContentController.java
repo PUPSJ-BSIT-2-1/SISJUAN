@@ -1,6 +1,5 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import javafx.application.Platform;
@@ -17,16 +16,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -116,7 +111,7 @@ public class FacultyHomeContentController {
     private void inputGradesButtonClick(javafx.event.ActionEvent actionEvent) {
         if (facultyDashboardController != null) {
             // Use the consistent FXML path for editing grades
-            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
+            String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyGradingModule.fxml";
             facultyDashboardController.loadContent(GRADES_FXML);
             facultyDashboardController.handleQuickActionClicks(GRADES_FXML);
         }
@@ -124,7 +119,7 @@ public class FacultyHomeContentController {
 
     private void checkScheduleButtonClick(javafx.event.ActionEvent actionEvent) {
         if (facultyDashboardController != null) {
-            String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyRoomAssignment.fxml";
+            String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassSchedule.fxml";
             facultyDashboardController.loadContent(SCHEDULE_FXML);
             facultyDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
         }

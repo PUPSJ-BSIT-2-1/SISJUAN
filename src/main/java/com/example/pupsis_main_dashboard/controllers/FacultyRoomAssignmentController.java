@@ -168,11 +168,11 @@ public class FacultyRoomAssignmentController {
                    TO_CHAR(sch.end_time, 'HH12:MI AM') AS end_time,
                    r.room_name AS room, s.units, sch.lecture_hour, sch.laboratory_hour,
                    sem.semester_name
-            FROM schedule sch
-            JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id
+            FROM faculty_load fl
+            LEFT JOIN schedule sch ON sch.faculty_load_id = fl.load_id
             JOIN faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN subjects s ON fl.subject_id = s.subject_id
-            JOIN room r ON sch.room_id = r.room_id
+            LEFT JOIN room r ON sch.room_id = r.room_id
             JOIN year_section ys ON fl.section_id = ys.section_id
             JOIN semesters sem ON fl.semester_id = sem.semester_id
             WHERE fac.faculty_id = ? AND fl.semester_id = ?;
@@ -207,7 +207,7 @@ public class FacultyRoomAssignmentController {
                     String startTime = rs.getString("start_time");
                     String endTime = rs.getString("end_time");
                     String room = rs.getString("room");
-                    String units = rs.getString("units"); // units is text in subjects table
+                    String units = rs.getString("units"); // units are text in subjects table
                     int lectureHour = rs.getInt("lecture_hour");
                     int labHour = rs.getInt("laboratory_hour");
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="rootSettingsVBox" prefWidth="810.0" spacing="20.0" stylesheets="@../css/SettingsContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GeneralSettingsController">
+
+    <Label styleClass="settings-title" text="Settings" />
+
+    <!-- Account Settings Section -->
+    <VBox spacing="10" styleClass="settings-section">
+        <Label prefHeight="39.0" prefWidth="984.0" styleClass="settings-section-header" text="Account Settings" />
+        
+        <Label styleClass="settings-label" text="Change Password" />
+        <PasswordField fx:id="currentPasswordField" maxWidth="Infinity" promptText="Current Password" styleClass="text-field" />
+        <PasswordField fx:id="newPasswordField" maxWidth="Infinity" promptText="New Password" styleClass="text-field" />
+        <PasswordField fx:id="confirmNewPasswordField" maxWidth="Infinity" promptText="Confirm New Password" styleClass="text-field" />
+        <Button maxWidth="Infinity" onAction="#handleChangePassword" styleClass="settings-button" text="Change Password" />
+
+        <Label styleClass="settings-label" text="Profile Information">
+            <VBox.margin>
+                <Insets bottom="0" left="0" right="0" top="10" />
+            </VBox.margin>
+        </Label>
+        <TextField fx:id="emailField" maxWidth="Infinity" promptText="Email Address" styleClass="text-field" />
+        <TextField fx:id="phoneField" maxWidth="Infinity" promptText="Phone Number" styleClass="text-field" />
+        <Button maxWidth="Infinity" onAction="#handleSaveProfile" styleClass="settings-button" text="Save Profile" />
+    </VBox>
+
+    <!-- Appearance Settings Section -->
+    <VBox spacing="10" styleClass="settings-section">
+        <Label prefHeight="39.0" prefWidth="1090.0" styleClass="settings-section-header" text="Appearance" />
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label styleClass="settings-label" text="Theme:" />
+         <StackPane>
+            <children>
+                  <ToggleButton fx:id="themeToggle" styleClass="modern-toggle-switch" />
+               <Region maxHeight="18.0" maxWidth="18.0" mouseTransparent="true" prefHeight="0.0" prefWidth="13.0" styleClass="thumb">
+                  <StackPane.margin>
+                     <Insets />
+                  </StackPane.margin>
+               </Region>
+            </children>
+         </StackPane> 
+        </HBox>
+        <!-- HBox for language selection removed -->
+        <!-- <Button maxWidth="Infinity" onAction="#handleSaveAppearance" styleClass="settings-button" text="Save Appearance Settings" /> -->
+    </VBox>
+
+    <!-- Notification Settings Section -->
+    <VBox spacing="10" styleClass="settings-section">
+        <Label prefHeight="39.0" prefWidth="785.0" styleClass="settings-section-header" text="Notifications" />
+        <CheckBox fx:id="emailNotificationsCheckbox" text="Receive Email Notifications" />
+        <CheckBox fx:id="newGradeNotificationsCheckbox" text="Notify for New Grades" />
+        <CheckBox fx:id="announcementNotificationsCheckbox" text="Notify for Announcements" />
+    </VBox>
+</VBox>

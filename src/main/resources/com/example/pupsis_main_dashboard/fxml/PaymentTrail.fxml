@@ -7,7 +7,7 @@
     <?import javafx.scene.layout.*?>
 
     <VBox spacing="6" maxWidth="810.0" minWidth="810.0" prefWidth="810.0"
-          styleClass="font-compact" stylesheets="@../css/PaymentInfo.css"
+          styleClass="font-compact" stylesheets="@../css/StudentPaymentInfo.css"
           xmlns="http://javafx.com/javafx/23.0.1"
           xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="com.example.pupsis_main_dashboard.controllers.PaymentTrailController">
