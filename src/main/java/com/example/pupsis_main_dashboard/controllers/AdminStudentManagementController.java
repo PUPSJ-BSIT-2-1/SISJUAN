@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils.showAlert;
+
 public class AdminStudentManagementController implements Initializable {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminStudentManagementController.class);
@@ -120,11 +122,9 @@ public class AdminStudentManagementController implements Initializable {
         new Thread(() -> {
             List<StudentData> pendingStudentsList = new ArrayList<>();
             String sql = """
-                SELECT s.student_id, s.firstname, s.lastname, ss.status_name AS status,
-                       COALESCE(sec.section_name, 'Unknown Section') AS section_name
+                SELECT s.student_id, s.firstname, s.lastname, ss.status_name AS status
                 FROM public.students s
                 JOIN public.student_statuses ss ON s.student_status_id = ss.student_status_id
-                LEFT JOIN public.section sec ON s.current_year_section_id = sec.section_id
                 WHERE ss.status_name = 'Pending'
                 ORDER BY s.lastname, s.firstname
             """;
@@ -140,7 +140,7 @@ public class AdminStudentManagementController implements Initializable {
                             rs.getString("firstname"),
                             rs.getString("lastname"),
                             rs.getString("status"),
-                            rs.getString("section_name")
+                            "Pending Assignment" // Default for pending students
                     );
                     pendingStudentsList.add(student);
                     currentDisplayedStudents.add(student); 
@@ -293,7 +293,12 @@ public class AdminStudentManagementController implements Initializable {
             int successCount = 0;
 
             for (StudentData student : selectedStudents) {
-                String result = processSingleStudentAcceptance(student.id);
+                String result = null;
+                try {
+                    result = processSingleStudentAcceptance(student.id);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 acceptanceResults.add(student.getFullName() + ": " + result);
                 if (result.startsWith("Successfully")) {
                     successCount++;
@@ -327,9 +332,9 @@ public class AdminStudentManagementController implements Initializable {
         }).start();
     }
 
-    private String processSingleStudentAcceptance(int studentId) {
+    private String processSingleStudentAcceptance(int studentId) throws SQLException {
         Connection conn = null;
-        try {
+        try { // Outer try for connection and initial setup
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false); 
 
@@ -338,60 +343,82 @@ public class AdminStudentManagementController implements Initializable {
             int yearLevelForStudent = 1; 
 
             if (currentAcademicYearId == -1 || currentSemesterId == -1) {
+                // This return will bypass the finally, but conn is null or will be handled by finally if an exception occurs before this.
                 return "Failed: Could not determine current academic year/semester.";
             }
 
-            int chosenSectionId = -1;
-            String findSectionSql = "SELECT sec.section_id FROM public.section sec LEFT JOIN public.student_sections ss ON sec.section_id = ss.section_id WHERE sec.academic_year_id = ? AND sec.semester_id = ? AND sec.year_level = ? GROUP BY sec.section_id, sec.max_capacity HAVING COUNT(ss.student_id) < sec.max_capacity ORDER BY COUNT(ss.student_id) ASC LIMIT 1";
+            String findSectionSql = """
+                SELECT sec.section_id, sec.section_name, COUNT(stud_sec.student_id) AS current_students
+                FROM public.section sec
+                LEFT JOIN public.student_sections stud_sec ON sec.section_id = stud_sec.section_id
+                WHERE sec.academic_year_id = ? AND sec.semester_id = ? AND sec.year_level = ?
+                GROUP BY sec.section_id, sec.section_name, sec.max_capacity
+                HAVING COUNT(stud_sec.student_id) < sec.max_capacity
+                ORDER BY current_students ASC
+                LIMIT 1
+            """;
+            String insertStudentSectionSql = "INSERT INTO public.student_sections (student_id, section_id) VALUES (?, ?)";
+            String updateStudentSql = "UPDATE public.students SET student_status_id = (SELECT student_status_id FROM public.student_statuses WHERE status_name = 'Enrolled'), current_year_section_id = ? WHERE student_id = ?";
 
-            try (PreparedStatement sectionPstmt = conn.prepareStatement(findSectionSql)) {
-                sectionPstmt.setInt(1, currentAcademicYearId);
-                sectionPstmt.setInt(2, currentSemesterId);
-                sectionPstmt.setInt(3, yearLevelForStudent);
-                ResultSet sectionRs = sectionPstmt.executeQuery();
-                if (sectionRs.next()) {
-                    chosenSectionId = sectionRs.getInt("section_id");
-                } else {
-                    conn.rollback();
-                    return "Failed: No suitable section found (Year Level: " + yearLevelForStudent + ").";
+            try (PreparedStatement pstmtFindSection = conn.prepareStatement(findSectionSql);
+                 PreparedStatement pstmtInsertStudentSection = conn.prepareStatement(insertStudentSectionSql);
+                 PreparedStatement pstmtUpdateStudent = conn.prepareStatement(updateStudentSql)) {
+
+                pstmtFindSection.setInt(1, currentAcademicYearId);
+                pstmtFindSection.setInt(2, currentSemesterId);
+                pstmtFindSection.setInt(3, yearLevelForStudent);
+
+                logger.debug("Executing findSectionSql with params: AY_ID={}, SEM_ID={}, YEAR_LEVEL=1", currentAcademicYearId, currentSemesterId);
+                try (ResultSet rs = pstmtFindSection.executeQuery()) {
+                    if (rs.next()) {
+                        int sectionId = rs.getInt("section_id");
+                        String sectionName = rs.getString("section_name");
+
+                        pstmtInsertStudentSection.setInt(1, studentId);
+                        pstmtInsertStudentSection.setInt(2, sectionId);
+                        logger.debug("Executing insertStudentSectionSql with params: StudentID={}, SectionID={}", studentId, sectionId);
+                        pstmtInsertStudentSection.executeUpdate();
+
+                        logger.debug("Executing updateStudentSql with params: SectionID={}, StudentID={}", sectionId, studentId);
+                        pstmtUpdateStudent.setInt(1, sectionId);
+                        pstmtUpdateStudent.setInt(2, studentId);
+                        pstmtUpdateStudent.executeUpdate();
+
+                        conn.commit();
+                        return "Successfully assigned to " + sectionName;
+                    } else {
+                        conn.rollback();
+                        return "Failed: No suitable section found (Year Level: " + yearLevelForStudent + ").";
+                    }
+                }
+            } catch (SQLException e) { // Catches for the inner try-with-resources
+                logger.error("SQL Error during student processing (student ID {}): {}", studentId, e.getMessage());
+                if (conn != null) { // conn should not be null here if this block is reached from inner try
+                    try { conn.rollback(); } catch (SQLException ex) { logger.error("Rollback failed for student ID {}", studentId, ex); }
+                }
+                return "Failed: Database error - " + e.getMessage();
+            } catch (Exception e) { // Catches for the inner try-with-resources
+                logger.error("Unexpected error during student processing (student ID {}): {}", studentId, e.getMessage());
+                if (conn != null) {
+                    try { conn.rollback(); } catch (SQLException ex) { logger.error("Rollback failed for student ID {}", studentId, ex); }
+                }
+                return "Failed: System error - " + e.getMessage();
+            }
+            // Removed the finally block that was here, as it's better suited for the outer try.
+
+        } finally { // Finally for the outer try (connection management)
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true); 
+                } catch (SQLException e) {
+                    logger.error("Failed to set autoCommit to true on connection for student ID {}: {}", studentId, e.getMessage());
+                }
+                try {
+                    conn.close(); 
+                } catch (SQLException e) {
+                    logger.error("Failed to close connection for student ID {}: {}", studentId, e.getMessage());
                 }
             }
-
-            String assignSectionSql = "INSERT INTO public.student_sections (student_id, section_id) VALUES (?, ?)";
-            try (PreparedStatement assignPstmt = conn.prepareStatement(assignSectionSql)) {
-                assignPstmt.setInt(1, studentId);
-                assignPstmt.setInt(2, chosenSectionId);
-                if (assignPstmt.executeUpdate() == 0) throw new SQLException("Assign failed");
-            }
-
-            int enrolledStatusId = getStudentStatusIdByName("Enrolled");
-            String updateStudentSql = "UPDATE public.students SET student_status_id = ?, current_year_section_id = ? WHERE student_id = ?";
-            try (PreparedStatement updatePstmt = conn.prepareStatement(updateStudentSql)) {
-                updatePstmt.setInt(1, enrolledStatusId);
-                updatePstmt.setInt(2, chosenSectionId);
-                updatePstmt.setInt(3, studentId);
-                if (updatePstmt.executeUpdate() == 0) throw new SQLException("Update student failed");
-            }
-            
-            conn.commit();
-            String sectionName = "Unknown Section";
-            try (PreparedStatement ps = conn.prepareStatement("SELECT section_name FROM public.section WHERE section_id = ?")) {
-                ps.setInt(1, chosenSectionId);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) sectionName = rs.getString("section_name");
-            }
-            return "Successfully assigned to " + sectionName;
-
-        } catch (SQLException e) {
-            logger.error("SQL Error processing student ID {}: {}", studentId, e.getMessage());
-            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { logger.error("Rollback failed", ex); }
-            return "Failed: Database error - " + e.getMessage();
-        } catch (Exception e) {
-            logger.error("Unexpected error processing student ID {}: {}", studentId, e.getMessage());
-            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { logger.error("Rollback failed", ex); }
-            return "Failed: System error - " + e.getMessage();
-        } finally {
-            if (conn != null) try { conn.setAutoCommit(true); conn.close(); } catch (SQLException e) { logger.error("Close conn failed", e); }
         }
     }
 
@@ -399,7 +426,7 @@ public class AdminStudentManagementController implements Initializable {
         logger.info("Attempting to accept student ID: {}", studentId);
         new Thread(() -> {
             Connection conn = null;
-            try {
+            try { // Outer try for the lambda's operations
                 conn = DBConnection.getConnection();
                 conn.setAutoCommit(false); 
 
@@ -410,62 +437,63 @@ public class AdminStudentManagementController implements Initializable {
                 if (currentAcademicYearId == -1 || currentSemesterId == -1) {
                     logger.error("Could not determine current academic year/semester. Cannot accept student ID: {}", studentId);
                     Platform.runLater(() -> showAlert("System Error", "Could not determine current academic year or semester."));
-                    if (conn != null) conn.rollback();
-                    return;
+                    // No explicit rollback here as commit hasn't happened; finally will handle close.
+                    return; // Exit thread execution
                 }
 
-                int chosenSectionId = -1;
-                String findSectionSql = "SELECT sec.section_id FROM public.section sec LEFT JOIN public.student_sections ss ON sec.section_id = ss.section_id WHERE sec.academic_year_id = ? AND sec.semester_id = ? AND sec.year_level = ? GROUP BY sec.section_id, sec.max_capacity HAVING COUNT(ss.student_id) < sec.max_capacity ORDER BY COUNT(ss.student_id) ASC LIMIT 1";
+                String findSectionSql = """
+                    SELECT sec.section_id, sec.section_name, COUNT(stud_sec.student_id) AS current_students
+                    FROM public.section sec
+                    LEFT JOIN public.student_sections stud_sec ON sec.section_id = stud_sec.section_id
+                    WHERE sec.academic_year_id = ? AND sec.semester_id = ? AND sec.year_level = ?
+                    GROUP BY sec.section_id, sec.section_name, sec.max_capacity
+                    HAVING COUNT(stud_sec.student_id) < sec.max_capacity
+                    ORDER BY current_students ASC
+                    LIMIT 1
+                """;
+                String insertStudentSectionSql = "INSERT INTO public.student_sections (student_id, section_id) VALUES (?, ?)";
+                String updateStudentSql = "UPDATE public.students SET student_status_id = (SELECT student_status_id FROM public.student_statuses WHERE status_name = 'Enrolled'), current_year_section_id = ? WHERE student_id = ?";
 
-                try (PreparedStatement sectionPstmt = conn.prepareStatement(findSectionSql)) {
-                    sectionPstmt.setInt(1, currentAcademicYearId);
-                    sectionPstmt.setInt(2, currentSemesterId);
-                    sectionPstmt.setInt(3, yearLevelForStudent);
-                    ResultSet sectionRs = sectionPstmt.executeQuery();
-                    if (sectionRs.next()) {
-                        chosenSectionId = sectionRs.getInt("section_id");
-                        logger.info("Found suitable section ID: {} for student ID: {} (Year Level: 1)", chosenSectionId, studentId);
-                    } else {
-                        logger.warn("No available sections found for student ID: {} in academic year: {}, semester: {}, year_level: 1", studentId, currentAcademicYearId, currentSemesterId);
-                        Platform.runLater(() -> showAlert("No Section Available", "No suitable section found for the student in the current term and year level 1, or all sections are full."));
-                        conn.rollback();
-                        return;
+                try (PreparedStatement pstmtFindSection = conn.prepareStatement(findSectionSql);
+                     PreparedStatement pstmtInsertStudentSection = conn.prepareStatement(insertStudentSectionSql);
+                     PreparedStatement pstmtUpdateStudent = conn.prepareStatement(updateStudentSql)) {
+
+                    pstmtFindSection.setInt(1, currentAcademicYearId);
+                    pstmtFindSection.setInt(2, currentSemesterId);
+                    pstmtFindSection.setInt(3, yearLevelForStudent);
+
+                    logger.debug("Executing findSectionSql with params: AY_ID={}, SEM_ID={}, YEAR_LEVEL=1", currentAcademicYearId, currentSemesterId);
+                    try (ResultSet rs = pstmtFindSection.executeQuery()) {
+                        if (rs.next()) {
+                            int sectionId = rs.getInt("section_id");
+                            String sectionName = rs.getString("section_name");
+
+                            pstmtInsertStudentSection.setInt(1, studentId);
+                            pstmtInsertStudentSection.setInt(2, sectionId);
+                            logger.debug("Executing insertStudentSectionSql with params: StudentID={}, SectionID={}", studentId, sectionId);
+                            pstmtInsertStudentSection.executeUpdate();
+
+                            logger.debug("Executing updateStudentSql with params: SectionID={}, StudentID={}", sectionId, studentId);
+                            pstmtUpdateStudent.setInt(1, sectionId);
+                            pstmtUpdateStudent.setInt(2, studentId);
+                            pstmtUpdateStudent.executeUpdate();
+
+                            conn.commit();
+                            logger.info("Successfully accepted and sectioned student ID: {}", studentId);
+                            Platform.runLater(() -> {
+                                showAlert("Success", "Student accepted and assigned to a section.");
+                                loadPendingStudents(); 
+                            });
+                        } else {
+                            logger.warn("No available sections found for student ID: {} in academic year: {}, semester: {}, year_level: 1", studentId, currentAcademicYearId, currentSemesterId);
+                            Platform.runLater(() -> showAlert("No Section Available", "No suitable section found for the student in the current term and year level 1, or all sections are full."));
+                            conn.rollback(); // Rollback if no section found
+                        }
                     }
-                }
+                } // Inner try-with-resources closes its resources (PreparedStatements, ResultSet)
+                  // Exceptions from here will be caught by the outer catch blocks.
 
-                String assignSectionSql = "INSERT INTO public.student_sections (student_id, section_id) VALUES (?, ?)";
-                try (PreparedStatement assignPstmt = conn.prepareStatement(assignSectionSql)) {
-                    assignPstmt.setInt(1, studentId);
-                    assignPstmt.setInt(2, chosenSectionId);
-                    int rowsAffected = assignPstmt.executeUpdate();
-                    if (rowsAffected == 0) {
-                        throw new SQLException("Failed to assign student to section, no rows affected.");
-                    }
-                    logger.info("Assigned student ID: {} to section ID: {}", studentId, chosenSectionId);
-                }
-
-                int enrolledStatusId = getStudentStatusIdByName("Enrolled"); 
-
-                String updateStudentSql = "UPDATE public.students SET student_status_id = ?, current_year_section_id = ? WHERE student_id = ?";
-                try (PreparedStatement updatePstmt = conn.prepareStatement(updateStudentSql)) {
-                    updatePstmt.setInt(1, enrolledStatusId);
-                    updatePstmt.setInt(2, chosenSectionId); 
-                    updatePstmt.setInt(3, studentId);
-                    int rowsAffected = updatePstmt.executeUpdate();
-                    if (rowsAffected == 0) {
-                        throw new SQLException("Failed to update student status, no rows affected.");
-                    }
-                    logger.info("Updated status for student ID: {} to 'Enrolled' and section to {} (Year Level: 1)", studentId, chosenSectionId);
-                }
-
-                conn.commit(); 
-                logger.info("Successfully accepted and sectioned student ID: {}", studentId);
-                Platform.runLater(() -> {
-                    showAlert("Success", "Student accepted and assigned to a section.");
-                    loadPendingStudents(); 
-                });
-
-            } catch (SQLException e) {
+            } catch (SQLException e) { // Catch for the outer try
                 logger.error("SQL Error accepting student ID {}: {}", studentId, e.getMessage(), e);
                 if (conn != null) {
                     try {
@@ -479,11 +507,11 @@ public class AdminStudentManagementController implements Initializable {
                     showAlert("Database Error", "Failed to accept student: " + e.getMessage());
                     loadPendingStudents(); 
                 });
-            } catch (Exception e) { 
+            } catch (Exception e) { // Catch for the outer try 
                  logger.error("Unexpected error accepting student ID {}: {}", studentId, e.getMessage(), e);
-                 if (conn != null) {
+                 if (conn != null) { // Should have been rolled back by SQLException catch if that was the cause
                     try {
-                        conn.rollback();
+                        conn.rollback(); // Attempt rollback if not already done
                     } catch (SQLException ex) {
                         logger.error("Error rolling back transaction for student ID {}: {}", studentId, ex.getMessage(), ex);
                     }
@@ -492,16 +520,20 @@ public class AdminStudentManagementController implements Initializable {
                     showAlert("System Error", "An unexpected error occurred: " + e.getMessage());
                     loadPendingStudents(); 
                 });
-            } finally {
+            } finally { // Finally for the outer try (connection management)
                 if (conn != null) {
                     try {
                         conn.setAutoCommit(true); 
+                    } catch (SQLException e) {
+                        logger.error("Error setting autoCommit to true for conn: {}", e.getMessage(), e);
+                    }
+                    try {
                         conn.close();
                     } catch (SQLException e) {
                         logger.error("Error closing connection: {}", e.getMessage(), e);
                     }
                 }
-            }
+            } // End of outer try's finally
         }).start();
     }
 
