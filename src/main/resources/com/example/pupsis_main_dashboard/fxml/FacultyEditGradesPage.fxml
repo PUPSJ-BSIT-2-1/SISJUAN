@@ -19,54 +19,50 @@
     <children>
         <BorderPane prefWidth="810.0">
             <top>
-            <HBox prefHeight="100.0" prefWidth="811.0" styleClass="red-card" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-               <children>
-                  <VBox prefHeight="84.0" prefWidth="502.0">
-                     <children>
-                        <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Grade Entry Interface" textFill="WHITE">
-                           <font>
-                              <Font size="30.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="15.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="30.0" prefWidth="502.0" styleClass="sub-header" text="Input and Submit Student Grades" textFill="WHITE">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                           <padding>
-                              <Insets bottom="3.0" />
-                           </padding>
-                        </Label>
-                     </children>
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
+                <HBox prefHeight="100.0" prefWidth="811.0" styleClass="red-card" BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets />
+                    </BorderPane.margin>
+                    <children>
+                        <VBox prefHeight="84.0" prefWidth="502.0">
+                            <children>
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Grade Entry Interface" textFill="WHITE">
+                                    <font>
+                                        <Font size="30.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets top="15.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <Label contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="30.0" prefWidth="502.0" styleClass="sub-header" text="Input and Submit Student Grades" textFill="WHITE">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                    <padding>
+                                        <Insets bottom="3.0" />
+                                    </padding>
+                                </Label>
+                            </children>
+                            <HBox.margin>
+                                <Insets left="20.0" />
+                            </HBox.margin>
+                        </VBox>
+                    </children>
+                </HBox>
             </top>
             <center>
-            <HBox BorderPane.alignment="CENTER">
-               <children>
+                <HBox BorderPane.alignment="CENTER">
+                    <children>
                         <VBox alignment="TOP_CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
                                     <children>
-                              <SVGPath content="M15.25 12c.966 0 1.75.784 1.75 1.75v4a1.75 1.75 0 0 1-1.75 1.75h-4.775l-.05-.05c.368-.737.575-1.57.575-2.45c0-1.177-.37-2.268-1-3.163V13.5h-.257a5.523 5.523 0 0 0-1.672-1.363c.209-.088.438-.137.679-.137h6.5Zm-3.75 4.5V18h3.75a.25.25 0 0 0 .25-.25V16.5h-4Zm4-1.5v-1.25a.25.25 0 0 0-.25-.25H11.5V15h4Zm2.5 6h-6.025l.512.513c.278.277.443.626.495.987H18a2 2 0 0 0 2-2V10.328a2 2 0 0 0-.586-1.414l-5.829-5.828a.491.491 0 0 0-.049-.04a.63.63 0 0 1-.036-.03a2.072 2.072 0 0 0-.219-.18a.652.652 0 0 0-.08-.044l-.048-.024l-.05-.029c-.054-.031-.109-.063-.166-.087a1.977 1.977 0 0 0-.624-.138a.56.56 0 0 1-.059-.007a.605.605 0 0 0-.082-.007H6a2 2 0 0 0-2 2v7.207a5.5 5.5 0 0 1 1.5-.207v-7A.5.5 0 0 1 6 4h6v4.5a2 2 0 0 0 2 2h4.5v10a.5.5 0 0 1-.5.5Zm-.622-12H14a.5.5 0 0 1-.5-.5V5.121L17.378 9ZM5.5 21.5a4.48 4.48 0 0 0 2.607-.832l2.613 2.612a.75.75 0 1 0 1.06-1.06l-2.612-2.613A4.5 4.5 0 1 0 5.5 21.5Zm0-1.5a3 3 0 1 1 0-6a3 3 0 0 1 0 6Z" styleClass="icon" />
+                                        <SVGPath content="M15.25 12c.966 0 1.75.784 1.75 1.75v4a1.75 1.75 0 0 1-1.75 1.75h-4.775l-.05-.05c.368-.737.575-1.57.575-2.45c0-1.177-.37-2.268-1-3.163V13.5h-.257a5.523 5.523 0 0 0-1.672-1.363c.209-.088.438-.137.679-.137h6.5Zm-3.75 4.5V18h3.75a.25.25 0 0 0 .25-.25V16.5h-4Zm4-1.5v-1.25a.25.25 0 0 0-.25-.25H11.5V15h4Zm2.5 6h-6.025l.512.513c.278.277.443.626.495.987H18a2 2 0 0 0 2-2V10.328a2 2 0 0 0-.586-1.414l-5.829-5.828a.491.491 0 0 0-.049-.04a.63.63 0 0 1-.036-.03a2.072 2.072 0 0 0-.219-.18a.652.652 0 0 0-.08-.044l-.048-.024l-.05-.029c-.054-.031-.109-.063-.166-.087a1.977 1.977 0 0 0-.624-.138a.56.56 0 0 1-.059-.007a.605.605 0 0 0-.082-.007H6a2 2 0 0 0-2 2v7.207a5.5 5.5 0 0 1 1.5-.207v-7A.5.5 0 0 1 6 4h6v4.5a2 2 0 0 0 2 2h4.5v10a.5.5 0 0 1-.5.5Zm-.622-12H14a.5.5 0 0 1-.5-.5V5.121L17.378 9ZM5.5 21.5a4.48 4.48 0 0 0 2.607-.832l2.613 2.612a.75.75 0 1 0 1.06-1.06l-2.612-2.613A4.5 4.5 0 1 0 5.5 21.5Zm0-1.5a3 3 0 1 1 0-6a3 3 0 0 1 0 6Z" styleClass="icon" />
                                         <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="224.0" promptText="Search..." styleClass="search-text-field" />
                                         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="525.0" spacing="20.0">
-                                          
                                             <children>
-                                                <MenuButton fx:id="subjCodeCombBox" alignment="CENTER" minWidth="150.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="100.0" text="Subject Code" textFill="WHITE" />
-                                                <MenuButton fx:id="yrSecCombBox" alignment="CENTER" minWidth="150.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Yr &amp; Section" textFill="WHITE">
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin></MenuButton>
+                                                <MenuButton fx:id="subjCodeCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="23.0" prefWidth="100.0" text="Subject Code" textFill="WHITE" />
+                                                <MenuButton fx:id="yrSecCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Yr &amp; Section" textFill="WHITE" />
                                             </children>
                                             <padding>
                                                 <Insets left="30.0" />
@@ -77,46 +73,46 @@
                                         <Insets />
                                     </VBox.margin>
                                 </HBox>
-                        <VBox alignment="TOP_CENTER" prefHeight="820.0" prefWidth="740.0" styleClass="small-cards">
-                           <children>
-                              <VBox prefHeight="120.0" prefWidth="100.0">
-                                 <children>
-                                                  <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
-                                                      <font>
-                                                          <Font size="9.0" />
-                                                      </font>
-                                                  </Label>
-                                                  <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" styleClass="text" text="Object Oriented Programming" wrapText="true">
-                                       <padding>
-                                          <Insets left="20.0" />
-                                       </padding>
-                                       <VBox.margin>
-                                          <Insets top="4.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Region prefHeight="30.0" prefWidth="786.0" styleClass="region" />
-                                    <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" VBox.vgrow="ALWAYS" />
-                                 </children>
-                              </VBox>
+                                <VBox alignment="TOP_CENTER" prefHeight="820.0" prefWidth="740.0" styleClass="small-cards">
+                                    <children>
+                                        <VBox prefHeight="120.0" prefWidth="100.0">
+                                            <children>
+                                                <Label fx:id="subDesclbl" text="Subject Description: " textFill="#5d5d5d">
+                                                    <font>
+                                                        <Font size="9.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" styleClass="text" text="Object Oriented Programming" wrapText="true">
+                                                    <padding>
+                                                        <Insets left="20.0" />
+                                                    </padding>
+                                                    <VBox.margin>
+                                                        <Insets top="4.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <Region prefHeight="30.0" prefWidth="786.0" styleClass="region" />
+                                                <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
                                         <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="800.0" prefWidth="750.0">
                                             <columns>
                                                 <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
                                                 <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student ID" />
-                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" resizable="false" text="Student Name" />
+                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" resizable="false" text="Student Name" />
                                                 <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
                                                 <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
-                                                <TableColumn fx:id="gradeStatCol" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" resizable="false" text="Grade Status" />
+                                                <TableColumn fx:id="gradeStatCol" maxWidth="183.20004882812498" minWidth="120.0" prefWidth="183.20004882812498" resizable="false" text="Grade Status" />
                                             </columns>
                                         </TableView>
-                           </children>
-                        </VBox>
+                                    </children>
+                                </VBox>
                             </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
+                            <padding>
+                                <Insets top="10.0" />
+                            </padding>
                         </VBox>
-               </children>
-            </HBox>
+                    </children>
+                </HBox>
             </center>
         </BorderPane>
     </children>
