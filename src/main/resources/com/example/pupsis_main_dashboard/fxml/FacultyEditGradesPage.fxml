@@ -84,14 +84,27 @@
                                                           <Font size="9.0" />
                                                       </font>
                                                   </Label>
-                                                  <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" text="Object Oriented Programming" wrapText="true">
+                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                                        <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" text="Object Oriented Programming" wrapText="true">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label fx:id="NoOfStudentsDesc" alignment="TOP_RIGHT" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="388.0" text="No. of Students: " wrapText="true">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label fx:id="numStudLbl" alignment="TOP_LEFT" contentDisplay="CENTER" prefHeight="30.0" prefWidth="49.0" text="0" wrapText="true" />
+                                       </children>
                                        <padding>
-                                          <Insets left="20.0" />
+                                          <Insets top="6.0" />
                                        </padding>
-                                       <VBox.margin>
-                                          <Insets top="4.0" />
-                                       </VBox.margin>
-                                    </Label>
+                                    </HBox>
                                     <Region prefHeight="30.0" prefWidth="786.0" styleClass="region" />
                                     <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" VBox.vgrow="ALWAYS" />
                                  </children>
