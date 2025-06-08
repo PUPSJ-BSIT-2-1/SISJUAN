@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="810.0" minWidth="810.0" prefHeight="457.0" prefWidth="810.0" spacing="10.0" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentHomeContentController">
+<VBox maxWidth="810.0" minWidth="810.0" prefHeight="457.0" prefWidth="810.0" spacing="10.0" stylesheets="@../css/GeneralHomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentHomeContentController">
    <FlowPane prefHeight="100.0" prefWidth="810.0">
       <children>
       
@@ -108,11 +108,7 @@
 
                                 <VBox alignment="TOP_CENTER" prefHeight="498.0" spacing="10" styleClass="cards" HBox.hgrow="ALWAYS">
             <Label styleClass="section-header" text="Quick Actions" />
-            <Button fx:id="viewGradesButton" prefWidth="190.0" styleClass="action-button" text="View Grades">
-            <padding>
-               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding></Button>
-            <Button fx:id="viewScheduleButton" prefWidth="190.0" styleClass="action-button" text="Check Schedule">
+            <Button fx:id="seeEnrollmentButton" prefWidth="190.0" styleClass="action-button" text="See Enrollment">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>
@@ -120,7 +116,11 @@
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>
-            <Button fx:id="seeEnrollmentButton" prefWidth="190.0" styleClass="action-button" text="See Enrollment">
+            <Button fx:id="viewGradesButton" prefWidth="190.0" styleClass="action-button" text="View Grades">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding></Button>
+            <Button fx:id="viewScheduleButton" prefWidth="190.0" styleClass="action-button" text="Check Schedule">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding></Button>

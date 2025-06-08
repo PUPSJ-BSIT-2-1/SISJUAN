@@ -8,12 +8,6 @@
     -fx-border-color: transparent;
 }
 
-.header {
-    -fx-font-size: 24px;
-    -fx-font-family: "Inter 18pt SemiBold";
-    -fx-text-fill: white;
-}
-
 .cards {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
@@ -29,6 +23,31 @@
     -fx-font-size: 14px;
 }
 
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cccccc;
+}
 /* Dark theme styles */
 
 .dark-theme .root {

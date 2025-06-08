@@ -10,7 +10,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
@@ -21,7 +20,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.slf4j.Logger;
@@ -36,7 +34,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 import com.example.pupsis_main_dashboard.PUPSIS;
-import com.example.pupsis_main_dashboard.controllers.SettingsController;
 
 public class AdminLoginController {
     @FXML private VBox leftSide;
@@ -106,7 +103,7 @@ public class AdminLoginController {
         StageAndSceneUtils u = new StageAndSceneUtils();
         Stage stage = (Stage) closeButton.getScene().getWindow();
         try {
-            u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/FrontPage.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            u.loadStage(stage, "/com/example/pupsis_main_dashboard/fxml/GeneralFrontPage.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -158,8 +155,8 @@ public class AdminLoginController {
                                     StageAndSceneUtils.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/AdminDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                                     // Apply theme to new dashboard scene
                                     if (stage.getScene() != null) {
-                                        Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                                        boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                                        Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                                        boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                                         PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
                                     }
                                 } catch (IOException e) {
@@ -251,15 +248,15 @@ public class AdminLoginController {
     // Applies the initial theme based on user preferences
     private void applyInitialTheme() {
         if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-            Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-            boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+            Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+            boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
             PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
         } else {
             // Scene might not be ready yet, try again later or ensure this is called when scene is set
             Platform.runLater(() -> {
                 if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                     PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
                 } else {
                     logger.warn("AdminLoginController: Scene still not available for theme application.");

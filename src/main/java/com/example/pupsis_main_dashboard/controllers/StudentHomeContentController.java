@@ -46,8 +46,8 @@ public class StudentHomeContentController {
     @FXML
     private ListView<String> listAnnouncements;
 
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGrades.fxml";
-    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGradingModule.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentClassSchedule.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentEnrollmentContent.fxml";
 
     private static final Logger logger = LoggerFactory.getLogger(StudentHomeContentController.class);
@@ -360,7 +360,7 @@ public class StudentHomeContentController {
 
     // Placeholder method for calculating current GWA
     private String calculateCurrentGWALogic() {
-        double gwa = StudentGradesController.getGWA();
+        double gwa = StudentGradingModuleController.getGWA();
         return gwa == 0 ? "N/A" : String.format("%.2f", gwa);
     }
 

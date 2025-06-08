@@ -107,10 +107,10 @@ public class FacultyManagementController {
 
     private void showFacultyDetailsModal(Faculty faculty) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyDetailsTableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyDetailsTableView.fxml"));
             Parent root = loader.load();
 
-            FacultyDetailsController controller = loader.getController();
+            AdminFacultyDetailsController controller = loader.getController();
             controller.setFaculty(faculty);
 
             Stage stage = new Stage();
@@ -145,10 +145,10 @@ public class FacultyManagementController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AssignSubjectDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminAssignSubjectDialog.fxml"));
             Parent root = loader.load();
 
-            AssignSubjectDialogController controller = loader.getController();
+            AdminAssignSubjectDialogController controller = loader.getController();
 
             List<String> subjects = loadSubjectCodes();
             System.out.println("Loaded subjects: " + subjects);  
@@ -220,12 +220,12 @@ public class FacultyManagementController {
 
             if (contentPane != null) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyTab.fxml")
+                        getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyPreview.fxml")
                 );
 
                 Parent newContent = loader.load();
 
-                FacultyTabController controller = loader.getController();
+                AdminFacultyPreviewController controller = loader.getController();
 
                 contentPane.setContent(newContent);
             }
@@ -270,7 +270,7 @@ public class FacultyManagementController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyDialog.fxml"));
             Parent root = loader.load();
-            FacultyDialogController controller = loader.getController();
+            AdminFacultyDialogController controller = loader.getController();
             controller.setFaculty(selectedFaculty);
             controller.setFacultyDAO(facultyDAO); 
 
@@ -358,7 +358,7 @@ public class FacultyManagementController {
     private void handlePrintReport() {
         ObservableList<Faculty> itemsToPrint = facultyTable.getItems();
 
-        PrintableReportController.showPrintableView(new ArrayList<>(itemsToPrint));
+        AdminPrintableReportController.showPrintableView(new ArrayList<>(itemsToPrint));
     }
 
     @FXML
@@ -382,10 +382,10 @@ public class FacultyManagementController {
 
     private Faculty showFacultyDialog(Faculty faculty) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyRegistrationDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyRegistrationDialog.fxml"));
             Parent root = loader.load();
 
-            FacultyDialogController controller = loader.getController();
+            AdminFacultyDialogController controller = loader.getController();
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setTitle(faculty == null ? "Add Faculty" : "Edit Faculty");

@@ -2,7 +2,6 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
-import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
@@ -48,12 +47,12 @@ public class AdminDashboardController {
     private static final String USER_TYPE = "ADMIN";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
     private static final String USERS_FXML = null;
-    private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/ADMINSubjectModule.fxml";
-    private static final String FACULTY_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyTab.fxml";
-    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminRoomAssignment.fxml";
-    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
-    private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
-    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
+    private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminSubjectModule.fxml";
+    private static final String FACULTY_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminFacultyPreview.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminClassSchedule.fxml";
+    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSchoolCalendar.fxml";
+    private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
     private static final String STUDENT_MANAGEMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentManagement.fxml";
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
@@ -93,8 +92,8 @@ public class AdminDashboardController {
         // Apply theme to the main dashboard scene
         Platform.runLater(() -> {
             if (contentPane != null && contentPane.getScene() != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                 PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
             } else {
                 logger.warn("AdminDashboardController: Scene not available for initial theme application.");
@@ -180,8 +179,8 @@ public class AdminDashboardController {
                 Parent content = loader.load();
 
                 // Apply theme to this loaded content
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
 
                 if (content != null) {
                     // Apply appropriate CSS classes based on the current theme
@@ -354,8 +353,8 @@ public class AdminDashboardController {
             }
             // Ensure the content has the correct theme applied before displaying
             if (content != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                 content.getStyleClass().removeAll("light-theme", "dark-theme");
                 content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
             }

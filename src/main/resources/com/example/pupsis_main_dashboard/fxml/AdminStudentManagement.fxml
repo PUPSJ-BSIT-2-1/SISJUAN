@@ -13,13 +13,25 @@
 
 <VBox prefHeight="200.0" prefWidth="810.0" spacing="10.0" styleClass="root" stylesheets="@../css/AdminStudentManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminStudentManagementController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" styleClass="red-card">
-         <children>
-            <Label styleClass="header" text="Student Management" />
-         </children>
+      <HBox prefHeight="90.0" prefWidth="810.0" styleClass="red-card">
          <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            <Insets bottom="20.0" left="20.0" right="10.0" top="20.0" />
          </padding>
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="header" text="Student Information Management">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="5.0" />
+                     </padding>
+                  </Label>
+                  <Label styleClass="sub-header" text="Review, evaluate, and approve student applications." />
+               </children>
+            </VBox>
+         </children>
       </HBox>
       <VBox prefWidth="100.0" spacing="10.0" styleClass="cards">
          <padding>

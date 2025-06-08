@@ -45,16 +45,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 import com.example.pupsis_main_dashboard.PUPSIS;
-import com.example.pupsis_main_dashboard.controllers.SettingsController;
 
-import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.example.pupsis_main_dashboard.utilities.AuthenticationService.authenticate;
-
-import java.util.concurrent.Executors;
-import java.util.prefs.Preferences;
 
 public class StudentLoginController {
     @FXML private VBox leftSide;
@@ -313,7 +308,7 @@ public class StudentLoginController {
         try {
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Stage newStage = StageAndSceneUtils.loadStage(
-                "/com/example/pupsis_main_dashboard/fxml/FrontPage.fxml",
+                    "/com/example/pupsis_main_dashboard/fxml/GeneralFrontPage.fxml",
                 "PUPSIS - Welcome",
                 null, // iconPath
                 StageAndSceneUtils.WindowSize.MEDIUM,
@@ -327,7 +322,7 @@ public class StudentLoginController {
             }
 
         } catch (IOException e) {
-            logger.error("Failed to load FrontPage.fxml when navigating back to front page.", e);
+            logger.error("Failed to load GeneralFrontPage.fxml when navigating back to front page.", e);
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Navigation Error");
             alert.setHeaderText("Could not return to the main page.");
@@ -377,8 +372,8 @@ public class StudentLoginController {
                         try {
                             u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
                             if (stage.getScene() != null) {
-                                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                                 PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
                             }
                         } catch (IOException e) {
@@ -470,9 +465,9 @@ public class StudentLoginController {
                     animateBlur(mainLoginPane, false);
 
                     try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/VerificationCode.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/GeneralVerificationCode.fxml"));
                         Parent root = loader.load();
-                        VerificationCodeController vcController = loader.getController();
+                        GeneralVerificationCodeController vcController = loader.getController();
 
                         Stage dialogStage = new Stage();
                         dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -546,7 +541,7 @@ public class StudentLoginController {
                         dialogStage.showAndWait(); 
 
                     } catch (IOException ioException) {
-                        logger.error("Failed to load VerificationCode.fxml", ioException);
+                        logger.error("Failed to load GeneralVerificationCode.fxml", ioException);
                         showAlert(Alert.AlertType.ERROR, "UI Error", "Cannot Open Dialog", "An error occurred while trying to open the verification code dialog.");
                     }
                 });
@@ -1003,14 +998,14 @@ public class StudentLoginController {
 
     private void applyInitialTheme() {
         if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-            Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-            boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+            Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+            boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
             PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
         } else {
             Platform.runLater(() -> {
                 if (mainLoginPane != null && mainLoginPane.getScene() != null) {
-                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                     PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
                 } else {
                     logger.warn("StudentLoginController: Scene still not available for theme application.");

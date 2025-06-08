@@ -57,12 +57,12 @@ public class StudentDashboardController {
     
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentHomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGrades.fxml";
-    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
-    private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGradingModule.fxml";
+    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSchoolCalendar.fxml";
+    private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentEnrollmentContent.fxml";
-    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
-    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/RoomAssignment.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentClassSchedule.fxml";
     private static final String PAYMENT_INFO_FXML = "/com/example/pupsis_main_dashboard/fxml/PaymentInfoContent.fxml";
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -95,8 +95,8 @@ public class StudentDashboardController {
         // Apply theme to the main dashboard scene
         Platform.runLater(() -> {
             if (contentPane != null && contentPane.getScene() != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
                 PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
             } else {
                 logger.warn("StudentDashboardController: Scene not available for initial theme application.");
@@ -157,8 +157,8 @@ public class StudentDashboardController {
                 if (resource != null) {
                     Parent content = FXMLLoader.load(resource);
                     // Apply theme to this loaded content
-                    Preferences userPrefs = Preferences.userNodeForPackage(SettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(SettingsController.THEME_PREF, false);
+                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
 
                     if (content != null) {
                         // Apply appropriate CSS classes based on the current theme

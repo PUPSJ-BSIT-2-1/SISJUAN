@@ -1,0 +1,346 @@
+.root {
+    -fx-font-family: "Inter";
+    -fx-background-radius: 20;
+    -fx-background-color: white; /* or your desired background color */
+    -fx-border-radius: 10;
+}
+
+.label {
+    -fx-font-family: 'Inter';
+}
+
+.rounded-border-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+/* Apply to all text elements in TableView */
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Column headers */
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #cdd0d1;
+    -fx-font-size: 12px; /* Ensures header text is 12px */
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 15px, 10px, 0px, 10px;
+}
+
+/* Table cells */
+.table-view .table-cell {
+    -fx-border-width: 0 0 1 0;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-padding: 10px 0px 10px 0px;
+}
+
+/* Hover effect for table rows */
+.table-row-cell:hover {
+    -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
+    -fx-text-fill: white;           /* White text */
+    -fx-background-radius: 10px;
+}
+
+/* Make sure text inside cells changes color */
+.table-row-cell:hover .text {
+    -fx-fill: white;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.table-view .grade-status-cell {
+    -fx-padding: 8px;
+    -fx-alignment: center;
+}
+
+.table-row-cell:hover .grade-status-passed {
+    -fx-background-color: #218838; /* Darker green on hover */
+}
+
+.table-row-cell:hover .grade-status-failed {
+    -fx-background-color: #c82333; /* Darker red on hover */
+}
+
+.table-row-cell:hover .grade-status-other {
+    -fx-background-color: #5a6268; /* Darker gray on hover */
+}
+
+/* Menu Button Base Styling */
+.menu-button {
+    -fx-background-color: #962323;
+    -fx-border-radius: 8px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 2;
+    -fx-background-radius: 8;
+    -fx-pref-width: 116;
+}
+
+.menu-button .text {
+    -fx-fill: white;
+}
+
+.menu-button .arrow {
+    -fx-background-color: white;
+}
+
+.menu-button .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Menu Popup Container */
+.menu-button .context-menu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 2; /* Small padding for visual separation */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+.menu-button > .menu-popup {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Individual Menu Items */
+.menu-button .menu-item {
+    -fx-background-color: rgba(128, 0, 0, 0.50); /* maroon with 0.1 opacity */
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-background-insets: 1px; /* Small inset for visual separation */
+    -fx-border-color: rgba(128, 0, 0, 0.10);
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-button .menu-item:hover {
+    -fx-background-color: rgba(128, 0, 0, 1); /* maroon with 0.12 opacity on hover */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1), 4, 0, 0, 0);
+}
+
+/* Ensure text stays white and visible */
+.menu-button .menu-item .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold; /* Make text more visible */
+    -fx-font-family: 'Inter';
+}
+
+/* Note: JavaFX doesn't support :last-child, so we'll keep the border for all items */
+
+/* Alternative approach if the above doesn't work - force specific background */
+.menu-button .menu-item:focused {
+    -fx-background-color: rgba(128, 0, 0, 0.80);
+    -fx-text-fill: white;
+}
+
+.menu-button .menu-item:selected {
+    -fx-background-color: rgba(128, 0, 0, 1);
+    -fx-text-fill: white;
+}
+
+/* Disabled state for Menu Button */
+.menu-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #800000; /* Gray color when disabled */
+    -fx-cursor: default;
+}
+
+.menu-button:disabled .text {
+    -fx-fill: #ffffff; /* Lighter text color when disabled */
+}
+
+.menu-button:disabled .arrow {
+    -fx-background-color: #cccccc; /* Lighter arrow color when disabled */
+}
+
+/* Ensure disabled menu items are visually different */
+.menu-button .menu-item:disabled {
+    -fx-opacity: 0.7;
+    -fx-background-color: rgba(128, 128, 128, 0.5); /* Gray with transparency */
+}
+
+.menu-button .menu-item:disabled .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Remove hover effects for disabled items */
+.menu-button .menu-item:disabled:hover {
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-cursor: default;
+    -fx-effect: none;
+    -fx-background-color: rgba(128, 128, 128, 0.5);
+}
+
+.small-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+#gradesHeaderLbl {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
+
+#gradesHeaderLbl:focused {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 30px;
+}
+
+.red-card .label {
+    -fx-font-size: 30px !important;
+    -fx-min-height: 50 !important;
+    -fx-max-height: 50 !important;
+    -fx-pref-height: 50 !important;
+}
+
+#subDesclbl {
+    -fx-font-size: 9px;
+    -fx-text-fill: #6c757d;
+}
+
+#subDesclbl:focused {
+    -fx-font-size: 9px;
+    -fx-text-fill: #6c757d;
+}
+
+#subjDescLbl{
+    -fx-font-size: 14px;
+    -fx-text-fill: #000000;
+}
+
+.grade-status-passed {
+    -fx-background-color: #28a745;
+    -fx-background-radius: 12px;
+    -fx-min-width: 20px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-failed {
+    -fx-background-color: #dc3545;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-other {
+    -fx-background-color: #6c757d;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.table-view .grade-status-cell {
+    -fx-padding: 8px;
+    -fx-alignment: center;
+}
+
+.table-row-cell:hover .grade-status-passed {
+    -fx-background-color: #218838; /* Darker green on hover */
+}
+
+.table-row-cell:hover .grade-status-failed {
+    -fx-background-color: #c82333; /* Darker red on hover */
+}
+
+.table-row-cell:hover .grade-status-other {
+    -fx-background-color: #5a6268; /* Darker gray on hover */
+}
+
+.grade-status-passed {
+    -fx-background-color: #28a745;
+    -fx-background-radius: 12px;
+    -fx-min-width: 20px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-failed {
+    -fx-background-color: #dc3545;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-other {
+    -fx-background-color: #6c757d;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}

@@ -96,7 +96,7 @@
                       <Insets bottom="50.0" />
                    </VBox.margin>
                    <children>
-                      <ToggleButton fx:id="rememberMeCheckBox" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" styleClass="switch-toggle-button" stylesheets="@../css/ToggleSwitch.css" text="ToggleButton">
+                      <ToggleButton fx:id="rememberMeCheckBox" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" styleClass="switch-toggle-button" stylesheets="@../css/GeneralToggleSwitch.css" text="ToggleButton">
                           <graphic>
                               <Region styleClass="thumb" />
                           </graphic>

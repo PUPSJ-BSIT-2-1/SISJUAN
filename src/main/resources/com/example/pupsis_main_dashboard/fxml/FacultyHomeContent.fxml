@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox fx:id="rootVBox" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/HomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyHomeContentController">
+<VBox fx:id="rootVBox" maxWidth="810.0" minWidth="810.0" prefWidth="810.0" style="-fx-background-color: transparent;" styleClass="font" stylesheets="@../css/GeneralHomeContent.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyHomeContentController">
    <children>
       <!-- Welcome Header -->
       <FlowPane prefHeight="50.0" prefWidth="810.0" styleClass="red-card">

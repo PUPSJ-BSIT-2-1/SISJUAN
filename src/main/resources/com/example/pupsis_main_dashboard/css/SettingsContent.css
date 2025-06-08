@@ -16,7 +16,7 @@
 
 /* Settings Page Specific Styles - Adjusted to mimic HomeContent */
 
-/* Styles for the root VBox of SettingsContent.fxml if needed, though it sits in .content-container */
+/* Styles for the root VBox of GeneralSettings.fxml if needed, though it sits in .content-container */
 #rootSettingsVBox {
     /* Match background to content-container or be transparent if content-container provides the bg */
     -fx-background-color: transparent; 
@@ -29,7 +29,7 @@
     -fx-padding: 0 0 20 0; /* Bottom padding */
 }
 
-.settings-section { /* This is like .cards in HomeContent.css */
+.settings-section { /* This is like .cards in GeneralHomeContent.css */
     -fx-background-color: #f8fcfc; /* Match Home's .cards background */
     -fx-padding: 20;               /* Match Home's .cards padding */
     -fx-border-color: #e3e5e6;     /* Match Home's .cards border */
@@ -40,7 +40,7 @@
     /* Spacing between sections will be handled by VBox spacing in FXML or specific margins */
 }
 
-.settings-section-header { /* Matches .section-header from HomeContent.css */
+.settings-section-header { /* Matches .section-header from GeneralHomeContent.css */
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-font-size: 18px;
     -fx-text-fill: #343a40;
@@ -49,7 +49,7 @@
     -fx-border-color: #e3e5e6; /* Light border if used */
 }
 
-.settings-label { /* Matches .stat-label from HomeContent.css for general labels */
+.settings-label { /* Matches .stat-label from GeneralHomeContent.css for general labels */
     -fx-font-family: "Inter", sans-serif; /* Assuming "Inter" is the base font */
     -fx-font-size: 14px;
     -fx-text-fill: #6c757d;

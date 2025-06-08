@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.pupsis_main_dashboard.controllers.AdminPrintableReportController"
+            style="-fx-background-color: white; -fx-padding: 20px;">
+
+    <!-- HEADER -->
+    <top>
+        <VBox spacing="10">
+            <Label text="Faculty Report Summary"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+            <Label fx:id="generatedOnLabel"
+                   text="Generated on:"
+                   style="-fx-font-size: 14px; -fx-text-fill: gray;" />
+        </VBox>
+    </top>
+
+    <!-- TABLE CONTENT -->
+    <center>
+        <TableView fx:id="reportTable" prefHeight="500">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
+                <TableColumn fx:id="firstNameColumn" text="First Name" prefWidth="120"/>
+                <TableColumn fx:id="lastNameColumn" text="Last Name" prefWidth="120"/>
+                <TableColumn fx:id="departmentColumn" text="Department" prefWidth="120"/>
+                <TableColumn fx:id="emailColumn" text="Email" prefWidth="180"/>
+                <TableColumn fx:id="contactColumn" text="Contact" prefWidth="120"/>
+                <TableColumn fx:id="birthdateColumn" text="Birthdate" prefWidth="100"/>
+                <TableColumn fx:id="dateJoinedColumn" text="Date Joined" prefWidth="100"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="80"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <!-- FOOTER -->
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button text="Print" onAction="#handlePrint"/>
+            <Button text="Close" onAction="#handleClose"/>
+        </HBox>
+    </bottom>
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</BorderPane>
