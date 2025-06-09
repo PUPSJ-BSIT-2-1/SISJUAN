@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class StudentEnrollmentController implements Initializable {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentEnrollmentController.class);
+    private static final int MAX_UNITS = 24;
 
     @FXML private VBox subjectListContainer;
     @FXML private VBox enrolledSubjectsDisplayContainer; 
@@ -35,12 +37,14 @@ public class StudentEnrollmentController implements Initializable {
     @FXML private Label currentYearLevelDisplayLabel;
     @FXML private Label currentSemesterDisplayLabel;
     @FXML private ProgressIndicator loadingIndicator; 
+    @FXML private Label unitCounterLabel; // Added for unit counting
 
     private StudentEnrollmentContext studentEnrollmentContext; 
     private List<SubjectData> availableSubjects;
     private List<CheckBox> subjectCheckboxes = new ArrayList<>();
     private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
     private Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
+    private int currentSelectedUnits = 0;
 
     private static final List<String> TIME_SLOTS = Arrays.asList(
             "Mon/Wed 9:00-10:30 AM",
@@ -61,11 +65,25 @@ public class StudentEnrollmentController implements Initializable {
         if (loadingIndicator != null) {
             loadingIndicator.setVisible(false);
         }
+        if (unitCounterLabel == null) {
+            logger.warn("unitCounterLabel is not injected. Unit counting UI will not be updated.");
+        } else {
+            unitCounterLabel.setText("Selected Units: 0/" + MAX_UNITS);
+        }
         refreshEnrollmentView(); // Initial data load and view setup
+        updateDynamicUnitCountAndEnrollButtonState(); // Initial state for unit counter
     }
 
     @FXML
     private void handleEnrollment(ActionEvent event) { 
+        if (currentSelectedUnits > MAX_UNITS) {
+            showAlert("Unit Limit Exceeded", "You cannot enroll in more than " + MAX_UNITS + " units. You have selected " + currentSelectedUnits + " units.", Alert.AlertType.WARNING);
+            // enrollButton might already be disabled by updateDynamicUnitCountAndEnrollButtonState, but ensure it's re-enabled if logic changes
+            // enrollButton.setDisable(false); // This might not be needed if updateDynamicUnitCountAndEnrollButtonState handles it
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+            return;
+        }
+
         List<EnrollmentData> selectedSubjects = subjectCheckboxes.stream()
                 .filter(CheckBox::isSelected)
                 .map(cb -> {
@@ -776,5 +794,53 @@ public class StudentEnrollmentController implements Initializable {
     private String getCurrentAcademicYear() {
         // This should ideally come from a config or a dedicated table/logic
         return "2024-2025"; // Placeholder
+    }
+
+    private void updateDynamicUnitCountAndEnrollButtonState() {
+        currentSelectedUnits = 0;
+        boolean anySelected = false;
+        for (CheckBox cb : subjectCheckboxes) {
+            if (cb.isSelected()) {
+                anySelected = true;
+                SubjectData sd = checkboxSubjectMap.get(cb);
+                if (sd != null && sd.units() != 0) {
+                    currentSelectedUnits += sd.units();
+                }
+            }
+        }
+
+        if (unitCounterLabel != null) {
+            unitCounterLabel.setText("Selected Units: " + currentSelectedUnits + "/" + MAX_UNITS);
+            if (currentSelectedUnits > MAX_UNITS) {
+                unitCounterLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;"); // Highlight if over limit
+            } else {
+                unitCounterLabel.setStyle("-fx-text-fill: -fx-text-base-color; -fx-font-weight: normal;"); // Default style
+            }
+        }
+
+        if (enrollButton != null) {
+            enrollButton.setDisable(!anySelected || currentSelectedUnits == 0 || currentSelectedUnits > MAX_UNITS);
+        }
+
+        // Advanced UX: Disable checkboxes that would exceed MAX_UNITS if selected
+        for (CheckBox cb : subjectCheckboxes) {
+            if (!cb.isSelected()) {
+                SubjectData sd = checkboxSubjectMap.get(cb);
+                if (sd != null && sd.units() != 0) {
+                    if (currentSelectedUnits + sd.units() > MAX_UNITS) {
+                        cb.setDisable(true);
+                    } else {
+                        cb.setDisable(false);
+                    }
+                }
+            } else {
+                 cb.setDisable(false); // Ensure selected checkboxes are always enabled (so they can be deselected)
+            }
+        }
+        if (selectAllButton != null) {
+            boolean allDisabled = subjectCheckboxes.stream().allMatch(Node::isDisabled);
+            boolean allSelected = !subjectCheckboxes.isEmpty() && subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
+            selectAllButton.setDisable(subjectCheckboxes.isEmpty() || allDisabled || allSelected);
+        }
     }
 }
