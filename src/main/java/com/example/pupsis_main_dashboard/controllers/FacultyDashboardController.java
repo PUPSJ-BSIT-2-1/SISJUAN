@@ -50,7 +50,7 @@ public class FacultyDashboardController {
     // FXML paths as constants
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyHomeContent.fxml";
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyGradingModule.fxml";
-    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSchoolCalendar.fxml";
+    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassSchedule.fxml";

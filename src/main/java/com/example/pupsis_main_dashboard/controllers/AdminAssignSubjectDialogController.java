@@ -2,7 +2,6 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 
@@ -19,16 +18,10 @@ public class AdminAssignSubjectDialogController {
     @FXML
     private ComboBox<String> semesterComboBox;
 
-    @FXML
-    private Button cancelButton;
-
-    @FXML
-    private Button assignButton;
-
     private Stage dialogStage;
     private boolean assigned = false;
 
-    // Called by AdminFacultyManagementController to provide subject list
+    // Called by AdminFacultyManagementController to provide a subject list
     public void setSubjects(List<String> subjects) {
         subjectComboBox.setItems(FXCollections.observableArrayList(subjects));
     }

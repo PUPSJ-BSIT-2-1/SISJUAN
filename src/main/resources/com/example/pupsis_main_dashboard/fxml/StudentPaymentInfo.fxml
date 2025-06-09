@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.SVGPath?>
+
+<BorderPane prefHeight="699.0" prefWidth="800.0" styleClass="root" stylesheets="@../css/StudentPaymentInfo.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.PaymentTrailController">
+
+    <!-- Header -->
+    <top>
+        <VBox prefHeight="100.0" prefWidth="800.0" spacing="4.0" styleClass="red-card">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <children>
+                <Label styleClass="header" text="Student Payment Records" />
+                <Label styleClass="sub-header" text="History of Fees and Transactions" />
+            </children>
+        </VBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <HBox alignment="TOP_CENTER" prefHeight="594.0" prefWidth="800.0" spacing="20">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <children>
+
+                <!-- Left Column -->
+                <VBox prefHeight="578.0" prefWidth="471.0" spacing="10.0">
+
+                    <!-- Student Info Card -->
+                    <VBox prefHeight="182" prefWidth="559" spacing="12.0" styleClass="cards">
+                        <children>
+                     <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="447.0">
+                        <children>
+                           <SVGPath content="M12 2.5a5.5 5.5 0 0 1 3.096 10.047a9.005 9.005 0 0 1 5.9 8.181a.75.75 0 1 1-1.499.044a7.5 7.5 0 0 0-14.993 0a.75.75 0 0 1-1.5-.045a9.005 9.005 0 0 1 5.9-8.18A5.5 5.5 0 0 1 12 2.5ZM8 8a4 4 0 1 0 8 0a4 4 0 0 0-8 0Z" styleClass="icons" />
+                                  <Label styleClass="cards-header" text="Student Information">
+                              <HBox.margin>
+                                 <Insets left="5.0" />
+                              </HBox.margin>
+                           </Label>
+                        </children>
+                     </HBox>
+                     <VBox prefHeight="113.0" prefWidth="447.0">
+                        <children>
+                           <HBox prefHeight="50.0" prefWidth="445.0">
+                              <children>
+                                 <VBox prefHeight="50.0" prefWidth="238.0">
+                                    <children>
+                                       <Label styleClass="stat-label" text="Student ID" />
+                                       <Label fx:id="studentID" styleClass="stat-value" text="Loading..." />
+                                    </children>
+                                 </VBox>
+                                 <VBox layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="222.0">
+                                    <children>
+                                       <Label styleClass="stat-label" text="Full Name" />
+                                       <Label fx:id="studentName" styleClass="stat-value" text="Loading..." />
+                                    </children>
+                                 </VBox>
+                              </children>
+                              <VBox.margin>
+                                 <Insets bottom="5.0" />
+                              </VBox.margin>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="445.0">
+                              <children>
+                                 <VBox prefHeight="60.0" prefWidth="238.0">
+                                    <children>
+                                       <Label styleClass="stat-label" text="Program" />
+                                       <Label fx:id="studentProgram" prefHeight="34.0" prefWidth="227.0" styleClass="stat-value" text="Loading..." />
+                                    </children>
+                                 </VBox>
+                                 <VBox layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="222.0">
+                                    <children>
+                                       <Label styleClass="stat-label" text="Year &amp; Section" />
+                                       <Label fx:id="studentYearSection" styleClass="stat-value" text="Loading..." />
+                                    </children>
+                                 </VBox>
+                              </children>
+                           </HBox>
+                        </children>
+                        <VBox.margin>
+                           <Insets left="5.0" right="5.0" />
+                        </VBox.margin>
+                     </VBox>
+                        </children>
+                  <VBox.margin>
+                     <Insets />
+                  </VBox.margin>
+                    </VBox>
+
+                    <!-- Payment Breakdown -->
+                    <VBox prefHeight="334.0" prefWidth="471.0" spacing="8.0" styleClass="cards">
+                        <children>
+                     <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="447.0">
+                        <children>
+                           <SVGPath content="M15 21a1.986 1.986 0 0 0 1.934-1.597l.48-2.403h2.836A1.75 1.75 0 0 0 22 15.25V9.261A2.261 2.261 0 0 0 19.75 7v-.004H14.5V5.25A2.25 2.25 0 0 0 12.25 3h-8A2.25 2.25 0 0 0 2 5.25v12.5A3.25 3.25 0 0 0 5.25 21H15Zm2.522-12.182l-2.059 10.291a.486.486 0 0 1-.963-.095V8.496h3.11a2.264 2.264 0 0 0-.088.322ZM5.778 8.5a.75.75 0 1 1 0-1.5a.75.75 0 0 1 0 1.5Zm-.747 7.25a.75.75 0 0 1 .75-.75h5a.75.75 0 1 1 0 1.5h-5a.75.75 0 0 1-.75-.75Zm.75-4.75h5a.75.75 0 1 1 0 1.5h-5a.75.75 0 0 1 0-1.5Z" styleClass="icons" />
+                                  <Label styleClass="cards-header" text="Payment Breakdown">
+                              <HBox.margin>
+                                 <Insets left="5.0" />
+                              </HBox.margin>
+                           </Label>
+                        </children>
+                     </HBox>
+                     <VBox spacing="13.0">
+                        <children>
+                           <HBox>
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="Academic Fee" />
+                                 <Label fx:id="academicFeeLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="10.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="Medical &amp; Dental Fee" />
+                                 <Label fx:id="medicalFeeLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="28.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="Library Fee" />
+                                 <Label fx:id="libraryFeeLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="47.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="Registration Fee" />
+                                 <Label fx:id="registrationFeeLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="64.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="Development Fee" />
+                                 <Label fx:id="developmentFeeLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="80.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="Student Information System Fee" />
+                                 <Label fx:id="sisFeeLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <HBox layoutX="10.0" layoutY="170.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="breakdown-label" text="NSTP " />
+                                 <Label fx:id="sisFeeLabel1" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="breakdown-label" text="₱0.00" />
+                              </children>
+                           </HBox>
+                           <Line endX="325.0" startX="-100.0" />
+                           <HBox layoutX="10.0" layoutY="98.0">
+                              <children>
+                                 <Label prefHeight="18.0" prefWidth="215.0" styleClass="total-breakdown-label" text="Total Amount Due" />
+                                 <Label fx:id="totalAmountDueLabel" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="255.0" styleClass="total-breakdown-amount" text="₱0.00" />
+                              </children>
+                           </HBox>
+                        </children>
+                        <VBox.margin>
+                           <Insets left="10.0" right="10.0" />
+                        </VBox.margin>
+                     </VBox>
+                        </children>
+                    </VBox>
+                </VBox>
+
+                <!-- Right Column -->
+                <VBox prefHeight="544" prefWidth="361" spacing="10.0">
+
+                    <!-- Payment Method -->
+                    <VBox prefHeight="220" prefWidth="253" spacing="12.0" styleClass="cards">
+                        <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                        <children>
+                     <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="246.0">
+                        <children>
+                           <SVGPath content="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z" styleClass="icons" />
+                                  <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Payment Method">
+                              <HBox.margin>
+                                 <Insets left="5.0" />
+                              </HBox.margin>
+                           </Label>
+                        </children>
+                     </HBox>
+
+                            <!-- Grouped Radio Buttons -->
+                            <VBox spacing="12">
+                                <children>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="247.0" spacing="10">
+                              <SVGPath content="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" styleClass="icons" />
+                                        <RadioButton fx:id="cardRadio" text="Credit / Debit Card" />
+                                    </HBox>
+
+                                    <HBox alignment="CENTER_LEFT" prefHeight="28.0" prefWidth="247.0" spacing="10">
+                              <SVGPath content="M6 17q-.425 0-.713-.288T5 16v-5.025q0-.425.288-.7T6 10q.425 0 .713.288T7 11v5.025q0 .425-.288.7T6 17Zm6 0q-.425 0-.713-.288T11 16v-5.025q0-.425.288-.7T12 10q.425 0 .713.288T13 11v5.025q0 .425-.288.7T12 17Zm-9.025 4q-.425 0-.7-.288T2 20q0-.425.288-.713T3 19h18.025q.425 0 .7.288T22 20q0 .425-.288.713T21 21H2.975ZM18 17q-.425 0-.713-.288T17 16v-5.025q0-.425.288-.7T18 10q.425 0 .713.288T19 11v5.025q0 .425-.288.7T18 17ZM12.9 1.45l8.425 4.2q.325.175.5.487t.175.688q0 .5-.362.837T20.775 8H3.25q-.5 0-.875-.338T2 6.825q0-.375.163-.688t.512-.462L11.1 1.45q.425-.2.9-.2t.9.2ZM6.45 6h11.1h-11.1Zm0 0h11.1L12 3.25L6.45 6Z" fill="#b13f3f" styleClass="icons">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </SVGPath>
+                                        <RadioButton fx:id="bankRadio" text="Bank Transfer">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></RadioButton>
+                                    </HBox>
+
+                                    <HBox alignment="CENTER_LEFT" prefHeight="28.0" prefWidth="247.0" spacing="10">
+                              <SVGPath content="M5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Zm5-4h4q.825 0 1.413-.588T16 15v-4h-4v2h2v2h-4V9h6q0-.825-.588-1.413T14 7h-4q-.825 0-1.413.588T8 9v6q0 .825.588 1.413T10 17Z" styleClass="icons">
+                                 <HBox.margin>
+                                    <Insets left="1.0" />
+                                 </HBox.margin>
+                              </SVGPath>
+                                        <RadioButton fx:id="gcashRadio" text="GCash">
+                                 <HBox.margin>
+                                    <Insets left="1.0" />
+                                 </HBox.margin></RadioButton>
+                                    </HBox>
+                                </children>
+                        <VBox.margin>
+                           <Insets left="5.0" />
+                        </VBox.margin>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <!-- Payment Summary -->
+                    <VBox prefHeight="225.0" prefWidth="270.0" spacing="14.0" styleClass="cards">
+                        <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                        <children>
+                     <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="246.0">
+                        <children>
+                           <SVGPath content="M7 17h2v-5H7v5Zm8 0h2V7h-2v10Zm-4 0h2v-3h-2v3Zm0-5h2v-2h-2v2Zm-6 9q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Z" styleClass="icons" />
+                                  <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Payment Summary">
+                              <HBox.margin>
+                                 <Insets left="5.0" />
+                              </HBox.margin>
+                           </Label>
+                        </children>
+                     </HBox>
+                            <GridPane hgap="12" vgap="14">
+                                <children>
+                                    <Label styleClass="breakdown-label" text="Total Fees:" />
+                                    <TextField fx:id="totalFeesField" editable="false" promptText="₱0.00" styleClass="payment-text-field" GridPane.columnIndex="1" />
+
+                                    <Label styleClass="breakdown-label" text="Amount Paid:" GridPane.rowIndex="1" />
+                                    <TextField fx:id="amountPaidField" promptText="₱0.00" styleClass="payment-text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                    <Label styleClass="breakdown-label" text="Change Due:" GridPane.rowIndex="2" />
+                                    <TextField fx:id="changeDueField" editable="false" promptText="₱0.00" styleClass="payment-text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                </children>
+                                <columnConstraints>
+                                    <ColumnConstraints /><ColumnConstraints />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints /><RowConstraints /><RowConstraints />
+                                </rowConstraints>
+                            </GridPane>
+
+                            <Button fx:id="submitPaymentButton" maxWidth="Infinity" styleClass="submit-button" text="Submit Payment" />
+                        </children>
+                    </VBox>
+               <VBox>
+                  <children>
+                     <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="270.0" styleClass="eligible-card">
+                        <children>
+                           <SVGPath fx:id="eligibleIcon" content="M1.547 24a.33.33 0 0 1-.327-.295v-.001L0 11.336l-.001-.031c0-.182.147-.329.329-.329h8.233v13.025zm3.36-3.265v.001a1.301 1.301 0 1 0 1.301-1.301h-.002c-.719 0-1.301.582-1.302 1.301zm.48-8c0 .181.147.328.329.328h.764a.328.328 0 0 0 0-.656h-.77a.329.329 0 0 0-.329.329v.003zm-3.61 0c0 .181.147.328.328.328H4.61a.328.328 0 0 0 0-.656H2.099a.328.328 0 0 0-.328.328v.003zm9.8 9.388a1.886 1.886 0 0 1-.494-.253l.006.004l-.1-.063a20.97 20.97 0 0 1-.69-.452l-.101-.071c-.132-.095-.194-.137-.262-.133c-.24.005-.48.007-.72.01V12.01l-.013-.77c.451-.287.867-.56.992-.664c.17-.342.338-.628.524-.902l-.017.027c.085-.133.17-.265.248-.396l1.724-2.894c.08-.136.167-.272.254-.408c.145-.216.299-.474.44-.74l.024-.049a.879.879 0 0 0 .079-.521l.001.005l-.006-3.12c.063-.454.319-.838.68-1.072l.006-.004a1.97 1.97 0 0 1 1.162-.5h.007l.063-.001c.341 0 .663.081.949.224l-.012-.006c.191.092.354.19.507.3l-.01-.007l.106.07c.241.127.421.341.501.6l.002.007c.187.696.358 1.329.517 1.964l.066.259c.101.34.188.751.244 1.172l.005.042c-.171 1.574-.5 3.01-.976 4.378l.042-.138l7.693-.011h.028a1.643 1.643 0 0 1 1.63 1.848l.001-.008a1.982 1.982 0 0 1-.894 1.781l-.008.005a2.171 2.171 0 0 1 .372 1.4v-.007a1.848 1.848 0 0 1-1.137 1.873l-.012.004a2.375 2.375 0 0 1 .299 1.31v-.006a1.905 1.905 0 0 1-.886 1.733l-.008.005a2.791 2.791 0 0 1 .224 1.459l.001-.013v.188a1.834 1.834 0 0 1-2.007 1.719l.007.001h-4.429l-.015.001l-.016-.001h.001h-5.91c-.051 0-.104 0-.16.008c-.068.004-.14.01-.214.01h-.015a1.13 1.13 0 0 1-.299-.04l.008.002zm-6.015-1.387a.64.64 0 1 1 1.281.001a.64.64 0 0 1-1.281-.001z" styleClass="like-icon">
+                              <HBox.margin>
+                                 <Insets left="10.0" />
+                              </HBox.margin>
+                           </SVGPath>
+                           <Label fx:id="eligibleLabel" prefHeight="43.0" prefWidth="218.0" styleClass="eligible-card-label" text="You are Qualified to Free Higher Education Act.">
+                              <HBox.margin>
+                                 <Insets left="7.0" />
+                              </HBox.margin>
+                           </Label>
+                        </children>
+                     </HBox>
+                     <HBox layoutX="10.0" layoutY="10.0" prefHeight="96.0" prefWidth="270.0" />
+                  </children>
+               </VBox>
+
+                </VBox>
+            </children>
+        </HBox>
+    </center>
+</BorderPane>

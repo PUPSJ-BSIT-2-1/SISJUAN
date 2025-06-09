@@ -1,28 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.pupsis_main_dashboard.controllers.AdminAssignSubjectDialogController"
-      spacing="15" style="-fx-background-color: #f8fcfc; -fx-padding: 20 20 20 20;">
+<VBox prefHeight="300.0" prefWidth="443.0" spacing="15" styleClass="assign-sub-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminAssignSubjectDialogController">
 
-    <Label text="Assign Subject to Faculty" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #800000;" />
+    <Label styleClass="assign-header" text="Assign Subject to Faculty">
+      <VBox.margin>
+         <Insets bottom="15.0" />
+      </VBox.margin></Label>
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Subject Code:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="subjectComboBox" promptText="Select Subject Code" prefWidth="250" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <GridPane alignment="CENTER_LEFT" hgap="10" prefHeight="106.0" prefWidth="418.0" vgap="20.0">
+        <Label styleClass="assign-sub-text" text="Subject Code:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <ComboBox fx:id="subjectComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Subject Code" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label text="Year Level:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="yearLevelComboBox" promptText="Select Year Level" prefWidth="250" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label styleClass="assign-sub-text" text="Year Level:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <ComboBox fx:id="yearLevelComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Year Level" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label text="Semester:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="semesterComboBox" promptText="Select Semester" prefWidth="250" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <Label styleClass="assign-sub-text" text="Semester:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <ComboBox fx:id="semesterComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Semester" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
+      <VBox.margin>
+         <Insets left="10.0" />
+      </VBox.margin>
     </GridPane>
 
-    <HBox spacing="15" alignment="CENTER_RIGHT">
-        <Button text="Cancel" onAction="#handleCancel" />
-        <Button text="Assign" onAction="#handleAssign" />
+    <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="385.0" spacing="15">
+        <Button onAction="#handleAssign" styleClass="assign-button" text="Assign" />
+        <Button onAction="#handleCancel" styleClass="cancel-button" text="Cancel">
+         <HBox.margin>
+            <Insets right="17.0" />
+         </HBox.margin></Button>
     </HBox>
 </VBox>

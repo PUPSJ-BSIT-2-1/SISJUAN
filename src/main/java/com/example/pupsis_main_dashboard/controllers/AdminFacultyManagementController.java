@@ -154,11 +154,11 @@ public class AdminFacultyManagementController {
 
             controller.setSubjects(subjects);
 
-            List<String> yearLevels = List.of("1-1", "1-2", "2-1", "2-2", "3-1", "3-2");
+            List<String> yearLevels = List.of("1-1", "1-2", "2-1", "2-2", "3-1", "3-2", "4-1", "4-2");
             controller.setYearLevels(yearLevels);
             System.out.println("Set year levels: " + yearLevels);  
 
-            List<String> semesters = List.of("1st Semester", "2nd Semester");
+            List<String> semesters = List.of("1st Semester", "2nd Semester", "Summer Term");
             controller.setSemesters(semesters);
             System.out.println("Set semesters: " + semesters);  
 

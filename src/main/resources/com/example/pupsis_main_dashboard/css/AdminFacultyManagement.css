@@ -251,7 +251,7 @@
 
 /* Utility buttons (Export CSV, Print Report) */
 .dark-theme .utility-button {
-    -fx-background-color: derive(#3c5888, -100%);
+    -fx-background-color: #3c5888;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-padding: 8 18;
@@ -260,9 +260,10 @@
 }
 
 .dark-theme .utility-button:hover {
-    -fx-background-color: derive(#3c5888, -110%); /* slightly lighter */
+    -fx-background-color: #4a6aa3; /* slightly lighter */
     -fx-cursor: hand;
 }
+
 .dark-theme .utility-label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -398,5 +399,422 @@
     -fx-font-family: "Inter";
     -fx-text-fill: #e0e0e0;
     -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+/* ================= ASSIGN SUBJECT TO FACULTY ======================= */
+
+.assign-sub-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+}
+
+.dark-theme .assign-sub-container {
+    -fx-background-color: #3a3a3a;
+}
+
+.assign-header {
+    -fx-font-size: 18;
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+.dark-theme .assign-header {
+    -fx-text-fill: #b22222;
+}
+
+.assign-sub-text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 3 3 3 10;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .assign-sub-text-field {
+    -fx-background-color: #3a3a3a;
+    -fx-border-width: 1px;
+    -fx-border-color: #555;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3 3 3 10;
+    -fx-font-weight: bold;
+}
+
+.assign-sub-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.dark-theme .assign-sub-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0 ;
+}
+
+.assign-button {
+    -fx-background-color: #800000; /* Dark green */
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #f8fcfc;
+    -fx-padding: 7px;
+}
+
+.assign-button:hover {
+    -fx-background-color: #5e0000; /* Darker green */
+    -fx-cursor: hand;
+}
+
+.dark-theme .assign-button {
+    -fx-background-color: #b22222;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #f8fcfc;
+    -fx-padding: 10px;
+}
+
+.dark-theme .assign-button:hover {
+    -fx-background-color: #e57373;
+    -fx-cursor: hand;
+}
+
+.cancel-button {
+    -fx-background-color: #e5e5e5;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #2b2b2b;
+    -fx-padding: 7px;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #a0a0a0;
+    -fx-cursor: hand;
+}
+
+.dark-theme .cancel-button {
+    -fx-background-color: #3a3a3a;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 10px;
+}
+
+.dark-theme .cancel-button:hover {
+    -fx-background-color: #777777;
+    -fx-cursor: hand;
+}
+
+.assign-combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+    -fx-padding: 3px;
+}
+
+.assign-combo-box .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+.assign-combo-box .arrow {
+    -fx-background-color: #343a40;
+    -fx-text-fill: #343a40;
+}
+
+.assign-combo-box:hover {
+    -fx-border-color: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.assign-combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.assign-combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.assign-combo-box .list-cell:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.dark-theme .assign-combo-box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3px;
+}
+
+.dark-theme .assign-combo-box:hover {
+    -fx-border-color: #888888;
+}
+
+.dark-theme .assign-combo-box .arrow {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .assign-combo-box .list-view {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .assign-combo-box .list-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .assign-combo-box .list-cell:hover {
+    -fx-background-color: #555555;
+    -fx-cursor: hand;
+}
+
+/* ================= VIEW INFORMATION FACULTY ======================= */
+
+.view-faculty-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .view-faculty-container {
+    -fx-background-color: transparent;
+}
+
+.view-header {
+    -fx-font-size: 18;
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .view-header {
+    -fx-text-fill: #b22222;
+}
+
+.view-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.dark-theme .view-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0 ;
+}
+
+
+/* ================= FACULTY REGISTRATION ======================= */
+
+/* Style the DatePicker text field */
+.register-date-picker .text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1 0 1 1px;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5 0 0 5px;
+    -fx-background-radius: 5 0 0 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 3 3 3 10;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .register-date-picker .text-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Style the DatePicker arrow button */
+.register-date-picker .arrow-button {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 0 5px 5px 0;
+    -fx-background-radius: 0 5px 5px 0;
+}
+
+.dark-theme .register-date-picker .arrow-button {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+}
+
+.register-date-picker .arrow {
+    -fx-background-color: #343a40;
+}
+
+.dark-theme .register-date-picker .arrow {
+    -fx-background-color: #e0e0e0;
+}
+
+.status-combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.status-combo-box .arrow {
+    -fx-background-color: #343a40;
+    -fx-text-fill: #343a40;
+}
+
+.status-combo-box:hover {
+    -fx-border-color: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.status-combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.status-combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.status-combo-box .list-cell:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.dark-theme .status-combo-box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .status-combo-box:hover {
+    -fx-border-color: #888888;
+}
+
+.dark-theme .status-combo-box .arrow {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .status-combo-box .list-view {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .status-combo-box .list-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .status-combo-box .list-cell:hover {
+    -fx-background-color: #555555;
+    -fx-cursor: hand;
+}
+
+/* ================= FACULTY PRINTABLE LIST ======================= */
+
+.printable-list {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .printable-list {
+    -fx-background-color: transparent;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.printable-header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .printable-header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #b22222;
+    -fx-font-weight: bold;
+}
+
+.printable-sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #646464;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .printable-sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #bbbbbb;
     -fx-font-weight: bold;
 }

@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="stackPane" prefHeight="631.0" prefWidth="810.0" styleClass="main-root" stylesheets="@../css/GeneralSchoolCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.SchoolCalendarController">
+<StackPane fx:id="stackPane" prefHeight="631.0" prefWidth="810.0" styleClass="main-root" stylesheets="@../css/GeneralCalendar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GeneralCalendarController">
    <children>
       <AnchorPane fx:id="anchor" prefHeight="517.0" prefWidth="414.0" StackPane.alignment="CENTER">
          <children>
@@ -50,7 +50,7 @@
             </GridPane>
          </children>
       </AnchorPane>
-      <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" styleClass="sub-root" stylesheets="@../css/GeneralSchoolCalendar.css">
+      <VBox fx:id="vBox" maxWidth="810.0" minWidth="810.0" prefHeight="653.0" prefWidth="810.0" styleClass="sub-root" stylesheets="@../css/GeneralCalendar.css">
          <children>
             <HBox alignment="CENTER" prefHeight="106.0" prefWidth="810.0" styleClass="header-container">
                <children>
