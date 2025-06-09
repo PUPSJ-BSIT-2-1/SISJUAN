@@ -571,10 +571,11 @@ public class StudentEnrollmentController implements Initializable {
                                 "AND fl.load_id NOT IN (" +
                                 "  SELECT sl_inner.faculty_load FROM student_load sl_inner " +
                                 "  WHERE sl_inner.student_pk_id = ? AND sl_inner.semester_id = ?" +
-                                ")";
-        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, studentId={}, semesterIdSubQuery={}]",
+                                ") AND s.year_level = ? AND s.semester_id = ?"; // Corrected: s.year_level instead of s.year_level_id
+
+        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, studentId={}, semesterIdSubQuery={}, yearLevel={}, semesterIdSubject={}]",
             availableQuery, context.sectionId(), context.semesterId(),
-            context.studentId(), context.semesterId());
+            context.studentId(), context.semesterId(), context.yearLevel(), context.semesterId());
 
         try (Connection connAvailableDetails = DBConnection.getConnection(); // Separate connection for available subject details
              PreparedStatement pstmtAvailable = connAvailableDetails.prepareStatement(availableQuery)) {
@@ -583,6 +584,8 @@ public class StudentEnrollmentController implements Initializable {
             pstmtAvailable.setInt(2, context.semesterId());
             pstmtAvailable.setInt(3, context.studentId());
             pstmtAvailable.setInt(4, context.semesterId());
+            pstmtAvailable.setInt(5, context.yearLevel());
+            pstmtAvailable.setInt(6, context.semesterId());
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
                 while (rs.next()) {
