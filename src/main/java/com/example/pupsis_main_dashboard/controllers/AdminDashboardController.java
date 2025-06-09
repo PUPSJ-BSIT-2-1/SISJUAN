@@ -50,7 +50,7 @@ public class AdminDashboardController {
     private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminSubjectModule.fxml";
     private static final String FACULTY_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminFacultyPreview.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminClassSchedule.fxml";
-    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSchoolCalendar.fxml";
+    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralCalendar.fxml";
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
     private static final String STUDENT_MANAGEMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentManagement.fxml";

@@ -32,10 +32,10 @@
         <Label styleClass="label-bold" text="🔍 Search:" />
         <TextField fx:id="searchField" onKeyReleased="#handleSearch" prefHeight="26.0" prefWidth="198.0" promptText="Search by name, ID, or email..." styleClass="search-text-field">
          <HBox.margin>
-            <Insets right="70.0" />
+            <Insets right="55.0" />
          </HBox.margin></TextField>
    
-       <!-- Button Bar -->
+          <!-- Button Bar -->
        <!-- Main Actions Row -->
        <HBox alignment="CENTER" prefHeight="46.0" prefWidth="448.0" spacing="10.0">
          <HBox alignment="CENTER" onMouseClicked="#handleAddFaculty" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
@@ -50,6 +50,9 @@
             <HBox.margin>
                <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
             </HBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
          </HBox>
          <HBox alignment="CENTER" layoutX="20.0" layoutY="20.0" onMouseClicked="#handleEditFaculty" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
@@ -63,6 +66,9 @@
             <HBox.margin>
                <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
             </HBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
          </HBox>
          <HBox alignment="CENTER" layoutX="412.0" layoutY="10.0" onMouseClicked="#handleDeleteFaculty" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
@@ -76,6 +82,9 @@
             <HBox.margin>
                <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
             </HBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
          </HBox>
          <HBox alignment="CENTER" layoutX="464.0" layoutY="10.0" onMouseClicked="#handleRefreshTable" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
@@ -89,6 +98,9 @@
             <HBox.margin>
                <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
             </HBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
          </HBox>
          <HBox alignment="CENTER" layoutX="508.0" layoutY="10.0" onMouseClicked="#handleAssignSubject" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
@@ -102,9 +114,12 @@
             <HBox.margin>
                <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
             </HBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
          </HBox>
          <HBox.margin>
-            <Insets />
+            <Insets right="15.0" />
          </HBox.margin>
        </HBox>
     </HBox>
