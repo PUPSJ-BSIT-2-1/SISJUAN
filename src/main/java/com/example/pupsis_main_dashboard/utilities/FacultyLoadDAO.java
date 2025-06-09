@@ -15,27 +15,27 @@ public class FacultyLoadDAO {
     /**
      * Adds a faculty load entry (assignment of subject to faculty).
      *
-     * @param facultyId    the faculty identifier (int)
-     * @param subjectId    the subject identifier (int)
-     * @param yearSection  the year_section string (e.g., "1-1")
-     * @param semester     the semester (e.g., "1st Semester")
-     * @param academicYear the academic year (e.g., "2023-2024")
+     * @param facultyId      the faculty identifier (String)
+     * @param subjectId      the subject identifier (int)
+     * @param sectionId      the section identifier (int) from the 'section' table
+     * @param semesterId     the semester identifier (int)
+     * @param academicYearId the academic year identifier (int)
      * @return true if insert is successful, false otherwise
      */
-    public boolean addFacultyLoad(int facultyId, int subjectId, String yearSection, String semester, String academicYear) {
-        String sql = "INSERT INTO faculty_load (faculty_id, subject_id, year_section, semester, academic_year) VALUES (?, ?, ?, ?, ?)";
+    public boolean addFacultyLoad(String facultyId, int subjectId, int sectionId, int semesterId, int academicYearId) {
+        String sql = "INSERT INTO faculty_load (faculty_id, subject_id, section_id, semester_id, academic_year_id) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, facultyId);
+            stmt.setString(1, facultyId);
             stmt.setInt(2, subjectId);
-            stmt.setString(3, yearSection);
-            stmt.setString(4, semester);
-            stmt.setString(5, academicYear);
+            stmt.setInt(3, sectionId);
+            stmt.setInt(4, semesterId);
+            stmt.setInt(5, academicYearId);
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            System.err.println("Error adding faculty load:");
+            System.err.println("Error adding faculty load: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

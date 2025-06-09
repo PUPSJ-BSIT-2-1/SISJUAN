@@ -4,6 +4,8 @@ import com.example.pupsis_main_dashboard.models.Faculty;
 import com.example.pupsis_main_dashboard.utilities.SubjectDAO;
 import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
 import com.example.pupsis_main_dashboard.utilities.FacultyLoadDAO;
+import com.example.pupsis_main_dashboard.utilities.SectionDAO;
+import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,13 +43,17 @@ public class AdminFacultyManagementController {
 
     private final ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
     private FacultyDAO facultyDAO;
-    private FacultyLoadDAO facultyLoadDAO;  // <-- Added declaration here
+    private FacultyLoadDAO facultyLoadDAO;  
+    private SubjectDAO subjectDAO;
+    private SectionDAO sectionDAO;
     private ScrollPane contentPane;
 
     public void initialize() {
         try {
             facultyDAO = new FacultyDAO();
             facultyLoadDAO = new FacultyLoadDAO();  
+            subjectDAO = new SubjectDAO();
+            sectionDAO = new SectionDAO();
         } catch (SQLException e) {
             showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR);
             return;
@@ -149,65 +155,75 @@ public class AdminFacultyManagementController {
 
             AdminAssignSubjectDialogController controller = loader.getController();
 
-            List<String> subjects = loadSubjectCodes();
-            System.out.println("Loaded subjects: " + subjects);  
+            // Load subjects
+            List<String> subjectCodes = subjectDAO.getAllSubjectCodes(); 
+            if (subjectCodes.isEmpty()) {
+                showAlert("Information", "No subjects available to assign.", Alert.AlertType.INFORMATION);
+                return;
+            }
+            controller.setSubjects(subjectCodes);
 
-            controller.setSubjects(subjects);
-
-            List<String> yearLevels = List.of("1-1", "1-2", "2-1", "2-2", "3-1", "3-2", "4-1", "4-2");
-            controller.setYearLevels(yearLevels);
-            System.out.println("Set year levels: " + yearLevels);  
-
-            List<String> semesters = List.of("1st Semester", "2nd Semester", "Summer Term");
-            controller.setSemesters(semesters);
-            System.out.println("Set semesters: " + semesters);  
+            // Load sections using SectionDAO
+            List<AdminAssignSubjectDialogController.SectionItem> sectionItems = sectionDAO.getAllSectionItems();
+            if (sectionItems.isEmpty()) {
+                showAlert("Information", "No sections available to assign.", Alert.AlertType.INFORMATION);
+                return;
+            }
+            controller.setSections(sectionItems);
 
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setTitle("Assign Subject");
+            String facultyFullName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
+            dialogStage.setTitle("Assign Subject to " + facultyFullName);
             dialogStage.setScene(new Scene(root));
             controller.setDialogStage(dialogStage);
             dialogStage.showAndWait();
 
             if (controller.isAssigned()) {
-                String subjectCode = controller.getSelectedSubjectId();
-                String yearSection = controller.getSelectedYearLevel();
-                String semester = controller.getSelectedSemester();
+                String facultyId = selectedFaculty.getFacultyId(); 
+                String subjectCode = controller.getSelectedSubjectCode(); 
+                int sectionId = controller.getSelectedSectionId();
 
-                int facultyId = selectedFaculty.getActualFacultyId(); 
-                SubjectDAO subjectDAO = new SubjectDAO();
+                // Get subject_id (INT) from subject_code (TEXT)
                 int subjectId = subjectDAO.getSubjectIdByCode(subjectCode);
-                String academicYear = "2023-2024";  
+                if (subjectId == -1) { 
+                    showAlert("Error", "Selected subject code not found or invalid.", Alert.AlertType.ERROR);
+                    return;
+                }
+
+                // Get current semester and academic year IDs
+                int semesterId = SchoolYearAndSemester.getCurrentSemesterId();
+                int academicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
+
+                if (semesterId == -1 || academicYearId == -1) { 
+                    showAlert("Error", "Could not determine current semester or academic year ID.", Alert.AlertType.ERROR);
+                    return;
+                }
 
                 boolean success = facultyLoadDAO.addFacultyLoad(
                         facultyId,
                         subjectId,
-                        yearSection,
-                        semester,
-                        academicYear
+                        sectionId,
+                        semesterId,
+                        academicYearId
                 );
 
                 if (success) {
-                    showAlert("Success", "Subject assigned successfully.", Alert.AlertType.INFORMATION);
+                    String successFacultyName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
+                    showAlert("Success", "Subject assigned successfully to " + successFacultyName, Alert.AlertType.INFORMATION);
+                    loadFacultyData(); 
                 } else {
-                    showAlert("Error", "Failed to assign subject.", Alert.AlertType.ERROR);
+                    showAlert("Error", "Failed to assign subject. Check logs for details.", Alert.AlertType.ERROR);
                 }
             }
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
+            System.err.println("Error loading AdminAssignSubjectDialog.fxml: " + e.getMessage());
             e.printStackTrace();
-            showAlert("Error", "Failed to open Assign Subject dialog or retrieve subject ID.", Alert.AlertType.ERROR);
-        }
-    }
-
-    private List<String> loadSubjectCodes() {
-        try {
-            SubjectDAO subjectDAO = new SubjectDAO();
-            List<String> subjectCodes = subjectDAO.getAllSubjectCodes();
-            System.out.println("Fetching subject codes from DB: " + subjectCodes);  
-            return subjectCodes;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return List.of();  
+            showAlert("Error", "Could not open the assign subject dialog.", Alert.AlertType.ERROR);
+        } catch (SQLException se) {
+            System.err.println("Database error during subject assignment: " + se.getMessage());
+            se.printStackTrace();
+            showAlert("Database Error", "A database error occurred: " + se.getMessage(), Alert.AlertType.ERROR);
         }
     }
 

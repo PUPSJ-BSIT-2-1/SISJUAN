@@ -185,17 +185,17 @@ public class FacultyGradingModuleController implements Initializable {
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
                 SELECT 
-                    ys.year_section, 
+                    sec.section_name AS year_section, 
                     sem.semester_id, 
                     s.subject_code, 
                     s.description,
                     s.subject_id
                 FROM faculty_load fl
                 JOIN subjects s ON fl.subject_id = s.subject_id
-                JOIN year_section ys ON fl.section_id = ys.section_id
+                JOIN section sec ON fl.section_id = sec.section_id
                 JOIN semesters sem ON fl.semester_id = sem.semester_id
                 WHERE fl.faculty_id = ?::smallint
-                ORDER BY ys.year_section, sem.semester_id, s.subject_code;
+                ORDER BY sec.section_name, sem.semester_id, s.subject_code;
                 """;
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, String.valueOf(facultyId));

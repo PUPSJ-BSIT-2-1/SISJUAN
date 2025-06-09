@@ -146,10 +146,10 @@ public class FacultyClassScheduleController {
         }
 
         String query = """
-            SELECT CONCAT(s.subject_code, ' - ', s.description, ' (', ys.year_section, ')') AS faculty_description_section,
+            SELECT CONCAT(s.subject_code, ' - ', s.description, ' (', sec.section_name, ')') AS faculty_description_section,
                    fac.faculty_id, fac.firstname || ' ' || fac.lastname AS faculty_name, fac.faculty_number,
                    fl.load_id, s.subject_id, s.subject_code, s.description AS subject_description,
-                   ys.year_section AS year_section, sch.days,
+                   sec.section_name AS year_section, sch.days,
                    TO_CHAR(sch.start_time, 'HH12:MI AM') AS start_time,
                    TO_CHAR(sch.end_time, 'HH12:MI AM') AS end_time,
                    r.room_name AS room, s.units, sch.lecture_hour, sch.laboratory_hour,
@@ -159,7 +159,7 @@ public class FacultyClassScheduleController {
             JOIN faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN subjects s ON fl.subject_id = s.subject_id
             LEFT JOIN room r ON sch.room_id = r.room_id
-            JOIN year_section ys ON fl.section_id = ys.section_id
+            JOIN section sec ON fl.section_id = sec.section_id
             JOIN semesters sem ON fl.semester_id = sem.semester_id
             WHERE fac.faculty_id = ? AND fl.semester_id = ?;
         """;

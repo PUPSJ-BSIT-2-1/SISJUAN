@@ -230,13 +230,13 @@ public class AdminClassScheduleController {
                 CONCAT(f.firstname, ' ', f.lastname) AS faculty_name, f.faculty_number,
                 r.room_name, s.start_time, s.end_time, s.days, sub.units,
                 s.lecture_hour, s.laboratory_hour,
-                ys.year_section
+                sec.section_name 
             FROM public.schedule s
             JOIN public.faculty_load fl ON s.faculty_load_id = fl.load_id
             JOIN public.subjects sub ON fl.subject_id = sub.subject_id
             JOIN public.faculty f ON fl.faculty_id = f.faculty_id
             LEFT JOIN public.room r ON s.room_id = r.room_id
-            JOIN public.year_section ys ON fl.section_id = ys.section_id
+            JOIN public.section sec ON fl.section_id = sec.section_id 
             WHERE fl.semester_id = ? AND fl.academic_year_id = ?
             ORDER BY s.schedule_id;
             """;
@@ -250,13 +250,11 @@ public class AdminClassScheduleController {
                     Button editButton = new Button("Edit");
                     editButton.getStyleClass().add("edit-button");
                     int loadId = rs.getInt("load_id");
-                    // String facultyValue = rs.getString("faculty_name"); // This was for the combo box, not directly for schedule display
-                    String subjectCode = rs.getString("subject_code"); // Corrected from subjectID to subjectCode for clarity
+                    String subjectCode = rs.getString("subject_code"); 
                     String facultyNumber = rs.getString("faculty_number");
                     String subDesc = rs.getString("subject_description");
                     String facultyName = rs.getString("faculty_name");
-                    // String facultyID = rs.getString("faculty_number"); // faculty_id is likely preferred if available from the faculty table
-                    String yearSection = rs.getString("year_section");
+                    String sectionName = rs.getString("section_name"); 
                     String days = rs.getString("days");
                     Time startTimeSql = rs.getTime("start_time");
                     Time endTimeSql = rs.getTime("end_time");
@@ -267,10 +265,9 @@ public class AdminClassScheduleController {
                     int lectureHour = rs.getInt("lecture_hour");
                     int laboratoryHour = rs.getInt("laboratory_hour");
 
-                    // Constructing facultyValue for display consistency if needed, or use facultyName directly
                     String facultyDisplayValue = facultyName + " (" + facultyNumber + ")";
 
-                    Schedule schedule = new Schedule(loadId, facultyDisplayValue, subjectCode, facultyNumber, subjectCode, subDesc, facultyName, facultyNumber, yearSection, days, startTime, endTime, room, unitsStr, lectureHour, laboratoryHour, editButton);
+                    Schedule schedule = new Schedule(loadId, facultyDisplayValue, subjectCode, facultyNumber, subjectCode, subDesc, facultyName, facultyNumber, sectionName, days, startTime, endTime, room, unitsStr, lectureHour, laboratoryHour, editButton);
                     createButton.setOnAction(_ -> handleCreateSchedule());
                     editButton.setOnAction(_ -> handleEditSchedule(schedule, borderPane, scheduleContainer));
                     deleteButton.setOnAction(_ -> handleDeleteSchedule(schedule));
@@ -332,11 +329,11 @@ public class AdminClassScheduleController {
 
         facultyIDComboBox.getItems().clear();
         String query = """
-                SELECT CONCAT(fac.faculty_number, ' - ', sub.description, ' (', ys.year_section, ')') AS faculty_load_display
+                SELECT CONCAT(fac.faculty_number, ' - ', sub.description, ' (', sec.section_name, ')') AS faculty_load_display
                 FROM public.faculty_load fl
                 JOIN public.faculty fac ON fl.faculty_id = fac.faculty_id
                 JOIN public.subjects sub ON fl.subject_id = sub.subject_id
-                JOIN public.year_section ys ON fl.section_id = ys.section_id
+                JOIN public.section sec ON fl.section_id = sec.section_id 
                 WHERE fl.semester_id = ? AND fl.academic_year_id = ? AND fl.load_id NOT IN (SELECT faculty_load_id FROM schedule)
                 ORDER BY faculty_load_display;
                 """;
@@ -524,28 +521,28 @@ public class AdminClassScheduleController {
         String[] parts = facultyComboBoxValue.split(" - | \\(|\\)");
         String facultyNumber = parts[0];
         String subjectDescription = parts[1];
-        String yearAndSectionFull = parts[2];
+        String sectionNameFull = parts[2];
 
         String query = """
             SELECT fl.load_id
             FROM public.faculty_load fl
             JOIN public.faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN public.subjects sub ON fl.subject_id = sub.subject_id
-            JOIN public.year_section ys ON fl.section_id = ys.section_id
-            WHERE fac.faculty_number = ? AND sub.description = ? AND ys.year_section = ?
+            JOIN public.section sec ON fl.section_id = sec.section_id
+            WHERE fac.faculty_number = ? AND sub.description = ? AND sec.section_name = ?
         """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, facultyNumber);
             pstmt.setString(2, subjectDescription);
-            pstmt.setString(3, yearAndSectionFull);
+            pstmt.setString(3, sectionNameFull);
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("load_id");
             } else {
-                logger.warn("Faculty load not found in DB for: FN='{}', Desc='{}', YS='{}'", facultyNumber, subjectDescription, yearAndSectionFull);
+                logger.warn("Faculty load not found in DB for: FN='{}', Desc='{}', SN='{}'", facultyNumber, subjectDescription, sectionNameFull);
                 return -1; 
             }
         } catch (SQLException e) {
