@@ -14,11 +14,8 @@
         <Label text="Subject Code:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <ComboBox fx:id="subjectComboBox" promptText="Select Subject Code" prefWidth="250" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Year Level:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="yearLevelComboBox" promptText="Select Year Level" prefWidth="250" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-        <Label text="Semester:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="semesterComboBox" promptText="Select Semester" prefWidth="250" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <Label text="Section:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="sectionComboBox" promptText="Select Section" prefWidth="250" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
     </GridPane>
 
     <HBox spacing="15" alignment="CENTER_RIGHT">

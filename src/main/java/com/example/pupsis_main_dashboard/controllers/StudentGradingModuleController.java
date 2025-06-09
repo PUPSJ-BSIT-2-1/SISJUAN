@@ -143,7 +143,7 @@ public class StudentGradingModuleController {
     private void loadGrades() {
         String sessionStudentID = SessionData.getInstance().getStudentNumber();
         String query = "SELECT DISTINCT ON (s.student_id, sub.subject_id, sl.academic_year_id, sl.semester_id) " +
-            "s.student_id, s.student_number, ysec.year_section AS section_code, " +
+            "s.student_id, s.student_number, sec.section_name AS section_code, " +
             "scs.status_name AS scholastic_status_name, sub.subject_id, sub.subject_code, " +
             "sub.description AS subject_description, sub.units, fac.faculty_id, fac.faculty_number, " +
             "fac.firstname || ' ' || fac.lastname AS faculty_name, g.grade_id, g.final_grade, " +
@@ -153,7 +153,7 @@ public class StudentGradingModuleController {
             "JOIN faculty_load fl ON sl.faculty_load = fl.load_id " +
             "JOIN faculty fac ON fl.faculty_id = fac.faculty_id " +
             "JOIN subjects sub ON fl.subject_id = sub.subject_id " +
-            "JOIN year_section ysec ON fl.section_id = ysec.section_id " +
+            "JOIN section sec ON fl.section_id = sec.section_id " +
             "LEFT JOIN schedule sch ON sch.faculty_load_id = fl.load_id " +
             "LEFT JOIN room r ON sch.room_id = r.room_id " +
             "LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_pk_id = s.student_id AND g.academic_year_id = sl.academic_year_id " +
@@ -162,9 +162,9 @@ public class StudentGradingModuleController {
             "WHERE s.student_id = ? " +
             "ORDER BY s.student_id, sub.subject_id, sl.academic_year_id DESC, sl.semester_id DESC, g.grade_id DESC;";
 
-        String query2 = "SELECT s.student_id, s.current_year_section_id, ys.year_section, ss.status_name AS current_scholastic_status " +
+        String query2 = "SELECT s.student_id, s.current_year_section_id, sec.section_name, sec.year_level, ss.status_name AS current_scholastic_status " +
             "FROM students s " +
-            "LEFT JOIN year_section ys ON s.current_year_section_id = ys.section_id " +
+            "LEFT JOIN section sec ON s.current_year_section_id = sec.section_id " +
             "LEFT JOIN scholastic_statuses ss ON s.scholastic_status_id = ss.scholastic_status_id " +
             "WHERE s.student_number = ?";
 
@@ -182,14 +182,15 @@ public class StudentGradingModuleController {
             try (ResultSet rs2 = stmt2.executeQuery()) {
                 if (rs2.next()) { 
                     studentID = rs2.getInt("student_id");
-                    String currentYearSectionName = rs2.getString("year_section");
+                    String currentSectionName = rs2.getString("section_name");
+                    int studentActualYearLevel = rs2.getInt("year_level");
                     String currentScholasticStatus = rs2.getString("current_scholastic_status");
                     
                     // Update labels on JavaFX Application Thread
-                    final String finalCurrentYearSectionName = currentYearSectionName;
                     final String finalCurrentScholasticStatus = currentScholasticStatus;
+                    final int finalStudentActualYearLevel = studentActualYearLevel;
                     javafx.application.Platform.runLater(() -> {
-                        determineYearLevel(finalCurrentYearSectionName);
+                        yearLevel.setText(String.valueOf(finalStudentActualYearLevel));
                         determineScholasticStatus(finalCurrentScholasticStatus);
                     });
                 } else {
@@ -256,28 +257,28 @@ public class StudentGradingModuleController {
     }
 
     private void populateYearSection() {
-        ObservableList<String> yearSections = FXCollections.observableArrayList(
-                "1st Year", "2nd Year", "3rd Year", "4th Year"
-        );
-        yearSectionComboBox.setItems(yearSections);
+        Task<ObservableList<String>> task = new Task<>() {
+            @Override
+            protected ObservableList<String> call() throws Exception {
+                ObservableList<String> sections = FXCollections.observableArrayList();
+                sections.add("All Sections"); // Add the "All Sections" option first
+                String sql = "SELECT DISTINCT section_name FROM section ORDER BY section_name";
+                try (Connection conn = DBConnection.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement(sql);
+                     ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        sections.add(rs.getString("section_name"));
+                    }
+                }
+                return sections;
+            }
+        };
+        task.setOnSucceeded(event -> yearSectionComboBox.setItems(task.getValue()));
+        new Thread(task).start();
     }
 
     private void determineYearLevel(String yearSection) {
-        String[] splitYearLevel = yearSection.split("-");
-        switch (splitYearLevel[0]) {
-            case "1":
-                yearLevel.setText("1st Year");
-                break;
-            case "2":
-                yearLevel.setText("2nd Year");
-                break;
-            case "3":
-                yearLevel.setText("3rd Year");
-                break;
-            case "4":
-                yearLevel.setText("4th Year");
-                break;
-        }
+        // Not needed anymore, year level is now directly retrieved from the database
     }
 
     private void determineScholasticStatus(String status) {
@@ -337,7 +338,7 @@ public class StudentGradingModuleController {
 
     private void filterGrades() {
         String selectedSemester = semesterComboBox.getValue();
-        String selectedYearSectionString = yearSectionComboBox.getValue();
+        String selectedSection = yearSectionComboBox.getValue();
         ObservableList<Grades> filteredGrades = FXCollections.observableArrayList();
 
         String searchGrades = """
@@ -361,8 +362,9 @@ public class StudentGradingModuleController {
             JOIN faculty_load fl ON sl.faculty_load = fl.load_id
             JOIN faculty fac ON fl.faculty_id = fac.faculty_id
             JOIN subjects sub ON fl.subject_id = sub.subject_id
-            JOIN schedule sch ON sch.faculty_load_id = fl.load_id
-            JOIN room r ON sch.room_id = r.room_id
+            JOIN section sec ON fl.section_id = sec.section_id
+            LEFT JOIN schedule sch ON sch.faculty_load_id = fl.load_id
+            LEFT JOIN room r ON sch.room_id = r.room_id
             LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_pk_id = s.student_id
             LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
             LEFT JOIN scholastic_statuses scs ON s.scholastic_status_id = scs.scholastic_status_id
@@ -384,8 +386,8 @@ public class StudentGradingModuleController {
             studentsTable.setPlaceholder(new Label("User session error."));
             return;
         }
-        if (selectedSemester == null || selectedYearSectionString == null) {
-            logger.info("Semester or Year Section not selected for filtering.");
+        if (selectedSemester == null || selectedSection == null) {
+            logger.info("Semester or Section not selected for filtering.");
             loadGrades(); 
             return;
         }
@@ -406,17 +408,17 @@ public class StudentGradingModuleController {
                 }
             }
 
-            int selectedYearSectionId;
+            int selectedSectionId;
             try {
-                selectedYearSectionId = Integer.parseInt(selectedYearSectionString);
+                selectedSectionId = Integer.parseInt(selectedSection);
             } catch (NumberFormatException e) {
-                logger.error("Invalid year section format in ComboBox: {}", selectedYearSectionString, e);
-                studentsTable.setPlaceholder(new Label("Invalid year/section filter value."));
+                logger.error("Invalid section format in ComboBox: {}", selectedSection, e);
+                studentsTable.setPlaceholder(new Label("Invalid section filter value."));
                 return;
             }
 
             stmt3_searchGrades.setInt(1, studentID);
-            stmt3_searchGrades.setObject(2, selectedYearSectionId, Types.INTEGER); 
+            stmt3_searchGrades.setObject(2, selectedSectionId, Types.INTEGER); 
             stmt3_searchGrades.setString(3, selectedSemester);    
 
             boolean hasResults = false;
@@ -458,7 +460,7 @@ public class StudentGradingModuleController {
                 if (!filteredGrades.isEmpty()) {
                      Grades firstGrade = filteredGrades.get(0);
                      determineScholasticStatus(firstGrade.getScholasticStatus());
-                     determineYearLevel(firstGrade.getSectionCode());
+                     // determineYearLevel(firstGrade.getSectionCode()); // Not needed anymore
                 }
                 computeSemesterGPA(); 
             }

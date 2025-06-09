@@ -444,7 +444,7 @@ public class StudentEnrollmentController implements Initializable {
         }
     }
 
-    private record StudentEnrollmentContext(String yearLevelString, String semesterString, int studentId, String studentYearSection, int sectionId, int semesterId, int academicYearId) {}
+    private record StudentEnrollmentContext(int yearLevel, String semesterString, int studentId, String studentYearSection, int sectionId, int semesterId, int academicYearId) {}
 
     private void refreshEnrollmentView() {
         logger.debug("refreshEnrollmentView: Starting data refresh.");
@@ -473,7 +473,7 @@ public class StudentEnrollmentController implements Initializable {
             EnrollmentPageData pageData = loadDataTask.getValue();
             if (pageData != null && pageData.context() != null) {
                 logger.info("refreshEnrollmentView: Student context and subjects loaded: {}", pageData.context());
-                if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText(pageData.context().yearLevelString());
+                if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText(convertNumericYearToString(pageData.context().yearLevel()));
                 if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText(pageData.context().semesterString());
                 populateSubjectListUI(pageData.subjectLists(), pageData.context());
             } else {
@@ -701,27 +701,26 @@ public class StudentEnrollmentController implements Initializable {
             throw new SQLException("Current user identifier not found.");
         }
 
-        String sql = """
-            SELECT
-                ys.year_section AS student_year_section,
-                sem.semester_name AS section_semester,
-                s.student_id,
-                ys.section_id,
-                sem.semester_id,
-                ay.academic_year_id
-            FROM
-                public.students s
-            LEFT JOIN
-                public.year_section ys ON s.current_year_section_id = ys.section_id
-            LEFT JOIN
-                public.semesters sem ON ys.semester_id = sem.semester_id
-            LEFT JOIN
-                public.academic_years ay ON ys.academic_year_id = ay.academic_year_id
-            WHERE
-                s.student_number = ?
-            """;
+        String sql = "SELECT " +
+                "    sec.year_level, " +  
+                "    sec.section_name AS student_year_section, " +
+                "    sem.semester_name AS section_semester, " +
+                "    s.student_id, " +
+                "    sec.section_id, " +      
+                "    sec.semester_id, " +     
+                "    sec.academic_year_id " + 
+                "FROM " +
+                "    public.students s " +
+                "LEFT JOIN " +
+                "    public.section sec ON s.current_year_section_id = sec.section_id " + 
+                "LEFT JOIN " +
+                "    public.semesters sem ON sec.semester_id = sem.semester_id " +        
+                "LEFT JOIN " +
+                "    public.academic_years ay ON sec.academic_year_id = ay.academic_year_id " + 
+                "WHERE " +
+                "    s.student_number = ?";
 
-        logger.debug("fetchStudentEnrollmentContext: SQL query: {}", sql);
+        logger.debug("fetchStudentEnrollmentContext: SQL query: {}\n", sql.replace("\n", " ").replaceAll("\s+", " "));
         logger.debug("fetchStudentEnrollmentContext: Parameter: {}", currentUserIdentifier);
 
         try (Connection conn = DBConnection.getConnection();
@@ -729,13 +728,14 @@ public class StudentEnrollmentController implements Initializable {
             pstmt.setString(1, currentUserIdentifier);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    String yearSection = rs.getString("student_year_section");
+                    int yearLevelInt = rs.getInt("year_level"); // Get integer year_level
+                    String studentYearSectionStr = rs.getString("student_year_section");
                     String semester = rs.getString("section_semester");
                     int studentId = rs.getInt("student_id");
                     int sectionId = rs.getInt("section_id");
                     int semesterId = rs.getInt("semester_id");
                     int academicYearId = rs.getInt("academic_year_id");
-                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearSection, semester, studentId, yearSection, sectionId, semesterId, academicYearId);
+                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelInt, semester, studentId, studentYearSectionStr, sectionId, semesterId, academicYearId);
                     logger.debug("fetchStudentEnrollmentContext: Fetched context: {}", context);
                     return context;
                 } else {
@@ -747,18 +747,6 @@ public class StudentEnrollmentController implements Initializable {
             logger.error("SQL Error fetching student enrollment context: ", e);
             throw e;
         }
-    }
-
-    private String convertYearSectionToYearLevel(String yearSection) {
-        if (yearSection == null || yearSection.isEmpty()) return null;
-        String digits = yearSection.replaceAll("[^0-9]", "");
-        if (!digits.isEmpty()) {
-            char yearChar = digits.charAt(0);
-            return convertNumericYearToString(Character.getNumericValue(yearChar));
-        }
-        if (yearSection.toLowerCase().contains("year")) return yearSection;
-        logger.error("Could not parse year level from year_section: {}", yearSection);
-        return null;
     }
 
     private String convertNumericYearToString(int yearLevel) {
