@@ -331,7 +331,7 @@
                                 <TableColumn fx:id="subDescriptionCell" editable="false" maxWidth="246.4000244140625" minWidth="155.99996948242188" prefWidth="172.0" resizable="false" text="Description" />
                                 <TableColumn fx:id="scheduleCell" editable="false" maxWidth="180.800048828125" minWidth="38.4000244140625" prefWidth="148.79998779296875" resizable="false" text="Schedule" />
                                 <TableColumn fx:id="roomCell" editable="false" maxWidth="160.80002441406248" minWidth="38.4000244140625" prefWidth="84.0" resizable="false" text="Room" />
-                                <TableColumn fx:id="editCell" editable="false" maxWidth="160.80002441406248" minWidth="38.4000244140625" prefWidth="84.800048828125" resizable="false" />
+                                <TableColumn fx:id="editCell" editable="false" maxWidth="160.80002441406248" minWidth="38.4000244140625" prefWidth="95.1998291015625" resizable="false" />
                             </columns>
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

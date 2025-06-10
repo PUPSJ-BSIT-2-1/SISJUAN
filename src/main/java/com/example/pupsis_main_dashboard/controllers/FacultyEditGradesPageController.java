@@ -829,10 +829,6 @@ public class FacultyEditGradesPageController implements Initializable {
         logger.info("Populating all year sections for faculty ID: " + SessionData.getInstance().getFacultyId());
         yrSecCombBox.getItems().clear(); // Clear previous items
 
-        // Add "All" option first
-        yrSecCombBox.getItems().add(allItem);
-        yrSecCombBox.getItems().clear();
-
         // Add the "All" option for an initial load
         MenuItem allItem = new MenuItem("All");
         allItem.setOnAction(event -> {

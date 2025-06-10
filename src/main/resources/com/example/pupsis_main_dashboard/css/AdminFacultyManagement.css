@@ -117,7 +117,7 @@
 .search-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #6b6b6b;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
@@ -392,7 +392,7 @@
 .dark-theme .search-text-field {
     -fx-background-color: #3a3a3a;
     -fx-border-width: 1px;
-    -fx-border-color: #555;
+    -fx-border-color: #b0b0b0;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";

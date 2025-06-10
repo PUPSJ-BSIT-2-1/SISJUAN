@@ -40,7 +40,7 @@
        <HBox alignment="CENTER" prefHeight="46.0" prefWidth="448.0" spacing="10.0">
          <HBox alignment="CENTER" onMouseClicked="#handleAddFaculty" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
-               <SVGPath content="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2v-6Z" styleClass="icons">
+               <SVGPath content="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2v-6Z" scaleX="0.8" scaleY="0.8" styleClass="icons">
                   <HBox.margin>
                      <Insets />
                   </HBox.margin>
@@ -56,7 +56,7 @@
          </HBox>
          <HBox alignment="CENTER" layoutX="20.0" layoutY="20.0" onMouseClicked="#handleEditFaculty" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
-               <SVGPath content="M3.995 17.207V19.5a.5.5 0 0 0 .5.5h2.298a.5.5 0 0 0 .353-.146l9.448-9.448l-3-3l-9.452 9.448a.5.5 0 0 0-.147.353m10.837-11.04l3 3l1.46-1.46a1 1 0 0 0 0-1.414l-1.585-1.586a1 1 0 0 0-1.414 0z" styleClass="icons">
+               <SVGPath content="M3.995 17.207V19.5a.5.5 0 0 0 .5.5h2.298a.5.5 0 0 0 .353-.146l9.448-9.448l-3-3l-9.452 9.448a.5.5 0 0 0-.147.353m10.837-11.04l3 3l1.46-1.46a1 1 0 0 0 0-1.414l-1.585-1.586a1 1 0 0 0-1.414 0z" scaleX="0.8" scaleY="0.8" styleClass="icons">
                   <HBox.margin>
                      <Insets />
                   </HBox.margin>
@@ -72,7 +72,7 @@
          </HBox>
          <HBox alignment="CENTER" layoutX="412.0" layoutY="10.0" onMouseClicked="#handleDeleteFaculty" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
-               <SVGPath content="m9.4 15.808l2.6-2.6l2.6 2.6l.708-.708l-2.6-2.6l2.6-2.6l-.708-.708l-2.6 2.6l-2.6-2.6l-.708.708l2.6 2.6l-2.6 2.6l.708.708ZM7.615 20q-.69 0-1.152-.462Q6 19.075 6 18.385V6H5V5h4v-.77h6V5h4v1h-1v12.385q0 .69-.462 1.152q-.463.463-1.153.463h-8.77Z" styleClass="icons">
+               <SVGPath content="m9.4 15.808l2.6-2.6l2.6 2.6l.708-.708l-2.6-2.6l2.6-2.6l-.708-.708l-2.6 2.6l-2.6-2.6l-.708.708l2.6 2.6l-2.6 2.6l.708.708ZM7.615 20q-.69 0-1.152-.462Q6 19.075 6 18.385V6H5V5h4v-.77h6V5h4v1h-1v12.385q0 .69-.462 1.152q-.463.463-1.153.463h-8.77Z" scaleX="0.8" scaleY="0.8" styleClass="icons">
                   <HBox.margin>
                      <Insets />
                   </HBox.margin>
@@ -88,7 +88,7 @@
          </HBox>
          <HBox alignment="CENTER" layoutX="464.0" layoutY="10.0" onMouseClicked="#handleRefreshTable" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
-               <SVGPath content="M12.872 13.191H18V8.064c-.008-1.135-.671-1.408-1.473-.605l-1.154 1.158a5.756 5.756 0 0 0-3.566-1.23c-1.55 0-3.009.604-4.104 1.701A5.748 5.748 0 0 0 6 13.191c0 1.553.604 3.012 1.701 4.107A5.77 5.77 0 0 0 11.807 19c1.55 0 3.009-.605 4.106-1.703c.296-.297.558-.621.78-.965a1.16 1.16 0 1 0-1.954-1.255c-.133.207-.292.4-.468.58a3.465 3.465 0 0 1-2.464 1.02a3.46 3.46 0 0 1-2.464-1.02a3.466 3.466 0 0 1-1.02-2.465c0-.93.362-1.805 1.02-2.461a3.466 3.466 0 0 1 2.464-1.021c.688 0 1.346.201 1.909.572l-1.448 1.451c-.803.802-.53 1.458.604 1.458z" styleClass="icons">
+               <SVGPath content="M12.872 13.191H18V8.064c-.008-1.135-.671-1.408-1.473-.605l-1.154 1.158a5.756 5.756 0 0 0-3.566-1.23c-1.55 0-3.009.604-4.104 1.701A5.748 5.748 0 0 0 6 13.191c0 1.553.604 3.012 1.701 4.107A5.77 5.77 0 0 0 11.807 19c1.55 0 3.009-.605 4.106-1.703c.296-.297.558-.621.78-.965a1.16 1.16 0 1 0-1.954-1.255c-.133.207-.292.4-.468.58a3.465 3.465 0 0 1-2.464 1.02a3.46 3.46 0 0 1-2.464-1.02a3.466 3.466 0 0 1-1.02-2.465c0-.93.362-1.805 1.02-2.461a3.466 3.466 0 0 1 2.464-1.021c.688 0 1.346.201 1.909.572l-1.448 1.451c-.803.802-.53 1.458.604 1.458z" scaleX="0.9" scaleY="0.9" styleClass="icons">
                   <HBox.margin>
                      <Insets />
                   </HBox.margin>
@@ -104,7 +104,7 @@
          </HBox>
          <HBox alignment="CENTER" layoutX="508.0" layoutY="10.0" onMouseClicked="#handleAssignSubject" prefHeight="26.0" prefWidth="85.0" spacing="3.0" styleClass="main-action-button">
             <children>
-               <SVGPath content="M4 20V4h6.315q-.111-.785.389-1.392Q11.204 2 12 2t1.296.608q.5.607.389 1.392H20v16H4Zm8-15.558q.325 0 .537-.212t.213-.538q0-.325-.213-.537T12 2.942q-.325 0-.537.213t-.213.537q0 .325.213.538t.537.212Zm0 8.635q1.258 0 2.129-.871t.871-2.13q0-1.257-.871-2.128T12 7.077q-1.258 0-2.129.871T9 10.077q0 1.258.871 2.129t2.129.87ZM5 19h14v-.765q-1.35-1.325-3.138-2.088T12 15.385q-2.075 0-3.863.762T5 18.235V19Z" styleClass="icons">
+               <SVGPath content="M4 20V4h6.315q-.111-.785.389-1.392Q11.204 2 12 2t1.296.608q.5.607.389 1.392H20v16H4Zm8-15.558q.325 0 .537-.212t.213-.538q0-.325-.213-.537T12 2.942q-.325 0-.537.213t-.213.537q0 .325.213.538t.537.212Zm0 8.635q1.258 0 2.129-.871t.871-2.13q0-1.257-.871-2.128T12 7.077q-1.258 0-2.129.871T9 10.077q0 1.258.871 2.129t2.129.87ZM5 19h14v-.765q-1.35-1.325-3.138-2.088T12 15.385q-2.075 0-3.863.762T5 18.235V19Z" scaleX="0.8" scaleY="0.8" styleClass="icons">
                   <HBox.margin>
                      <Insets />
                   </HBox.margin>
@@ -140,7 +140,7 @@
     <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="810.0" spacing="10.0" styleClass="button-container">
       <HBox alignment="CENTER" onMouseClicked="#handleExportCSV" prefHeight="34.0" prefWidth="122.0" spacing="3.0" styleClass="utility-button">
          <children>
-            <SVGPath content="m16.565 20.096l2.531-2.53v2.069h.77V16.25H16.48v.77h2.069l-2.53 2.53l.545.546ZM5.615 20q-.67 0-1.143-.472Q4 19.056 4 18.385V5.615q0-.67.472-1.143Q4.944 4 5.615 4h12.77q.67 0 1.143.472q.472.472.472 1.143v5.95q-.263-.09-.504-.147q-.24-.056-.496-.112v-5.69q0-.231-.192-.424Q18.615 5 18.385 5H5.615q-.23 0-.423.192Q5 5.385 5 5.615v12.77q0 .23.192.423q.193.192.423.192h5.666q.036.28.093.521q.057.24.147.479H5.615ZM5 18v1V5v6.306v-.075V18Zm2.5-1.73h3.96q.055-.257.15-.497l.2-.504H7.5v1Zm0-3.77h6.58q.493-.346.97-.587q.479-.24 1.027-.376V11.5H7.5v1Zm0-3.77h9v-1h-9v1ZM18 22.116q-1.671 0-2.836-1.164T14 18.115q0-1.67 1.164-2.835T18 14.115q1.671 0 2.836 1.165T22 18.115q0 1.672-1.164 2.836Q19.67 22.115 18 22.115Z" styleClass="icons">
+            <SVGPath content="m16.565 20.096l2.531-2.53v2.069h.77V16.25H16.48v.77h2.069l-2.53 2.53l.545.546ZM5.615 20q-.67 0-1.143-.472Q4 19.056 4 18.385V5.615q0-.67.472-1.143Q4.944 4 5.615 4h12.77q.67 0 1.143.472q.472.472.472 1.143v5.95q-.263-.09-.504-.147q-.24-.056-.496-.112v-5.69q0-.231-.192-.424Q18.615 5 18.385 5H5.615q-.23 0-.423.192Q5 5.385 5 5.615v12.77q0 .23.192.423q.193.192.423.192h5.666q.036.28.093.521q.057.24.147.479H5.615ZM5 18v1V5v6.306v-.075V18Zm2.5-1.73h3.96q.055-.257.15-.497l.2-.504H7.5v1Zm0-3.77h6.58q.493-.346.97-.587q.479-.24 1.027-.376V11.5H7.5v1Zm0-3.77h9v-1h-9v1ZM18 22.116q-1.671 0-2.836-1.164T14 18.115q0-1.67 1.164-2.835T18 14.115q1.671 0 2.836 1.165T22 18.115q0 1.672-1.164 2.836Q19.67 22.115 18 22.115Z" scaleX="0.9" scaleY="0.9" styleClass="icons">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -160,7 +160,7 @@
       </HBox>
       <HBox fx:id="backButton" alignment="CENTER" layoutX="683.0" layoutY="30.0" onMouseClicked="#handleExportCSV" prefHeight="34.0" prefWidth="85.0" spacing="3.0" styleClass="utility-button">
          <children>
-            <SVGPath content="M10 19.438L8.955 20.5l-7.666-7.79a1.02 1.02 0 0 1 0-1.42L8.955 3.5L10 4.563L2.682 12z" styleClass="icons">
+            <SVGPath content="M10 19.438L8.955 20.5l-7.666-7.79a1.02 1.02 0 0 1 0-1.42L8.955 3.5L10 4.563L2.682 12z" scaleX="0.8" scaleY="0.8" styleClass="icons">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

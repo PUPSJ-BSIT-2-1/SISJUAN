@@ -1,4 +1,14 @@
 /* Welcome text style */
+
+.root {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-background-color: white; /* Light grey background for the app (default for .root elements) */
+}
+
+.dark-theme .root {
+    -fx-background-color: transparent; /* Dark grey background for the app (default for .root elements) */
+}
+
 .welcome-text {
     -fx-font-size: 14px;
     -fx-text-fill: white;
@@ -140,7 +150,7 @@
 
 /* Dark theme card style */
 .dark-theme .cards {
-    -fx-background-color: #3a3a3a;
+    -fx-background-color: #2b2b2b;
     -fx-border-color: #555555;
 }
 
@@ -192,25 +202,6 @@
 /* Dark theme statistic icon style */
 .dark-theme .stat-icon {
     -fx-fill: #e57373;
-}
-
-/* ComboBox styles */
-.combo-box {
-    -fx-background-color: #f8fcfc;
-    -fx-border-color: #e3e5e6;
-    -fx-border-radius: 5;
-}
-
-.modern-combo {
-    -fx-background-color: white;
-    -fx-border-color: #d5d5d5;
-    -fx-border-radius: 5;
-    -fx-font-size: 14px;
-}
-
-.modern-combo:focused {
-    -fx-border-color: #800000;
-    -fx-background-color: white;
 }
 
 /* No gray out when combo box is disabled */
@@ -309,21 +300,6 @@
     -fx-background-color: #b8b8b8;
 }
 
-/* Dark theme additions */
-.dark-theme .modern-combo {
-    -fx-background-color: #454545;
-    -fx-border-color: #565656;
-    -fx-text-fill: #e0e0e0;
-}
-
-.dark-theme .modern-combo:hover {
-    -fx-border-color: #757575;
-}
-
-.dark-theme .modern-combo:focused {
-    -fx-border-color: #c22222;
-}
-
 .dark-theme .subject-code {
     -fx-text-fill: #e57373;
 }
@@ -407,4 +383,153 @@
 
 .action-button:hover {
     -fx-background-color: #600000;
+}
+
+
+.modern-check-box {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.modern-check-box .box {
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+}
+
+
+.dark-theme .modern-check-box {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .modern-check-box .box {
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+}
+
+.combo-box .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #343a40;
+    -fx-text-fill: #343a40;
+}
+
+.combo-box:hover {
+    -fx-border-color: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.dark-theme .combo-box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .combo-box:hover {
+    -fx-border-color: #888888;
+}
+
+.dark-theme .combo-box .arrow {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .combo-box .list-view {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.dark-theme .combo-box .list-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+}
+
+.dark-theme .combo-box .list-cell:hover {
+    -fx-background-color: #555555;
+}
+
+.info-label {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+}
+
+.dark-theme .info-label {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.exceeded-label {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cc0000; /* darker red */
+    -fx-font-weight: bold;
+}
+
+.dark-theme .exceeded-label {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
 }

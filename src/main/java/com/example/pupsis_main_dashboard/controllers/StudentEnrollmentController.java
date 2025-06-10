@@ -41,9 +41,9 @@ public class StudentEnrollmentController implements Initializable {
 
     private StudentEnrollmentContext studentEnrollmentContext; 
     private List<SubjectData> availableSubjects;
-    private List<CheckBox> subjectCheckboxes = new ArrayList<>();
-    private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
-    private Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
+    private final List<CheckBox> subjectCheckboxes = new ArrayList<>();
+    private final Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
+    private final Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
     private int currentSelectedUnits = 0;
 
     private static final List<String> TIME_SLOTS = Arrays.asList(
@@ -123,7 +123,7 @@ public class StudentEnrollmentController implements Initializable {
                     logger.error("handleEnrollment Task: Student context or ID not found for enrollment.");
                     throw new SQLException("Student context or ID not found for enrollment.");
                 }
-                int studentDbId = currentContext.studentId(); // Use studentId from currentContext
+                int studentDbId = currentContext.studentId(); // Use studentId from the currentContext
                 String studentCurrentYearSection = currentContext.studentYearSection(); // Use yearSection from currentContext
 
                 if (studentCurrentYearSection == null || studentCurrentYearSection.trim().isEmpty()) {
@@ -132,7 +132,7 @@ public class StudentEnrollmentController implements Initializable {
                 }
 
                 String academicYear = getCurrentAcademicYear();
-                // Ensure currentSemesterForDB is derived correctly, possibly from currentContext if UI label is not reliable here
+                // Ensure currentSemesterForDB is derived correctly, possibly from currentContext if the UI label is not reliable here
                 String currentSemesterForDB = currentContext.semesterString(); 
                 if (currentSemesterForDB == null || currentSemesterForDB.equals("N/A") || currentSemesterForDB.trim().isEmpty()) {
                      logger.error("handleEnrollment Task: Could not determine current semester for enrollment from context.");
@@ -145,7 +145,7 @@ public class StudentEnrollmentController implements Initializable {
                     connection.setAutoCommit(false);
 
                     // Get the next load_id for student_load. This assumes load_id is an auto-increment or needs manual sequence handling.
-                    // For simplicity, let's assume it's manually handled or you have a sequence. Here, we'll find max + 1.
+                    // For simplicity, let's assume it's manually handled, or you have a sequence. Here, we'll find max + 1.
                     // THIS IS NOT ROBUST FOR CONCURRENT ENVIRONMENTS. A SEQUENCE IS PREFERRED.
                     int nextLoadId = 0;
                     try (Statement stmtMaxId = connection.createStatement();
@@ -164,8 +164,8 @@ public class StudentEnrollmentController implements Initializable {
 
                     try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
                         for (EnrollmentData enrollment : selectedSubjects) {
-                            stmt.setInt(1, studentDbId); // student_pk_id from students table
-                            stmt.setInt(2, Integer.parseInt(enrollment.subjectId())); // subject_id from subjects table
+                            stmt.setInt(1, studentDbId); // student_pk_id from students' table
+                            stmt.setInt(2, Integer.parseInt(enrollment.subjectId())); // subject_id from the subject table
                             stmt.setInt(3, currentContext.semesterId()); // semester_id from context
                             stmt.setInt(4, nextLoadId++); // PK for student_load
                             stmt.setInt(5, currentContext.academicYearId()); // academic_year_id from context
@@ -190,7 +190,7 @@ public class StudentEnrollmentController implements Initializable {
                             ex.printStackTrace();
                         }
                     }
-                    throw e; // Re-throw to be caught by task's exception handler
+                    throw e; // Re-throw to be caught by the task's exception handler
                 }
             }
         };
@@ -258,7 +258,7 @@ public class StudentEnrollmentController implements Initializable {
             return; // No enabled checkboxes to act upon
         }
 
-        // Determine target state based on whether all *enabled* checkboxes are currently selected
+        // Determine a target state based on whether all *enabled* checkboxes are currently selected
         boolean allCurrentlyEnabledSelected = enabledCheckboxes.stream().allMatch(CheckBox::isSelected);
         boolean targetState = !allCurrentlyEnabledSelected;
 
@@ -266,7 +266,7 @@ public class StudentEnrollmentController implements Initializable {
             cb.setSelected(targetState);
         }
         updateSelectAllButtonState(); // Update button text and state
-        updateEnrollButtonState();    // Update enroll button based on new selection
+        updateEnrollButtonState();    // Update enroll button based on a new selection
     }
 
     private void updateEnrollButtonState() {
@@ -290,7 +290,7 @@ public class StudentEnrollmentController implements Initializable {
         this.availableSubjects = subjectLists.availableSubjects; 
 
         if (enrolledSubjectsDisplayContainer != null && subjectLists.enrolledSubjects != null && !subjectLists.enrolledSubjects.isEmpty()) {
-            // Optional: Add headers for enrolled subjects section for consistency
+            // Optional: Add headers for an enrolled subjects section for consistency
             HBox enrolledHeaderBox = new HBox(10);
             enrolledHeaderBox.setPadding(new Insets(0, 0, 5, 0)); 
             Label enrolledSpacer = new Label(); // Spacer for checkbox column alignment
@@ -315,7 +315,7 @@ public class StudentEnrollmentController implements Initializable {
                 subjectBox.setAlignment(Pos.CENTER_LEFT);
                 subjectBox.getStyleClass().add("subject-row"); // Use similar styling if desired
 
-                Label spacerLabel = new Label(); // Spacer to align with checkbox column
+                Label spacerLabel = new Label(); // Spacer to align with the checkbox column
                 spacerLabel.setPrefWidth(40); // Match checkbox area width
                 spacerLabel.getStyleClass().add("cell-spacer");
 
@@ -363,7 +363,7 @@ public class StudentEnrollmentController implements Initializable {
                 codeLabel.setPrefWidth(200.0); // prefWidth from FXML
                 codeLabel.getStyleClass().add("subject-code"); // Style class from FXML
 
-                // Include units in the description label as it's not a separate column in FXML header
+                // Include units in the description label as it's not a separate column in the FXML header
                 Label descriptionLabel = new Label(String.format("%s (%d units)", subject.description(), subject.units()));
                 descriptionLabel.setPrefWidth(300.0); // prefWidth from FXML
                 descriptionLabel.setWrapText(true); // From FXML
@@ -407,7 +407,7 @@ public class StudentEnrollmentController implements Initializable {
                         hasActualSelectableSchedules = false; // Correct the flag
                     }
                 } 
-                // This 'else' covers cases where schedules list was null, empty, or only contained placeholders from the start.
+                // This 'else' covers cases where a schedule list was null, empty, or only contained placeholders from the start.
                 if (!hasActualSelectableSchedules) {
                     scheduleComboBox.getItems().clear(); // Ensure it's clean
                     scheduleComboBox.getItems().add("No schedules available");
@@ -417,7 +417,7 @@ public class StudentEnrollmentController implements Initializable {
                     checkBox.setDisable(true);   // Disable the checkbox
                 } else {
                     scheduleComboBox.setDisable(false);
-                    checkBox.setDisable(false); // Ensure checkbox is enabled if schedules are present
+                    checkBox.setDisable(false); // Ensure the checkbox is enabled if schedules are present
                 }
 
                 subjectCheckboxes.add(checkBox);
@@ -440,7 +440,7 @@ public class StudentEnrollmentController implements Initializable {
         if (selectAllButton != null) {
             // updateSelectAllButtonState already handles disabling if no enabled checkboxes exist.
             // So, this specific line might be redundant or can be simplified.
-            // For now, let updateSelectAllButtonState handle the logic.
+            // For now, let the updateSelectAllButtonState handle the logic.
             // selectAllButton.setDisable(this.availableSubjects.isEmpty()); // Original line
             updateSelectAllButtonState(); // Ensure button text and state are correct after population
         }
@@ -495,7 +495,7 @@ public class StudentEnrollmentController implements Initializable {
                 if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText(pageData.context().semesterString());
                 populateSubjectListUI(pageData.subjectLists(), pageData.context());
             } else {
-                // This case should ideally be handled by onFailed if an exception was thrown
+                // OnFailed should ideally handle this case if an exception was thrown
                 logger.error("refreshEnrollmentView: Task succeeded but returned null data or context.");
                 handleLoadErrorUI("Task completed but data is missing.");
             }
@@ -566,7 +566,7 @@ public class StudentEnrollmentController implements Initializable {
                             rs.getString("description"),
                             rs.getInt("units"),
                             String.valueOf(rs.getInt("subject_id")),
-                            null, // For enrolled subjects, specific schedule is primary, not list
+                            null, // For enrolled subjects, a specific schedule is primary, not a list
                             String.valueOf(rs.getInt("faculty_load_id")),
                             scheduleStr
                     ));
@@ -575,7 +575,7 @@ public class StudentEnrollmentController implements Initializable {
         }
         logger.debug("fetchEnrollmentSubjectLists (Phase 1 - Enrolled): Found {} enrolled subjects.", enrolledSubjects.size());
 
-        // Helper record to store intermediate data for available subjects
+        // Helper records to store intermediate data for available subjects
         record AvailableSubjectInfo(String subjectCode, String description, int units, String subjectId, String facultyLoadId) {}
         List<AvailableSubjectInfo> tempAvailableSubjectInfos = new ArrayList<>();
 
@@ -660,7 +660,7 @@ public class StudentEnrollmentController implements Initializable {
                     }
 
                     if (schedulesForSubject.isEmpty()) {
-                        // If no rows in schedule table for this faculty_load_id, add a placeholder
+                        // If no rows in the schedule table for this faculty_load_id, add a placeholder
                         schedulesForSubject.add("No schedules available for this offering");
                     }
 
@@ -723,21 +723,21 @@ public class StudentEnrollmentController implements Initializable {
         }
 
         String sql = "SELECT " +
-                "    sec.year_level, " +  
+                "    sec.year_level, " +
                 "    sec.section_name AS student_year_section, " +
                 "    sem.semester_name AS section_semester, " +
                 "    s.student_id, " +
-                "    sec.section_id, " +      
-                "    sec.semester_id, " +     
-                "    sec.academic_year_id " + 
+                "    sec.section_id, " +
+                "    sec.semester_id, " +
+                "    sec.academic_year_id " +
                 "FROM " +
                 "    public.students s " +
                 "LEFT JOIN " +
-                "    public.section sec ON s.current_year_section_id = sec.section_id " + 
+                "    public.section sec ON s.current_year_section_id = sec.section_id " +
                 "LEFT JOIN " +
-                "    public.semesters sem ON sec.semester_id = sem.semester_id " +        
+                "    public.semesters sem ON sec.semester_id = sem.semester_id " +
                 "LEFT JOIN " +
-                "    public.academic_years ay ON sec.academic_year_id = ay.academic_year_id " + 
+                "    public.academic_years ay ON sec.academic_year_id = ay.academic_year_id " +
                 "WHERE " +
                 "    s.student_number = ?";
 
@@ -761,7 +761,7 @@ public class StudentEnrollmentController implements Initializable {
                     return context;
                 } else {
                     logger.warn("fetchStudentEnrollmentContext: No enrollment context found for student identifier: {}", currentUserIdentifier);
-                    return null; // Or throw specific exception
+                    return null; // Or throw a specific exception
                 }
             }
         } catch (SQLException e) {
@@ -811,10 +811,11 @@ public class StudentEnrollmentController implements Initializable {
 
         if (unitCounterLabel != null) {
             unitCounterLabel.setText("Selected Units: " + currentSelectedUnits + "/" + MAX_UNITS);
+            unitCounterLabel.getStyleClass().add("info-label");
             if (currentSelectedUnits > MAX_UNITS) {
-                unitCounterLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;"); // Highlight if over limit
+                unitCounterLabel.getStyleClass().add("exceeded-label"); // Highlight if over limit
             } else {
-                unitCounterLabel.setStyle("-fx-text-fill: -fx-text-base-color; -fx-font-weight: normal;"); // Default style
+                unitCounterLabel.getStyleClass().add("info-label"); // Default style
             }
         }
 

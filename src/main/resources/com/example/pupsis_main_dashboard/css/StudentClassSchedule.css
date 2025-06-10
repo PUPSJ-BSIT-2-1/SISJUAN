@@ -144,6 +144,10 @@
 
 /* ==================== DARK THEME STYLES ==================== */
 
+.dark-theme .root {
+    -fx-background-color: transparent;
+}
+
 .dark-icons {
     -fx-fill: white;
 }

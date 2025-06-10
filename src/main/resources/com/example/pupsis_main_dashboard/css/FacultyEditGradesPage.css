@@ -223,7 +223,7 @@
 
 .mini-cards {
     -fx-background-color: #f8fcfc;
-    -fx-background-radius: 10;
+    -fx-background-radius: 8;
     -fx-border-color: #e3e5e6;
     -fx-border-width: 1.5;
     -fx-border-radius: 8;
@@ -362,18 +362,20 @@
 }
 
 .icon {
-    -fx-fill: black;
+    -fx-fill: #6b6b6b;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
 }
 
 .search-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #6b6b6b;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
     -fx-text-fill: #343a40;
-    -fx-padding: 3px;
+    -fx-padding: 5px;
     -fx-font-weight: bold;
 }
 
@@ -402,7 +404,7 @@
 }
 
 .dark-theme .icon {
-    -fx-fill: white;
+    -fx-fill: #b0b0b0;
 }
 
 .dark-theme .text {
@@ -432,7 +434,7 @@
 .dark-theme .search-text-field {
     -fx-background-color: #3a3a3a;
     -fx-border-width: 1px;
-    -fx-border-color: #555;
+    -fx-border-color: #555555;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
@@ -482,4 +484,26 @@
 /* Make sure text inside cells changes color in dark theme */
 .dark-theme .table-row-cell:hover .text {
     -fx-fill: white;
+}
+
+.total-student {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .total-student {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #b22222;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .mini-cards {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 8;
+    -fx-border-color: #555555;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
 }

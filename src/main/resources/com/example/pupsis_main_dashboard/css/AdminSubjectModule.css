@@ -161,13 +161,13 @@
 }
 
 .search-icon {
-    -fx-fill: black;
+    -fx-fill: #6b6b6b;
 }
 
 .search-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #6b6b6b;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
@@ -191,8 +191,8 @@
 
 .year-combo-box {
     -fx-background-color: white;
-    -fx-border-color: #343a40;
-    -fx-border-width: 2px;
+    -fx-border-color: #6b6b6b;
+    -fx-border-width: 1px;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
@@ -406,13 +406,13 @@
 }
 
 .dark-theme .search-icon {
-    -fx-fill: #e0e0e0;
+    -fx-fill: #b0b0b0;
 }
 
 .dark-theme .search-text-field {
     -fx-background-color: #3a3a3a;
+    -fx-border-color: #b0b0b0;
     -fx-border-width: 1px;
-    -fx-border-color: #555;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
@@ -436,8 +436,8 @@
 
 .dark-theme .year-combo-box {
     -fx-background-color: #3a3a3a;
-    -fx-border-color: #555555;
-    -fx-border-width: 2px;
+    -fx-border-color: #b0b0b0;
+    -fx-border-width: 1px;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";

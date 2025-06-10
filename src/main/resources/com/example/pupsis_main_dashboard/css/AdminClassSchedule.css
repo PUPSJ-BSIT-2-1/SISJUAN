@@ -124,7 +124,7 @@
 }
 
 .filter-icon {
-    -fx-fill: black;
+    -fx-fill: #6b6b6b;
 }
 
 .utility-button {
@@ -272,7 +272,7 @@
 }
 
 .dark-theme .filter-icon {
-    -fx-fill: white;
+    -fx-fill: #b0b0b0;
 }
 
 .dark-theme .add-button-label {
@@ -329,7 +329,7 @@
 .add-schedule-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #6b6b6b;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
