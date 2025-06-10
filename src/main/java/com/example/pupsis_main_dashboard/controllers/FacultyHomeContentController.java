@@ -256,12 +256,12 @@ public class FacultyHomeContentController {
         // Get the current day in short form (e.g., Mon, Tue)
         String today = LocalDate.now().getDayOfWeek().toString().substring(0, 3);
         logger.info("loadTodaySchedule: Attempting to load today's ({}) schedule for facultyId: {}", today, facultyId);
-        String sql = "SELECT s.subject_code, s.description, r.room_name, sch.start_time, sch.end_time, ys.year_section " +
+        String sql = "SELECT s.subject_code, s.description, r.room_name, sch.start_time, sch.end_time, sec.section_name AS year_section " +
                      "FROM schedule sch " +
                      "JOIN faculty_load fl ON sch.faculty_load_id = fl.load_id " +
                      "JOIN subjects s ON fl.subject_id = s.subject_id " +
-                     "JOIN room r ON sch.room_id = r.room_id " +
-                     "JOIN year_section ys ON ys.section_id = fl.section_id " +
+                     "LEFT JOIN room r ON sch.room_id = r.room_id " +
+                     "JOIN section sec ON sec.section_id = fl.section_id " +
                      "WHERE fl.faculty_id = ? AND sch.days LIKE '%' || ? || '%' AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
         List<Node> scheduleNodes = new ArrayList<>();
 

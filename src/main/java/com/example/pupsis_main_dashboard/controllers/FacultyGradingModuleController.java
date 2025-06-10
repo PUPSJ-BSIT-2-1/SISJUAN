@@ -9,23 +9,21 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableRow;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.ScrollPane;
+
 import java.io.IOException;
 
 import javafx.scene.Node;
@@ -65,6 +63,12 @@ public class FacultyGradingModuleController implements Initializable {
             searchIconContainer.setOnMouseClicked(event -> {
                 // Your click handler code
             });
+        }
+
+        var columns = new TableColumn[]{yearSecCol, semCol, subjCodeCol, subjDescCol};
+        for (var col : columns) {
+            col.setReorderable(false);
+            col.setSortable(false);
         }
 
         // Show loading indicator
@@ -181,17 +185,17 @@ public class FacultyGradingModuleController implements Initializable {
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
                 SELECT 
-                    ys.year_section, 
+                    sec.section_name AS year_section, 
                     sem.semester_id, 
                     s.subject_code, 
                     s.description,
                     s.subject_id
                 FROM faculty_load fl
                 JOIN subjects s ON fl.subject_id = s.subject_id
-                JOIN year_section ys ON fl.section_id = ys.section_id
+                JOIN section sec ON fl.section_id = sec.section_id
                 JOIN semesters sem ON fl.semester_id = sem.semester_id
                 WHERE fl.faculty_id = ?::smallint
-                ORDER BY ys.year_section, sem.semester_id, s.subject_code;
+                ORDER BY sec.section_name, sem.semester_id, s.subject_code;
                 """;
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, String.valueOf(facultyId));

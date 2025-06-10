@@ -2,16 +2,15 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Faculty;
 import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Tooltip;
 
@@ -45,7 +44,7 @@ public class AdminFacultyPreviewController {
         try {
             facultyDAO = new FacultyDAO();
         } catch (SQLException e) {
-            showError("Database connection failed.");
+            StageAndSceneUtils.showAlert("Error", "Failed to connect to database.", Alert.AlertType.ERROR);
             return;
         }
 
@@ -97,8 +96,8 @@ public class AdminFacultyPreviewController {
                 // Load the FXML content into a Parent node
                 Parent newContent = loader.load();
 
-                // Retrieve the controller for the loaded FXML (FacultyManagementController)
-                FacultyManagementController controller = loader.getController();
+                // Retrieve the controller for the loaded FXML (AdminFacultyManagementController)
+                AdminFacultyManagementController controller = loader.getController();
 
                 // Replace the current content of the ScrollPane with the newly loaded content
                 contentPane.setContent(newContent);
@@ -116,7 +115,6 @@ public class AdminFacultyPreviewController {
             long fullTimeCount = allFaculty.stream()
                     .filter(f -> f.getFacultyStatusName() != null && "Full-time".equalsIgnoreCase(f.getFacultyStatusName()))
                     .count();
-
             long partTimeCount = allFaculty.stream()
                     .filter(f -> f.getFacultyStatusName() != null && "Part-time".equalsIgnoreCase(f.getFacultyStatusName()))
                     .count();
@@ -136,7 +134,7 @@ public class AdminFacultyPreviewController {
             recentFacultyTable.setItems(FXCollections.observableArrayList(recent));
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Failed to load dashboard data.");
+            StageAndSceneUtils.showAlert("Error", "Failed to load dashboard data.", Alert.AlertType.ERROR);
         }
     }
 
@@ -158,29 +156,8 @@ public class AdminFacultyPreviewController {
                     .collect(Collectors.toList());
             recentFacultyTable.setItems(FXCollections.observableArrayList(filtered));
         } catch (Exception e) {
-            showError("Search failed.");
+            StageAndSceneUtils.showAlert("Error", "Failed to filter table.", Alert.AlertType.ERROR);
         }
-    }
-
-    @FXML
-    private void handleManageFaculty() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyManagement.fxml"));
-            Parent managementRoot = loader.load();
-
-            Stage currentStage = (Stage) manageButton.getScene().getWindow();
-            Scene scene = new Scene(managementRoot);
-            currentStage.setScene(scene);
-            currentStage.setTitle("Faculty Management");
-        } catch (IOException e) {
-            showError("Failed to load Faculty Management interface.");
-            e.printStackTrace();
-        }
-    }
-
-    private void showError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        alert.showAndWait();
     }
 
     private void showInfo(String title, String msg) {

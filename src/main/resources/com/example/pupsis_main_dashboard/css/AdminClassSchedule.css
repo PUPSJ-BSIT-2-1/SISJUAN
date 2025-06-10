@@ -21,7 +21,7 @@
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
     -fx-alignment: center-left;
-    -fx-padding : 20px;
+    -fx-padding : 15px;
 }
 
 .red-card .label {
@@ -127,6 +127,33 @@
     -fx-fill: black;
 }
 
+.utility-button {
+    -fx-background-color: #3c5888;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.utility-button:hover {
+    -fx-background-color: #4d6ea6; /* lighter blue */
+    -fx-cursor: hand;
+}
+
+.utility-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.no-schedules-message {
+    -fx-text-fill: black;
+}
+
+.dark-theme .no-schedules-message {
+    -fx-text-fill: white;
+}
+
 /* DARK THEME STYLES */
 
 .dark-theme .cards {
@@ -144,7 +171,7 @@
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
     -fx-alignment: center-left;
-    -fx-padding: 20px;
+    -fx-padding: 15px;
 }
 
 .dark-theme .red-card .label {
@@ -253,6 +280,25 @@
     -fx-text-fill: white;
 }
 
+.dark-theme .utility-button {
+    -fx-background-color: #3c5888;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.dark-theme .utility-button:hover {
+    -fx-background-color: #4a6aa3; /* slightly lighter */
+    -fx-cursor: hand;
+}
+
+.dark-theme .utility-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
 /* =================STYLE FOR THE ADD SCHEDULE CONTAINER================== */
 
 .add-schedule-container {
@@ -320,6 +366,13 @@
     -fx-text-fill: #343a40;
 }
 
+.combo-box .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
 .combo-box .arrow {
     -fx-background-color: #343a40;
     -fx-text-fill: #343a40;
@@ -335,6 +388,7 @@
     -fx-border-color: #343a40;
     -fx-border-width: 1px;
     -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
 }
 
 .combo-box .list-cell {
@@ -342,6 +396,8 @@
     -fx-text-fill: #343a40;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
 }
 
 .combo-box .list-cell:hover {

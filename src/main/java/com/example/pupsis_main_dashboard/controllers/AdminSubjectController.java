@@ -1,22 +1,16 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-import com.example.pupsis_main_dashboard.models.SubjectManagement;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.sql.Connection;
@@ -29,9 +23,9 @@ public class AdminSubjectController implements Initializable {
     @FXML private TableView<SubjectManagement> tableView;
     @FXML private TableColumn<SubjectManagement, String> subjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> prerequisiteColumn;
-    @FXML private TableColumn<SubjectManagement, String> equivSubjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> descriptionColumn;
     @FXML private TableColumn<SubjectManagement, Double> unitColumn;
+    @FXML private TableColumn<SubjectManagement, String> equivSubjectCodeColumn; // Added equivSubjectCodeColumn
     @FXML private ComboBox<String> yearSemComboBox;
     @FXML private TextField searchBar;
 
@@ -51,11 +45,11 @@ public class AdminSubjectController implements Initializable {
 
         tableView.setRowFactory(_ -> {
             TableRow<SubjectManagement> row = new TableRow<>();
-            row.setPrefHeight(13);
+            row.setPrefHeight(15);
             return row;
         });
 
-        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, equivSubjectCodeColumn, descriptionColumn, unitColumn};
+        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, descriptionColumn, unitColumn, equivSubjectCodeColumn}; // Added equivSubjectCodeColumn
         for (var col : columns) {
             col.setReorderable(false);
         }
@@ -67,8 +61,9 @@ public class AdminSubjectController implements Initializable {
         // Table columns setup
         subjectCodeColumn.setCellValueFactory(new PropertyValueFactory<>("subjectCode"));
         prerequisiteColumn.setCellValueFactory(new PropertyValueFactory<>("prerequisite"));
-        equivSubjectCodeColumn.setCellValueFactory(new PropertyValueFactory<>("equivSubjectCode"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        unitColumn.setCellValueFactory(new PropertyValueFactory<>("unit"));
+        equivSubjectCodeColumn.setCellValueFactory(new PropertyValueFactory<>("equivSubjectCode")); // Setup for equivSubjectCodeColumn
 
         // Center align all columns except description
         subjectCodeColumn.setCellFactory(tc -> {
@@ -103,6 +98,23 @@ public class AdminSubjectController implements Initializable {
             return cell;
         });
 
+        unitColumn.setCellFactory(tc -> {
+            TableCell<SubjectManagement, Double> cell = new TableCell<SubjectManagement, Double>() {
+                @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.toString());
+                        setAlignment(Pos.CENTER);
+                    }
+
+                }
+            };
+            return cell;
+        });
+
         equivSubjectCodeColumn.setCellFactory(tc -> {
             TableCell<SubjectManagement, String> cell = new TableCell<SubjectManagement, String>() {
                 @Override
@@ -114,22 +126,6 @@ public class AdminSubjectController implements Initializable {
                         setText(item);
                         setAlignment(Pos.CENTER);
                     }
-                }
-            };
-            return cell;
-        });
-
-        unitColumn.setCellFactory(tc -> {
-            TableCell<SubjectManagement, Double> cell = new TableCell<SubjectManagement, Double>() {
-                @Override
-                protected void updateItem(Double item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                        setText(item.toString());
-                    }
-                    setAlignment(Pos.CENTER);
                 }
             };
             return cell;
@@ -151,8 +147,6 @@ public class AdminSubjectController implements Initializable {
             };
             return cell;
         });
-
-        unitColumn.setCellValueFactory(new PropertyValueFactory<>("unit"));
 
         // ComboBox filter options
         yearSemComboBox.getItems().addAll(
@@ -191,313 +185,290 @@ public class AdminSubjectController implements Initializable {
         updateFilter();
 
         // Button handlers
-        addButton.setOnAction(e -> handleAdd());
-        editButton.setOnAction(e -> handleEdit());
-        deleteButton.setOnAction(e -> handleDelete());
-        refreshButton.setOnAction(e -> {
+        addButton.setOnAction(_ -> handleAdd());
+        editButton.setOnAction(_ -> handleEdit());
+        deleteButton.setOnAction(_ -> handleDelete());
+        refreshButton.setOnAction(_ -> {
             setupInitialSubjects();
             updateFilter();
         });
     }
 
-    private void setupInitialSubjects() {
-        // Clear existing subjects if any
-        allSubjects.clear();
-
-        // Fetch subjects from Supabase
-        try (Connection connection = DBConnection.getConnection()) {
-            String query = "SELECT s.subject_code, s.pre_requisites, s.description, s.units, yl.year_level_name AS year_level, sem.semester_name AS semester " +
-                    "FROM public.subjects s " +
-                    "JOIN public.year_levels yl ON s.year_level_id = yl.year_level_id " +
-                    "JOIN public.semesters sem ON s.semester_id = sem.semester_id " +
-                    "ORDER BY yl.year_level_name, sem.semester_name, s.subject_code";
-
-            try (PreparedStatement statement = connection.prepareStatement(query);
-                 ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-                    String subjectCode = resultSet.getString("subject_code");
-                    String preRequisites = resultSet.getString("pre_requisites");
-                    String description = resultSet.getString("description");
-                    double units = resultSet.getDouble("units");
-                    String yearLevel = resultSet.getString("year_level"); // Already aliased from yl.year_level_name
-                    String semester = resultSet.getString("semester"); // Now aliased from sem.semester_name
-
-                    // Using subjectCode for equivSubjectCode as specified
-                    SubjectManagement subject = new SubjectManagement(
-                            subjectCode,
-                            preRequisites != null ? preRequisites : "",
-                            subjectCode, // Using subject_code for equiv_code
-                            description,
-                            units,
-                            yearLevel,
-                            semester
-                    );
-
-                    allSubjects.add(subject);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "Failed to load subjects from the database: " + e.getMessage());
-        }
+    private Integer getSemesterIdFromName(String semesterName) {
+        return switch (semesterName) {
+            case "1st Semester" -> 1;
+            case "Summer Semester" -> 2;
+            case "2nd Semester" -> 3;
+            default -> null; // Or throw an exception for an unknown semester name
+        };
     }
 
     private void updateFilter() {
+        String searchText = searchBar.getText().toLowerCase();
+        String selectedYearSem = yearSemComboBox.getValue();
+
         filteredSubjects.setPredicate(subject -> {
-            boolean yearSemMatch = true;
+            boolean matchesSearchText = isMatchesSearchText(subject, searchText);
 
-            if (!"Year & Semester".equals(currentYearSem)) {
-                if (currentYearSem.contains("SUMMER")) {
-                    yearSemMatch = "SUMMER".equalsIgnoreCase(subject.getSemester());
+            boolean matchesYearSem = true;
+            if (selectedYearSem != null && !selectedYearSem.equals("Year & Semester")) {
+                String[] parts = selectedYearSem.split(" - ");
+                if (parts.length == 2) {
+                    try {
+                        int yearFilter = Integer.parseInt(parts[0].replaceAll("[^0-9]", ""));
+                        String semesterNameFilter = parts[1];
+                        Integer semesterIdFilter = getSemesterIdFromName(semesterNameFilter);
+
+                        matchesYearSem = subject.getYearLevel() != null && subject.getYearLevel() == yearFilter &&
+                                subject.getSemesterId() != null && subject.getSemesterId().equals(semesterIdFilter);
+                    } catch (NumberFormatException e) {
+                        // Handle parsing error if necessary, for now, assume a valid format or no match
+                        matchesYearSem = false;
+                    }
                 } else {
-                    String[] parts = currentYearSem.split(" - ");
-                    if (parts.length == 2) {
-                        String year = parts[0].trim();
-                        String semester = parts[1].trim();
-                        yearSemMatch = year.equalsIgnoreCase(subject.getYearLevel()) && semester.equalsIgnoreCase(subject.getSemester());
-                    }
+                    matchesYearSem = false; // Invalid format
                 }
             }
-
-            boolean searchMatch = true;
-            if (currentSearchText != null && !currentSearchText.isEmpty()) {
-                String searchTextLower = currentSearchText.toLowerCase();
-                searchMatch = subject.getSubjectCode().toLowerCase().contains(searchTextLower) ||
-                        subject.getDescription().toLowerCase().contains(searchTextLower) ||
-                        subject.getPrerequisite().toLowerCase().contains(searchTextLower) ||
-                        subject.getEquivSubjectCode().toLowerCase().contains(searchTextLower);
-            }
-
-            return yearSemMatch && searchMatch;
+            return matchesSearchText && matchesYearSem;
         });
+
+        // Put a placeholder if no subjects found
+        Label placeholder = new Label("No subjects found");
+        placeholder.getStyleClass().add("no-subjects-placeholder");
+        tableView.setPlaceholder(placeholder);
     }
 
-    private void handleAdd() {
-        SubjectManagement newSubject = showSubjectForm(null);
-        if (newSubject != null) {
-            // Save to database first
-            if (saveSubjectToDatabase(newSubject, true)) {
-                // If database save was successful, add to UI
-                allSubjects.add(newSubject);
-                updateFilter();
-                showAlert("Success", "Subject added successfully.");
-            }
+    private boolean isMatchesSearchText(SubjectManagement subject, String searchText) {
+        boolean matchesSearchText = true;
+        if (searchText != null && !searchText.isEmpty()) {
+            matchesSearchText = subject.getSubjectCode().toLowerCase().contains(searchText) ||
+                    subject.getDescription().toLowerCase().contains(searchText) ||
+                    (subject.getPrerequisite() != null && subject.getPrerequisite().toLowerCase().contains(searchText)) ||
+                    (subject.getEquivSubjectCode() != null && subject.getEquivSubjectCode().toLowerCase().contains(searchText)); // Added equivSubjectCode to filter
         }
+        return matchesSearchText;
     }
 
-    private void handleEdit() {
-        SubjectManagement selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            SubjectManagement updatedSubject = showSubjectForm(selected);
-            if (updatedSubject != null) {
-                // Save changes to database
-                if (saveSubjectToDatabase(updatedSubject, false)) {
-                    // Refresh the table
-                    setupInitialSubjects(); // Reload all subjects
-                    tableView.refresh();
-                    showAlert("Success", "Subject updated successfully.");
-                }
-            }
-        } else {
-            showAlert("Edit Failed", "Please select a subject to edit.");
-        }
-    }
+    private void setupInitialSubjects() {
+        allSubjects.clear(); // Clear existing subjects before loading new ones
+        String sql = "SELECT subject_id, subject_code, pre_requisites, description, units, year_level, semester_id FROM subjects";
 
-    private void handleDelete() {
-        SubjectManagement selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            // Confirm deletion
-            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmAlert.setTitle("Confirm Deletion");
-            confirmAlert.setHeaderText(null);
-            confirmAlert.setContentText("Are you sure you want to delete the subject: " + selected.getSubjectCode() + "?");
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
-            Optional<ButtonType> result = confirmAlert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                // Delete from database first
-                if (deleteSubjectFromDatabase(selected)) {
-                    // If database deletion was successful, remove from UI
-                    allSubjects.remove(selected);
-                    updateFilter();
-                    showAlert("Success", "Subject deleted successfully.");
-                }
-            }
-        } else {
-            showAlert("Delete Failed", "Please select a subject to delete.");
-        }
-    }
-
-    private SubjectManagement showSubjectForm(SubjectManagement subject) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminSubjectForm.fxml"));
-            Parent parent = loader.load();
-
-            AdminSubjectFormController controller = loader.getController();
-            if (subject != null) {
-                controller.setSubject(subject);
-            }
-
-            Stage stage = new Stage();
-            stage.setTitle(subject == null ? "Add Subject" : "Edit Subject");
-            stage.setScene(new Scene(parent));
-            stage.setResizable(false);
-            stage.showAndWait();
-
-            return controller.getSubject();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Form Load Error", "Unable to open the subject form: " + e.getMessage());
-            return null;
-        }
-    }
-
-
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    public void addSubject(SubjectManagement subject) {
-        allSubjects.add(subject);
-        updateFilter();
-    }
-
-    private boolean saveSubjectToDatabase(SubjectManagement subject, boolean isNewSubject) {
-        try (Connection connection = DBConnection.getConnection()) {
-            if (isNewSubject) {
-                // First, get the next value from the sequence or find max id and increment
-                int newSubjectId = getNextSubjectId(connection);
-
-                // Now insert with the explicit subject_id
-                String query = """
-                        INSERT INTO subjects (subject_id, subject_code, pre_requisites, description, units, year_level_id, semester_id)
-                        VALUES (?, ?, ?, ?, ?,
-                        (SELECT year_level_id FROM year_levels WHERE year_level_name = ?),
-                        (SELECT semester_id FROM semesters WHERE semester_name = ?))
-                        """;
-
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.setInt(1, newSubjectId);
-                    statement.setString(2, subject.getSubjectCode());
-                    statement.setString(3, subject.getPrerequisite());
-                    statement.setString(4, subject.getDescription());
-                    statement.setDouble(5, subject.getUnit());
-                    statement.setString(6, subject.getYearLevel());
-                    statement.setString(7, subject.getSemester());
-
-                    int rowsAffected = statement.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        setupInitialSubjects();  // Refresh data
-                        return true;
-                    }
-                    return false;
-                }
-            } else {
-                // For updates, we need to find the subject_id first based on subject_code
-                int subjectId = getSubjectIdByCode(connection, subject.getSubjectCode());
-
-                if (subjectId == -1) {
-                    showAlert("Update Error", "Could not find subject with code: " + subject.getSubjectCode());
-                    return false;
-                }
-
-                String query = """
-                        UPDATE subjects SET pre_requisites = ?, description = ?, units = ?, 
-                        year_level_id = (SELECT year_level_id FROM year_levels WHERE year_level_name = ?), 
-                        semester_id = (SELECT semester_id FROM semesters WHERE semester_name = ?) 
-                        WHERE subject_id = ?
-                        """;
-
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.setString(1, subject.getPrerequisite());
-                    statement.setString(2, subject.getDescription());
-                    statement.setDouble(3, subject.getUnit());
-                    statement.setString(4, subject.getYearLevel());
-                    statement.setString(5, subject.getSemester());
-                    statement.setInt(6, subjectId);
-
-                    int rowsAffected = statement.executeUpdate();
-                    return rowsAffected > 0;
-                }
+            while (rs.next()) {
+                allSubjects.add(new SubjectManagement(
+                        rs.getInt("subject_id"),
+                        rs.getString("subject_code"),
+                        rs.getString("pre_requisites"),
+                        rs.getString("description"),
+                        rs.getDouble("units"),
+                        rs.getInt("year_level"),
+                        rs.getInt("semester_id")
+                ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error",
-                    isNewSubject ? "Failed to add new subject: " : "Failed to update subject: " + e.getMessage());
-            return false;
+            e.printStackTrace(); // Consider more sophisticated error handling
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load subjects from the database.");
         }
+        // tableView.setItems(allSubjects); // This will be set via SortedList bound to FilteredList
+    }
+
+    // Helper method to show the subject form dialog
+    private SubjectManagement showSubjectFormDialog(SubjectManagement subjectToEdit) {
+        // TODO: Implement or locate AdminSubjectForm.fxml and its controller
+        // Currently, the FXML and/or its controller cannot be found, so this functionality is disabled.
+        showAlert(Alert.AlertType.WARNING, "Feature Unavailable", "The form for adding/editing subjects is currently unavailable.");
+        return null; // Return null as the form cannot be shown
     }
 
     // Helper method to get the next available subject_id
     private int getNextSubjectId(Connection connection) throws SQLException {
-        // Try to get the next value from a sequence if it exists
-        try {
-            String sequenceQuery = "SELECT nextval('subjects_subject_id_seq')";
-            try (PreparedStatement stmt = connection.prepareStatement(sequenceQuery);
-                 ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
+        // Try to get the next value from a sequence if it exists (PostgreSQL specific)
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT nextval('subjects_subject_id_seq')");
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
             }
         } catch (SQLException e) {
-            // Sequence doesn't exist, fallback to finding max and incrementing
-            System.out.println("Sequence not found, getting max ID instead: " + e.getMessage());
+            // Sequence might not exist or other error fallback to MAX(subject_id) + 1
+            System.err.println("Sequence 'subjects_subject_id_seq' not found or error, falling back to MAX(subject_id): " + e.getMessage());
         }
 
-        // Find the maximum subject_id and increment by 1
-        String maxIdQuery = "SELECT COALESCE(MAX(subject_id), 0) + 1 FROM subjects";
-        try (PreparedStatement stmt = connection.prepareStatement(maxIdQuery);
+        // Fallback: Find the maximum subject_id and increment by 1
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT COALESCE(MAX(subject_id), 0) + 1 FROM subjects");
              ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
         }
-
-        // Default to 1 if we can't determine next ID
+        // Should not happen if a table exists, but as a last resort:
         return 1;
     }
 
-    // Helper method to get subject_id by subject_code
-    private int getSubjectIdByCode(Connection connection, String subjectCode) throws SQLException {
-        String query = "SELECT subject_id FROM subjects WHERE subject_code = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, subjectCode);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("subject_id");
+    private boolean saveSubjectToDatabase(SubjectManagement subject, boolean isNewSubject) {
+        String sql;
+        if (isNewSubject) {
+            sql = "INSERT INTO subjects (subject_id, subject_code, pre_requisites, description, units, year_level, semester_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        } else {
+            sql = "UPDATE subjects SET subject_code = ?, pre_requisites = ?, description = ?, units = ?, year_level = ?, semester_id = ? WHERE subject_id = ?";
+        }
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            if (isNewSubject) {
+                int newSubjectId = getNextSubjectId(conn);
+                pstmt.setInt(1, newSubjectId); // Use generated/retrieved subject_id
+                pstmt.setString(2, subject.getSubjectCode());
+                pstmt.setString(3, subject.getPrerequisite());
+                pstmt.setString(4, subject.getDescription());
+                pstmt.setDouble(5, subject.getUnit());
+                pstmt.setInt(6, subject.getYearLevel()); // Direct integer year_level
+                pstmt.setInt(7, subject.getSemesterId()); // Direct integer semester_id
+            } else {
+                pstmt.setString(1, subject.getSubjectCode());
+                pstmt.setString(2, subject.getPrerequisite());
+                pstmt.setString(3, subject.getDescription());
+                pstmt.setDouble(4, subject.getUnit());
+                pstmt.setInt(5, subject.getYearLevel()); // Direct integer year_level
+                pstmt.setInt(6, subject.getSemesterId()); // Direct integer semester_id
+                pstmt.setInt(7, subject.getSubjectId()); // WHERE clause
+            }
+
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", (isNewSubject ? "Failed to add subject: " : "Failed to update subject: ") + e.getMessage());
+            return false;
+        }
+    }
+
+    private void handleAdd() {
+        SubjectManagement newSubject = showSubjectFormDialog(null);
+        if (newSubject != null) {
+            if (saveSubjectToDatabase(newSubject, true)) {
+                // If DB save is successful, refresh the list from DB to get the new ID if it was auto-generated by a sequence
+                setupInitialSubjects();
+                updateFilter();
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Subject added successfully.");
+            } else {
+                // showAlert is already called in saveSubjectToDatabase on failure
+            }
+        }
+    }
+
+    private void handleEdit() {
+        SubjectManagement selectedSubject = tableView.getSelectionModel().getSelectedItem();
+        if (selectedSubject == null) {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a subject to edit.");
+            return;
+        }
+
+        SubjectManagement editedSubject = showSubjectFormDialog(selectedSubject);
+        if (editedSubject != null) {
+            // The editedSubject might be a new instance from the form, ensure it has the original ID for update
+            SubjectManagement subjectToSave = new SubjectManagement(
+                    selectedSubject.getSubjectId(), // Crucial: use original ID for update
+                    editedSubject.getSubjectCode(),
+                    editedSubject.getPrerequisite(),
+                    editedSubject.getDescription(),
+                    editedSubject.getUnit(),
+                    editedSubject.getYearLevel(),
+                    editedSubject.getSemesterId()
+            );
+
+            if (saveSubjectToDatabase(subjectToSave, false)) {
+                setupInitialSubjects(); // Refresh list from DB
+                updateFilter();
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Subject updated successfully.");
+            } else {
+                // showAlert is already called in saveSubjectToDatabase on failure
+            }
+        }
+    }
+
+    private void handleDelete() {
+        SubjectManagement selectedSubject = tableView.getSelectionModel().getSelectedItem();
+        if (selectedSubject == null) {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a subject to delete.");
+            return;
+        }
+
+        Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationDialog.setTitle("Confirm Deletion");
+        confirmationDialog.setHeaderText("Delete Subject: " + selectedSubject.getSubjectCode());
+        confirmationDialog.setContentText("Are you sure you want to delete this subject? This action cannot be undone.");
+
+        Optional<ButtonType> result = confirmationDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String sql = "DELETE FROM subjects WHERE subject_id = ?";
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setInt(1, selectedSubject.getSubjectId());
+                int affectedRows = pstmt.executeUpdate();
+
+                if (affectedRows > 0) {
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Subject deleted successfully.");
+                    allSubjects.remove(selectedSubject); // Remove from the observable list
+                    updateFilter(); // Refresh the table view
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete the subject. It might have already been deleted or does not exist.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                // Check for foreign key constraint violation (e.g., if the subject is in use)
+                if (e.getSQLState().equals("23503")) { // PostgreSQL specific error code for foreign_key_violation
+                    showAlert(Alert.AlertType.ERROR, "Deletion Failed", "Cannot delete subject: It is currently assigned or referenced by other records (e.g., faculty load, student grades). Please remove those associations first.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while trying to delete the subject: " + e.getMessage());
                 }
             }
         }
-        return -1; // Not found
     }
 
-    // Helper method to get the next available subject_id via stored function if available
-    private boolean deleteSubjectFromDatabase(SubjectManagement subject) {
-        try (Connection connection = DBConnection.getConnection()) {
-            // First, find the subject_id based on subject_code
-            int subjectId = getSubjectIdByCode(connection, subject.getSubjectCode());
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
-            if (subjectId == -1) {
-                showAlert("Delete Error", "Could not find subject with code: " + subject.getSubjectCode());
-                return false;
-            }
+    // Inner class for Subject data model
+    public static class SubjectManagement {
+        private final Integer subjectId;
+        private final String subjectCode;
+        private final String prerequisite;
+        private final String description;
+        private final Double unit;
+        private final Integer yearLevel; // Changed from yearLevelId
+        private final Integer semesterId;
+        private final String equivSubjectCode; // Added equivSubjectCode
 
-            String query = "DELETE FROM subjects WHERE subject_id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, subjectId);
-                int rowsAffected = statement.executeUpdate();
-                return rowsAffected > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "Failed to delete subject: " + e.getMessage());
-            return false;
+        public SubjectManagement(Integer subjectId, String subjectCode, String prerequisite, String description, Double unit, Integer yearLevel, Integer semesterId) {
+            this.subjectId = subjectId;
+            this.subjectCode = subjectCode;
+            this.prerequisite = prerequisite;
+            this.description = description;
+            this.unit = unit;
+            this.yearLevel = yearLevel;
+            this.semesterId = semesterId;
+            this.equivSubjectCode = subjectCode; // Copy subjectCode to equivSubjectCode
         }
+
+        // Getters
+        public Integer getSubjectId() { return subjectId; }
+        public String getSubjectCode() { return subjectCode; }
+        public String getPrerequisite() { return prerequisite; }
+        public String getDescription() { return description; }
+        public Double getUnit() { return unit; }
+        public Integer getYearLevel() { return yearLevel; }
+        public Integer getSemesterId() { return semesterId; }
+        public String getEquivSubjectCode() { return equivSubjectCode; } // Getter for equivSubjectCode
     }
 }

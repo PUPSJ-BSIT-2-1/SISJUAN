@@ -12,8 +12,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.TableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Region;
 
 import java.net.URL;
 import java.sql.*;
@@ -87,35 +89,45 @@ public class FacultyEditGradesPageController implements Initializable {
         gradeStatCol.setCellValueFactory(new PropertyValueFactory<>("gradeStatus"));
 
         gradeStatCol.setCellFactory(tc -> new TableCell<Student, String>() {
+            private final Label label = new Label();
+
+            {
+                label.setPrefHeight(25);
+                label.setMinWidth(Region.USE_PREF_SIZE);
+                label.setMaxWidth(Region.USE_PREF_SIZE);
+            }
+
             @Override
             protected void updateItem(String gradeStatus, boolean empty) {
                 super.updateItem(gradeStatus, empty);
 
                 // Clear all previous style classes
-                getStyleClass().removeAll("grade-status-passed", "grade-status-failed", "grade-status-other");
+                label.getStyleClass().removeAll("grade-status-passed", "grade-status-failed", "grade-status-other");
 
                 if (empty || gradeStatus == null || gradeStatus.trim().isEmpty()) {
-                    setText(null);
+                    setGraphic(null);
                 } else {
-                    setText(gradeStatus);
+                    label.setText(gradeStatus);
 
                     // Apply CSS class based on grade status
                     switch (gradeStatus.toLowerCase()) {
                         case "passed":
-                            getStyleClass().add("grade-status-passed");
+                            label.getStyleClass().add("grade-status-passed");
                             break;
                         case "failed":
-                            getStyleClass().add("grade-status-failed");
+                            label.getStyleClass().add("grade-status-failed");
                             break;
                         case "incomplete":
                         case "withdrawn":
                         case "dropped":
-                            getStyleClass().add("grade-status-other");
+                            label.getStyleClass().add("grade-status-other");
                             break;
                         default:
                             // No special styling for unknown statuses
                             break;
                     }
+
+                    setGraphic(label);
                 }
             }
         });
@@ -327,6 +339,7 @@ public class FacultyEditGradesPageController implements Initializable {
     private void setupRowHoverEffect() {
 
         studentsTable.getColumns().forEach(column -> column.setReorderable(false));
+        studentsTable.getColumns().forEach(column -> column.setSortable(false));
     }
 
     // Updated validation method to handle both numeric grades and special text values
@@ -464,12 +477,12 @@ public class FacultyEditGradesPageController implements Initializable {
                        gs.status_name as grade_status,
                        s.firstname,
                        s.lastname,
-                       CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS "Student Name",
-                       ys.year_section,  
+                       CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS \"Student Name\",
+                       sec.section_name,  
                        f.load_id
                 FROM faculty_load f
                 JOIN subjects su ON f.subject_id = su.subject_id
-                JOIN year_section ys ON f.section_id = ys.section_id 
+                JOIN section sec ON f.section_id = sec.section_id 
                 JOIN grade g ON g.faculty_load = f.load_id
                 JOIN students s ON g.student_pk_id = s.student_id
                 LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
@@ -478,7 +491,7 @@ public class FacultyEditGradesPageController implements Initializable {
                 """);
 
                     if (selectedYearSection != null && !selectedYearSection.equals("All")) {
-                        queryBuilder.append(" AND CAST(ys.year_section AS TEXT) = ?");
+                        queryBuilder.append(" AND CAST(sec.section_name AS TEXT) = ?");
                     }
                     queryBuilder.append(" ORDER BY s.lastname, s.firstname");
 
@@ -544,6 +557,7 @@ public class FacultyEditGradesPageController implements Initializable {
 
     new Thread(loadTask).start();
 }
+
     private int getGradeStatusId(String statusName, Connection conn) throws SQLException {
         String query = "SELECT grade_status_id FROM grade_statuses WHERE status_name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -665,71 +679,66 @@ public class FacultyEditGradesPageController implements Initializable {
     }
 
     private void populateYearSectionsForSubject(String subjectCode) {
-        logger.info("Populating year sections for subject: " + subjectCode);
+        logger.info("Populating year sections for subject: " + subjectCode + " and faculty ID: " + SessionData.getInstance().getFacultyId());
+        yrSecCombBox.getItems().clear(); // Clear previous items
+
+        // Add "All" option first
+        MenuItem allItem = new MenuItem("All");
+        allItem.setOnAction(event -> {
+            yrSecCombBox.setText("All");
+            selectedYearSection = "All";
+            if (selectedSubjectCode != null) {
+                loadStudentsBySubjectCode(selectedSubjectCode);
+            }
+        });
+        yrSecCombBox.getItems().add(allItem);
+
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-        SELECT DISTINCT ys.year_section 
-        FROM faculty_load f
-        JOIN subjects s ON f.subject_id = s.subject_id
-        JOIN year_section ys ON f.section_id = ys.section_id 
-        WHERE f.faculty_id = CAST(? AS SMALLINT) 
-        AND s.subject_code = ?
-        ORDER BY ys.year_section 
-        """;
-
+                SELECT DISTINCT sec.section_name  
+                FROM faculty_load fl
+                JOIN subjects s ON fl.subject_id = s.subject_id
+                JOIN section sec ON fl.section_id = sec.section_id  
+                WHERE s.subject_code = ?
+                AND CAST(fl.faculty_id AS TEXT) = ?
+                ORDER BY sec.section_name;  
+            """;
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, SessionData.getInstance().getFacultyId());
-                pstmt.setString(2, subjectCode);
+                pstmt.setString(1, subjectCode);
+                pstmt.setString(2, String.valueOf(SessionData.getInstance().getFacultyId()));
                 ResultSet rs = pstmt.executeQuery();
 
-                yrSecCombBox.getItems().clear();
-
-                // Collect all year sections in a list first
-                java.util.List<String> yearSections = new java.util.ArrayList<>();
                 while (rs.next()) {
-                    yearSections.add(rs.getString("year_section"));
+                    String sectionName = rs.getString("section_name");
+                    MenuItem item = new MenuItem(sectionName);
+                    item.setOnAction(event -> {
+                        yrSecCombBox.setText(sectionName);
+                        this.selectedYearSection = sectionName;
+                        loadStudentsBySubjectCode(selectedSubjectCode);
+                    });
+                    yrSecCombBox.getItems().add(item);
                 }
 
-                // Now process based on the count
-                if (yearSections.size() == 1) {
-                    // If only one section, disable dropdown and set the section
-                    String yearSection = yearSections.get(0);
-                    yrSecCombBox.setText(yearSection);
-                    yrSecCombBox.setDisable(true);
-                    selectedYearSection = yearSection;
-                }
-                else if (yearSections.size() > 1) {
-                    // If multiple sections, enable dropdown and populate with sections
-                    yrSecCombBox.setDisable(false);
-
-                    for (String yearSection : yearSections) {
-                        MenuItem item = new MenuItem(yearSection);
-                        item.setOnAction(event -> {
-                            logger.info("Year section selected: " + yearSection);
-                            yrSecCombBox.setText(yearSection);
-                            selectedYearSection = yearSection;
-                            loadStudentsBySubjectCode(selectedSubjectCode);
-                        });
-                        yrSecCombBox.getItems().add(item);
-                    }
-
-                    // Set the first section as default if nothing is selected
-                    if (selectedYearSection == null) {
-                        String firstSection = yearSections.get(0);
-                        yrSecCombBox.setText(firstSection);
-                        selectedYearSection = firstSection;
+                // Default to "All" if no specific section is selected or available
+                boolean specificSectionSelected = false;
+                if (selectedYearSection != null && !selectedYearSection.equals("All")) {
+                    for (MenuItem mi : yrSecCombBox.getItems()) {
+                        if (mi.getText().equals(selectedYearSection)) {
+                            yrSecCombBox.setText(selectedYearSection);
+                            specificSectionSelected = true;
+                            break;
+                        }
                     }
                 }
-                else {
-                    // If no sections found, disable the dropdown
-                    yrSecCombBox.setText("No Sections");
-                    yrSecCombBox.setDisable(true);
-                    selectedYearSection = null;
+                // Ensure 'All' is selected if nothing else matches or if selectedYearSection is null/All
+                if (!specificSectionSelected || yrSecCombBox.getText() == null || yrSecCombBox.getText().isEmpty()) {
+                    yrSecCombBox.setText("All");
+                    this.selectedYearSection = "All";
                 }
 
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error loading year sections for subject: " + subjectCode, e);
+            logger.log(Level.SEVERE, "Error loading year sections for subject: " + subjectCode + " and faculty ID: " + SessionData.getInstance().getFacultyId(), e);
             showError("Database Error", "Failed to load year sections: " + e.getMessage());
         }
     }
@@ -759,7 +768,7 @@ public class FacultyEditGradesPageController implements Initializable {
         if (yrSecCombBox != null) {
             if (yearSection == null || yearSection.equals("All")) {
                 yrSecCombBox.setText("All");
-                selectedYearSection = null;
+                selectedYearSection = "All";
             } else {
                 yrSecCombBox.setText(yearSection);
                 selectedYearSection = yearSection;
@@ -817,41 +826,43 @@ public class FacultyEditGradesPageController implements Initializable {
 
     // Modify the populateYearSections method to include filtering
     private void populateYearSections() {
-        logger.info("Populating year sections for faculty ID: " + SessionData.getInstance().getFacultyId());
+        logger.info("Populating all year sections for faculty ID: " + SessionData.getInstance().getFacultyId());
+        yrSecCombBox.getItems().clear(); // Clear previous items
+
+        // Add "All" option first
+        yrSecCombBox.getItems().add(allItem);
+        yrSecCombBox.getItems().clear();
+
+        // Add the "All" option for an initial load
+        MenuItem allItem = new MenuItem("All");
+        allItem.setOnAction(event -> {
+            logger.info("Year section selected: All");
+            yrSecCombBox.setText("All");
+            selectedYearSection = null;
+            if (selectedSubjectCode != null) {
+                loadStudentsBySubjectCode(selectedSubjectCode);
+            }
+        });
+        yrSecCombBox.getItems().add(allItem);
+
         try (Connection conn = DBConnection.getConnection()) {
             String query = """
-        SELECT DISTINCT ys.year_section 
-        FROM faculty_load fl
-        JOIN year_section ys ON fl.section_id = ys.section_id
-        WHERE fl.faculty_id = CAST(? AS SMALLINT) 
-        ORDER BY ys.year_section;
-        """;
-
+                SELECT DISTINCT sec.section_name  
+                FROM faculty_load fl
+                JOIN section sec ON fl.section_id = sec.section_id  
+                WHERE CAST(fl.faculty_id AS TEXT) = ?
+                ORDER BY sec.section_name;  
+            """;
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, SessionData.getInstance().getFacultyId());
+                pstmt.setString(1, String.valueOf(SessionData.getInstance().getFacultyId()));
                 ResultSet rs = pstmt.executeQuery();
 
-                yrSecCombBox.getItems().clear();
-
-                // Add the "All" option for an initial load
-                MenuItem allItem = new MenuItem("All");
-                allItem.setOnAction(event -> {
-                    logger.info("Year section selected: All");
-                    yrSecCombBox.setText("All");
-                    selectedYearSection = null;
-                    if (selectedSubjectCode != null) {
-                        loadStudentsBySubjectCode(selectedSubjectCode);
-                    }
-                });
-                yrSecCombBox.getItems().add(allItem);
-
                 while (rs.next()) {
-                    String yearSection = rs.getString("year_section");
-                    MenuItem item = new MenuItem(yearSection);
+                    String sectionName = rs.getString("section_name");
+                    MenuItem item = new MenuItem(sectionName);
                     item.setOnAction(event -> {
-                        logger.info("Year section selected: " + yearSection);
-                        yrSecCombBox.setText(yearSection);
-                        selectedYearSection = yearSection;
+                        yrSecCombBox.setText(sectionName);
+                        this.selectedYearSection = sectionName;
                         if (selectedSubjectCode != null) {
                             loadStudentsBySubjectCode(selectedSubjectCode);
                         }
@@ -859,11 +870,26 @@ public class FacultyEditGradesPageController implements Initializable {
                     yrSecCombBox.getItems().add(item);
                 }
 
-                // Enable dropdown initially
-                yrSecCombBox.setDisable(false);
+                // Default to "All" if no specific section is selected or available
+                boolean specificSectionSelected = false;
+                if (selectedYearSection != null && !selectedYearSection.equals("All")) {
+                    for (MenuItem mi : yrSecCombBox.getItems()) {
+                        if (mi.getText().equals(selectedYearSection)) {
+                            yrSecCombBox.setText(selectedYearSection);
+                            specificSectionSelected = true;
+                            break;
+                        }
+                    }
+                }
+                // Ensure 'All' is selected if nothing else matches or if selectedYearSection is null/All
+                if (!specificSectionSelected || yrSecCombBox.getText() == null || yrSecCombBox.getText().isEmpty()) {
+                    yrSecCombBox.setText("All");
+                    this.selectedYearSection = "All";
+                }
+
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error loading year sections: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Error loading year sections for faculty ID: " + SessionData.getInstance().getFacultyId(), e);
             showError("Database Error", "Failed to load year sections: " + e.getMessage());
         }
     }

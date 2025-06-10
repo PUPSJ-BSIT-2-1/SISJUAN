@@ -15,7 +15,7 @@ public class AdminFacultyDialogController {
     @FXML private TextField firstNameField;
     @FXML private TextField middleNameField;
     @FXML private TextField lastNameField;
-    @FXML private ComboBox<String> departmentComboBox;
+    @FXML private TextField departmentField;
     @FXML private TextField emailField;
     @FXML private TextField contactField;
     @FXML private DatePicker birthdatePicker;
@@ -30,7 +30,6 @@ public class AdminFacultyDialogController {
 
     @FXML
     private void initialize() {
-        departmentComboBox.setItems(FXCollections.observableArrayList("Department A", "Department B"));
         statusComboBox.setItems(FXCollections.observableArrayList("Full-time", "Part-time"));
         dateJoinedPicker.setValue(LocalDate.now());
     }
@@ -47,20 +46,31 @@ public class AdminFacultyDialogController {
         this.faculty = faculty;
 
         if (faculty != null) {
+            // Populate fields for editing an existing faculty
             facultyIdField.setText(faculty.getFacultyId());
             firstNameField.setText(faculty.getFirstName());
             middleNameField.setText(faculty.getMiddleName());
             lastNameField.setText(faculty.getLastName());
-            departmentComboBox.setValue(faculty.getDepartmentName());
+            departmentField.setText(faculty.getDepartmentName());
             emailField.setText(faculty.getEmail());
             contactField.setText(faculty.getContactNumber());
             birthdatePicker.setValue(faculty.getBirthdate());
             statusComboBox.setValue(faculty.getFacultyStatusName());
             dateJoinedPicker.setValue(faculty.getDateJoined());
 
-            facultyIdField.setDisable(true);
+            facultyIdField.setDisable(true); // Don't allow editing the user-facing ID
         } else {
-            this.faculty = new Faculty();
+            // Clear fields for adding a new faculty
+            facultyIdField.clear();
+            firstNameField.clear();
+            middleNameField.clear();
+            lastNameField.clear();
+            departmentField.clear();
+            emailField.clear();
+            contactField.clear();
+            birthdatePicker.setValue(null);
+            statusComboBox.setValue(null);
+            dateJoinedPicker.setValue(LocalDate.now());
             facultyIdField.setDisable(false);
         }
     }
@@ -76,18 +86,42 @@ public class AdminFacultyDialogController {
     @FXML
     private void handleSave() {
         if (isInputValid()) {
-            faculty.setFacultyId(facultyIdField.getText());
-            faculty.setFirstName(firstNameField.getText());
-            faculty.setMiddleName(middleNameField.getText());
-            faculty.setLastName(lastNameField.getText());
-            faculty.setEmail(emailField.getText());
-            faculty.setContactNumber(contactField.getText());
-            faculty.setBirthdate(birthdatePicker.getValue());
-            faculty.setDateJoined(dateJoinedPicker.getValue());
+            boolean isNew = (this.faculty == null);
+
+            if (isNew) {
+                // Create a new Faculty object for an insert operation.
+                // The integer primary key (actualFacultyId) must be null.
+                this.faculty = new Faculty(
+                        facultyIdField.getText(),       // facultyId (user-facing string)
+                        null,                           // actualFacultyId (integer PK)
+                        firstNameField.getText(),
+                        middleNameField.getText(),
+                        lastNameField.getText(),
+                        null,                           // departmentId
+                        departmentField.getText(),      // departmentName
+                        emailField.getText(),
+                        contactField.getText(),
+                        birthdatePicker.getValue(),
+                        null,                           // facultyStatusId
+                        statusComboBox.getValue(),      // facultyStatusName
+                        dateJoinedPicker.getValue()
+                );
+            } else {
+                // Update the existing Faculty object for an update operation.
+                this.faculty.setFirstName(firstNameField.getText());
+                this.faculty.setMiddleName(middleNameField.getText());
+                this.faculty.setLastName(lastNameField.getText());
+                this.faculty.setDepartmentName(departmentField.getText());
+                this.faculty.setEmail(emailField.getText());
+                this.faculty.setContactNumber(contactField.getText());
+                this.faculty.setBirthdate(birthdatePicker.getValue());
+                this.faculty.setFacultyStatusName(statusComboBox.getValue());
+                this.faculty.setDateJoined(dateJoinedPicker.getValue());
+            }
 
             try {
                 // Get IDs for selected department and status
-                String selectedDepartmentName = departmentComboBox.getValue();
+                String selectedDepartmentName = departmentField.getText();
                 // TODO: Uncomment and ensure FacultyDAO.getDepartmentIdByName is implemented
                 // Integer departmentId = facultyDAO.getDepartmentIdByName(selectedDepartmentName); 
                 // if (departmentId == null) {
@@ -145,7 +179,7 @@ public class AdminFacultyDialogController {
         if (lastNameField.getText() == null || lastNameField.getText().isEmpty()) {
             errorContent.append("Last Name is required.\n");
         }
-        if (departmentComboBox.getValue() == null || departmentComboBox.getValue().isEmpty()) {
+        if (departmentField.getText() == null || departmentField.getText().isEmpty()) {
             errorContent.append("Department must be selected.\n");
         }
         if (emailField.getText() == null || !emailField.getText().contains("@")) {

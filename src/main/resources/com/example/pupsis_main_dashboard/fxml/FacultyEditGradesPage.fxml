@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -10,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -21,37 +19,40 @@
     <children>
         <BorderPane prefWidth="810.0">
             <top>
-                <Pane prefHeight="99.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <HBox prefHeight="100.0" prefWidth="811.0" styleClass="red-card" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
                         <Insets />
                     </BorderPane.margin>
-                    <padding>
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                    </padding>
                     <children>
-                        <HBox alignment="CENTER" prefHeight="99.0" prefWidth="810.0" spacing="15.0">
+                        <VBox prefHeight="84.0" prefWidth="502.0">
                             <children>
-                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="373.0" text="Grades" textFill="WHITE">
+                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Grade Entry Interface" textFill="WHITE">
                                     <font>
                                         <Font size="30.0" />
                                     </font>
+                                    <VBox.margin>
+                                        <Insets top="15.0" />
+                                    </VBox.margin>
                                 </Label>
-                                <VBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="570.0" />
+                                <Label contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="30.0" prefWidth="502.0" styleClass="sub-header" text="Input and Submit Student Grades" textFill="WHITE">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                    <padding>
+                                        <Insets bottom="3.0" />
+                                    </padding>
+                                </Label>
                             </children>
-                            <padding>
-                                <Insets bottom="16.0" left="30.0" right="16.0" top="16.0" />
-                            </padding>
-                        </HBox>
+                            <HBox.margin>
+                                <Insets left="20.0" />
+                            </HBox.margin>
+                        </VBox>
                     </children>
-                    <styleClass>
-                        <String fx:value="cards" />
-                        <String fx:value="red-card" />
-                    </styleClass>
-                </Pane>
+                </HBox>
             </top>
             <center>
-            <HBox BorderPane.alignment="CENTER">
-               <children>
+                <HBox BorderPane.alignment="CENTER">
+                    <children>
                         <VBox alignment="TOP_CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
@@ -60,11 +61,8 @@
                                         <TextField fx:id="searchBar" promptText="Search..." />
                                         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="590.0" spacing="20.0">
                                             <children>
-                                                <MenuButton fx:id="subjCodeCombBox" alignment="CENTER" minWidth="150.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="100.0" text="Subject Code" textFill="WHITE" />
-                                                <MenuButton fx:id="yrSecCombBox" alignment="CENTER" minWidth="150.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Yr &amp; Section" textFill="WHITE">
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin></MenuButton>
+                                                <MenuButton fx:id="subjCodeCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="23.0" prefWidth="100.0" text="Subject Code" textFill="WHITE" />
+                                                <MenuButton fx:id="yrSecCombBox" alignment="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Yr &amp; Section" textFill="WHITE" />
                                             </children>
                                             <padding>
                                                 <Insets left="30.0" />
@@ -123,21 +121,21 @@
                                             <columns>
                                                 <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="55.0" prefWidth="55.0" resizable="false" text="#" />
                                                 <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Student ID" />
-                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" resizable="false" text="Student Name" />
+                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" resizable="false" text="Student Name" />
                                                 <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Subject Code" />
                                                 <TableColumn fx:id="finGradeCol" editable="true" maxWidth="111.0" minWidth="111.0" prefWidth="111.0" resizable="false" text="Final Grade" />
-                                                <TableColumn fx:id="gradeStatCol" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" resizable="false" text="Grade Status" />
+                                                <TableColumn fx:id="gradeStatCol" maxWidth="183.20004882812498" minWidth="120.0" prefWidth="183.20004882812498" resizable="false" text="Grade Status" />
                                             </columns>
                                         </TableView>
-                           </children>
-                        </VBox>
+                                    </children>
+                                </VBox>
                             </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
+                            <padding>
+                                <Insets top="10.0" />
+                            </padding>
                         </VBox>
-               </children>
-            </HBox>
+                    </children>
+                </HBox>
             </center>
         </BorderPane>
     </children>

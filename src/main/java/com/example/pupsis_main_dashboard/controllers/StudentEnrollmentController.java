@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class StudentEnrollmentController implements Initializable {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentEnrollmentController.class);
+    private static final int MAX_UNITS = 24;
 
     @FXML private VBox subjectListContainer;
     @FXML private VBox enrolledSubjectsDisplayContainer; 
@@ -35,12 +37,14 @@ public class StudentEnrollmentController implements Initializable {
     @FXML private Label currentYearLevelDisplayLabel;
     @FXML private Label currentSemesterDisplayLabel;
     @FXML private ProgressIndicator loadingIndicator; 
+    @FXML private Label unitCounterLabel; // Added for unit counting
 
     private StudentEnrollmentContext studentEnrollmentContext; 
     private List<SubjectData> availableSubjects;
     private List<CheckBox> subjectCheckboxes = new ArrayList<>();
     private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
     private Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
+    private int currentSelectedUnits = 0;
 
     private static final List<String> TIME_SLOTS = Arrays.asList(
             "Mon/Wed 9:00-10:30 AM",
@@ -61,11 +65,25 @@ public class StudentEnrollmentController implements Initializable {
         if (loadingIndicator != null) {
             loadingIndicator.setVisible(false);
         }
+        if (unitCounterLabel == null) {
+            logger.warn("unitCounterLabel is not injected. Unit counting UI will not be updated.");
+        } else {
+            unitCounterLabel.setText("Selected Units: 0/" + MAX_UNITS);
+        }
         refreshEnrollmentView(); // Initial data load and view setup
+        updateDynamicUnitCountAndEnrollButtonState(); // Initial state for unit counter
     }
 
     @FXML
     private void handleEnrollment(ActionEvent event) { 
+        if (currentSelectedUnits > MAX_UNITS) {
+            showAlert("Unit Limit Exceeded", "You cannot enroll in more than " + MAX_UNITS + " units. You have selected " + currentSelectedUnits + " units.", Alert.AlertType.WARNING);
+            // enrollButton might already be disabled by updateDynamicUnitCountAndEnrollButtonState, but ensure it's re-enabled if logic changes
+            // enrollButton.setDisable(false); // This might not be needed if updateDynamicUnitCountAndEnrollButtonState handles it
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+            return;
+        }
+
         List<EnrollmentData> selectedSubjects = subjectCheckboxes.stream()
                 .filter(CheckBox::isSelected)
                 .map(cb -> {
@@ -215,28 +233,50 @@ public class StudentEnrollmentController implements Initializable {
 
     private void updateSelectAllButtonState() {
         if (selectAllButton != null) {
-            boolean allSelected = !subjectCheckboxes.isEmpty() && subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-            selectAllButton.setText(allSelected ? "Deselect All" : "Select All");
-            selectAllButton.setDisable(subjectCheckboxes.isEmpty()); // Disable if no subjects to select
+            List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
+                                                              .filter(cb -> !cb.isDisabled())
+                                                              .collect(Collectors.toList());
+
+            if (enabledCheckboxes.isEmpty()) {
+                selectAllButton.setText("Select All");
+                selectAllButton.setDisable(true);
+            } else {
+                boolean allEnabledSelected = enabledCheckboxes.stream().allMatch(CheckBox::isSelected);
+                selectAllButton.setText(allEnabledSelected ? "Deselect All" : "Select All");
+                selectAllButton.setDisable(false);
+            }
         }
     }
 
     @FXML
     private void handleSelectAll(ActionEvent event) {
-        boolean allCurrentlySelected = subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-        boolean targetState = !allCurrentlySelected;
+        List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
+                                                          .filter(cb -> !cb.isDisabled())
+                                                          .collect(Collectors.toList());
 
-        for (CheckBox cb : subjectCheckboxes) {
+        if (enabledCheckboxes.isEmpty()) {
+            return; // No enabled checkboxes to act upon
+        }
+
+        // Determine target state based on whether all *enabled* checkboxes are currently selected
+        boolean allCurrentlyEnabledSelected = enabledCheckboxes.stream().allMatch(CheckBox::isSelected);
+        boolean targetState = !allCurrentlyEnabledSelected;
+
+        for (CheckBox cb : enabledCheckboxes) {
             cb.setSelected(targetState);
         }
-        updateSelectAllButtonState(); // Update button text
-        updateEnrollButtonState(); // Update enroll button based on new selection
+        updateSelectAllButtonState(); // Update button text and state
+        updateEnrollButtonState();    // Update enroll button based on new selection
     }
 
     private void updateEnrollButtonState() {
         if (enrollButton != null) {
-            boolean anySelected = subjectCheckboxes.stream().anyMatch(CheckBox::isSelected);
-            enrollButton.setDisable(!anySelected);
+            List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
+                                                              .filter(cb -> !cb.isDisabled())
+                                                              .collect(Collectors.toList());
+
+            boolean anyEnabledSelected = enabledCheckboxes.stream().anyMatch(CheckBox::isSelected);
+            enrollButton.setDisable(!anyEnabledSelected);
         }
     }
 
@@ -335,13 +375,49 @@ public class StudentEnrollmentController implements Initializable {
                 scheduleComboBox.getStyleClass().add("modern-combo"); // Style class from FXML
                 scheduleComboBox.setPromptText("Select Schedule"); // From FXML
 
-                if (subject.availableSchedules() != null && !subject.availableSchedules().isEmpty()) {
-                    scheduleComboBox.getItems().addAll(subject.availableSchedules());
-                    scheduleComboBox.setValue(subject.availableSchedules().get(0)); 
-                } else {
+                List<String> schedules = subject.availableSchedules();
+                boolean hasActualSelectableSchedules = false;
+
+                if (schedules != null && !schedules.isEmpty()) {
+                    hasActualSelectableSchedules = schedules.stream().anyMatch(s ->
+                        !s.equalsIgnoreCase("No schedules available") &&
+                        !s.equalsIgnoreCase("No schedules available for this offering") &&
+                        !s.equalsIgnoreCase("No specific schedules listed") &&
+                        !s.equalsIgnoreCase("Schedule TBD")
+                    );
+                }
+
+                if (hasActualSelectableSchedules) {
+                    // Filter out placeholders if they might coexist, though current backend logic suggests they won't.
+                    List<String> actualScheduleEntries = schedules.stream().filter(s ->
+                        !s.equalsIgnoreCase("No schedules available") &&
+                        !s.equalsIgnoreCase("No schedules available for this offering") &&
+                        !s.equalsIgnoreCase("No specific schedules listed") &&
+                        !s.equalsIgnoreCase("Schedule TBD")
+                    ).collect(Collectors.toList());
+
+                    if (!actualScheduleEntries.isEmpty()) {
+                        scheduleComboBox.getItems().addAll(actualScheduleEntries);
+                        scheduleComboBox.setValue(actualScheduleEntries.get(0));
+                    } else {
+                        // This case implies only placeholders were present, despite hasActualSelectableSchedules being true due to a logic flaw or unexpected data.
+                        // Fallback to no schedules available.
+                        scheduleComboBox.getItems().add("No schedules available");
+                        scheduleComboBox.setValue("No schedules available");
+                        hasActualSelectableSchedules = false; // Correct the flag
+                    }
+                } 
+                // This 'else' covers cases where schedules list was null, empty, or only contained placeholders from the start.
+                if (!hasActualSelectableSchedules) {
+                    scheduleComboBox.getItems().clear(); // Ensure it's clean
                     scheduleComboBox.getItems().add("No schedules available");
                     scheduleComboBox.setValue("No schedules available");
                     scheduleComboBox.setDisable(true);
+                    checkBox.setSelected(false); // Unselect if it was somehow selected
+                    checkBox.setDisable(true);   // Disable the checkbox
+                } else {
+                    scheduleComboBox.setDisable(false);
+                    checkBox.setDisable(false); // Ensure checkbox is enabled if schedules are present
                 }
 
                 subjectCheckboxes.add(checkBox);
@@ -362,8 +438,11 @@ public class StudentEnrollmentController implements Initializable {
         updateEnrollButtonState(); 
         updateSelectAllButtonState();
         if (selectAllButton != null) {
-            selectAllButton.setDisable(this.availableSubjects.isEmpty()); // Corrected variable name
-            updateSelectAllButtonState(); // Ensure button text is correct
+            // updateSelectAllButtonState already handles disabling if no enabled checkboxes exist.
+            // So, this specific line might be redundant or can be simplified.
+            // For now, let updateSelectAllButtonState handle the logic.
+            // selectAllButton.setDisable(this.availableSubjects.isEmpty()); // Original line
+            updateSelectAllButtonState(); // Ensure button text and state are correct after population
         }
         if (loadingIndicator != null) loadingIndicator.setVisible(false);
     }
@@ -383,7 +462,7 @@ public class StudentEnrollmentController implements Initializable {
         }
     }
 
-    private record StudentEnrollmentContext(String yearLevelString, String semesterString, int studentId, String studentYearSection, int sectionId, int semesterId, int academicYearId) {}
+    private record StudentEnrollmentContext(int yearLevel, String semesterString, int studentId, String studentYearSection, int sectionId, int semesterId, int academicYearId) {}
 
     private void refreshEnrollmentView() {
         logger.debug("refreshEnrollmentView: Starting data refresh.");
@@ -412,7 +491,7 @@ public class StudentEnrollmentController implements Initializable {
             EnrollmentPageData pageData = loadDataTask.getValue();
             if (pageData != null && pageData.context() != null) {
                 logger.info("refreshEnrollmentView: Student context and subjects loaded: {}", pageData.context());
-                if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText(pageData.context().yearLevelString());
+                if (currentYearLevelDisplayLabel != null) currentYearLevelDisplayLabel.setText(convertNumericYearToString(pageData.context().yearLevel()));
                 if (currentSemesterDisplayLabel != null) currentSemesterDisplayLabel.setText(pageData.context().semesterString());
                 populateSubjectListUI(pageData.subjectLists(), pageData.context());
             } else {
@@ -510,10 +589,11 @@ public class StudentEnrollmentController implements Initializable {
                                 "AND fl.load_id NOT IN (" +
                                 "  SELECT sl_inner.faculty_load FROM student_load sl_inner " +
                                 "  WHERE sl_inner.student_pk_id = ? AND sl_inner.semester_id = ?" +
-                                ")";
-        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, studentId={}, semesterIdSubQuery={}]",
+                                ") AND s.year_level = ? AND s.semester_id = ?"; // Corrected: s.year_level instead of s.year_level_id
+
+        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, studentId={}, semesterIdSubQuery={}, yearLevel={}, semesterIdSubject={}]",
             availableQuery, context.sectionId(), context.semesterId(),
-            context.studentId(), context.semesterId());
+            context.studentId(), context.semesterId(), context.yearLevel(), context.semesterId());
 
         try (Connection connAvailableDetails = DBConnection.getConnection(); // Separate connection for available subject details
              PreparedStatement pstmtAvailable = connAvailableDetails.prepareStatement(availableQuery)) {
@@ -522,6 +602,8 @@ public class StudentEnrollmentController implements Initializable {
             pstmtAvailable.setInt(2, context.semesterId());
             pstmtAvailable.setInt(3, context.studentId());
             pstmtAvailable.setInt(4, context.semesterId());
+            pstmtAvailable.setInt(5, context.yearLevel());
+            pstmtAvailable.setInt(6, context.semesterId());
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
                 while (rs.next()) {
@@ -640,27 +722,26 @@ public class StudentEnrollmentController implements Initializable {
             throw new SQLException("Current user identifier not found.");
         }
 
-        String sql = """
-            SELECT
-                ys.year_section AS student_year_section,
-                sem.semester_name AS section_semester,
-                s.student_id,
-                ys.section_id,
-                sem.semester_id,
-                ay.academic_year_id
-            FROM
-                public.students s
-            LEFT JOIN
-                public.year_section ys ON s.current_year_section_id = ys.section_id
-            LEFT JOIN
-                public.semesters sem ON ys.semester_id = sem.semester_id
-            LEFT JOIN
-                public.academic_years ay ON ys.academic_year_id = ay.academic_year_id
-            WHERE
-                s.student_number = ?
-            """;
+        String sql = "SELECT " +
+                "    sec.year_level, " +  
+                "    sec.section_name AS student_year_section, " +
+                "    sem.semester_name AS section_semester, " +
+                "    s.student_id, " +
+                "    sec.section_id, " +      
+                "    sec.semester_id, " +     
+                "    sec.academic_year_id " + 
+                "FROM " +
+                "    public.students s " +
+                "LEFT JOIN " +
+                "    public.section sec ON s.current_year_section_id = sec.section_id " + 
+                "LEFT JOIN " +
+                "    public.semesters sem ON sec.semester_id = sem.semester_id " +        
+                "LEFT JOIN " +
+                "    public.academic_years ay ON sec.academic_year_id = ay.academic_year_id " + 
+                "WHERE " +
+                "    s.student_number = ?";
 
-        logger.debug("fetchStudentEnrollmentContext: SQL query: {}", sql);
+        logger.debug("fetchStudentEnrollmentContext: SQL query: {}\n", sql.replace("\n", " ").replaceAll("\s+", " "));
         logger.debug("fetchStudentEnrollmentContext: Parameter: {}", currentUserIdentifier);
 
         try (Connection conn = DBConnection.getConnection();
@@ -668,13 +749,14 @@ public class StudentEnrollmentController implements Initializable {
             pstmt.setString(1, currentUserIdentifier);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    String yearSection = rs.getString("student_year_section");
+                    int yearLevelInt = rs.getInt("year_level"); // Get integer year_level
+                    String studentYearSectionStr = rs.getString("student_year_section");
                     String semester = rs.getString("section_semester");
                     int studentId = rs.getInt("student_id");
                     int sectionId = rs.getInt("section_id");
                     int semesterId = rs.getInt("semester_id");
                     int academicYearId = rs.getInt("academic_year_id");
-                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearSection, semester, studentId, yearSection, sectionId, semesterId, academicYearId);
+                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelInt, semester, studentId, studentYearSectionStr, sectionId, semesterId, academicYearId);
                     logger.debug("fetchStudentEnrollmentContext: Fetched context: {}", context);
                     return context;
                 } else {
@@ -686,18 +768,6 @@ public class StudentEnrollmentController implements Initializable {
             logger.error("SQL Error fetching student enrollment context: ", e);
             throw e;
         }
-    }
-
-    private String convertYearSectionToYearLevel(String yearSection) {
-        if (yearSection == null || yearSection.isEmpty()) return null;
-        String digits = yearSection.replaceAll("[^0-9]", "");
-        if (!digits.isEmpty()) {
-            char yearChar = digits.charAt(0);
-            return convertNumericYearToString(Character.getNumericValue(yearChar));
-        }
-        if (yearSection.toLowerCase().contains("year")) return yearSection;
-        logger.error("Could not parse year level from year_section: {}", yearSection);
-        return null;
     }
 
     private String convertNumericYearToString(int yearLevel) {
@@ -724,5 +794,53 @@ public class StudentEnrollmentController implements Initializable {
     private String getCurrentAcademicYear() {
         // This should ideally come from a config or a dedicated table/logic
         return "2024-2025"; // Placeholder
+    }
+
+    private void updateDynamicUnitCountAndEnrollButtonState() {
+        currentSelectedUnits = 0;
+        boolean anySelected = false;
+        for (CheckBox cb : subjectCheckboxes) {
+            if (cb.isSelected()) {
+                anySelected = true;
+                SubjectData sd = checkboxSubjectMap.get(cb);
+                if (sd != null && sd.units() != 0) {
+                    currentSelectedUnits += sd.units();
+                }
+            }
+        }
+
+        if (unitCounterLabel != null) {
+            unitCounterLabel.setText("Selected Units: " + currentSelectedUnits + "/" + MAX_UNITS);
+            if (currentSelectedUnits > MAX_UNITS) {
+                unitCounterLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;"); // Highlight if over limit
+            } else {
+                unitCounterLabel.setStyle("-fx-text-fill: -fx-text-base-color; -fx-font-weight: normal;"); // Default style
+            }
+        }
+
+        if (enrollButton != null) {
+            enrollButton.setDisable(!anySelected || currentSelectedUnits == 0 || currentSelectedUnits > MAX_UNITS);
+        }
+
+        // Advanced UX: Disable checkboxes that would exceed MAX_UNITS if selected
+        for (CheckBox cb : subjectCheckboxes) {
+            if (!cb.isSelected()) {
+                SubjectData sd = checkboxSubjectMap.get(cb);
+                if (sd != null && sd.units() != 0) {
+                    if (currentSelectedUnits + sd.units() > MAX_UNITS) {
+                        cb.setDisable(true);
+                    } else {
+                        cb.setDisable(false);
+                    }
+                }
+            } else {
+                 cb.setDisable(false); // Ensure selected checkboxes are always enabled (so they can be deselected)
+            }
+        }
+        if (selectAllButton != null) {
+            boolean allDisabled = subjectCheckboxes.stream().allMatch(Node::isDisabled);
+            boolean allSelected = !subjectCheckboxes.isEmpty() && subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
+            selectAllButton.setDisable(subjectCheckboxes.isEmpty() || allDisabled || allSelected);
+        }
     }
 }
