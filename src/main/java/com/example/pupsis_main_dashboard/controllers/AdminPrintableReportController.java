@@ -44,6 +44,13 @@ public class AdminPrintableReportController {
 
     @FXML
     private void initialize() {
+
+        var columns = List.of(idColumn, firstNameColumn, lastNameColumn, departmentColumn, emailColumn, contactColumn, birthdateColumn, dateJoinedColumn, statusColumn);
+        columns.forEach(col -> {
+            col.setReorderable(false);
+            col.setSortable(false);
+        });
+
         idColumn.setCellValueFactory(new PropertyValueFactory<>("facultyId"));
         idColumn.setPrefWidth(80);
 
@@ -53,7 +60,7 @@ public class AdminPrintableReportController {
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         lastNameColumn.setPrefWidth(160);
 
-        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("department"));
+        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("departmentName"));
         departmentColumn.setPrefWidth(120);
 
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -68,7 +75,7 @@ public class AdminPrintableReportController {
         dateJoinedColumn.setCellValueFactory(new PropertyValueFactory<>("dateJoined"));
         dateJoinedColumn.setPrefWidth(140);
 
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("facultyStatusName"));
         statusColumn.setPrefWidth(130);
 
         reportTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);

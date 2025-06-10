@@ -33,7 +33,6 @@
     -fx-text-fill: white;
     -fx-background-radius: 6;
     -fx-font-weight: bold;
-    -fx-cursor: hand;
 }
 
 .main-action-button:hover {
@@ -430,7 +429,7 @@
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
     -fx-text-fill: #343a40;
-    -fx-padding: 3 3 3 10;
+    -fx-padding: 6px;
     -fx-font-weight: bold;
 }
 
@@ -649,7 +648,6 @@
     -fx-text-fill: #e0e0e0 ;
 }
 
-
 /* ================= FACULTY REGISTRATION ======================= */
 
 /* Style the DatePicker text field */
@@ -662,7 +660,7 @@
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
     -fx-text-fill: #343a40;
-    -fx-padding: 3 3 3 10;
+    -fx-padding: 7px;
     -fx-font-weight: bold;
 }
 
@@ -701,6 +699,7 @@
     -fx-font-family: "Inter";
     -fx-text-fill: #343a40;
     -fx-font-weight: bold;
+    -fx-padding: 3px;
 }
 
 .status-combo-box .arrow {

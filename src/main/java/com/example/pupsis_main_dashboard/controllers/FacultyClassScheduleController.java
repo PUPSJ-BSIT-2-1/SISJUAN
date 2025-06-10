@@ -193,7 +193,7 @@ public class FacultyClassScheduleController {
                     String startTime = rs.getString("start_time");
                     String endTime = rs.getString("end_time");
                     String room = rs.getString("room");
-                    String units = rs.getString("units"); // units are text in the subjects table
+                    String units = rs.getString("units"); // units are text in the subject table
                     int lectureHour = rs.getInt("lecture_hour");
                     int labHour = rs.getInt("laboratory_hour");
 

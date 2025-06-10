@@ -133,6 +133,7 @@ public class Schedule {
     public void setLaboratoryHour(int laboratoryHour) { this.laboratoryHour.set(laboratoryHour); }
     public void setSubID(String subjectID) { this.subjectID.set(subjectID != null ? subjectID : ""); }
     public void setFacultyNumber(String facultyNumber) { this.facultyNumber.set(facultyNumber != null ? facultyNumber : ""); }
+    public void setSchedule(String schedule) { this.schedule.set(this.yearSection.get() + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get()); }
 
     // Getters
     public int getLoadID() { return loadID.get(); }
