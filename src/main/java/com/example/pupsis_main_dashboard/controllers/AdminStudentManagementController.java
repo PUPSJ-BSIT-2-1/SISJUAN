@@ -80,6 +80,7 @@ public class AdminStudentManagementController implements Initializable {
 
         // Setup header controls for batch operations
         selectAllCheckBox = new CheckBox("Select All");
+        selectAllCheckBox.getStyleClass().add("student-check-box");
         selectAllCheckBox.setOnAction(event -> {
             boolean select = selectAllCheckBox.isSelected();
             for (StudentData student : currentDisplayedStudents) {
@@ -88,6 +89,7 @@ public class AdminStudentManagementController implements Initializable {
         });
 
         batchAcceptButton = new Button("Batch Accept Selected");
+        batchAcceptButton.getStyleClass().add("batch-accept-button");
         batchAcceptButton.setOnAction(event -> handleBatchAcceptSelected());
 
         HBox headerControls = new HBox(10, selectAllCheckBox, batchAcceptButton);
@@ -186,12 +188,14 @@ public class AdminStudentManagementController implements Initializable {
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setPrefWidth(170); 
         col1.setMinWidth(10); 
-        col1.setHgrow(Priority.SOMETIMES); 
+        col1.setHgrow(Priority.SOMETIMES);
+        col1.setHalignment(HPos.CENTER);
 
         ColumnConstraints col2 = new ColumnConstraints();
         col2.setPrefWidth(100);
         col2.setMinWidth(10);
         col2.setHgrow(Priority.SOMETIMES);
+        col2.setHalignment(HPos.CENTER);
 
         ColumnConstraints col3 = new ColumnConstraints();
         col3.setPrefWidth(120);
@@ -206,6 +210,7 @@ public class AdminStudentManagementController implements Initializable {
 
         gridPane.getColumnConstraints().addAll(col0, col1, col2, col3, col4);
 
+        student.checkBox.getStyleClass().add("student-check-box");
         gridPane.add(student.checkBox, 0, 0);
 
         Label nameLabel = new Label(student.getFullName());

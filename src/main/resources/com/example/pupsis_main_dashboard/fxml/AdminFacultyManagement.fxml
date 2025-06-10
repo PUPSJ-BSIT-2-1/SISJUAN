@@ -134,9 +134,6 @@
             <TableColumn fx:id="contactColumn" prefWidth="112.0001220703125" text="Contact" />
             <TableColumn fx:id="detailsColumn" minWidth="0.0" prefWidth="68.7999267578125" text=" " />
         </columns>
-      <columnResizePolicy>
-         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-      </columnResizePolicy>
     </TableView>
 
        <!-- Utility Row -->

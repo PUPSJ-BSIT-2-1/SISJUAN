@@ -27,6 +27,10 @@ public class AdminFacultyDetailsController {
 
     // Called from AdminFacultyManagementController to pass the Faculty data to display
     public void setFaculty(Faculty faculty) {
+
+        for (Label label : new Label[]{idLabel, firstNameLabel, middleNameLabel, lastNameLabel, departmentLabel, emailLabel, contactLabel, birthdateLabel, dateJoinedLabel, statusLabel}) {
+            label.getStyleClass().add("view-text");
+        }
         idLabel.setText(faculty.getFacultyId());
         firstNameLabel.setText(faculty.getFirstName());
         middleNameLabel.setText(faculty.getMiddleName());
@@ -39,7 +43,7 @@ public class AdminFacultyDetailsController {
         statusLabel.setText(faculty.getFacultyStatusName());
     }
 
-    // Close button handler, closes the modal window
+    // Close the button handler, closes the modal window
     @FXML
     private void handleClose() {
         if (dialogStage != null) {

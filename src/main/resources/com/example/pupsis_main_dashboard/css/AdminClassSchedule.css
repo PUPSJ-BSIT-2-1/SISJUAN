@@ -146,6 +146,14 @@
     -fx-text-fill: white;
 }
 
+.no-schedules-message {
+    -fx-text-fill: black;
+}
+
+.dark-theme .no-schedules-message {
+    -fx-text-fill: white;
+}
+
 /* DARK THEME STYLES */
 
 .dark-theme .cards {

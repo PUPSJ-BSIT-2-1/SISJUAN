@@ -1,9 +1,11 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -34,13 +36,10 @@ public class AdminAssignSubjectDialogController {
     private ComboBox<SectionItem> sectionComboBox;
 
     @FXML
-    private ComboBox<SemesterItem> semesterComboBox;
+    private TextField semesterTextField;
 
     @FXML
-    private Button cancelButton;
-
-    @FXML
-    private Button assignButton;
+    private TextField schoolYearTextField;
 
     private Stage dialogStage;
     private boolean assigned = false;
@@ -63,21 +62,6 @@ public class AdminAssignSubjectDialogController {
                         .findFirst().orElse(null);
             }
         });
-
-        // Configure the ComboBox to display the name property of SemesterItem
-        semesterComboBox.setConverter(new StringConverter<SemesterItem>() {
-            @Override
-            public String toString(SemesterItem semesterItem) {
-                return semesterItem == null ? null : semesterItem.name();
-            }
-
-            @Override
-            public SemesterItem fromString(String string) {
-                return semesterComboBox.getItems().stream()
-                        .filter(item -> item.name().equals(string))
-                        .findFirst().orElse(null);
-            }
-        });
     }
 
     // Called by AdminFacultyManagementController to provide subject list
@@ -90,9 +74,9 @@ public class AdminAssignSubjectDialogController {
         sectionComboBox.setItems(FXCollections.observableArrayList(sections));
     }
 
-    // Called by AdminFacultyManagementController to provide semesters
-    public void setSemesters(List<SemesterItem> semesters) {
-        semesterComboBox.setItems(FXCollections.observableArrayList(semesters));
+    public void setSchoolYearAndSemester(String schoolYear, String semester) {
+        schoolYearTextField.setText(schoolYear);
+        semesterTextField.setText(semester);
     }
 
     // For AdminFacultyManagementController to get selected subject ID
@@ -104,12 +88,6 @@ public class AdminAssignSubjectDialogController {
     public int getSelectedSectionId() {
         SectionItem selectedSection = sectionComboBox.getValue();
         return selectedSection != null ? selectedSection.id() : -1; // Return -1 or throw if null, based on desired error handling
-    }
-
-    // For AdminFacultyManagementController to get selected semester's ID
-    public int getSelectedSemesterId() {
-        SemesterItem selectedSemester = semesterComboBox.getValue();
-        return selectedSemester != null ? selectedSemester.id() : -1;
     }
 
     // Dialog stage setter to allow dialog control
@@ -132,22 +110,14 @@ public class AdminAssignSubjectDialogController {
     // Assign button action: validate selections, then close with confirmation
     @FXML
     private void handleAssign() {
-        if (subjectComboBox.getValue() == null || sectionComboBox.getValue() == null || semesterComboBox.getValue() == null) {
+        if (subjectComboBox.getValue() == null || sectionComboBox.getValue() == null) {
             // Simple validation: all fields required
             // You can replace with a nicer alert dialog if you want
-            System.out.println("Please select subject, section, and semester.");
+            StageAndSceneUtils.showAlert("Error", "Please select a subject and section.", Alert.AlertType.ERROR);
             return;
         }
         assigned = true;
         dialogStage.close();
     }
 
-    // Helper method for alerts (assuming you might want to add one)
-    private void showAlert(String title, String content, javafx.scene.control.Alert.AlertType alertType) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 }
