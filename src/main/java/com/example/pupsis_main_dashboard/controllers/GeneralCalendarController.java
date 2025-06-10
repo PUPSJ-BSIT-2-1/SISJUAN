@@ -22,7 +22,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class SchoolCalendarController {
+public class GeneralCalendarController {
     @FXML private GridPane calendarGrid;
     @FXML private VBox vBox;
     @FXML private GridPane monthPicker;
@@ -42,9 +42,9 @@ public class SchoolCalendarController {
     protected double xOffset = 0;
     protected double yOffset = 0;
 
-    private final String stylesheetPath = Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/GeneralSchoolCalendar.css")).toExternalForm();
+    private final String stylesheetPath = Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/GeneralCalendar.css")).toExternalForm();
 
-    private static final Logger logger = LoggerFactory.getLogger(SchoolCalendarController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GeneralCalendarController.class);
 
     @FXML private void initialize() {
         // Load events asynchronously
@@ -123,7 +123,7 @@ public class SchoolCalendarController {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.getDialogPane().setPrefSize(370, 320);  // Increased size
         dialog.initStyle(StageStyle.TRANSPARENT);
-        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/GeneralSchoolCalendar.css")).toExternalForm());
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/css/GeneralCalendar.css")).toExternalForm());
 
         if (root.getStyleClass().contains("dark-theme")) {
             // Apply the dark theme to the root scene of the dialog
