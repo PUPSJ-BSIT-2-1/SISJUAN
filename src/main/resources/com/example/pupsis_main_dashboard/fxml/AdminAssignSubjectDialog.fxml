@@ -21,8 +21,8 @@
         <Label styleClass="assign-sub-text" text="Subject Code:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <ComboBox fx:id="subjectComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Subject Code" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label styleClass="assign-sub-text" text="Year Level:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <ComboBox fx:id="yearLevelComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Year Level" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label styleClass="assign-sub-text" text="Section:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <ComboBox fx:id="sectionComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Section" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
         <Label styleClass="assign-sub-text" text="Semester:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <ComboBox fx:id="semesterComboBox" prefHeight="30.0" prefWidth="280.0" promptText="Select Semester" styleClass="assign-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />

@@ -6,6 +6,7 @@ import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
 import com.example.pupsis_main_dashboard.utilities.FacultyLoadDAO;
 import com.example.pupsis_main_dashboard.utilities.SectionDAO;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
+import com.example.pupsis_main_dashboard.utilities.SemesterDAO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,6 +47,7 @@ public class AdminFacultyManagementController {
     private FacultyLoadDAO facultyLoadDAO;  
     private SubjectDAO subjectDAO;
     private SectionDAO sectionDAO;
+    private SemesterDAO semesterDAO;
     private ScrollPane contentPane;
 
     public void initialize() {
@@ -54,6 +56,7 @@ public class AdminFacultyManagementController {
             facultyLoadDAO = new FacultyLoadDAO();  
             subjectDAO = new SubjectDAO();
             sectionDAO = new SectionDAO();
+            semesterDAO = new SemesterDAO();
         } catch (SQLException e) {
             showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR);
             return;
@@ -171,6 +174,14 @@ public class AdminFacultyManagementController {
             }
             controller.setSections(sectionItems);
 
+            // Load semesters using SemesterDAO
+            List<AdminAssignSubjectDialogController.SemesterItem> semesterItems = semesterDAO.getAllSemesters();
+            if (semesterItems.isEmpty()) {
+                showAlert("Information", "No semesters available to assign.", Alert.AlertType.INFORMATION);
+                return;
+            }
+            controller.setSemesters(semesterItems);
+
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             String facultyFullName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
@@ -183,6 +194,7 @@ public class AdminFacultyManagementController {
                 String facultyId = selectedFaculty.getFacultyId(); 
                 String subjectCode = controller.getSelectedSubjectCode(); 
                 int sectionId = controller.getSelectedSectionId();
+                int semesterId = controller.getSelectedSemesterId();
 
                 // Get subject_id (INT) from subject_code (TEXT)
                 int subjectId = subjectDAO.getSubjectIdByCode(subjectCode);
@@ -191,8 +203,7 @@ public class AdminFacultyManagementController {
                     return;
                 }
 
-                // Get current semester and academic year IDs
-                int semesterId = SchoolYearAndSemester.getCurrentSemesterId();
+                // Get current academic year ID
                 int academicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
 
                 if (semesterId == -1 || academicYearId == -1) { 

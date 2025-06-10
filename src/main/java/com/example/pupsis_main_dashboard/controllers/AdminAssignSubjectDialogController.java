@@ -19,11 +19,22 @@ public class AdminAssignSubjectDialogController {
         }
     }
 
+    // Inner record to hold semester data
+    public record SemesterItem(int id, String name) {
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     @FXML
     private ComboBox<String> subjectComboBox;
 
     @FXML
-    private ComboBox<SectionItem> yearLevelComboBox;
+    private ComboBox<SectionItem> sectionComboBox;
+
+    @FXML
+    private ComboBox<SemesterItem> semesterComboBox;
 
     @FXML
     private Button cancelButton;
@@ -37,7 +48,7 @@ public class AdminAssignSubjectDialogController {
     @FXML
     public void initialize() {
         // Configure the ComboBox to display the name property of SectionItem
-        yearLevelComboBox.setConverter(new StringConverter<SectionItem>() {
+        sectionComboBox.setConverter(new StringConverter<SectionItem>() {
             @Override
             public String toString(SectionItem sectionItem) {
                 return sectionItem == null ? null : sectionItem.name();
@@ -47,7 +58,22 @@ public class AdminAssignSubjectDialogController {
             public SectionItem fromString(String string) {
                 // Not needed for a non-editable ComboBox, but good practice to implement
                 // This would require looking up the SectionItem by name if it were editable
-                return yearLevelComboBox.getItems().stream()
+                return sectionComboBox.getItems().stream()
+                        .filter(item -> item.name().equals(string))
+                        .findFirst().orElse(null);
+            }
+        });
+
+        // Configure the ComboBox to display the name property of SemesterItem
+        semesterComboBox.setConverter(new StringConverter<SemesterItem>() {
+            @Override
+            public String toString(SemesterItem semesterItem) {
+                return semesterItem == null ? null : semesterItem.name();
+            }
+
+            @Override
+            public SemesterItem fromString(String string) {
+                return semesterComboBox.getItems().stream()
                         .filter(item -> item.name().equals(string))
                         .findFirst().orElse(null);
             }
@@ -61,7 +87,12 @@ public class AdminAssignSubjectDialogController {
 
     // Called by AdminFacultyManagementController to provide sections
     public void setSections(List<SectionItem> sections) {
-        yearLevelComboBox.setItems(FXCollections.observableArrayList(sections));
+        sectionComboBox.setItems(FXCollections.observableArrayList(sections));
+    }
+
+    // Called by AdminFacultyManagementController to provide semesters
+    public void setSemesters(List<SemesterItem> semesters) {
+        semesterComboBox.setItems(FXCollections.observableArrayList(semesters));
     }
 
     // For AdminFacultyManagementController to get selected subject ID
@@ -71,8 +102,14 @@ public class AdminAssignSubjectDialogController {
 
     // For AdminFacultyManagementController to get selected year level's ID
     public int getSelectedSectionId() {
-        SectionItem selectedSection = yearLevelComboBox.getValue();
+        SectionItem selectedSection = sectionComboBox.getValue();
         return selectedSection != null ? selectedSection.id() : -1; // Return -1 or throw if null, based on desired error handling
+    }
+
+    // For AdminFacultyManagementController to get selected semester's ID
+    public int getSelectedSemesterId() {
+        SemesterItem selectedSemester = semesterComboBox.getValue();
+        return selectedSemester != null ? selectedSemester.id() : -1;
     }
 
     // Dialog stage setter to allow dialog control
@@ -95,10 +132,10 @@ public class AdminAssignSubjectDialogController {
     // Assign button action: validate selections, then close with confirmation
     @FXML
     private void handleAssign() {
-        if (subjectComboBox.getValue() == null || yearLevelComboBox.getValue() == null) {
+        if (subjectComboBox.getValue() == null || sectionComboBox.getValue() == null || semesterComboBox.getValue() == null) {
             // Simple validation: all fields required
             // You can replace with a nicer alert dialog if you want
-            System.out.println("Please select subject and section.");
+            System.out.println("Please select subject, section, and semester.");
             return;
         }
         assigned = true;
