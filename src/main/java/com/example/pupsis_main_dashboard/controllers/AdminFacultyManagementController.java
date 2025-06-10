@@ -274,14 +274,32 @@ public class AdminFacultyManagementController {
 
     @FXML
     private void handleAddFaculty() {
-        Faculty newFaculty = showFacultyDialog(null);
-        if (newFaculty != null) {
-            boolean success = facultyDAO.addFaculty(newFaculty);
-            if (success) {
-                showAlert("Success", "Faculty added successfully. Click Refresh to update view.", Alert.AlertType.INFORMATION);
-            } else {
-                showAlert("Error", "Failed to add faculty.", Alert.AlertType.ERROR);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyRegistrationDialog.fxml"));
+            Parent root = loader.load();
+
+            AdminFacultyDialogController controller = loader.getController();
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setTitle("Add New Faculty");
+            dialogStage.setScene(new Scene(root));
+            controller.setDialogStage(dialogStage);
+            controller.setFaculty(null); // Pass null for a new faculty
+
+            dialogStage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                Faculty newFaculty = controller.getFaculty();
+                if (facultyDAO.addFaculty(newFaculty)) {
+                    showAlert("Success", "Faculty added successfully.", Alert.AlertType.INFORMATION);
+                    loadFacultyData(); // Refresh the table
+                } else {
+                    showAlert("Error", "Failed to add faculty.", Alert.AlertType.ERROR);
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open the add faculty window.", Alert.AlertType.ERROR);
         }
     }
 
@@ -389,18 +407,18 @@ public class AdminFacultyManagementController {
 
     @FXML
     private void handleSearch() {
-        String query = searchField.getText().toLowerCase();
-        if (query.isEmpty()) {
+        String keyword = searchField.getText().toLowerCase();
+        if (keyword.isEmpty()) {
             facultyTable.setItems(facultyList);
         } else {
             ObservableList<Faculty> filteredList = facultyList.stream()
-                    .filter(faculty -> faculty.getFirstName().toLowerCase().contains(query) ||
-                            faculty.getLastName().toLowerCase().contains(query) ||
-                            faculty.getFacultyId().toLowerCase().contains(query) ||
-                            (faculty.getDepartmentName() != null && faculty.getDepartmentName().toLowerCase().contains(query)) || 
-                            (faculty.getEmail() != null && faculty.getEmail().toLowerCase().contains(query)) ||
-                            (faculty.getContactNumber() != null && faculty.getContactNumber().toLowerCase().contains(query)) ||
-                            (faculty.getFacultyStatusName() != null && faculty.getFacultyStatusName().toLowerCase().contains(query))) 
+                    .filter(faculty -> faculty.getFirstName().toLowerCase().contains(keyword) ||
+                            faculty.getLastName().toLowerCase().contains(keyword) ||
+                            faculty.getFacultyId().toLowerCase().contains(keyword) ||
+                            (faculty.getDepartmentName() != null && faculty.getDepartmentName().toLowerCase().contains(keyword)) || 
+                            (faculty.getEmail() != null && faculty.getEmail().toLowerCase().contains(keyword)) ||
+                            (faculty.getContactNumber() != null && faculty.getContactNumber().toLowerCase().contains(keyword)) ||
+                            (faculty.getFacultyStatusName() != null && faculty.getFacultyStatusName().toLowerCase().contains(keyword))) 
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
             facultyTable.setItems(filteredList);
         }

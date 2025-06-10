@@ -46,6 +46,7 @@ public class AdminFacultyDialogController {
         this.faculty = faculty;
 
         if (faculty != null) {
+            // Populate fields for editing an existing faculty
             facultyIdField.setText(faculty.getFacultyId());
             firstNameField.setText(faculty.getFirstName());
             middleNameField.setText(faculty.getMiddleName());
@@ -57,9 +58,19 @@ public class AdminFacultyDialogController {
             statusComboBox.setValue(faculty.getFacultyStatusName());
             dateJoinedPicker.setValue(faculty.getDateJoined());
 
-            facultyIdField.setDisable(true);
+            facultyIdField.setDisable(true); // Don't allow editing the user-facing ID
         } else {
-            this.faculty = new Faculty();
+            // Clear fields for adding a new faculty
+            facultyIdField.clear();
+            firstNameField.clear();
+            middleNameField.clear();
+            lastNameField.clear();
+            departmentField.clear();
+            emailField.clear();
+            contactField.clear();
+            birthdatePicker.setValue(null);
+            statusComboBox.setValue(null);
+            dateJoinedPicker.setValue(LocalDate.now());
             facultyIdField.setDisable(false);
         }
     }
@@ -75,14 +86,38 @@ public class AdminFacultyDialogController {
     @FXML
     private void handleSave() {
         if (isInputValid()) {
-            faculty.setFacultyId(facultyIdField.getText());
-            faculty.setFirstName(firstNameField.getText());
-            faculty.setMiddleName(middleNameField.getText());
-            faculty.setLastName(lastNameField.getText());
-            faculty.setEmail(emailField.getText());
-            faculty.setContactNumber(contactField.getText());
-            faculty.setBirthdate(birthdatePicker.getValue());
-            faculty.setDateJoined(dateJoinedPicker.getValue());
+            boolean isNew = (this.faculty == null);
+
+            if (isNew) {
+                // Create a new Faculty object for an insert operation.
+                // The integer primary key (actualFacultyId) must be null.
+                this.faculty = new Faculty(
+                        facultyIdField.getText(),       // facultyId (user-facing string)
+                        null,                           // actualFacultyId (integer PK)
+                        firstNameField.getText(),
+                        middleNameField.getText(),
+                        lastNameField.getText(),
+                        null,                           // departmentId
+                        departmentField.getText(),      // departmentName
+                        emailField.getText(),
+                        contactField.getText(),
+                        birthdatePicker.getValue(),
+                        null,                           // facultyStatusId
+                        statusComboBox.getValue(),      // facultyStatusName
+                        dateJoinedPicker.getValue()
+                );
+            } else {
+                // Update the existing Faculty object for an update operation.
+                this.faculty.setFirstName(firstNameField.getText());
+                this.faculty.setMiddleName(middleNameField.getText());
+                this.faculty.setLastName(lastNameField.getText());
+                this.faculty.setDepartmentName(departmentField.getText());
+                this.faculty.setEmail(emailField.getText());
+                this.faculty.setContactNumber(contactField.getText());
+                this.faculty.setBirthdate(birthdatePicker.getValue());
+                this.faculty.setFacultyStatusName(statusComboBox.getValue());
+                this.faculty.setDateJoined(dateJoinedPicker.getValue());
+            }
 
             try {
                 // Get IDs for selected department and status
