@@ -283,19 +283,15 @@ public class AdminFacultyManagementController {
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setTitle("Add New Faculty");
             dialogStage.setScene(new Scene(root));
+            controller.setFacultyDAO(facultyDAO);
             controller.setDialogStage(dialogStage);
             controller.setFaculty(null); // Pass null for a new faculty
 
             dialogStage.showAndWait();
 
+            // Only reload table if user saved successfully!
             if (controller.isSaveClicked()) {
-                Faculty newFaculty = controller.getFaculty();
-                if (facultyDAO.addFaculty(newFaculty)) {
-                    showAlert("Success", "Faculty added successfully.", Alert.AlertType.INFORMATION);
-                    loadFacultyData(); // Refresh the table
-                } else {
-                    showAlert("Error", "Failed to add faculty.", Alert.AlertType.ERROR);
-                }
+                showAlert("Success", "Click Refresh to update the list.", Alert.AlertType.INFORMATION);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -327,8 +323,7 @@ public class AdminFacultyManagementController {
             dialogStage.showAndWait();
 
             if (controller.isSaveClicked()) { 
-                loadFacultyData(); 
-                showAlert("Success", "Faculty details updated successfully.", Alert.AlertType.INFORMATION);
+                showAlert("Success", "Click Refresh to update the list.", Alert.AlertType.INFORMATION);
             } else {
                  if (controller.getErrorMessage() != null && !controller.getErrorMessage().isEmpty()) {
                     showAlert("Error", controller.getErrorMessage(), Alert.AlertType.ERROR);
@@ -341,6 +336,7 @@ public class AdminFacultyManagementController {
     }
 
 
+
     @FXML
     private void handleDeleteFaculty() {
         Faculty selectedFaculty = facultyTable.getSelectionModel().getSelectedItem();
@@ -349,23 +345,26 @@ public class AdminFacultyManagementController {
             return;
         }
 
-        Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationDialog.setTitle("Confirm Deletion");
-        confirmationDialog.setHeaderText("Delete Faculty Member");
-        confirmationDialog.setContentText("Are you sure you want to delete " + selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName() + "?");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Delete");
+        confirm.setHeaderText("Are you sure you want to delete this faculty member?");
+        confirm.setContentText("This action cannot be undone.");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
 
-        confirmationDialog.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                boolean success = facultyDAO.deleteFaculty(selectedFaculty.getActualFacultyId());
-                if (success) {
-                    facultyList.remove(selectedFaculty);
-                    showAlert("Success", "Faculty member deleted successfully.", Alert.AlertType.INFORMATION);
-                } else {
-                    showAlert("Error", "Failed to delete faculty member.", Alert.AlertType.ERROR);
-                }
-            }
-        });
+        int result = facultyDAO.deleteFaculty(selectedFaculty.getActualFacultyId());
+        if (result == 1) {
+            showAlert("Success", "Faculty member deleted successfully.", Alert.AlertType.INFORMATION);
+            loadFacultyData(); // Refresh table
+        } else if (result == -1) {
+            showAlert("Delete Failed",
+                    "This faculty member cannot be deleted because they are assigned to faculty loads.\n"
+                            + "Remove all their assignments first before deleting.",
+                    Alert.AlertType.ERROR);
+        } else {
+            showAlert("Error", "Failed to delete faculty. Please try again.", Alert.AlertType.ERROR);
+        }
     }
+
 
     @FXML
     private void handleRefreshTable() {

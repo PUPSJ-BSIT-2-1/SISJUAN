@@ -2,11 +2,13 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Faculty;
 import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
+import com.example.pupsis_main_dashboard.models.Department;
+import com.example.pupsis_main_dashboard.models.FacultyStatus;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class AdminFacultyDialogController {
@@ -15,11 +17,11 @@ public class AdminFacultyDialogController {
     @FXML private TextField firstNameField;
     @FXML private TextField middleNameField;
     @FXML private TextField lastNameField;
-    @FXML private TextField departmentField;
+    @FXML private ComboBox<Department> departmentComboBox;
     @FXML private TextField emailField;
     @FXML private TextField contactField;
     @FXML private DatePicker birthdatePicker;
-    @FXML private ComboBox<String> statusComboBox;
+    @FXML private ComboBox<FacultyStatus> statusComboBox;
     @FXML private DatePicker dateJoinedPicker;
 
     private Stage dialogStage;
@@ -30,9 +32,19 @@ public class AdminFacultyDialogController {
 
     @FXML
     private void initialize() {
-        statusComboBox.setItems(FXCollections.observableArrayList("Full-time", "Part-time"));
+        try {
+            departmentComboBox.setItems(FXCollections.observableArrayList(FacultyDAO.getAllDepartments()));
+        } catch (SQLException e) {
+            showErrorAlert("Error loading department list:\n" + e.getMessage());
+        }
+        try {
+            statusComboBox.setItems(FXCollections.observableArrayList(FacultyDAO.getAllFacultyStatuses()));
+        } catch (SQLException e) {
+            showErrorAlert("Error loading status list:\n" + e.getMessage());
+        }
         dateJoinedPicker.setValue(LocalDate.now());
     }
+
 
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
@@ -46,26 +58,48 @@ public class AdminFacultyDialogController {
         this.faculty = faculty;
 
         if (faculty != null) {
-            // Populate fields for editing an existing faculty
             facultyIdField.setText(faculty.getFacultyId());
             firstNameField.setText(faculty.getFirstName());
             middleNameField.setText(faculty.getMiddleName());
             lastNameField.setText(faculty.getLastName());
-            departmentField.setText(faculty.getDepartmentName());
+
+            // Set selected department
+            if (faculty.getDepartmentId() != null && departmentComboBox.getItems() != null) {
+                for (Department dep : departmentComboBox.getItems()) {
+                    if (dep.getDepartmentId() == faculty.getDepartmentId()) {
+                        departmentComboBox.setValue(dep);
+                        break;
+                    }
+                }
+            } else {
+                departmentComboBox.setValue(null);
+            }
+           // for debugging only System.out.println("Faculty's current Department ID: " + faculty.getDepartmentId());
+
             emailField.setText(faculty.getEmail());
             contactField.setText(faculty.getContactNumber());
             birthdatePicker.setValue(faculty.getBirthdate());
-            statusComboBox.setValue(faculty.getFacultyStatusName());
-            dateJoinedPicker.setValue(faculty.getDateJoined());
 
-            facultyIdField.setDisable(true); // Don't allow editing the user-facing ID
+            // Set selected status
+            if (faculty.getFacultyStatusId() != null && statusComboBox.getItems() != null) {
+                for (FacultyStatus stat : statusComboBox.getItems()) {
+                    if (stat.getFacultyStatusId() == faculty.getFacultyStatusId()) {
+                        statusComboBox.setValue(stat);
+                        break;
+                    }
+                }
+            } else {
+                statusComboBox.setValue(null);
+            }
+
+            dateJoinedPicker.setValue(faculty.getDateJoined());
+            facultyIdField.setDisable(true);
         } else {
-            // Clear fields for adding a new faculty
             facultyIdField.clear();
             firstNameField.clear();
             middleNameField.clear();
             lastNameField.clear();
-            departmentField.clear();
+            departmentComboBox.setValue(null);
             emailField.clear();
             contactField.clear();
             birthdatePicker.setValue(null);
@@ -85,78 +119,92 @@ public class AdminFacultyDialogController {
 
     @FXML
     private void handleSave() {
-        if (isInputValid()) {
-            boolean isNew = (this.faculty == null);
+        if (!isInputValid()) return;
 
-            if (isNew) {
-                // Create a new Faculty object for an insert operation.
-                // The integer primary key (actualFacultyId) must be null.
-                this.faculty = new Faculty(
-                        facultyIdField.getText(),       // facultyId (user-facing string)
-                        null,                           // actualFacultyId (integer PK)
-                        firstNameField.getText(),
-                        middleNameField.getText(),
-                        lastNameField.getText(),
-                        null,                           // departmentId
-                        departmentField.getText(),      // departmentName
-                        emailField.getText(),
-                        contactField.getText(),
-                        birthdatePicker.getValue(),
-                        null,                           // facultyStatusId
-                        statusComboBox.getValue(),      // facultyStatusName
-                        dateJoinedPicker.getValue()
-                );
-            } else {
-                // Update the existing Faculty object for an update operation.
-                this.faculty.setFirstName(firstNameField.getText());
-                this.faculty.setMiddleName(middleNameField.getText());
-                this.faculty.setLastName(lastNameField.getText());
-                this.faculty.setDepartmentName(departmentField.getText());
-                this.faculty.setEmail(emailField.getText());
-                this.faculty.setContactNumber(contactField.getText());
-                this.faculty.setBirthdate(birthdatePicker.getValue());
-                this.faculty.setFacultyStatusName(statusComboBox.getValue());
-                this.faculty.setDateJoined(dateJoinedPicker.getValue());
+        Department selectedDepartment = departmentComboBox.getValue();
+        FacultyStatus selectedStatus = statusComboBox.getValue();
+
+        if (selectedDepartment == null || selectedStatus == null) {
+            showErrorAlert("Department and Status must be selected.");
+            return;
+        }
+
+        boolean isNew = (this.faculty == null);
+
+        if (isNew) {
+            String facultyNum = facultyIdField.getText();
+
+            // Double-check for duplicate BEFORE trying to add
+            if (facultyDAO.facultyNumberExists(facultyNum)) {
+                showErrorAlert("A faculty with this Faculty Number already exists. Please use a unique Faculty Number.");
+                return;
             }
 
-            try {
-                // Get IDs for selected department and status
-                String selectedDepartmentName = departmentField.getText();
-                // TODO: Uncomment and ensure FacultyDAO.getDepartmentIdByName is implemented
-                // Integer departmentId = facultyDAO.getDepartmentIdByName(selectedDepartmentName); 
-                // if (departmentId == null) {
-                //     errorMessage = "Selected department is invalid or not found.";
-                //     showErrorAlert(errorMessage);
-                //     return;
-                // }
-                // faculty.setDepartmentId(departmentId);
+            // Build new Faculty
+            this.faculty = new Faculty(
+                    facultyNum, null,
+                    firstNameField.getText(),
+                    middleNameField.getText(),
+                    lastNameField.getText(),
+                    selectedDepartment.getDepartmentId(),
+                    selectedDepartment.getDepartmentName(),
+                    emailField.getText(),
+                    contactField.getText(),
+                    birthdatePicker.getValue(),
+                    selectedStatus.getFacultyStatusId(),
+                    selectedStatus.getStatusName(),
+                    dateJoinedPicker.getValue()
+            );
 
-                String selectedStatusName = statusComboBox.getValue();
-                // TODO: Uncomment and ensure FacultyDAO.getFacultyStatusIdByName is implemented
-                // Integer statusId = facultyDAO.getFacultyStatusIdByName(selectedStatusName); 
-                // if (statusId == null) {
-                //     errorMessage = "Selected status is invalid or not found.";
-                //     showErrorAlert(errorMessage);
-                //     return;
-                // }
-                // faculty.setFacultyStatusId(statusId);
+            int result = facultyDAO.addFaculty(this.faculty);
 
-                // Removed: faculty.setDepartment(departmentField.getText());
-                // Removed: faculty.setStatus(statusComboBox.getValue());
-
+            if (result == 1) {
+                // Success: show only the success, then close
                 saveClicked = true;
+                showAlert("Success", "Faculty member added successfully.", Alert.AlertType.INFORMATION);
                 dialogStage.close();
-            } catch (/*SQLException |*/ NullPointerException e) { // SQLException removed as DB calls are commented
-                // errorMessage = "Database error when fetching Department/Status ID: " + e.getMessage();
-                errorMessage = "FacultyDAO not initialized or dependent DAO methods not yet implemented. Cannot save Department/Status ID.";
-                if (e instanceof NullPointerException && facultyDAO == null) {
-                    errorMessage = "FacultyDAO not initialized. Cannot fetch Department/Status ID.";
-                }
-                showErrorAlert(errorMessage + "\n" + e.getMessage());
-                e.printStackTrace(); // For debugging
+            } else if (result == -1) {
+                // Should *never* hit this if pre-check worked, but for safety:
+                showErrorAlert("A faculty with this Faculty Number already exists. Please use a unique Faculty Number.");
+            } else {
+                showErrorAlert("Failed to add faculty. Please check your input or try again.");
+            }
+        } else {
+            // Edit/update path
+            this.faculty.setFirstName(firstNameField.getText());
+            this.faculty.setMiddleName(middleNameField.getText());
+            this.faculty.setLastName(lastNameField.getText());
+            this.faculty.setDepartmentId(selectedDepartment.getDepartmentId());
+            this.faculty.setDepartmentName(selectedDepartment.getDepartmentName());
+            this.faculty.setEmail(emailField.getText());
+            this.faculty.setContactNumber(contactField.getText());
+            this.faculty.setBirthdate(birthdatePicker.getValue());
+            this.faculty.setFacultyStatusId(selectedStatus.getFacultyStatusId());
+            this.faculty.setFacultyStatusName(selectedStatus.getStatusName());
+            this.faculty.setDateJoined(dateJoinedPicker.getValue());
+            boolean success = facultyDAO.updateFaculty(this.faculty);
+
+            if (success) {
+                saveClicked = true;
+                showAlert("Success", "Faculty member updated successfully.", Alert.AlertType.INFORMATION);
+                dialogStage.close();
+            } else {
+                showErrorAlert("Failed to update faculty data. Please check your input or try again.");
             }
         }
     }
+
+    // Utility: simple success/info alert
+    private void showAlert(String title, String msg, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.initOwner(dialogStage);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
+
+
 
     @FXML
     private void handleCancel() {
@@ -179,7 +227,7 @@ public class AdminFacultyDialogController {
         if (lastNameField.getText() == null || lastNameField.getText().isEmpty()) {
             errorContent.append("Last Name is required.\n");
         }
-        if (departmentField.getText() == null || departmentField.getText().isEmpty()) {
+        if (departmentComboBox.getValue() == null) {
             errorContent.append("Department must be selected.\n");
         }
         if (emailField.getText() == null || !emailField.getText().contains("@")) {
@@ -188,7 +236,7 @@ public class AdminFacultyDialogController {
         if (birthdatePicker.getValue() == null || birthdatePicker.getValue().isAfter(LocalDate.now())) {
             errorContent.append("Valid Birthdate is required.\n");
         }
-        if (statusComboBox.getValue() == null || statusComboBox.getValue().isEmpty()) {
+        if (statusComboBox.getValue() == null) {
             errorContent.append("Status must be selected.\n");
         }
         if (dateJoinedPicker.getValue() == null) {
@@ -203,6 +251,7 @@ public class AdminFacultyDialogController {
         errorMessage = "";
         return true;
     }
+
 
     private void showErrorAlert(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

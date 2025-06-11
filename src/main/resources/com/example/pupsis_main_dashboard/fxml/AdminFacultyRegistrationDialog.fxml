@@ -59,7 +59,12 @@
 
                     <!-- Row 4 -->
                     <Label styleClass="view-text" text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                    <TextField fx:id="departmentField" promptText="Enter Department" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <ComboBox fx:id="departmentComboBox" prefHeight="20.0" prefWidth="150.0"  GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <GridPane.margin>
+                            <Insets />
+                        </GridPane.margin>
+                    </ComboBox>
+
 
                     <!-- Row 5 -->
                     <Label styleClass="view-text" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
