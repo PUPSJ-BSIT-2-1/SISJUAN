@@ -1,14 +1,16 @@
 .root {
     -fx-font-family: "Inter";
     -fx-background-radius: 20;
-    -fx-background-color: white; /* or your desired background color */
+    -fx-background-color: white;
     -fx-border-radius: 10;
 }
 
+/*changes all labels on the root level to "Inter"*/
 .label {
     -fx-font-family: 'Inter';
 }
 
+/*rounds the root border*/
 .rounded-border-pane {
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
@@ -65,8 +67,8 @@
 
 /* Hover effect for table rows */
 .table-row-cell:hover {
-    -fx-background-color: #a03030; /* Slightly lighter maroon for hover */
-    -fx-text-fill: white;           /* White text */
+    -fx-background-color: #a03030; /* maroon for hover */
+    -fx-text-fill: white;        /* White text */     /* White text */
     -fx-background-radius: 10px;
 }
 
@@ -219,6 +221,14 @@
     -fx-padding: 10;
 }
 
+.mini-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 8;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+}
+
 .cards {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
@@ -315,13 +325,19 @@
 .grade-status-passed {
     -fx-background-color: #28a745;
     -fx-background-radius: 12px;
-    -fx-min-width: 20px;
+    -fx-max-width: 20px;
     -fx-text-fill: white;
     -fx-padding: 6px 12px;
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+    -fx-content-display: center;
 }
+
+.grade-status-passed .label {
+    -fx-text-fill: white;
+}
+
 
 .grade-status-failed {
     -fx-background-color: #dc3545;
@@ -331,6 +347,7 @@
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+    -fx-content-display: center;
 }
 
 .grade-status-other {
@@ -341,21 +358,24 @@
     -fx-alignment: center;
     -fx-font-size: 12px;
     -fx-font-family: 'Inter';
+    -fx-content-display: center;
 }
 
 .icon {
-    -fx-fill: black;
+    -fx-fill: #6b6b6b;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
 }
 
 .search-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #6b6b6b;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
     -fx-text-fill: #343a40;
-    -fx-padding: 3px;
+    -fx-padding: 5px;
     -fx-font-weight: bold;
 }
 
@@ -384,7 +404,7 @@
 }
 
 .dark-theme .icon {
-    -fx-fill: white;
+    -fx-fill: #b0b0b0;
 }
 
 .dark-theme .text {
@@ -414,7 +434,7 @@
 .dark-theme .search-text-field {
     -fx-background-color: #3a3a3a;
     -fx-border-width: 1px;
-    -fx-border-color: #555;
+    -fx-border-color: #555555;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
@@ -464,4 +484,26 @@
 /* Make sure text inside cells changes color in dark theme */
 .dark-theme .table-row-cell:hover .text {
     -fx-fill: white;
+}
+
+.total-student {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .total-student {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #b22222;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .mini-cards {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 8;
+    -fx-border-color: #555555;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
 }

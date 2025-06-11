@@ -14,10 +14,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<DialogPane prefWidth="500.0" styleClass="root" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDialogController">
+<DialogPane prefHeight="602.0" prefWidth="500.0" styleClass="root" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDialogController">
 
     <content>
-        <VBox prefWidth="500.0" spacing="15.0">
+        <VBox prefHeight="566.0" prefWidth="500.0" spacing="20.0">
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
             </padding>

@@ -1,6 +1,6 @@
 .root {
     -fx-font-family: "Inter", sans-serif;
-    -fx-background-color: #f4f6f8; /* Light grey background for the app (default for .root elements) */
+    -fx-background-color: transparent; /* Light grey background for the app (default for .root elements) */
 }
 
 .dark-theme .root {
@@ -144,7 +144,6 @@
     -fx-background-color: #800000;
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-
     -fx-alignment: center;
     -fx-text-fill: white;
     -fx-font-size: 13px;
@@ -153,16 +152,17 @@
 
 .submit-button:hover {
     -fx-background-color: #5e0000;
+    -fx-cursor: hand;
 }
 
 .dark-theme .submit-button {
     -fx-background-color: #b22222;
     -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
 }
 
 .dark-theme .submit-button:hover {
     -fx-background-color: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
 }
 
 
@@ -175,7 +175,7 @@
 .radio-button .radio {
     -fx-background-color: #f8fcfc;
     -fx-border-color: #343a40;
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
     -fx-padding: 4px;
     -fx-background-radius: 50%;
     -fx-border-radius: 50%;

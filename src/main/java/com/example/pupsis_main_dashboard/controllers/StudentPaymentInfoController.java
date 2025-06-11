@@ -16,7 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class PaymentTrailController {
+public class StudentPaymentInfoController {
 
     // Student Information
     @FXML private Label studentID;
@@ -54,7 +54,7 @@ public class PaymentTrailController {
     private double currentBalance = 0.00;
     private String studentNumber;
 
-    Logger logger = LoggerFactory.getLogger(PaymentTrailController.class.getName());
+    Logger logger = LoggerFactory.getLogger(StudentPaymentInfoController.class.getName());
 
 
     /*

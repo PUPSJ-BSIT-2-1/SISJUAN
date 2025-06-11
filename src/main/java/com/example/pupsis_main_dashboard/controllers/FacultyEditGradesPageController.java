@@ -32,6 +32,7 @@ public class FacultyEditGradesPageController implements Initializable {
     @FXML private Label gradesHeaderLbl;
     @FXML private Label subDesclbl;
     @FXML private Label subjDescLbl;
+    @FXML private Label numStudLbl;
     @FXML private MenuButton subjCodeCombBox;
     @FXML private MenuButton yrSecCombBox;
     @FXML private TableView<Student> studentsTable;
@@ -257,7 +258,7 @@ public class FacultyEditGradesPageController implements Initializable {
                 return "5.00";
             }
 
-            // NEW RULE: If grade is below 3.01, automatically set to 5.0 (failing)
+            // NEW RULE: If the grade is below 3.01, automatically set to 5.0 (failing)
             if (gradeValue > 3.0f) {
                 return "5.00";
             }
@@ -276,7 +277,7 @@ public class FacultyEditGradesPageController implements Initializable {
                 roundedFractional = 0.75f;
             } else if (fractionalPart > 0.75 && fractionalPart < 1.00) {
                 roundedFractional = 1.00f;
-                wholePart++; // Carry over to next whole number
+                wholePart++; // Carry over to the next whole number
                 if (wholePart > 5) wholePart = 5; // Cap at 5.00
             } else {
                 roundedFractional = 0.00f; // Exact whole numbers stay as is
@@ -326,7 +327,7 @@ public class FacultyEditGradesPageController implements Initializable {
             return trimmedGrade;
         }
 
-        // Try to format as numeric grade
+        // Try to format as a numeric grade
         try {
             float gradeValue = Float.parseFloat(trimmedGrade);
             return gradeFormat.format(gradeValue);
@@ -363,7 +364,7 @@ public class FacultyEditGradesPageController implements Initializable {
         }
     }
 
-    // Updated method to provide comprehensive validation message
+    // Updated method to provide a comprehensive validation message
     private String getGradeValidationMessage() {
         return "Please enter a valid grade:\n" +
                 "• Numeric grade between 1.00 and 3.00 (grades above 3.00 will be set to 5.00)\n" +
@@ -458,11 +459,11 @@ public class FacultyEditGradesPageController implements Initializable {
     }
 
     private void loadStudentsBySubjectCode(String subjectCode) {
+        ObservableList<Student> tempList = FXCollections.observableArrayList();
         logger.info("Loading students for Subject Code: " + subjectCode);
         Task<ObservableList<Student>> loadTask = new Task<>() {
             @Override
             protected ObservableList<Student> call() throws Exception {
-                ObservableList<Student> tempList = FXCollections.observableArrayList();
                 int rowNum = 1; // Initialize counter for auto-incrementing numbers
 
                 try (Connection conn = DBConnection.getConnection()) {
@@ -513,7 +514,7 @@ public class FacultyEditGradesPageController implements Initializable {
                                 String formattedGrade = formatGradeFromDB(finalGradeFromDB);
 
                                 Student student = new Student(
-                                        String.valueOf(rowNum++), // Use auto-incrementing number instead of grade_id
+                                        String.valueOf(rowNum++), // Use an auto-incrementing number instead of grade_id
                                         rs.getString("student_id"),
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
@@ -540,6 +541,7 @@ public class FacultyEditGradesPageController implements Initializable {
                 String headerText = selectedYearSection != null && !selectedYearSection.equals("All")
                         ? String.format("%s - %s", subjectCode, selectedYearSection)
                         : subjectCode;
+                numStudLbl.setText(String.valueOf(tempList.size()));
             } else {
                 logger.severe("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
                 System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
@@ -599,7 +601,7 @@ public class FacultyEditGradesPageController implements Initializable {
                         selectedSubjectCode = subjCode;
                         selectedSubjectDesc = subjDesc;
 
-                        // Populate year sections based on selected subject
+                        // Populate year sections based on a selected subject
                         populateYearSectionsForSubject(subjCode);
 
                         // Load students with the selected subject and year section
@@ -707,11 +709,11 @@ public class FacultyEditGradesPageController implements Initializable {
                 ResultSet rs = pstmt.executeQuery();
 
                 while (rs.next()) {
-                    String sectionName = rs.getString("section_name");  
-                    MenuItem item = new MenuItem(sectionName);  
+                    String sectionName = rs.getString("section_name");
+                    MenuItem item = new MenuItem(sectionName);
                     item.setOnAction(event -> {
-                        yrSecCombBox.setText(sectionName);  
-                        this.selectedYearSection = sectionName;  
+                        yrSecCombBox.setText(sectionName);
+                        this.selectedYearSection = sectionName;
                         loadStudentsBySubjectCode(selectedSubjectCode);
                     });
                     yrSecCombBox.getItems().add(item);
@@ -827,11 +829,12 @@ public class FacultyEditGradesPageController implements Initializable {
         logger.info("Populating all year sections for faculty ID: " + SessionData.getInstance().getFacultyId());
         yrSecCombBox.getItems().clear(); // Clear previous items
 
-        // Add "All" option first
+        // Add the "All" option for an initial load
         MenuItem allItem = new MenuItem("All");
         allItem.setOnAction(event -> {
+            logger.info("Year section selected: All");
             yrSecCombBox.setText("All");
-            selectedYearSection = "All";
+            selectedYearSection = null;
             if (selectedSubjectCode != null) {
                 loadStudentsBySubjectCode(selectedSubjectCode);
             }
@@ -851,11 +854,11 @@ public class FacultyEditGradesPageController implements Initializable {
                 ResultSet rs = pstmt.executeQuery();
 
                 while (rs.next()) {
-                    String sectionName = rs.getString("section_name");  
-                    MenuItem item = new MenuItem(sectionName);  
+                    String sectionName = rs.getString("section_name");
+                    MenuItem item = new MenuItem(sectionName);
                     item.setOnAction(event -> {
-                        yrSecCombBox.setText(sectionName);  
-                        this.selectedYearSection = sectionName;  
+                        yrSecCombBox.setText(sectionName);
+                        this.selectedYearSection = sectionName;
                         if (selectedSubjectCode != null) {
                             loadStudentsBySubjectCode(selectedSubjectCode);
                         }
@@ -887,7 +890,7 @@ public class FacultyEditGradesPageController implements Initializable {
         }
     }
 
-    // Updated helper method to format grades from database
+    // Updated helper method to format grades from a database
     private String formatGradeFromDB(String gradeStr) {
         if (gradeStr == null || gradeStr.trim().isEmpty()) {
             return gradeStr;

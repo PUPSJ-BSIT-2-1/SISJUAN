@@ -28,7 +28,7 @@ public class StudentHomeContentController {
     @FXML
     private Button viewScheduleButton;
     @FXML
-    private Button viewPaymentButton; //TODO: Add payment button
+    private Button viewPaymentButton;
     @FXML
     private Button seeEnrollmentButton;
     @FXML
@@ -49,6 +49,7 @@ public class StudentHomeContentController {
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGradingModule.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentClassSchedule.fxml";
     private static final String ENROLLMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentEnrollmentContent.fxml";
+    private static final String PAYMENT_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentPaymentInfo.fxml";
 
     private static final Logger logger = LoggerFactory.getLogger(StudentHomeContentController.class);
 
@@ -70,6 +71,10 @@ public class StudentHomeContentController {
 
         if (seeEnrollmentButton != null) {
             seeEnrollmentButton.setOnAction(this::seeEnrollmentButtonClick);
+        }
+
+        if (viewPaymentButton != null) {
+            viewPaymentButton.setOnAction(this::viewPaymentButtonClick);
         }
     }
 
@@ -214,6 +219,16 @@ public class StudentHomeContentController {
             studentDashboardController.handleQuickActionClicks(ENROLLMENT_FXML);
         } else {
             logger.error("StudentDashboardController reference is null, cannot load enrollment content");
+        }
+    }
+
+    private void viewPaymentButtonClick(ActionEvent actionEvent) {
+        if (studentDashboardController != null) {
+            logger.info("See Payment button clicked, loading payment content");
+            studentDashboardController.loadContent(PAYMENT_FXML);
+            studentDashboardController.handleQuickActionClicks(PAYMENT_FXML);
+        } else {
+            logger.error("StudentDashboardController reference is null, cannot load payment content");
         }
     }
 

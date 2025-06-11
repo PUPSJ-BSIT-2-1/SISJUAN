@@ -250,34 +250,39 @@ public class StudentEnrollmentController implements Initializable {
 
     @FXML
     private void handleSelectAll(ActionEvent event) {
-        List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
-                                                          .filter(cb -> !cb.isDisabled())
-                                                          .collect(Collectors.toList());
+        // Filter checkboxes to only those corresponding to subjects with actual, selectable schedules.
+        List<CheckBox> selectableCheckboxes = subjectCheckboxes.stream()
+                .filter(cb -> {
+                    SubjectData subject = checkboxSubjectMap.get(cb);
+                    if (subject == null || subject.availableSchedules() == null || subject.availableSchedules().isEmpty()) {
+                        return false;
+                    }
+                    // A schedule is considered actual if it's not a placeholder message.
+                    return subject.availableSchedules().stream().anyMatch(s ->
+                            !s.equalsIgnoreCase("No schedules available") &&
+                            !s.equalsIgnoreCase("No schedules available for this offering") &&
+                            !s.equalsIgnoreCase("No specific schedules listed") &&
+                            !s.equalsIgnoreCase("Schedule TBD")
+                    );
+                })
+                .collect(Collectors.toList());
 
-        if (enabledCheckboxes.isEmpty()) {
-            return; // No enabled checkboxes to act upon
+        if (selectableCheckboxes.isEmpty()) {
+            return; // No subjects with schedules to select.
         }
 
-        // Determine target state based on whether all *enabled* checkboxes are currently selected
-        boolean allCurrentlyEnabledSelected = enabledCheckboxes.stream().allMatch(CheckBox::isSelected);
-        boolean targetState = !allCurrentlyEnabledSelected;
+        // Determine if all selectable subjects are already selected to toggle between select/deselect all.
+        boolean allSelected = selectableCheckboxes.stream().allMatch(CheckBox::isSelected);
+        boolean targetState = !allSelected;
 
-        for (CheckBox cb : enabledCheckboxes) {
+        // Apply the target state to all selectable checkboxes.
+        for (CheckBox cb : selectableCheckboxes) {
             cb.setSelected(targetState);
         }
-        updateSelectAllButtonState(); // Update button text and state
-        updateEnrollButtonState();    // Update enroll button based on new selection
-    }
 
-    private void updateEnrollButtonState() {
-        if (enrollButton != null) {
-            List<CheckBox> enabledCheckboxes = subjectCheckboxes.stream()
-                                                              .filter(cb -> !cb.isDisabled())
-                                                              .collect(Collectors.toList());
-
-            boolean anyEnabledSelected = enabledCheckboxes.stream().anyMatch(CheckBox::isSelected);
-            enrollButton.setDisable(!anyEnabledSelected);
-        }
+        // Refresh UI states.
+        updateSelectAllButtonState();
+        updateDynamicUnitCountAndEnrollButtonState();
     }
 
     private void populateSubjectListUI(EnrollmentSubjectLists subjectLists, StudentEnrollmentContext context) {
@@ -415,9 +420,13 @@ public class StudentEnrollmentController implements Initializable {
                     scheduleComboBox.setDisable(true);
                     checkBox.setSelected(false); // Unselect if it was somehow selected
                     checkBox.setDisable(true);   // Disable the checkbox
+                    codeLabel.setDisable(true);
+                    descriptionLabel.setDisable(true);
                 } else {
                     scheduleComboBox.setDisable(false);
                     checkBox.setDisable(false); // Ensure checkbox is enabled if schedules are present
+                    codeLabel.setDisable(false);
+                    descriptionLabel.setDisable(false);
                 }
 
                 subjectCheckboxes.add(checkBox);
@@ -425,7 +434,7 @@ public class StudentEnrollmentController implements Initializable {
                 subjectScheduleMap.put(checkBox, scheduleComboBox);
 
                 checkBox.setOnAction(event -> {
-                    updateEnrollButtonState();
+                    updateDynamicUnitCountAndEnrollButtonState();
                     updateSelectAllButtonState();
                 });
 
@@ -435,7 +444,7 @@ public class StudentEnrollmentController implements Initializable {
         } else {
             subjectListContainer.getChildren().add(new Label("No subjects available for enrollment for your program/semester, or you are already enrolled in all offered subjects."));
         }
-        updateEnrollButtonState(); 
+        updateDynamicUnitCountAndEnrollButtonState(); 
         updateSelectAllButtonState();
         if (selectAllButton != null) {
             // updateSelectAllButtonState already handles disabling if no enabled checkboxes exist.
@@ -530,7 +539,7 @@ public class StudentEnrollmentController implements Initializable {
         List<SubjectData> availableSubjectsOutput = new ArrayList<>(); // Final list for output
 
         // Phase 1: Query for ENROLLED subjects
-        String enrolledQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, fl.load_id AS faculty_load_id, " +
+        String enrolledQuery = "SELECT s.subject_code, s.description, CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, s.subject_id, fl.load_id AS faculty_load_id, " +
                              "sch.days, sch.start_time, sch.end_time, r.room_name " +
                              "FROM subjects s " +
                              "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
@@ -580,7 +589,7 @@ public class StudentEnrollmentController implements Initializable {
         List<AvailableSubjectInfo> tempAvailableSubjectInfos = new ArrayList<>();
 
         // Phase 2: Query for AVAILABLE subjects (Get subject details and faculty_load_id)
-        String availableQuery = "SELECT s.subject_code, s.description, s.units, s.subject_id, " +
+        String availableQuery = "SELECT s.subject_code, s.description, CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, s.subject_id, " +
                                 "fl.load_id AS faculty_load_id, " +
                                 "(SELECT COUNT(*) FROM student_load sl_count WHERE sl_count.faculty_load = fl.load_id AND sl_count.academic_year_id = fl.academic_year_id AND sl_count.semester_id = fl.semester_id) AS current_enrollees " +
                                 "FROM subjects s " +
