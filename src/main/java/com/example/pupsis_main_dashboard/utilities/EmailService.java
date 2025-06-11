@@ -106,16 +106,16 @@ public class EmailService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username, "PUPSIS Admissions Office"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-            message.setSubject("Congratulations on Your Acceptance to PUP!");
+            message.setSubject("Congratulations on Your Acceptance to PUPSJ!");
 
             String body = "Dear " + studentName + ",\n\n"
                     + "Congratulations! We are delighted to inform you of your acceptance to the Polytechnic University of the Philippines San Juan Branch.\n\n"
                     + "You have been assigned to section: " + sectionName + ".\n\n"
                     + "Further details regarding your enrollment and orientation will be sent to you shortly. "
                     + "Please monitor your email for updates.\n\n"
-                    + "Welcome to the PUP community!\n\n"
+                    + "Welcome to the PUPSJ community!\n\n"
                     + "Sincerely,\n"
-                    + "The PUP Admissions Office";
+                    + "The PUPSJ Admissions Office";
 
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setText(body);
