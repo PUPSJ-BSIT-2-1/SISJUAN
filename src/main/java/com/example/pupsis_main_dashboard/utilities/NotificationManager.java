@@ -10,7 +10,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -86,7 +86,7 @@ public class NotificationManager {
                     notification.getMessage()
                 );
                 System.out.println("Email notification sent to: " + userEmail);
-            } catch (jakarta.mail.MessagingException e) {
+            } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
         });

@@ -95,6 +95,42 @@ public class EmailService {
         }
     }
 
+    public void sendAcceptanceEmail(String recipient, String studentName, String sectionName) throws MessagingException {
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username, "PUPSIS Admissions Office"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setSubject("Congratulations on Your Acceptance to PUP!");
+
+            String body = "Dear " + studentName + ",\n\n"
+                    + "Congratulations! We are delighted to inform you of your acceptance to the Polytechnic University of the Philippines San Juan Branch.\n\n"
+                    + "You have been assigned to section: " + sectionName + ".\n\n"
+                    + "Further details regarding your enrollment and orientation will be sent to you shortly. "
+                    + "Please monitor your email for updates.\n\n"
+                    + "Welcome to the PUP community!\n\n"
+                    + "Sincerely,\n"
+                    + "The PUP Admissions Office";
+
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(body);
+
+            MimeMultipart multipart = new MimeMultipart();
+            multipart.addBodyPart(textPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+        } catch (UnsupportedEncodingException e) {
+            throw new MessagingException("Encoding error while sending acceptance email", e);
+        }
+    }
+
     private static MimeMultipart getMimeMultipart(String code) throws MessagingException {
         MimeMultipart multipart = new MimeMultipart();
 
