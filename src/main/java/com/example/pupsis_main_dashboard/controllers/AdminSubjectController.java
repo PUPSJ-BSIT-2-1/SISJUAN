@@ -6,16 +6,11 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.sql.Connection;
@@ -50,7 +45,7 @@ public class AdminSubjectController implements Initializable {
 
         tableView.setRowFactory(_ -> {
             TableRow<SubjectManagement> row = new TableRow<>();
-            row.setPrefHeight(13);
+            row.setPrefHeight(15);
             return row;
         });
 
@@ -112,8 +107,9 @@ public class AdminSubjectController implements Initializable {
                         setText(null);
                     } else {
                         setText(item.toString());
+                        setAlignment(Pos.CENTER);
                     }
-                    setAlignment(Pos.CENTER);
+
                 }
             };
             return cell;
@@ -189,26 +185,22 @@ public class AdminSubjectController implements Initializable {
         updateFilter();
 
         // Button handlers
-        addButton.setOnAction(e -> handleAdd());
-        editButton.setOnAction(e -> handleEdit());
-        deleteButton.setOnAction(e -> handleDelete());
-        refreshButton.setOnAction(e -> {
+        addButton.setOnAction(_ -> handleAdd());
+        editButton.setOnAction(_ -> handleEdit());
+        deleteButton.setOnAction(_ -> handleDelete());
+        refreshButton.setOnAction(_ -> {
             setupInitialSubjects();
             updateFilter();
         });
     }
 
     private Integer getSemesterIdFromName(String semesterName) {
-        switch (semesterName) {
-            case "1st Semester":
-                return 1;
-            case "Summer Semester":
-                return 2;
-            case "2nd Semester":
-                return 3;
-            default:
-                return null; // Or throw an exception for unknown semester name
-        }
+        return switch (semesterName) {
+            case "1st Semester" -> 1;
+            case "Summer Semester" -> 2;
+            case "2nd Semester" -> 3;
+            default -> null; // Or throw an exception for an unknown semester name
+        };
     }
 
     private void updateFilter() {
@@ -216,13 +208,7 @@ public class AdminSubjectController implements Initializable {
         String selectedYearSem = yearSemComboBox.getValue();
 
         filteredSubjects.setPredicate(subject -> {
-            boolean matchesSearchText = true;
-            if (searchText != null && !searchText.isEmpty()) {
-                matchesSearchText = subject.getSubjectCode().toLowerCase().contains(searchText) ||
-                        subject.getDescription().toLowerCase().contains(searchText) ||
-                        (subject.getPrerequisite() != null && subject.getPrerequisite().toLowerCase().contains(searchText)) ||
-                        (subject.getEquivSubjectCode() != null && subject.getEquivSubjectCode().toLowerCase().contains(searchText)); // Added equivSubjectCode to filter
-            }
+            boolean matchesSearchText = isMatchesSearchText(subject, searchText);
 
             boolean matchesYearSem = true;
             if (selectedYearSem != null && !selectedYearSem.equals("Year & Semester")) {
@@ -236,7 +222,7 @@ public class AdminSubjectController implements Initializable {
                         matchesYearSem = subject.getYearLevel() != null && subject.getYearLevel() == yearFilter &&
                                 subject.getSemesterId() != null && subject.getSemesterId().equals(semesterIdFilter);
                     } catch (NumberFormatException e) {
-                        // Handle parsing error if necessary, for now, assume valid format or no match
+                        // Handle parsing error if necessary, for now, assume a valid format or no match
                         matchesYearSem = false;
                     }
                 } else {
@@ -245,6 +231,22 @@ public class AdminSubjectController implements Initializable {
             }
             return matchesSearchText && matchesYearSem;
         });
+
+        // Put a placeholder if no subjects found
+        Label placeholder = new Label("No subjects found");
+        placeholder.getStyleClass().add("no-subjects-placeholder");
+        tableView.setPlaceholder(placeholder);
+    }
+
+    private boolean isMatchesSearchText(SubjectManagement subject, String searchText) {
+        boolean matchesSearchText = true;
+        if (searchText != null && !searchText.isEmpty()) {
+            matchesSearchText = subject.getSubjectCode().toLowerCase().contains(searchText) ||
+                    subject.getDescription().toLowerCase().contains(searchText) ||
+                    (subject.getPrerequisite() != null && subject.getPrerequisite().toLowerCase().contains(searchText)) ||
+                    (subject.getEquivSubjectCode() != null && subject.getEquivSubjectCode().toLowerCase().contains(searchText)); // Added equivSubjectCode to filter
+        }
+        return matchesSearchText;
     }
 
     private void setupInitialSubjects() {
@@ -290,7 +292,7 @@ public class AdminSubjectController implements Initializable {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            // Sequence might not exist or other error, fallback to MAX(subject_id) + 1
+            // Sequence might not exist or other error fallback to MAX(subject_id) + 1
             System.err.println("Sequence 'subjects_subject_id_seq' not found or error, falling back to MAX(subject_id): " + e.getMessage());
         }
 
@@ -301,7 +303,7 @@ public class AdminSubjectController implements Initializable {
                 return rs.getInt(1);
             }
         }
-        // Should not happen if table exists, but as a last resort:
+        // Should not happen if a table exists, but as a last resort:
         return 1;
     }
 
@@ -349,7 +351,7 @@ public class AdminSubjectController implements Initializable {
         SubjectManagement newSubject = showSubjectFormDialog(null);
         if (newSubject != null) {
             if (saveSubjectToDatabase(newSubject, true)) {
-                // If DB save is successful, refresh the list from DB to get the new ID if it was auto-generated by sequence
+                // If DB save is successful, refresh the list from DB to get the new ID if it was auto-generated by a sequence
                 setupInitialSubjects();
                 updateFilter();
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Subject added successfully.");
@@ -419,7 +421,7 @@ public class AdminSubjectController implements Initializable {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                // Check for foreign key constraint violation (e.g., if subject is in use)
+                // Check for foreign key constraint violation (e.g., if the subject is in use)
                 if (e.getSQLState().equals("23503")) { // PostgreSQL specific error code for foreign_key_violation
                     showAlert(Alert.AlertType.ERROR, "Deletion Failed", "Cannot delete subject: It is currently assigned or referenced by other records (e.g., faculty load, student grades). Please remove those associations first.");
                 } else {

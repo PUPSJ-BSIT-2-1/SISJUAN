@@ -55,7 +55,7 @@
     -fx-font-family: 'Inter';
     -fx-font-style: italic;
     -fx-text-fill: black;
-    -fx-padding: 10px, 5px, 0px, 5px;
+    -fx-padding: 15px, 10px, 0px, 10px;
 }
 
 /* Table cells */
@@ -65,6 +65,7 @@
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
     -fx-text-fill: black;
+    -fx-padding: 10px 0px 10px 0px;
 }
 
 /* Rows */
@@ -286,14 +287,16 @@
 
 /* SVG Search Icon styling */
 .search-icon {
-    -fx-fill: #6e6e6e;
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
+    -fx-fill: #6b6b6b;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
 }
 
 /* Dark theme SVG icon styling */
 .dark-theme .search-icon {
     -fx-fill: #b0b0b0;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
 }
 
 /* Search icon container for larger clickable area */
@@ -375,13 +378,13 @@
 .dark-theme .sub-header {
     -fx-font-size: 14px;
     -fx-font-family: "Inter";
-    -fx-text-fill: #cccccc;
+    -fx-text-fill: white;
 }
 
 .search-text-field {
     -fx-background-color: white;
     -fx-border-width: 1px;
-    -fx-border-color: #343a40;
+    -fx-border-color: #6b6b6b;
     -fx-border-radius: 5px;
     -fx-font-size: 12px;
     -fx-font-family: "Inter";

@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="731.0" prefWidth="810.0" stylesheets="@../css/StudentClassSchedule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentClassScheduleController">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="731.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/StudentClassSchedule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentClassScheduleController">
    <children>
       <HBox alignment="CENTER" prefHeight="102.0" prefWidth="810.0">
          <children>

@@ -46,7 +46,6 @@
     -fx-border-width: 0 0 1 0;
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
-    -fx-padding: 5px;
     -fx-text-fill: black;
 }
 
@@ -56,8 +55,8 @@
     -fx-border-color: #e3e5e6;
     -fx-border-width: 0 2 2 2;
     -fx-border-radius: 0 0 10 10;
-    -fx-padding: 0 10 10 10;
     -fx-text-fill: black;
+    -fx-padding: 0 10;
 }
 
 .red-card {
@@ -193,7 +192,6 @@
     -fx-border-width: 0 0 1 0;
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
-    -fx-padding: 5px;
     -fx-text-fill: #e0e0e0;
 }
 
@@ -203,7 +201,7 @@
     -fx-border-color: #555555;
     -fx-border-width: 0 2 2 2;
     -fx-border-radius: 0 0 10 10;
-    -fx-padding: 0 10 10 10;
+    -fx-padding: 0 10;
     -fx-text-fill: #e0e0e0;
 }
 

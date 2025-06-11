@@ -69,7 +69,7 @@
                         <TableColumn fx:id="sectionCell" editable="false" maxWidth="171.19998168945312" minWidth="48.0" prefWidth="133.5999755859375" resizable="false" text="Section" />
                         <TableColumn fx:id="scheduleCell" editable="false" maxWidth="209.60003662109375" minWidth="38.4000244140625" prefWidth="159.19989013671875" resizable="false" text="Schedule" />
                         <TableColumn fx:id="dayCell" editable="false" maxWidth="174.4000244140625" minWidth="32.0" prefWidth="64.0" resizable="false" text="Day" />
-                        <TableColumn fx:id="roomCell" editable="false" maxWidth="137.5999755859375" minWidth="38.4000244140625" prefWidth="76.0" resizable="false" text="Room" />
+                        <TableColumn fx:id="roomCell" editable="false" maxWidth="137.5999755859375" minWidth="38.4000244140625" prefWidth="91.199951171875" resizable="false" text="Room" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

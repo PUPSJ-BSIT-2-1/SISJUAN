@@ -6,7 +6,6 @@ import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
 import com.example.pupsis_main_dashboard.utilities.FacultyLoadDAO;
 import com.example.pupsis_main_dashboard.utilities.SectionDAO;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
-import com.example.pupsis_main_dashboard.utilities.SemesterDAO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -44,23 +43,29 @@ public class AdminFacultyManagementController {
 
     private final ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
     private FacultyDAO facultyDAO;
-    private FacultyLoadDAO facultyLoadDAO;  
+    private FacultyLoadDAO facultyLoadDAO;
     private SubjectDAO subjectDAO;
     private SectionDAO sectionDAO;
-    private SemesterDAO semesterDAO;
     private ScrollPane contentPane;
+    private String schoolYear;
+    private String semester;
 
     public void initialize() {
+        new Thread(() -> {
+            schoolYear = SchoolYearAndSemester.determineCurrentSemester();
+            semester = SchoolYearAndSemester.getCurrentAcademicYear();
+        }).start();
+
         try {
             facultyDAO = new FacultyDAO();
-            facultyLoadDAO = new FacultyLoadDAO();  
+            loadFacultyData();
+            facultyLoadDAO = new FacultyLoadDAO();
             subjectDAO = new SubjectDAO();
             sectionDAO = new SectionDAO();
-            semesterDAO = new SemesterDAO();
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR);
-            return;
+            Platform.runLater(() -> showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR));
         }
+
 
         // Go back to the dashboard when the back button is clicked
         backButton.setOnMouseClicked(_ -> {
@@ -76,14 +81,13 @@ public class AdminFacultyManagementController {
             String fullName = faculty.getFirstName() + " " + mi + " " + faculty.getLastName();
             return new SimpleStringProperty(fullName.trim());
         });
-        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("departmentName")); 
+        departmentColumn.setCellValueFactory(new PropertyValueFactory<>("departmentName"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         contactColumn.setCellValueFactory(new PropertyValueFactory<>("contactNumber"));
 
         searchField.textProperty().addListener((obs, oldVal, newVal) -> handleSearch());
 
         facultyTable.setItems(facultyList);
-        loadFacultyData();
         detailsColumn.setCellFactory(col -> new TableCell<>() {
             private final Button btn = new Button("➕");
 
@@ -125,7 +129,7 @@ public class AdminFacultyManagementController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Faculty Details - " + faculty.getFirstName() + " " + faculty.getLastName());
             stage.setScene(new Scene(root));
-            controller.setDialogStage(stage);  
+            controller.setDialogStage(stage);
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,11 +138,11 @@ public class AdminFacultyManagementController {
     }
 
 
-    private void loadFacultyData() {
+    public void loadFacultyData() {
         facultyList.clear();
         try {
-            List<Faculty> list = facultyDAO.getAllFaculty();
-            facultyList.addAll(list);
+            List<Faculty> faculties = facultyDAO.getAllFaculty();
+            facultyList.addAll(faculties);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,7 +163,7 @@ public class AdminFacultyManagementController {
             AdminAssignSubjectDialogController controller = loader.getController();
 
             // Load subjects
-            List<String> subjectCodes = subjectDAO.getAllSubjectCodes(); 
+            List<String> subjectCodes = subjectDAO.getAllSubjectCodes();
             if (subjectCodes.isEmpty()) {
                 showAlert("Information", "No subjects available to assign.", Alert.AlertType.INFORMATION);
                 return;
@@ -174,13 +178,7 @@ public class AdminFacultyManagementController {
             }
             controller.setSections(sectionItems);
 
-            // Load semesters using SemesterDAO
-            List<AdminAssignSubjectDialogController.SemesterItem> semesterItems = semesterDAO.getAllSemesters();
-            if (semesterItems.isEmpty()) {
-                showAlert("Information", "No semesters available to assign.", Alert.AlertType.INFORMATION);
-                return;
-            }
-            controller.setSemesters(semesterItems);
+            controller.setSchoolYearAndSemester(schoolYear, semester);
 
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -191,24 +189,31 @@ public class AdminFacultyManagementController {
             dialogStage.showAndWait();
 
             if (controller.isAssigned()) {
-                String facultyId = selectedFaculty.getFacultyId(); 
-                String subjectCode = controller.getSelectedSubjectCode(); 
+                int facultyId = selectedFaculty.getActualFacultyId();
+                String subjectCode = controller.getSelectedSubjectCode();
                 int sectionId = controller.getSelectedSectionId();
-                int semesterId = controller.getSelectedSemesterId();
 
                 // Get subject_id (INT) from subject_code (TEXT)
                 int subjectId = subjectDAO.getSubjectIdByCode(subjectCode);
-                if (subjectId == -1) { 
+                if (subjectId == -1) {
                     showAlert("Error", "Selected subject code not found or invalid.", Alert.AlertType.ERROR);
                     return;
                 }
 
-                // Get current academic year ID
+                // Get current semester and academic year IDs
+                int semesterId = SchoolYearAndSemester.getCurrentSemesterId();
                 int academicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
 
-                if (semesterId == -1 || academicYearId == -1) { 
+                if (semesterId == -1 || academicYearId == -1) {
                     showAlert("Error", "Could not determine current semester or academic year ID.", Alert.AlertType.ERROR);
                     return;
+                }
+
+                for (FacultyLoadDAO.FacultyLoad load : facultyLoadDAO.getAllFacultyLoad()) {
+                    if (load.facultyId() == facultyId && load.subjectId() == subjectId && load.sectionId() == sectionId && load.semesterId() == semesterId && load.academicYearId() == academicYearId) {
+                        showAlert("Error", "Subject is already assigned to this faculty member.", Alert.AlertType.ERROR);
+                        return;
+                    }
                 }
 
                 boolean success = facultyLoadDAO.addFacultyLoad(
@@ -222,7 +227,7 @@ public class AdminFacultyManagementController {
                 if (success) {
                     String successFacultyName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
                     showAlert("Success", "Subject assigned successfully to " + successFacultyName, Alert.AlertType.INFORMATION);
-                    loadFacultyData(); 
+                    loadFacultyData();
                 } else {
                     showAlert("Error", "Failed to assign subject. Check logs for details.", Alert.AlertType.ERROR);
                 }
@@ -316,7 +321,7 @@ public class AdminFacultyManagementController {
             Parent root = loader.load();
             AdminFacultyDialogController controller = loader.getController();
             controller.setFaculty(selectedFaculty);
-            controller.setFacultyDAO(facultyDAO); 
+            controller.setFacultyDAO(facultyDAO);
 
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Edit Faculty");
@@ -326,11 +331,11 @@ public class AdminFacultyManagementController {
 
             dialogStage.showAndWait();
 
-            if (controller.isSaveClicked()) { 
-                loadFacultyData(); 
+            if (controller.isSaveClicked()) {
+                loadFacultyData();
                 showAlert("Success", "Faculty details updated successfully.", Alert.AlertType.INFORMATION);
             } else {
-                 if (controller.getErrorMessage() != null && !controller.getErrorMessage().isEmpty()) {
+                if (controller.getErrorMessage() != null && !controller.getErrorMessage().isEmpty()) {
                     showAlert("Error", controller.getErrorMessage(), Alert.AlertType.ERROR);
                 }
             }
@@ -415,10 +420,10 @@ public class AdminFacultyManagementController {
                     .filter(faculty -> faculty.getFirstName().toLowerCase().contains(keyword) ||
                             faculty.getLastName().toLowerCase().contains(keyword) ||
                             faculty.getFacultyId().toLowerCase().contains(keyword) ||
-                            (faculty.getDepartmentName() != null && faculty.getDepartmentName().toLowerCase().contains(keyword)) || 
+                            (faculty.getDepartmentName() != null && faculty.getDepartmentName().toLowerCase().contains(keyword)) ||
                             (faculty.getEmail() != null && faculty.getEmail().toLowerCase().contains(keyword)) ||
                             (faculty.getContactNumber() != null && faculty.getContactNumber().toLowerCase().contains(keyword)) ||
-                            (faculty.getFacultyStatusName() != null && faculty.getFacultyStatusName().toLowerCase().contains(keyword))) 
+                            (faculty.getFacultyStatusName() != null && faculty.getFacultyStatusName().toLowerCase().contains(keyword)))
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
             facultyTable.setItems(filteredList);
         }
