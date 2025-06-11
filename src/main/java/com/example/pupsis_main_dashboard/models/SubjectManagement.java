@@ -3,41 +3,41 @@ package com.example.pupsis_main_dashboard.models;
 import javafx.beans.property.*;
 
 public class SubjectManagement {
+    private final IntegerProperty subjectId = new SimpleIntegerProperty();
     private final StringProperty subjectCode = new SimpleStringProperty();
     private final StringProperty preRequisites = new SimpleStringProperty(); // Changed from prerequisite
-    private final StringProperty equivSubjectCode = new SimpleStringProperty();
     private final StringProperty description = new SimpleStringProperty();
     private final DoubleProperty units = new SimpleDoubleProperty(); // Changed from unit
     private final StringProperty yearLevel = new SimpleStringProperty();
     private final StringProperty semester = new SimpleStringProperty();
 
-    public SubjectManagement (String subjectCode, String preRequisites, String equivSubjectCode,
+    public SubjectManagement (int subjectId, String subjectCode, String preRequisites,
                               String description, double units, String yearLevel, String semester) {
+        this.subjectId.set(subjectId);
         this.subjectCode.set(subjectCode);
         this.preRequisites.set(preRequisites);
-        this.equivSubjectCode.set(equivSubjectCode != null ? equivSubjectCode : subjectCode); // Default to subject_code if null
         this.description.set(description);
         this.units.set(units);
         this.yearLevel.set(yearLevel);
         this.semester.set(semester);
     }
 
+    public IntegerProperty subjectIdProperty() { return subjectId; }
     public StringProperty subjectCodeProperty() { return subjectCode; }
     public StringProperty preRequisitesProperty() { return preRequisites; } // Changed from prerequisiteProperty
-    public StringProperty equivSubjectCodeProperty() { return equivSubjectCode; }
     public StringProperty descriptionProperty() { return description; }
     public DoubleProperty unitsProperty() { return units; } // Changed from unitProperty
     public StringProperty yearLevelProperty() { return yearLevel; }
     public StringProperty semesterProperty() { return semester; }
+
+    public int getSubjectId() { return subjectId.get(); }
+    public void setSubjectId(int value) { subjectId.set(value); }
 
     public String getSubjectCode() { return subjectCode.get(); }
     public void setSubjectCode(String value) { subjectCode.set(value); }
 
     public String getPreRequisites() { return preRequisites.get(); } // Changed from getPrerequisite
     public void setPreRequisites(String value) { preRequisites.set(value); } // Changed from setPrerequisite
-
-    public String getEquivSubjectCode() { return equivSubjectCode.get(); }
-    public void setEquivSubjectCode(String value) { equivSubjectCode.set(value); }
 
     public String getDescription() { return description.get(); }
     public void setDescription(String value) { description.set(value); }

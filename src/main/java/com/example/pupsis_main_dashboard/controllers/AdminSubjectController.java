@@ -1,31 +1,42 @@
 package com.example.pupsis_main_dashboard.controllers;
 
+import com.example.pupsis_main_dashboard.models.SubjectManagement;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class AdminSubjectController implements Initializable {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectController.class);
 
     @FXML private TableView<SubjectManagement> tableView;
     @FXML private TableColumn<SubjectManagement, String> subjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> prerequisiteColumn;
     @FXML private TableColumn<SubjectManagement, String> descriptionColumn;
     @FXML private TableColumn<SubjectManagement, Double> unitColumn;
-    @FXML private TableColumn<SubjectManagement, String> equivSubjectCodeColumn; // Added equivSubjectCodeColumn
     @FXML private ComboBox<String> yearSemComboBox;
     @FXML private TextField searchBar;
 
@@ -42,6 +53,7 @@ public class AdminSubjectController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        logger.info("Initializing AdminSubjectController");
 
         tableView.setRowFactory(_ -> {
             TableRow<SubjectManagement> row = new TableRow<>();
@@ -49,7 +61,7 @@ public class AdminSubjectController implements Initializable {
             return row;
         });
 
-        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, descriptionColumn, unitColumn, equivSubjectCodeColumn}; // Added equivSubjectCodeColumn
+        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, descriptionColumn, unitColumn}; 
         for (var col : columns) {
             col.setReorderable(false);
         }
@@ -63,7 +75,6 @@ public class AdminSubjectController implements Initializable {
         prerequisiteColumn.setCellValueFactory(new PropertyValueFactory<>("prerequisite"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         unitColumn.setCellValueFactory(new PropertyValueFactory<>("unit"));
-        equivSubjectCodeColumn.setCellValueFactory(new PropertyValueFactory<>("equivSubjectCode")); // Setup for equivSubjectCodeColumn
 
         // Center align all columns except description
         subjectCodeColumn.setCellFactory(tc -> {
@@ -110,22 +121,6 @@ public class AdminSubjectController implements Initializable {
                         setAlignment(Pos.CENTER);
                     }
 
-                }
-            };
-            return cell;
-        });
-
-        equivSubjectCodeColumn.setCellFactory(tc -> {
-            TableCell<SubjectManagement, String> cell = new TableCell<SubjectManagement, String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                        setText(item);
-                        setAlignment(Pos.CENTER);
-                    }
                 }
             };
             return cell;
@@ -189,12 +184,14 @@ public class AdminSubjectController implements Initializable {
         editButton.setOnAction(_ -> handleEdit());
         deleteButton.setOnAction(_ -> handleDelete());
         refreshButton.setOnAction(_ -> {
+            logger.info("Refresh button clicked.");
             setupInitialSubjects();
             updateFilter();
         });
     }
 
     private Integer getSemesterIdFromName(String semesterName) {
+        logger.debug("Getting semester ID from name: {}", semesterName);
         return switch (semesterName) {
             case "1st Semester" -> 1;
             case "Summer Semester" -> 2;
@@ -203,31 +200,42 @@ public class AdminSubjectController implements Initializable {
         };
     }
 
-    private void updateFilter() {
-        String searchText = searchBar.getText().toLowerCase();
-        String selectedYearSem = yearSemComboBox.getValue();
+    private String getSemesterNameFromId(int semesterId) {
+        return switch (semesterId) {
+            case 1 -> "1st Semester";
+            case 2 -> "Summer Semester";
+            case 3 -> "2nd Semester";
+            default -> "";
+        };
+    }
 
+    private Integer getYearLevelFromName(String yearName) {
+        if (yearName == null || yearName.isEmpty()) return null;
+        try {
+            return Integer.parseInt(yearName.replaceAll("[^0-9]", ""));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private String getYearLevelNameFromId(int yearLevelId) {
+        return switch (yearLevelId) {
+            case 1 -> "1st Year";
+            case 2 -> "2nd Year";
+            case 3 -> "3rd Year";
+            case 4 -> "4th Year";
+            default -> "";
+        };
+    }
+
+    private void updateFilter() {
+        logger.debug("Updating filter with Year/Sem: '{}' and Search: '{}'", currentYearSem, currentSearchText);
         filteredSubjects.setPredicate(subject -> {
-            boolean matchesSearchText = isMatchesSearchText(subject, searchText);
+            boolean matchesSearchText = isMatchesSearchText(subject, currentSearchText);
 
             boolean matchesYearSem = true;
-            if (selectedYearSem != null && !selectedYearSem.equals("Year & Semester")) {
-                String[] parts = selectedYearSem.split(" - ");
-                if (parts.length == 2) {
-                    try {
-                        int yearFilter = Integer.parseInt(parts[0].replaceAll("[^0-9]", ""));
-                        String semesterNameFilter = parts[1];
-                        Integer semesterIdFilter = getSemesterIdFromName(semesterNameFilter);
-
-                        matchesYearSem = subject.getYearLevel() != null && subject.getYearLevel() == yearFilter &&
-                                subject.getSemesterId() != null && subject.getSemesterId().equals(semesterIdFilter);
-                    } catch (NumberFormatException e) {
-                        // Handle parsing error if necessary, for now, assume a valid format or no match
-                        matchesYearSem = false;
-                    }
-                } else {
-                    matchesYearSem = false; // Invalid format
-                }
+            if (currentYearSem != null && !currentYearSem.equals("Year & Semester")) {
+                matchesYearSem = currentYearSem.equals(subject.getYearLevel() + " - " + subject.getSemester());
             }
             return matchesSearchText && matchesYearSem;
         });
@@ -239,17 +247,18 @@ public class AdminSubjectController implements Initializable {
     }
 
     private boolean isMatchesSearchText(SubjectManagement subject, String searchText) {
+        logger.debug("Checking if subject matches search text: {}", searchText);
         boolean matchesSearchText = true;
         if (searchText != null && !searchText.isEmpty()) {
             matchesSearchText = subject.getSubjectCode().toLowerCase().contains(searchText) ||
                     subject.getDescription().toLowerCase().contains(searchText) ||
-                    (subject.getPrerequisite() != null && subject.getPrerequisite().toLowerCase().contains(searchText)) ||
-                    (subject.getEquivSubjectCode() != null && subject.getEquivSubjectCode().toLowerCase().contains(searchText)); // Added equivSubjectCode to filter
+                    (subject.getPrerequisite() != null && subject.getPrerequisite().toLowerCase().contains(searchText));
         }
         return matchesSearchText;
     }
 
     private void setupInitialSubjects() {
+        logger.info("Setting up initial subjects list.");
         allSubjects.clear(); // Clear existing subjects before loading new ones
         String sql = "SELECT subject_id, subject_code, pre_requisites, description, units, year_level, semester_id FROM subjects";
 
@@ -257,34 +266,66 @@ public class AdminSubjectController implements Initializable {
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
+            logger.debug("Executing query to fetch all subjects.");
             while (rs.next()) {
+                int yearLevelId = rs.getInt("year_level");
+                int semesterId = rs.getInt("semester_id");
+
                 allSubjects.add(new SubjectManagement(
                         rs.getInt("subject_id"),
                         rs.getString("subject_code"),
                         rs.getString("pre_requisites"),
                         rs.getString("description"),
                         rs.getDouble("units"),
-                        rs.getInt("year_level"),
-                        rs.getInt("semester_id")
+                        getYearLevelNameFromId(yearLevelId),
+                        getSemesterNameFromId(semesterId)
                 ));
             }
+            logger.info("Successfully fetched {} subjects from the database.", allSubjects.size());
         } catch (SQLException e) {
-            e.printStackTrace(); // Consider more sophisticated error handling
+            logger.error("Error fetching subjects from database", e);
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load subjects from the database.");
         }
         // tableView.setItems(allSubjects); // This will be set via SortedList bound to FilteredList
     }
 
     // Helper method to show the subject form dialog
-    private SubjectManagement showSubjectFormDialog(SubjectManagement subjectToEdit) {
-        // TODO: Implement or locate AdminSubjectForm.fxml and its controller
-        // Currently, the FXML and/or its controller cannot be found, so this functionality is disabled.
-        showAlert(Alert.AlertType.WARNING, "Feature Unavailable", "The form for adding/editing subjects is currently unavailable.");
-        return null; // Return null as the form cannot be shown
+    private void showSubjectFormDialog(SubjectManagement subjectToEdit) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminSubjectForm.fxml"));
+            Parent root = loader.load();
+
+            AdminSubjectFormController controller = loader.getController();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle(subjectToEdit == null ? "Add New Subject" : "Edit Subject");
+            stage.setScene(new Scene(root));
+
+            // This callback is executed when the form's save button is clicked.
+            controller.showForm(subjectToEdit, () -> {
+                SubjectManagement resultSubject = controller.getSubject();
+                boolean isNew = (subjectToEdit == null);
+                if (saveSubjectToDatabase(resultSubject, isNew)) {
+                    setupInitialSubjects();
+                    updateFilter();
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Subject " + (isNew ? "added" : "updated") + " successfully.");
+                } else {
+                    // Error alert is shown within saveSubjectToDatabase
+                }
+            });
+
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            logger.error("Failed to load the subject form FXML.", e);
+            showAlert(Alert.AlertType.ERROR, "UI Error", "Could not open the subject form.");
+        }
     }
 
     // Helper method to get the next available subject_id
     private int getNextSubjectId(Connection connection) throws SQLException {
+        logger.debug("Getting next available subject ID.");
         // Try to get the next value from a sequence if it exists (PostgreSQL specific)
         try (PreparedStatement stmt = connection.prepareStatement("SELECT nextval('subjects_subject_id_seq')");
              ResultSet rs = stmt.executeQuery()) {
@@ -293,7 +334,7 @@ public class AdminSubjectController implements Initializable {
             }
         } catch (SQLException e) {
             // Sequence might not exist or other error fallback to MAX(subject_id) + 1
-            System.err.println("Sequence 'subjects_subject_id_seq' not found or error, falling back to MAX(subject_id): " + e.getMessage());
+            logger.error("Sequence 'subjects_subject_id_seq' not found or error, falling back to MAX(subject_id): {}", e.getMessage());
         }
 
         // Fallback: Find the maximum subject_id and increment by 1
@@ -308,6 +349,7 @@ public class AdminSubjectController implements Initializable {
     }
 
     private boolean saveSubjectToDatabase(SubjectManagement subject, boolean isNewSubject) {
+        logger.debug("Saving subject to database: {}", subject.getSubjectCode());
         String sql;
         if (isNewSubject) {
             sql = "INSERT INTO subjects (subject_id, subject_code, pre_requisites, description, units, year_level, semester_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -318,6 +360,9 @@ public class AdminSubjectController implements Initializable {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            Integer yearLevel = getYearLevelFromName(subject.getYearLevel());
+            Integer semesterId = getSemesterIdFromName(subject.getSemester());
+
             if (isNewSubject) {
                 int newSubjectId = getNextSubjectId(conn);
                 pstmt.setInt(1, newSubjectId); // Use generated/retrieved subject_id
@@ -325,15 +370,15 @@ public class AdminSubjectController implements Initializable {
                 pstmt.setString(3, subject.getPrerequisite());
                 pstmt.setString(4, subject.getDescription());
                 pstmt.setDouble(5, subject.getUnit());
-                pstmt.setInt(6, subject.getYearLevel()); // Direct integer year_level
-                pstmt.setInt(7, subject.getSemesterId()); // Direct integer semester_id
+                pstmt.setInt(6, yearLevel != null ? yearLevel : 0);
+                pstmt.setInt(7, semesterId != null ? semesterId : 0);
             } else {
                 pstmt.setString(1, subject.getSubjectCode());
                 pstmt.setString(2, subject.getPrerequisite());
                 pstmt.setString(3, subject.getDescription());
                 pstmt.setDouble(4, subject.getUnit());
-                pstmt.setInt(5, subject.getYearLevel()); // Direct integer year_level
-                pstmt.setInt(6, subject.getSemesterId()); // Direct integer semester_id
+                pstmt.setInt(5, yearLevel != null ? yearLevel : 0);
+                pstmt.setInt(6, semesterId != null ? semesterId : 0);
                 pstmt.setInt(7, subject.getSubjectId()); // WHERE clause
             }
 
@@ -341,63 +386,38 @@ public class AdminSubjectController implements Initializable {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error saving subject to database: {}", e.getMessage());
             showAlert(Alert.AlertType.ERROR, "Database Error", (isNewSubject ? "Failed to add subject: " : "Failed to update subject: ") + e.getMessage());
             return false;
         }
     }
 
     private void handleAdd() {
-        SubjectManagement newSubject = showSubjectFormDialog(null);
-        if (newSubject != null) {
-            if (saveSubjectToDatabase(newSubject, true)) {
-                // If DB save is successful, refresh the list from DB to get the new ID if it was auto-generated by a sequence
-                setupInitialSubjects();
-                updateFilter();
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Subject added successfully.");
-            } else {
-                // showAlert is already called in saveSubjectToDatabase on failure
-            }
-        }
+        logger.info("Add button clicked.");
+        showSubjectFormDialog(null);
     }
 
     private void handleEdit() {
         SubjectManagement selectedSubject = tableView.getSelectionModel().getSelectedItem();
         if (selectedSubject == null) {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a subject to edit.");
+            logger.warn("Edit button clicked without a selection.");
             return;
         }
 
-        SubjectManagement editedSubject = showSubjectFormDialog(selectedSubject);
-        if (editedSubject != null) {
-            // The editedSubject might be a new instance from the form, ensure it has the original ID for update
-            SubjectManagement subjectToSave = new SubjectManagement(
-                    selectedSubject.getSubjectId(), // Crucial: use original ID for update
-                    editedSubject.getSubjectCode(),
-                    editedSubject.getPrerequisite(),
-                    editedSubject.getDescription(),
-                    editedSubject.getUnit(),
-                    editedSubject.getYearLevel(),
-                    editedSubject.getSemesterId()
-            );
-
-            if (saveSubjectToDatabase(subjectToSave, false)) {
-                setupInitialSubjects(); // Refresh list from DB
-                updateFilter();
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Subject updated successfully.");
-            } else {
-                // showAlert is already called in saveSubjectToDatabase on failure
-            }
-        }
+        logger.info("Edit button clicked for subject: {}", selectedSubject.getSubjectCode());
+        showSubjectFormDialog(selectedSubject);
     }
 
     private void handleDelete() {
         SubjectManagement selectedSubject = tableView.getSelectionModel().getSelectedItem();
         if (selectedSubject == null) {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a subject to delete.");
+            logger.warn("Delete button clicked without a selection.");
             return;
         }
 
+        logger.info("Delete button clicked for subject: {}", selectedSubject.getSubjectCode());
         Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationDialog.setTitle("Confirm Deletion");
         confirmationDialog.setHeaderText("Delete Subject: " + selectedSubject.getSubjectCode());
@@ -405,70 +425,50 @@ public class AdminSubjectController implements Initializable {
 
         Optional<ButtonType> result = confirmationDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            String sql = "DELETE FROM subjects WHERE subject_id = ?";
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-                pstmt.setInt(1, selectedSubject.getSubjectId());
-                int affectedRows = pstmt.executeUpdate();
-
-                if (affectedRows > 0) {
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Subject deleted successfully.");
-                    allSubjects.remove(selectedSubject); // Remove from the observable list
-                    updateFilter(); // Refresh the table view
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete the subject. It might have already been deleted or does not exist.");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                // Check for foreign key constraint violation (e.g., if the subject is in use)
-                if (e.getSQLState().equals("23503")) { // PostgreSQL specific error code for foreign_key_violation
-                    showAlert(Alert.AlertType.ERROR, "Deletion Failed", "Cannot delete subject: It is currently assigned or referenced by other records (e.g., faculty load, student grades). Please remove those associations first.");
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while trying to delete the subject: " + e.getMessage());
-                }
+            logger.debug("User confirmed deletion for subject: {}.", selectedSubject.getSubjectCode());
+            if (deleteSubjectFromDatabase(selectedSubject.getSubjectCode())) {
+                setupInitialSubjects(); // Refresh list from DB
+                updateFilter();
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Subject deleted successfully.");
             }
         }
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
+    private boolean deleteSubjectFromDatabase(String subjectCode) {
+        logger.info("Attempting to delete subject: {}", subjectCode);
+        String sql = "DELETE FROM subjects WHERE subject_code = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, subjectCode);
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                logger.info("Successfully deleted subject: {}", subjectCode);
+                return true;
+            } else {
+                logger.warn("Deletion failed for subject '{}', it might not exist.", subjectCode);
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete the subject. It might have already been deleted or does not exist.");
+                return false;
+            }
+        } catch (SQLException e) {
+            logger.error("SQL error while deleting subject: {}", subjectCode, e);
+            // Check for foreign key constraint violation (e.g., if the subject is in use)
+            if (e.getSQLState().equals("23503")) { // PostgreSQL specific error code for foreign_key_violation
+                showAlert(Alert.AlertType.ERROR, "Deletion Failed", "Cannot delete subject: It is currently assigned or referenced by other records (e.g., faculty load, student grades). Please remove those associations first.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while deleting the subject.");
+            }
+            return false;
+        }
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    // Inner class for Subject data model
-    public static class SubjectManagement {
-        private final Integer subjectId;
-        private final String subjectCode;
-        private final String prerequisite;
-        private final String description;
-        private final Double unit;
-        private final Integer yearLevel; // Changed from yearLevelId
-        private final Integer semesterId;
-        private final String equivSubjectCode; // Added equivSubjectCode
-
-        public SubjectManagement(Integer subjectId, String subjectCode, String prerequisite, String description, Double unit, Integer yearLevel, Integer semesterId) {
-            this.subjectId = subjectId;
-            this.subjectCode = subjectCode;
-            this.prerequisite = prerequisite;
-            this.description = description;
-            this.unit = unit;
-            this.yearLevel = yearLevel;
-            this.semesterId = semesterId;
-            this.equivSubjectCode = subjectCode; // Copy subjectCode to equivSubjectCode
-        }
-
-        // Getters
-        public Integer getSubjectId() { return subjectId; }
-        public String getSubjectCode() { return subjectCode; }
-        public String getPrerequisite() { return prerequisite; }
-        public String getDescription() { return description; }
-        public Double getUnit() { return unit; }
-        public Integer getYearLevel() { return yearLevel; }
-        public Integer getSemesterId() { return semesterId; }
-        public String getEquivSubjectCode() { return equivSubjectCode; } // Getter for equivSubjectCode
     }
 }
