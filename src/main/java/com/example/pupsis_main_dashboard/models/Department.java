@@ -11,5 +11,3 @@ public class Department {
     public int getDepartmentId() { return departmentId; }
     public String getDepartmentName() { return departmentName; }
     @Override public String toString() { return departmentName; } // For ComboBox display
-}
-

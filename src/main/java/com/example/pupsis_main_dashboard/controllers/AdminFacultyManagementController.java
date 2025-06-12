@@ -14,6 +14,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -38,6 +41,7 @@ public class AdminFacultyManagementController {
     @FXML private TableColumn<Faculty, String> emailColumn;
     @FXML private TableColumn<Faculty, String> contactColumn;
     @FXML private TableColumn<Faculty, Void> detailsColumn;
+    @FXML private TableColumn<Faculty, Void> viewAssignmentsColumn;
     @FXML private HBox backButton;
     @FXML private TextField searchField;
 
@@ -65,7 +69,6 @@ public class AdminFacultyManagementController {
         } catch (SQLException e) {
             Platform.runLater(() -> showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR));
         }
-
 
         // Go back to the dashboard when the back button is clicked
         backButton.setOnMouseClicked(_ -> {
@@ -115,7 +118,58 @@ public class AdminFacultyManagementController {
             col.setReorderable(false);
             col.setSortable(false);
         }
+        addViewAssignmentsButtonToTable();
     }
+
+    private void showAssignmentsForFaculty(Faculty faculty) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyAssignmentsDialog.fxml"));
+            Parent root = loader.load();
+
+            AdminFacultyAssignmentsDialogController controller = loader.getController();
+            controller.setFacultyLoadDAO(facultyLoadDAO);
+            controller.setFaculty(faculty);
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Assigned Subjects");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            controller.setDialogStage(dialogStage);
+
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Optionally show an error dialog
+        }
+    }
+
+    private void addViewAssignmentsButtonToTable() {
+        viewAssignmentsColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button viewBtn = new Button();
+
+            {
+                // Use Unicode for eye icon (works even without custom graphics)
+                viewBtn.setText(" \uD83D\uDC41\uFE0F"); // 👁️
+                viewBtn.setStyle("-fx-background-color: transparent; -fx-font-size: 18;"); // No background, bigger icon
+
+                viewBtn.setOnAction(event -> {
+                    Faculty faculty = getTableView().getItems().get(getIndex());
+                    // Call your show assignments method here!
+                    showAssignmentsForFaculty(faculty);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(viewBtn);
+                }
+            }
+        });
+    }
+
 
     private void showFacultyDetailsModal(Faculty faculty) {
         try {
@@ -233,7 +287,6 @@ public class AdminFacultyManagementController {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error loading AdminAssignSubjectDialog.fxml: " + e.getMessage());
             e.printStackTrace();
             showAlert("Error", "Could not open the assign subject dialog.", Alert.AlertType.ERROR);
         } catch (SQLException se) {
