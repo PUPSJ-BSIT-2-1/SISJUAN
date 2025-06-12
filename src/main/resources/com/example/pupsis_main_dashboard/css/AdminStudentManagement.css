@@ -1,5 +1,5 @@
 .root {
-    -background-color: #f8fcfc;
+    -background-color: transparent;
 }
 
 .red-card {
@@ -53,7 +53,7 @@
 /* Dark theme styles */
 
 .dark-theme .root {
-    -background-color: #2b2b2b;
+    -background-color: transparent;
 }
 
 .dark-theme .red-card {

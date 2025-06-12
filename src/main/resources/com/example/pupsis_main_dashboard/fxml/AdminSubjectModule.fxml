@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox prefHeight="790.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AdminSubjectModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectController">
+<VBox prefHeight="706.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AdminSubjectModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectController">
     <children>
         <HBox>
             <children>
-                <VBox prefHeight="105.0" prefWidth="810.0" styleClass="red-card">
+                <VBox prefHeight="100.0" prefWidth="810.0" styleClass="red-card">
                     <children>
                         <Label styleClass="header" text="Subject and Curriculum Management" />
                         <Label styleClass="sub-header" text="Academic Subject Planning and Oversight" />
@@ -53,7 +53,21 @@
                 <Insets bottom="10.0" />
             </VBox.margin>
         </HBox>
-        <TableView fx:id="tableView" prefHeight="527.0" prefWidth="810.0">
+        <HBox alignment="CENTER_RIGHT" prefHeight="21.0" prefWidth="810.0" spacing="15.0">
+            <padding>
+                <Insets right="20.0" top="5.0" />
+            </padding>
+            <children>
+                <Button fx:id="addButton" prefWidth="93.0" styleClass="styled-button" text="Add" />
+                <Button fx:id="editButton" styleClass="styled-button" text="Edit" />
+                <Button fx:id="deleteButton" styleClass="styled-button" text="Delete" />
+                <Button fx:id="refreshButton" styleClass="styled-button" text="Refresh" />
+            </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+        </HBox>
+        <TableView fx:id="tableView" prefHeight="458.0" prefWidth="810.0">
             <columns>
                 <TableColumn fx:id="subjectCodeColumn" prefWidth="114.39994621276855" text="Subject Code" />
                 <TableColumn fx:id="prerequisiteColumn" prefWidth="127.20001983642578" text="Prerequisite" />
@@ -68,16 +82,5 @@
                 <Insets bottom="10.0" />
             </VBox.margin>
         </TableView>
-        <HBox alignment="CENTER_RIGHT" prefHeight="90.0" prefWidth="810.0" spacing="15.0" styleClass="button-container">
-            <padding>
-                <Insets right="30.0" top="5.0" />
-            </padding>
-            <children>
-                <Button fx:id="addButton" prefWidth="93.0" styleClass="styled-button" text="Add" />
-                <Button fx:id="editButton" styleClass="styled-button" text="Edit" />
-                <Button fx:id="deleteButton" styleClass="styled-button" text="Delete" />
-                <Button fx:id="refreshButton" styleClass="styled-button" text="Refresh" />
-            </children>
-        </HBox>
     </children>
 </VBox>

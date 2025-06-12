@@ -16,11 +16,11 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="root" prefHeight="725.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AdminClassSchedule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminClassScheduleController">
+<StackPane fx:id="root" prefHeight="713.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AdminClassSchedule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminClassScheduleController">
     <children>
-        <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="743.2" prefWidth="810.4">
+        <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="709.0" prefWidth="810.0">
             <center>
-                <VBox fx:id="scheduleContainer" prefHeight="448.0" prefWidth="610.0" styleClass="add-schedule-container" BorderPane.alignment="CENTER">
+                <VBox fx:id="scheduleContainer" prefHeight="456.0" prefWidth="610.0" styleClass="add-schedule-container" BorderPane.alignment="CENTER">
                     <children>
                         <HBox prefHeight="34.0" prefWidth="586.0">
                             <children>
@@ -187,7 +187,7 @@
                 </VBox>
             </center>
             <top>
-                <Region prefHeight="145.0" prefWidth="810.0" BorderPane.alignment="CENTER" />
+                <Region prefHeight="112.0" prefWidth="810.0" BorderPane.alignment="CENTER" />
             </top>
             <left>
                 <Region prefHeight="442.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
@@ -196,14 +196,14 @@
                 <Region prefHeight="442.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
             </right>
             <bottom>
-                <Region prefHeight="145.0" prefWidth="810.0" BorderPane.alignment="CENTER" />
+                <Region prefHeight="140.0" prefWidth="810.0" BorderPane.alignment="CENTER" />
             </bottom>
         </BorderPane>
-        <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="743.0" prefWidth="810.0">
+        <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="721.0" prefWidth="810.0">
             <children>
-                <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="76.0" prefWidth="810.0" styleClass="red-card">
+                <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="810.0" styleClass="red-card">
                     <children>
-                        <VBox alignment="CENTER_LEFT" prefHeight="94.0" prefWidth="644.0" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="593.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label styleClass="header" text="Class Schedule Management">
                                     <font>
@@ -216,10 +216,10 @@
                                 <Label styleClass="sub-header" text="Class Schedule Control and Management" />
                             </children>
                             <HBox.margin>
-                                <Insets bottom="10.0" />
+                                <Insets bottom="10.0" left="10.0" top="10.0" />
                             </HBox.margin>
                         </VBox>
-                  <HBox fx:id="importRooms" alignment="CENTER" prefHeight="50.0" prefWidth="162.0" styleClass="utility-button">
+                  <HBox fx:id="importRooms" alignment="CENTER" prefHeight="50.0" prefWidth="154.0" styleClass="utility-button">
                      <children>
                         <SVGPath content="M3 21v-2h2V3h10v1h4v6h-2V6h-2v6h-2V5H7v14h5v2H3Zm14 1l-.3-1.5q-.3-.125-.563-.275t-.512-.35l-1.45.5l-1-1.725l1.125-1q-.05-.375-.05-.638t.05-.637l-1.125-1l1-1.725l1.45.5q.25-.2.513-.363t.562-.287L17 12h2l.3 1.5q.3.125.563.275t.512.35l1.45-.5l1 1.725l-1.125 1q.05.375.05.638t-.05.637l1.125 1l-1 1.725l-1.45-.475q-.25.2-.513.35t-.562.275L19 22h-2Zm1-3q.825 0 1.413-.588T20 17q0-.825-.588-1.413T18 15q-.825 0-1.413.588T16 17q0 .825.588 1.413T18 19Zm-7-6q-.425 0-.713-.288T10 12q0-.425.288-.713T11 11q.425 0 .713.288T12 12q0 .425-.288.713T11 13Zm-4 6V5v14Z" styleClass="add-button-icon" />
                         <Label alignment="CENTER" styleClass="utility-label" text="Import Rooms">
@@ -229,7 +229,7 @@
                         </Label>
                      </children>
                      <HBox.margin>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets bottom="20.0" right="10.0" top="20.0" />
                      </HBox.margin>
                   </HBox>
                     </children>
@@ -323,7 +323,7 @@
                                 <Insets bottom="10.0" />
                             </VBox.margin>
                         </HBox>
-                        <TableView id="mainGradingTable" fx:id="scheduleTable" prefHeight="457.0" prefWidth="810.0" styleClass="grades-table">
+                        <TableView id="mainGradingTable" fx:id="scheduleTable" prefHeight="436.0" prefWidth="810.0" styleClass="grades-table">
                             <columns>
                                 <TableColumn fx:id="facultyIDCell" editable="false" maxWidth="152.800048828125" minWidth="38.4000244140625" prefWidth="75.19998168945312" resizable="false" text="Fac ID" />
                                 <TableColumn fx:id="facultyNameCell" editable="false" maxWidth="199.99993896484375" minWidth="112.800048828125" prefWidth="120.00003051757812" resizable="false" text="Faculty Name" />

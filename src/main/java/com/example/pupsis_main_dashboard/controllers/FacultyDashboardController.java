@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 public class FacultyDashboardController {
 
@@ -48,6 +49,7 @@ public class FacultyDashboardController {
     private String formattedName;
     
     // FXML paths as constants
+    private static final String USER_TYPE = "FACULTY";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyHomeContent.fxml";
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyGradingModule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralCalendar.fxml";
@@ -297,6 +299,14 @@ public class FacultyDashboardController {
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
+
+            if (content != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                content.getStyleClass().removeAll("light-theme", "dark-theme");
+                content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+            }
+
             contentPane.setContent(content);
             resetScrollPosition();
         } catch (IOException e) {

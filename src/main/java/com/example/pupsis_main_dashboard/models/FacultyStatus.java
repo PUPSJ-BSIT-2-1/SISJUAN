@@ -1,4 +1,5 @@
 package com.example.pupsis_main_dashboard.models;
+
 public class FacultyStatus {
     private final int facultyStatusId;
     private final String statusName;

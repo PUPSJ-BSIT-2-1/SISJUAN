@@ -1,6 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.utilities.DBConnection; 
+import com.example.pupsis_main_dashboard.utilities.EmailService;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester; 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.DatePicker;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -25,28 +27,42 @@ import javafx.scene.text.Font;
 import javafx.scene.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.mail.MessagingException;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.time.LocalDate;
 
 import static com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils.showAlert;
 
 public class AdminStudentManagementController implements Initializable {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminStudentManagementController.class);
+    private final EmailService emailService = new EmailService();
 
     @FXML
     private VBox studentListContainer; 
     private VBox studentList; 
     private CheckBox selectAllCheckBox;
+    @FXML
     private Button batchAcceptButton;
-    private List<StudentData> currentDisplayedStudents = new ArrayList<>(); 
+    private final List<StudentData> currentDisplayedStudents = new ArrayList<>();
+
+    @FXML private DatePicker firstSemStartDatePicker;
+    @FXML private DatePicker secondSemStartDatePicker;
+    @FXML private Button confirmFirstSemButton;
+    @FXML private Button confirmSecondSemButton;
+    @FXML private DatePicker firstSemEndDatePicker;
+    @FXML private DatePicker secondSemEndDatePicker;
+    @FXML private Button confirmFirstSemEndButton;
+    @FXML private Button confirmSecondSemEndButton;
 
     private static class StudentData {
         int id;
@@ -88,9 +104,21 @@ public class AdminStudentManagementController implements Initializable {
             }
         });
 
-        batchAcceptButton = new Button("Batch Accept Selected");
         batchAcceptButton.getStyleClass().add("batch-accept-button");
         batchAcceptButton.setOnAction(event -> handleBatchAcceptSelected());
+
+        if (confirmFirstSemButton != null) {
+            confirmFirstSemButton.setOnAction(event -> handleConfirmSemesterStartDate());
+        }
+        if (confirmSecondSemButton != null) {
+            confirmSecondSemButton.setOnAction(event -> handleConfirmSemesterStartDate());
+        }
+        if (confirmFirstSemEndButton != null) {
+            confirmFirstSemEndButton.setOnAction(event -> handleConfirmSemesterEndDate());
+        }
+        if (confirmSecondSemEndButton != null) {
+            confirmSecondSemEndButton.setOnAction(event -> handleConfirmSemesterEndDate());
+        }
 
         HBox headerControls = new HBox(10, selectAllCheckBox, batchAcceptButton);
         headerControls.setPadding(new Insets(5, 0, 10, 0));
@@ -115,6 +143,7 @@ public class AdminStudentManagementController implements Initializable {
         }
 
         loadPendingStudents();
+        autoAdvanceEligibleStudentsIfNeeded();
         logger.info("AdminStudentManagementController initialized.");
     }
 
@@ -255,6 +284,7 @@ public class AdminStudentManagementController implements Initializable {
         return gridPane;
     }
 
+    @FXML
     private void handleBatchAcceptSelected() {
         List<StudentData> selectedStudents = new ArrayList<>();
         for (StudentData student : currentDisplayedStudents) {
@@ -341,11 +371,31 @@ public class AdminStudentManagementController implements Initializable {
         Connection conn = null;
         try { // Outer try for connection and initial setup
             conn = DBConnection.getConnection();
-            conn.setAutoCommit(false); 
+            conn.setAutoCommit(false);
+
+            // Fetch student details for email
+            String studentFirstName = null;
+            String studentLastName = null;
+            String studentEmail = null;
+            String getStudentDetailsSql = "SELECT firstname, lastname, email FROM public.students WHERE student_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(getStudentDetailsSql)) {
+                pstmt.setInt(1, studentId);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        studentFirstName = rs.getString("firstname");
+                        studentLastName = rs.getString("lastname");
+                        studentEmail = rs.getString("email");
+                    } else {
+                        conn.rollback();
+                        logger.warn("Could not find student with ID {} to accept.", studentId);
+                        return "Failed: Student not found.";
+                    }
+                }
+            }
 
             int currentAcademicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
             int currentSemesterId = SchoolYearAndSemester.getCurrentSemesterId();
-            int yearLevelForStudent = 1; 
+            int yearLevelForStudent = 1;
 
             if (currentAcademicYearId == -1 || currentSemesterId == -1) {
                 // This return will bypass the finally, but conn is null or will be handled by finally if an exception occurs before this.
@@ -363,7 +413,26 @@ public class AdminStudentManagementController implements Initializable {
                 LIMIT 1
             """;
             String insertStudentSectionSql = "INSERT INTO public.student_sections (student_id, section_id) VALUES (?, ?)";
-            String updateStudentSql = "UPDATE public.students SET student_status_id = (SELECT student_status_id FROM public.student_statuses WHERE status_name = 'Enrolled'), current_year_section_id = ? WHERE student_id = ?";
+            String updateStudentSql = """
+                UPDATE public.students 
+                SET student_status_id = (
+                        SELECT student_status_id 
+                        FROM public.student_statuses 
+                        WHERE status_name = 'Enrolled'
+                    ), 
+                    scholastic_status_id = (
+                        SELECT scholastic_status_id 
+                        FROM public.scholastic_statuses 
+                        WHERE status_name = 'Regular'
+                    ), 
+                    fhe_eligible_id = (
+                        SELECT fhe_id 
+                        FROM public.fhe_act_statuses 
+                        WHERE status_name = 'Eligible'
+                    ), 
+                    current_year_section_id = ? 
+                WHERE student_id = ?
+                """;
 
             try (PreparedStatement pstmtFindSection = conn.prepareStatement(findSectionSql);
                  PreparedStatement pstmtInsertStudentSection = conn.prepareStatement(insertStudentSectionSql);
@@ -390,6 +459,20 @@ public class AdminStudentManagementController implements Initializable {
                         pstmtUpdateStudent.executeUpdate();
 
                         conn.commit();
+                        logger.info("Successfully committed changes for student ID {}", studentId);
+
+                        // Send acceptance email
+                        if (studentEmail != null && !studentEmail.trim().isEmpty()) {
+                            try {
+                                emailService.sendAcceptanceEmail(studentEmail, studentFirstName + " " + studentLastName, sectionName);
+                                logger.info("Acceptance email sent successfully to {}", studentEmail);
+                            } catch (MessagingException e) {
+                                logger.error("Failed to send acceptance email for student ID {}: {}", studentId, e.getMessage(), e);
+                            }
+                        } else {
+                            logger.warn("Could not send acceptance email for student ID {}: email address is missing or empty.", studentId);
+                        }
+
                         return "Successfully assigned to " + sectionName;
                     } else {
                         conn.rollback();
@@ -398,42 +481,59 @@ public class AdminStudentManagementController implements Initializable {
                 }
             } catch (SQLException e) { // Catches for the inner try-with-resources
                 logger.error("SQL Error during student processing (student ID {}): {}", studentId, e.getMessage());
-                if (conn != null) { // conn should not be null here if this block is reached from inner try
-                    try { conn.rollback(); } catch (SQLException ex) { logger.error("Rollback failed for student ID {}", studentId, ex); }
-                }
-                return "Failed: Database error - " + e.getMessage();
-            } catch (Exception e) { // Catches for the inner try-with-resources
-                logger.error("Unexpected error during student processing (student ID {}): {}", studentId, e.getMessage());
                 if (conn != null) {
-                    try { conn.rollback(); } catch (SQLException ex) { logger.error("Rollback failed for student ID {}", studentId, ex); }
+                    conn.rollback(); // Rollback on inner SQL error
                 }
-                return "Failed: System error - " + e.getMessage();
+                // Re-throw to be caught by the outer catch block
+                throw e;
             }
-            // Removed the finally block that was here, as it's better suited for the outer try.
-
-        } finally { // Finally for the outer try (connection management)
+        } catch (SQLException e) { // Catches connection errors or re-thrown errors
+            logger.error("A database error occurred processing student ID {}: {}", studentId, e.getMessage(), e);
+            // The connection might be null or closed, so rollback is handled in the inner catch.
+            // This method is called from a background thread that handles UI updates,
+            // so returning an error string is appropriate.
+            return "Failed: A database error occurred.";
+        } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true); 
+                    conn.setAutoCommit(true); // Reset auto-commit state
+                    conn.close();
                 } catch (SQLException e) {
-                    logger.error("Failed to set autoCommit to true on connection for student ID {}: {}", studentId, e.getMessage());
-                }
-                try {
-                    conn.close(); 
-                } catch (SQLException e) {
-                    logger.error("Failed to close connection for student ID {}: {}", studentId, e.getMessage());
+                    logger.error("Failed to close database connection for student ID {}: {}", studentId, e.getMessage(), e);
                 }
             }
         }
     }
 
     private void handleAcceptStudent(int studentId) {
-        logger.info("Attempting to accept student ID: {}", studentId);
+        logger.info("Accepting student ID: {}", studentId);
         new Thread(() -> {
             Connection conn = null;
             try { // Outer try for the lambda's operations
                 conn = DBConnection.getConnection();
                 conn.setAutoCommit(false); 
+
+                // Fetch student details for email
+                String studentFirstName = null;
+                String studentLastName = null;
+                String studentEmail = null;
+                String getStudentDetailsSql = "SELECT firstname, lastname, email FROM public.students WHERE student_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(getStudentDetailsSql)) {
+                    pstmt.setInt(1, studentId);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        if (rs.next()) {
+                            studentFirstName = rs.getString("firstname");
+                            studentLastName = rs.getString("lastname");
+                            studentEmail = rs.getString("email");
+                        } else {
+                            conn.rollback();
+                            logger.warn("Could not find student with ID {} to accept.", studentId);
+                            Platform.runLater(() -> showAlert("Failed", "Student not found."));
+                            // No explicit rollback here as commit hasn't happened; finally will handle close.
+                            return; // Exit thread execution
+                        }
+                    }
+                }
 
                 int currentAcademicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
                 int currentSemesterId = SchoolYearAndSemester.getCurrentSemesterId();
@@ -484,7 +584,20 @@ public class AdminStudentManagementController implements Initializable {
                             pstmtUpdateStudent.executeUpdate();
 
                             conn.commit();
-                            logger.info("Successfully accepted and sectioned student ID: {}", studentId);
+                            logger.info("Successfully committed changes for student ID {}", studentId);
+
+                            // Send acceptance email
+                            if (studentEmail != null && !studentEmail.trim().isEmpty()) {
+                                try {
+                                    emailService.sendAcceptanceEmail(studentEmail, studentFirstName + " " + studentLastName, sectionName);
+                                    logger.info("Acceptance email sent successfully to {}", studentEmail);
+                                } catch (MessagingException e) {
+                                    logger.error("Failed to send acceptance email for student ID {}: {}", studentId, e.getMessage(), e);
+                                }
+                            } else {
+                                logger.warn("Could not send acceptance email for student ID {}: email address is missing or empty.", studentId);
+                            }
+
                             Platform.runLater(() -> {
                                 showAlert("Success", "Student accepted and assigned to a section.");
                                 loadPendingStudents(); 
@@ -601,5 +714,233 @@ public class AdminStudentManagementController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
         logger.debug("Showing alert: Title='{}', Content='{}'", title, content);
+    }
+
+    // === Advancement Logic ===
+    private List<Integer> getAllStudentIds() {
+        List<Integer> ids = new ArrayList<>();
+        String sql = "SELECT student_id FROM public.students";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                ids.add(rs.getInt("student_id"));
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching all student IDs", e);
+        }
+        return ids;
+    }
+
+    // Returns true if student was advanced, false otherwise
+    private boolean advanceStudentIfEligible(int studentId) {
+        // 1. Fetch current context
+        int sectionId = -1, yearLevel = -1, semesterId = -1, academicYearId = -1;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                "SELECT s.current_year_section_id, sec.year_level, sec.semester_id, sec.academic_year_id " +
+                "FROM public.students s JOIN public.section sec ON s.current_year_section_id = sec.section_id " +
+                "WHERE s.student_id = ?")) {
+            stmt.setInt(1, studentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    sectionId = rs.getInt("current_year_section_id");
+                    yearLevel = rs.getInt("year_level");
+                    semesterId = rs.getInt("semester_id");
+                    academicYearId = rs.getInt("academic_year_id");
+                } else {
+                    logger.warn("Student {} not found for advancement", studentId);
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching student context for advancement", e);
+            return false;
+        }
+        // 2. Get required subjects for current section/year/semester
+        Set<Integer> requiredSubjectIds = new HashSet<>();
+        String requiredSubjectsSql = "SELECT s.subject_id FROM subjects s " +
+                "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
+                "WHERE fl.section_id = ? AND fl.semester_id = ? AND s.year_level = ? AND s.semester_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(requiredSubjectsSql)) {
+            stmt.setInt(1, sectionId);
+            stmt.setInt(2, semesterId);
+            stmt.setInt(3, yearLevel);
+            stmt.setInt(4, semesterId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    requiredSubjectIds.add(rs.getInt("subject_id"));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching required subjects for advancement", e);
+            return false;
+        }
+        if (requiredSubjectIds.isEmpty()) {
+            logger.warn("No required subjects found for student {} (section/year/semester)", studentId);
+            return false;
+        }
+        // 3. Check passed grades
+        Set<Integer> passedSubjectIds = new HashSet<>();
+        String passedGradesSql = "SELECT subject_id FROM grade WHERE student_pk_id = ? AND subject_id = ANY (?) AND grade_status_id = 2";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(passedGradesSql)) {
+            stmt.setInt(1, studentId);
+            Array subjectArray = conn.createArrayOf("INTEGER", requiredSubjectIds.toArray());
+            stmt.setArray(2, subjectArray);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    passedSubjectIds.add(rs.getInt("subject_id"));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching passed grades for advancement", e);
+            return false;
+        }
+        if (!passedSubjectIds.containsAll(requiredSubjectIds)) {
+            logger.info("Student {} not eligible for advancement: not all required subjects passed", studentId);
+            return false;
+        }
+        // 4. Find next section
+        int nextYearLevel = yearLevel;
+        int nextSemesterId = semesterId + 1;
+        if (nextSemesterId > 3) { // 1=1st, 2=Summer, 3=2nd
+            nextSemesterId = 1;
+            nextYearLevel++;
+        }
+        int nextSectionId = -1;
+        String nextSectionSql = "SELECT section_id FROM section WHERE year_level = ? AND semester_id = ? AND academic_year_id = ? LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(nextSectionSql)) {
+            stmt.setInt(1, nextYearLevel);
+            stmt.setInt(2, nextSemesterId);
+            stmt.setInt(3, academicYearId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    nextSectionId = rs.getInt("section_id");
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error finding next section for advancement", e);
+            return false;
+        }
+        if (nextSectionId == -1) {
+            logger.warn("No next section found for advancement for student {}. Advancement halted.", studentId);
+            return false;
+        }
+        // 5. Update student record
+        String updateStudentSql = "UPDATE students SET current_year_section_id = ? WHERE student_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateStudentSql)) {
+            stmt.setInt(1, nextSectionId);
+            stmt.setInt(2, studentId);
+            int updated = stmt.executeUpdate();
+            if (updated > 0) {
+                logger.info("Student {} advanced to section {}", studentId, nextSectionId);
+                return true;
+            }
+        } catch (SQLException e) {
+            logger.error("Error updating student section for advancement", e);
+        }
+        return false;
+    }
+
+    @FXML
+    private void handleConfirmSemesterStartDate() {
+        LocalDate firstStart = firstSemStartDatePicker.getValue();
+        LocalDate firstEnd = firstSemEndDatePicker.getValue();
+        LocalDate secondStart = secondSemStartDatePicker.getValue();
+        LocalDate secondEnd = secondSemEndDatePicker.getValue();
+        new Thread(() -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                // Save 1st Semester (semester_id = 1)
+                if (firstStart != null || firstEnd != null) {
+                    String sql = "UPDATE semesters SET start_date = ?, end_date = ? WHERE semester_id = 1";
+                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setDate(1, firstStart != null ? Date.valueOf(firstStart) : null);
+                        stmt.setDate(2, firstEnd != null ? Date.valueOf(firstEnd) : null);
+                        stmt.executeUpdate();
+                    }
+                }
+                // Save 2nd Semester (semester_id = 3)
+                if (secondStart != null || secondEnd != null) {
+                    String sql = "UPDATE semesters SET start_date = ?, end_date = ? WHERE semester_id = 3";
+                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setDate(1, secondStart != null ? Date.valueOf(secondStart) : null);
+                        stmt.setDate(2, secondEnd != null ? Date.valueOf(secondEnd) : null);
+                        stmt.executeUpdate();
+                    }
+                }
+                Platform.runLater(() -> showAlert("Confirm Semester Dates", "Semester dates have been saved."));
+            } catch (SQLException e) {
+                logger.error("Error saving semester dates", e);
+                Platform.runLater(() -> showAlert("Error", "Failed to save semester dates."));
+            }
+        }).start();
+    }
+
+    @FXML
+    private void handleConfirmSemesterEndDate() {
+        handleConfirmSemesterStartDate(); // Use the same logic for saving all dates
+    }
+
+    public void autoAdvanceEligibleStudentsIfNeeded() {
+        // 1. Fetch semester start and end dates from DB
+        // 2. Check if current date matches the logic for advancing
+        // 3. If so, run the advancement logic (previously in handleAdvanceAllEligible)
+        new Thread(() -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                String sql = "SELECT semester_id, start_date, end_date FROM semesters WHERE semester_id IN (1, 3)";
+                Map<Integer, Date[]> semesterDates = new HashMap<>();
+                try (PreparedStatement stmt = conn.prepareStatement(sql);
+                     ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        int semId = rs.getInt("semester_id");
+                        Date start = rs.getDate("start_date");
+                        Date end = rs.getDate("end_date");
+                        semesterDates.put(semId, new Date[]{start, end});
+                    }
+                }
+                LocalDate now = LocalDate.now();
+                boolean shouldAdvance = false;
+                // Example logic: advance on the day after 1st sem end or 2nd sem end
+                for (Map.Entry<Integer, Date[]> entry : semesterDates.entrySet()) {
+                    Date end = entry.getValue()[1];
+                    if (end != null && now.isEqual(end.toLocalDate().plusDays(1))) {
+                        shouldAdvance = true;
+                        break;
+                    }
+                }
+                if (shouldAdvance) {
+                    Platform.runLater(() -> advanceAllEligibleStudents());
+                }
+            } catch (SQLException e) {
+                logger.error("Error checking semester dates for auto-advance", e);
+            }
+        }).start();
+    }
+
+    private void advanceAllEligibleStudents() {
+        // Place the batch advancement logic here (from previous handleAdvanceAllEligible)
+        List<Integer> studentIds = getAllStudentIds();
+        int advancedCount = 0;
+        for (Integer studentId : studentIds) {
+            if (advanceStudentIfEligible(studentId)) {
+                advancedCount++;
+            }
+        }
+        // After advancing, clear semester dates in DB
+        new Thread(() -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                String sql = "UPDATE semesters SET start_date = NULL, end_date = NULL WHERE semester_id IN (1, 3)";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.executeUpdate();
+                }
+            } catch (SQLException e) {
+                logger.error("Error clearing semester dates after advancement", e);
+            }
+        }).start();
+        showAlert("Auto-Advancement", "Eligible students have been advanced based on semester dates. " + advancedCount + " students advanced. Semester dates have been cleared.");
     }
 }

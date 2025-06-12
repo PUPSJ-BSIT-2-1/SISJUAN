@@ -30,7 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Connection;
@@ -316,7 +316,6 @@ public class StudentLoginController {
             );
 
             if (newStage != null) {
-                newStage.setMaximized(true);
                 newStage.show();
                 currentStage.hide();
             }
@@ -340,6 +339,28 @@ public class StudentLoginController {
         }
     }
 
+    private Integer authenticateAndGetStatus(String studentNumber, String password) {
+        String sql = "SELECT password, student_status_id FROM students WHERE student_number = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, studentNumber);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String hashedPassword = rs.getString("password");
+                    int statusId = rs.getInt("student_status_id");
+
+                    if (PasswordHandler.verifyPassword(password, hashedPassword)) {
+                        return statusId; // Return status ID if password matches
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error during authentication for student {}", studentNumber, e);
+        }
+        return null; // Return null if user not found or password doesn't match
+    }
+
     private void handleLogin(VBox leftSide, boolean isRegistration) {
         String studentId = studentIdField.getText().trim(); 
         String password = loginPasswordField.getText().trim();
@@ -356,31 +377,38 @@ public class StudentLoginController {
 
         loginExecutor.submit(() -> {
             try {
-                boolean isAuthenticated = authenticate(studentId, password); 
+                Integer statusId = authenticateAndGetStatus(studentId, password);
 
                 Platform.runLater(() -> {
                     leftSide.getChildren().remove(loader);
                     animateBlur(mainLoginPane, false);
 
-                    if (isAuthenticated) {
-                        RememberMeHandler.savePreference(USER_TYPE, studentId, password, rememberMeCheckBox.isSelected());
-                        RememberMeHandler.setCurrentUserStudentNumber(studentId); 
-                        SessionData.getInstance().setStudentNumber(studentId);
-                        
-                        StageAndSceneUtils u = new StageAndSceneUtils();
-                        Stage stage = (Stage) leftSide.getScene().getWindow();
-                        try {
-                            u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
-                            if (stage.getScene() != null) {
-                                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
-                                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
-                                PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
+                    if (statusId != null) {
+                        if (statusId == 2) { // Pending approval
+                            errorLabel.setText("Your registration is pending approval. Please wait for an administrator to review your application.");
+                        } else if (statusId == 1) { // Enrolled/Active
+                            RememberMeHandler.savePreference(USER_TYPE, studentId, password, rememberMeCheckBox.isSelected());
+                            RememberMeHandler.setCurrentUserStudentNumber(studentId); 
+                            SessionData.getInstance().setStudentNumber(studentId);
+                            
+                            StageAndSceneUtils u = new StageAndSceneUtils();
+                            Stage stage = (Stage) leftSide.getScene().getWindow();
+                            try {
+                                u.loadStage(stage,"/com/example/pupsis_main_dashboard/fxml/StudentDashboard.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+                                if (stage.getScene() != null) {
+                                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                                    PUPSIS.applyThemeToSingleScene(stage.getScene(), darkModeEnabled);
+                                }
+                            } catch (IOException e) {
+                                showAlert(Alert.AlertType.ERROR,
+                                        "Login Error",
+                                        "Unable to load dashboard",
+                                        "There was an error loading the dashboard. Please try again.");
                             }
-                        } catch (IOException e) {
-                            showAlert(Alert.AlertType.ERROR,
-                                    "Login Error",
-                                    "Unable to load dashboard",
-                                    "There was an error loading the dashboard. Please try again.");
+                        } else {
+                            // For other statuses like 'Dropped', 'Graduated', etc.
+                            errorLabel.setText("Your account is not active. Please contact an administrator.");
                         }
                     } else {
                         errorLabel.setText("Invalid credentials");
@@ -398,22 +426,6 @@ public class StudentLoginController {
                 logger.error("Authentication error", e);
             }
         });
-    }
-
-    private String getStudentStatus(String studentId) {
-        String status = null;
-        String query = "SELECT status FROM students WHERE student_number = ?"; 
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, studentId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                status = resultSet.getString("status");
-            }
-        } catch (SQLException e) {
-            logger.error("Error fetching student status for {}: ", studentId, e);
-        }
-        return status;
     }
 
     private void handleConfirmRegistration() {
@@ -562,39 +574,56 @@ public class StudentLoginController {
         emailService.sendVerificationEmail(toEmail, code);
     }
 
+    private int getStudentStatusIdByName(Connection conn, String statusName) throws SQLException {
+        String sql = "SELECT student_status_id FROM student_statuses WHERE status_name = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, statusName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("student_status_id");
+                }
+            }
+        }
+        // If status name not found, throw an exception or return a default ID.
+        // For now, throwing an exception to highlight potential misconfiguration.
+        logger.error("Student status name '{}' not found in student_statuses table.", statusName);
+        throw new SQLException("Student status name '" + statusName + "' not found.");
+    }
+
     private String[] completeRegistration(String firstName, String middleName, String lastName, String email, String address, String month, String day, String year) throws SQLException {
         String plainTextPassword = generateRandomPassword().trim(); 
         String hashedPassword = PasswordHandler.hashPassword(plainTextPassword); 
         LocalDate birthDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase()).getValue(), Integer.parseInt(day));
         String studentNumber = generateStudentNumber(); 
-        String status = "Pending"; 
+        String statusName = "Pending"; // Assuming 'Pending' is the desired initial status
 
-        // Removed year_level_id from the SQL query
-        String sql = "INSERT INTO students (firstname, middlename, lastname, email, password, birthday, address, status, student_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
+        String sql = "INSERT INTO students (firstname, middlename, lastname, email, password, birthday, address, student_status_id, student_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection()) {
+            int studentStatusId = getStudentStatusIdByName(conn, statusName);
 
-            pstmt.setString(1, firstName);
-            if (middleName == null || middleName.trim().isEmpty()) {
-                pstmt.setNull(2, java.sql.Types.VARCHAR);
-            } else {
-                pstmt.setString(2, middleName);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, firstName);
+                if (middleName == null || middleName.trim().isEmpty()) {
+                    pstmt.setNull(2, java.sql.Types.VARCHAR);
+                } else {
+                    pstmt.setString(2, middleName);
+                }
+                pstmt.setString(3, lastName);
+                pstmt.setString(4, email);
+                pstmt.setString(5, hashedPassword); 
+                pstmt.setDate(6, java.sql.Date.valueOf(birthDate));
+                pstmt.setString(7, address);
+                pstmt.setInt(8, studentStatusId); // Use student_status_id
+                pstmt.setString(9, studentNumber); 
+
+                pstmt.executeUpdate();
+                logger.info("Student {} registered successfully with student number {}. Password generated.", email, studentNumber);
+                return new String[]{studentNumber, plainTextPassword}; 
             }
-            pstmt.setString(3, lastName);
-            pstmt.setString(4, email);
-            pstmt.setString(5, hashedPassword); 
-            pstmt.setDate(6, java.sql.Date.valueOf(birthDate));
-            pstmt.setString(7, address);
-            pstmt.setString(8, status);
-            pstmt.setString(9, studentNumber); 
-
-            pstmt.executeUpdate();
-            logger.info("Student {} registered successfully with student number {}. Password generated.", email, studentNumber);
-            return new String[]{studentNumber, plainTextPassword}; 
         } catch (SQLException e) {
             logger.error("SQL Error during registration for email {}: ", email, e);
-            if (e.getSQLState().equals("23505")) { 
+            if (e.getSQLState() != null && e.getSQLState().equals("23505")) { // Check for null SQLState
                 throw new SQLException("Registration failed: Email already exists or student number conflict.", e);
             }
             throw e; 
