@@ -64,9 +64,6 @@ public class AdminSubjectController implements Initializable {
         var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, descriptionColumn, unitColumn}; 
         for (var col : columns) {
             col.setReorderable(false);
-        }
-
-        for (var col : columns) {
             col.setSortable(false);
         }
 

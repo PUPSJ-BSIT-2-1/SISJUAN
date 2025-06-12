@@ -53,7 +53,7 @@ public class AdminStudentManagementController implements Initializable {
     private CheckBox selectAllCheckBox;
     @FXML
     private Button batchAcceptButton;
-    private List<StudentData> currentDisplayedStudents = new ArrayList<>(); 
+    private final List<StudentData> currentDisplayedStudents = new ArrayList<>();
 
     @FXML private DatePicker firstSemStartDatePicker;
     @FXML private DatePicker secondSemStartDatePicker;
