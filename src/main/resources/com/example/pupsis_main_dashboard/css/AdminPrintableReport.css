@@ -1,0 +1,277 @@
+/* ================= FACULTY PRINTABLE LIST ======================= */
+
+.printable-list {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .printable-list {
+    -fx-background-color: transparent;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.printable-header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .printable-header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #b22222;
+    -fx-font-weight: bold;
+}
+
+.printable-sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #646464;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .printable-sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #bbbbbb;
+    -fx-font-weight: bold;
+}
+
+.printable-table .scroll-bar:vertical,
+.printable-table .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.printable-table .scroll-bar:vertical .thumb,
+.printable-table .scroll-bar:horizontal .thumb {
+    -fx-background-color: #888; /* Scrollbar thumb color */
+    -fx-background-insets: 2;
+    -fx-background-radius: 4;
+}
+
+.printable-table .scroll-bar:vertical .track,
+.printable-table .scroll-bar:horizontal .track {
+    -fx-background-color: #e0e0e0; /* Scrollbar track color */
+    -fx-background-insets: 0;
+}
+
+.dark-theme .printable-table .scroll-bar:vertical .thumb,
+.dark-theme .printable-table .scroll-bar:horizontal .thumb {
+    -fx-background-color: #bbbbbb;
+}
+
+.dark-theme .printable-table .scroll-bar:vertical .track,
+.dark-theme .printable-table .scroll-bar:horizontal .track {
+    -fx-background-color: #4a4a4a;
+}
+
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 5 10 5 10px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+/* Table Header Cells with Gridlines */
+.table-view .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #ccc; /* Light gray for subtle grid look */
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #bbb;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10;
+}
+
+.table-view .table-cell, .table-cell {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: center;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+/* Remove hover effect */
+.table-row-cell:hover {
+    -fx-background-color: maroon;
+}
+
+/* Style selected row */
+.table-row-cell:filled:selected {
+    -fx-background-color: #a03030;
+}
+
+.table-row-cell:filled:selected .table-cell,
+.table-row-cell:filled:selected .text {
+    -fx-text-fill: white;
+}
+
+/* TableView Styles */
+.dark-theme .table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #555; /* Dark gray for subtle grid look */
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+/* Table Header Cells with Gridlines */
+.dark-theme .table-view .column-header {
+    -fx-background-color: #333333;
+    -fx-border-color: #555; /* Dark gray for subtle grid look */
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.dark-theme .table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #555;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-border-width: 0 0 1 0;
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10;
+}
+
+.dark-theme .table-view .table-cell, .dark-theme .table-cell {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-table-cell-border-color: transparent;
+}
+
+.dark-theme .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+/* Remove hover effect */
+.dark-theme .table-row-cell:hover {
+    -fx-background-color: #6b0000;
+    -fx-text-fill: white;
+}
+
+/* Style selected row */
+.dark-theme .table-row-cell:filled:selected {
+    -fx-background-color: #8a2929;
+    -fx-text-fill: #f0f0f0;
+}
+
+.dark-theme .table-row-cell:filled:selected .table-cell,
+.dark-theme .table-row-cell:filled:selected .text {
+    -fx-text-fill: #f0f0f0;
+}
+
+.assign-button {
+    -fx-background-color: #800000; /* Dark green */
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #f8fcfc;
+    -fx-padding: 7px;
+}
+
+.assign-button:hover {
+    -fx-background-color: #5e0000; /* Darker green */
+    -fx-cursor: hand;
+}
+
+.dark-theme .assign-button {
+    -fx-background-color: #b22222;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #f8fcfc;
+    -fx-padding: 10px;
+}
+
+.dark-theme .assign-button:hover {
+    -fx-background-color: #e57373;
+    -fx-cursor: hand;
+}
+
+.cancel-button {
+    -fx-background-color: #e5e5e5;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #2b2b2b;
+    -fx-padding: 7px;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #a0a0a0;
+    -fx-cursor: hand;
+}
+
+.dark-theme .cancel-button {
+    -fx-background-color: #3a3a3a;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 10px;
+}
+
+.dark-theme .cancel-button:hover {
+    -fx-background-color: #777777;
+    -fx-cursor: hand;
+}
