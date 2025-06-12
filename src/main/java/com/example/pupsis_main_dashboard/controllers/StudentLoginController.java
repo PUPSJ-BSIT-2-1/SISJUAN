@@ -316,7 +316,6 @@ public class StudentLoginController {
             );
 
             if (newStage != null) {
-                newStage.setMaximized(true);
                 newStage.show();
                 currentStage.hide();
             }
