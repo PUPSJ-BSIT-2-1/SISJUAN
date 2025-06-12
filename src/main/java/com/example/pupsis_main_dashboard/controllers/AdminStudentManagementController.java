@@ -36,6 +36,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.time.LocalDate;
 
 import static com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils.showAlert;
 
@@ -49,8 +52,6 @@ public class AdminStudentManagementController implements Initializable {
     private VBox studentList; 
     private CheckBox selectAllCheckBox;
     @FXML
-    private Button advanceAllButton;
-    @FXML
     private Button batchAcceptButton;
     private List<StudentData> currentDisplayedStudents = new ArrayList<>(); 
 
@@ -58,6 +59,10 @@ public class AdminStudentManagementController implements Initializable {
     @FXML private DatePicker secondSemStartDatePicker;
     @FXML private Button confirmFirstSemButton;
     @FXML private Button confirmSecondSemButton;
+    @FXML private DatePicker firstSemEndDatePicker;
+    @FXML private DatePicker secondSemEndDatePicker;
+    @FXML private Button confirmFirstSemEndButton;
+    @FXML private Button confirmSecondSemEndButton;
 
     private static class StudentData {
         int id;
@@ -103,10 +108,16 @@ public class AdminStudentManagementController implements Initializable {
         batchAcceptButton.setOnAction(event -> handleBatchAcceptSelected());
 
         if (confirmFirstSemButton != null) {
-            confirmFirstSemButton.setOnAction(event -> handleConfirmSemesterStartDate(1));
+            confirmFirstSemButton.setOnAction(event -> handleConfirmSemesterStartDate());
         }
         if (confirmSecondSemButton != null) {
-            confirmSecondSemButton.setOnAction(event -> handleConfirmSemesterStartDate(3));
+            confirmSecondSemButton.setOnAction(event -> handleConfirmSemesterStartDate());
+        }
+        if (confirmFirstSemEndButton != null) {
+            confirmFirstSemEndButton.setOnAction(event -> handleConfirmSemesterEndDate());
+        }
+        if (confirmSecondSemEndButton != null) {
+            confirmSecondSemEndButton.setOnAction(event -> handleConfirmSemesterEndDate());
         }
 
         HBox headerControls = new HBox(10, selectAllCheckBox, batchAcceptButton);
@@ -132,6 +143,7 @@ public class AdminStudentManagementController implements Initializable {
         }
 
         loadPendingStudents();
+        autoAdvanceEligibleStudentsIfNeeded();
         logger.info("AdminStudentManagementController initialized.");
     }
 
@@ -176,14 +188,12 @@ public class AdminStudentManagementController implements Initializable {
                     selectAllCheckBox.setSelected(false);
                     selectAllCheckBox.setDisable(true);
                     batchAcceptButton.setDisable(true);
-                    advanceAllButton.setDisable(true);
                     Label noStudentsLabel = new Label("No pending student registrations found.");
                     noStudentsLabel.setPadding(new Insets(10));
                     studentList.getChildren().add(noStudentsLabel);
                 } else {
                     selectAllCheckBox.setDisable(false);
                     batchAcceptButton.setDisable(false);
-                    advanceAllButton.setDisable(false);
                     for (StudentData student : pendingStudentsList) {
                         studentList.getChildren().add(createStudentRow(student));
                         studentList.getChildren().add(new Separator()); 
@@ -274,6 +284,7 @@ public class AdminStudentManagementController implements Initializable {
         return gridPane;
     }
 
+    @FXML
     private void handleBatchAcceptSelected() {
         List<StudentData> selectedStudents = new ArrayList<>();
         for (StudentData student : currentDisplayedStudents) {
@@ -309,7 +320,6 @@ public class AdminStudentManagementController implements Initializable {
             selectAllCheckBox.setSelected(false);
             selectAllCheckBox.setDisable(true);
             batchAcceptButton.setDisable(true);
-            advanceAllButton.setDisable(true);
         }
 
         logger.info("Batch accept initiated for {} students.", selectedStudents.size());
@@ -355,103 +365,6 @@ public class AdminStudentManagementController implements Initializable {
                 loadPendingStudents(); 
             });
         }).start();
-    }
-
-    @FXML
-    private void handleAdvanceAllEligible() {
-        // 1. Eligibility logging query
-        String eligibilitySql = """
-            SELECT s.student_id,
-                   COUNT(DISTINCT req.subject_id) AS required_count,
-                   COUNT(DISTINCT g.subject_id) AS passed_count
-            FROM students s
-            JOIN student_statuses ss ON s.student_status_id = ss.student_status_id
-            JOIN section sec ON s.current_year_section_id = sec.section_id
-            JOIN faculty_load fl ON fl.section_id = sec.section_id AND fl.semester_id = sec.semester_id
-            JOIN subjects req ON req.subject_id = fl.subject_id
-            LEFT JOIN grade g ON g.student_pk_id = s.student_id AND g.subject_id = req.subject_id AND g.grade_status_id = 2
-            WHERE ss.status_name = 'Enrolled'
-            GROUP BY s.student_id
-        """;
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(eligibilitySql);
-             ResultSet rs = stmt.executeQuery()) {
-            logger.info("Eligibility query results:");
-            while (rs.next()) {
-                int studentId = rs.getInt("student_id");
-                int required = rs.getInt("required_count");
-                int passed = rs.getInt("passed_count");
-                boolean eligible = (required > 0 && required == passed);
-                logger.info("Student {}: required={}, passed={}, eligible={}", studentId, required, passed, eligible);
-            }
-        } catch (SQLException e) {
-            logger.error("Error fetching eligibility data for advancement (batch)", e);
-        }
-
-        // 2. Batch advancement: single SQL for eligibility and update
-        String sql = """
-WITH eligible AS (
-    SELECT
-        s.student_id,
-        sec.section_id AS current_section_id,
-        sec.year_level,
-        sec.semester_id,
-        sec.academic_year_id,
-        CASE
-            WHEN sec.semester_id < 3 THEN sec.year_level
-            ELSE sec.year_level + 1
-        END AS next_year_level,
-        CASE
-            WHEN sec.semester_id < 3 THEN sec.semester_id + 1
-            ELSE 1
-        END AS next_semester_id,
-        sec.academic_year_id AS next_academic_year_id
-    FROM students s
-    JOIN student_statuses ss ON s.student_status_id = ss.student_status_id
-    JOIN section sec ON s.current_year_section_id = sec.section_id
-    JOIN faculty_load fl ON fl.section_id = sec.section_id AND fl.semester_id = sec.semester_id
-    JOIN subjects req ON req.subject_id = fl.subject_id
-    LEFT JOIN grade g ON g.student_pk_id = s.student_id AND g.subject_id = req.subject_id AND g.grade_status_id = 2
-    WHERE ss.status_name = 'Enrolled'
-    GROUP BY s.student_id, sec.section_id, sec.year_level, sec.semester_id, sec.academic_year_id
-    HAVING COUNT(DISTINCT req.subject_id) > 0
-       AND COUNT(DISTINCT req.subject_id) = COUNT(DISTINCT g.subject_id)
-),
-next_sections AS (
-    SELECT
-        e.student_id,
-        MIN(ns.section_id) AS next_section_id
-    FROM eligible e
-    JOIN section ns ON ns.year_level = e.next_year_level
-                   AND ns.semester_id = e.next_semester_id
-                   AND ns.academic_year_id = e.next_academic_year_id
-    GROUP BY e.student_id
-)
-UPDATE students s
-SET current_year_section_id = ns.next_section_id
-FROM next_sections ns
-WHERE s.student_id = ns.student_id
-RETURNING s.student_id, ns.next_section_id;
-        """;
-        int advancedCount = 0;
-        List<Integer> advancedStudentIds = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            logger.info("Batch advancement result:");
-            while (rs.next()) {
-                int studentId = rs.getInt("student_id");
-                int nextSectionId = rs.getInt("next_section_id");
-                logger.info("Advanced student {} to section {}", studentId, nextSectionId);
-                advancedStudentIds.add(studentId);
-                advancedCount++;
-            }
-        } catch (SQLException e) {
-            logger.error("Error during batch advancement", e);
-            showAlert("Error", "Could not advance eligible students.");
-            return;
-        }
-        showAlert("Advancement Complete", advancedCount + " students advanced.");
     }
 
     private String processSingleStudentAcceptance(int studentId) throws SQLException {
@@ -933,30 +846,101 @@ RETURNING s.student_id, ns.next_section_id;
         return false;
     }
 
-    // Semester start date confirmation handler
-    private void handleConfirmSemesterStartDate(int semesterId) {
-        DatePicker picker = (semesterId == 1) ? firstSemStartDatePicker : secondSemStartDatePicker;
-        if (picker == null || picker.getValue() == null) {
-            showAlert("Invalid Date", "Please select a valid start date.");
-            return;
-        }
-        java.sql.Date newDate = java.sql.Date.valueOf(picker.getValue());
-        String updateSql = "UPDATE semesters SET start_date = ? WHERE semester_id = ?";
+    @FXML
+    private void handleConfirmSemesterStartDate() {
+        LocalDate firstStart = firstSemStartDatePicker.getValue();
+        LocalDate firstEnd = firstSemEndDatePicker.getValue();
+        LocalDate secondStart = secondSemStartDatePicker.getValue();
+        LocalDate secondEnd = secondSemEndDatePicker.getValue();
         new Thread(() -> {
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(updateSql)) {
-                stmt.setDate(1, newDate);
-                stmt.setInt(2, semesterId);
-                int updated = stmt.executeUpdate();
-                if (updated > 0) {
-                    Platform.runLater(() -> showAlert("Success", "Semester start date updated."));
-                } else {
-                    Platform.runLater(() -> showAlert("Error", "Failed to update semester start date."));
+            try (Connection conn = DBConnection.getConnection()) {
+                // Save 1st Semester (semester_id = 1)
+                if (firstStart != null || firstEnd != null) {
+                    String sql = "UPDATE semesters SET start_date = ?, end_date = ? WHERE semester_id = 1";
+                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setDate(1, firstStart != null ? Date.valueOf(firstStart) : null);
+                        stmt.setDate(2, firstEnd != null ? Date.valueOf(firstEnd) : null);
+                        stmt.executeUpdate();
+                    }
                 }
+                // Save 2nd Semester (semester_id = 3)
+                if (secondStart != null || secondEnd != null) {
+                    String sql = "UPDATE semesters SET start_date = ?, end_date = ? WHERE semester_id = 3";
+                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setDate(1, secondStart != null ? Date.valueOf(secondStart) : null);
+                        stmt.setDate(2, secondEnd != null ? Date.valueOf(secondEnd) : null);
+                        stmt.executeUpdate();
+                    }
+                }
+                Platform.runLater(() -> showAlert("Confirm Semester Dates", "Semester dates have been saved."));
             } catch (SQLException e) {
-                logger.error("Error updating semester start date", e);
-                Platform.runLater(() -> showAlert("Database Error", "Failed to update semester start date."));
+                logger.error("Error saving semester dates", e);
+                Platform.runLater(() -> showAlert("Error", "Failed to save semester dates."));
             }
         }).start();
+    }
+
+    @FXML
+    private void handleConfirmSemesterEndDate() {
+        handleConfirmSemesterStartDate(); // Use the same logic for saving all dates
+    }
+
+    public void autoAdvanceEligibleStudentsIfNeeded() {
+        // 1. Fetch semester start and end dates from DB
+        // 2. Check if current date matches the logic for advancing
+        // 3. If so, run the advancement logic (previously in handleAdvanceAllEligible)
+        new Thread(() -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                String sql = "SELECT semester_id, start_date, end_date FROM semesters WHERE semester_id IN (1, 3)";
+                Map<Integer, Date[]> semesterDates = new HashMap<>();
+                try (PreparedStatement stmt = conn.prepareStatement(sql);
+                     ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        int semId = rs.getInt("semester_id");
+                        Date start = rs.getDate("start_date");
+                        Date end = rs.getDate("end_date");
+                        semesterDates.put(semId, new Date[]{start, end});
+                    }
+                }
+                LocalDate now = LocalDate.now();
+                boolean shouldAdvance = false;
+                // Example logic: advance on the day after 1st sem end or 2nd sem end
+                for (Map.Entry<Integer, Date[]> entry : semesterDates.entrySet()) {
+                    Date end = entry.getValue()[1];
+                    if (end != null && now.isEqual(end.toLocalDate().plusDays(1))) {
+                        shouldAdvance = true;
+                        break;
+                    }
+                }
+                if (shouldAdvance) {
+                    Platform.runLater(() -> advanceAllEligibleStudents());
+                }
+            } catch (SQLException e) {
+                logger.error("Error checking semester dates for auto-advance", e);
+            }
+        }).start();
+    }
+
+    private void advanceAllEligibleStudents() {
+        // Place the batch advancement logic here (from previous handleAdvanceAllEligible)
+        List<Integer> studentIds = getAllStudentIds();
+        int advancedCount = 0;
+        for (Integer studentId : studentIds) {
+            if (advanceStudentIfEligible(studentId)) {
+                advancedCount++;
+            }
+        }
+        // After advancing, clear semester dates in DB
+        new Thread(() -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                String sql = "UPDATE semesters SET start_date = NULL, end_date = NULL WHERE semester_id IN (1, 3)";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.executeUpdate();
+                }
+            } catch (SQLException e) {
+                logger.error("Error clearing semester dates after advancement", e);
+            }
+        }).start();
+        showAlert("Auto-Advancement", "Eligible students have been advanced based on semester dates. " + advancedCount + " students advanced. Semester dates have been cleared.");
     }
 }
