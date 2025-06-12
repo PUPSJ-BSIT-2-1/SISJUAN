@@ -8,6 +8,17 @@ public class Department {
         this.departmentId = id;
         this.departmentName = name;
     }
-    public int getDepartmentId() { return departmentId; }
-    public String getDepartmentName() { return departmentName; }
-    @Override public String toString() { return departmentName; } // For ComboBox display
+
+    public int getDepartmentId() {
+        return departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    @Override
+    public String toString() {
+        return departmentName;
+    } // For ComboBox display
+}
