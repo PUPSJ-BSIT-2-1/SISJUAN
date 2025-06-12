@@ -386,7 +386,26 @@ public class AdminStudentManagementController implements Initializable {
                 LIMIT 1
             """;
             String insertStudentSectionSql = "INSERT INTO public.student_sections (student_id, section_id) VALUES (?, ?)";
-            String updateStudentSql = "UPDATE public.students SET student_status_id = (SELECT student_status_id FROM public.student_statuses WHERE status_name = 'Enrolled'), current_year_section_id = ? WHERE student_id = ?";
+            String updateStudentSql = """
+                UPDATE public.students 
+                SET student_status_id = (
+                        SELECT student_status_id 
+                        FROM public.student_statuses 
+                        WHERE status_name = 'Enrolled'
+                    ), 
+                    scholastic_status_id = (
+                        SELECT scholastic_status_id 
+                        FROM public.scholastic_statuses 
+                        WHERE status_name = 'Regular'
+                    ), 
+                    fhe_eligible_id = (
+                        SELECT fhe_id 
+                        FROM public.fhe_act_statuses 
+                        WHERE status_name = 'Eligible'
+                    ), 
+                    current_year_section_id = ? 
+                WHERE student_id = ?
+                """;
 
             try (PreparedStatement pstmtFindSection = conn.prepareStatement(findSectionSql);
                  PreparedStatement pstmtInsertStudentSection = conn.prepareStatement(insertStudentSectionSql);

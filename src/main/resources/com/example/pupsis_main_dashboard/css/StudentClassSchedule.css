@@ -2,6 +2,10 @@
     -fx-font-family: 'Inter';
 }
 
+.root {
+    -fx-background-color: transparent;
+}
+
 /* Apply to all text elements in TableView */
 .table-view {
     -fx-font-family: 'Inter';

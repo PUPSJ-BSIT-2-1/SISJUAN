@@ -84,8 +84,8 @@
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="316.2" minWidth="10.0" prefWidth="309.7999755859375" />
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="215.40000610351564" minWidth="10.0" prefWidth="76.79996337890623" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="244.79998779296875" minWidth="10.0" prefWidth="206.2" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="215.40000610351564" minWidth="10.0" prefWidth="59.19998779296873" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="244.79998779296875" minWidth="10.0" prefWidth="224.80001220703127" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="151.0" />
                     </columnConstraints>
                     <rowConstraints>

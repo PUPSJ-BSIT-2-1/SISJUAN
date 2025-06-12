@@ -357,6 +357,13 @@
     -fx-text-fill: #f0f0f0;
 }
 
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
 /* Red card */
 .dark-theme .red-card {
     -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));

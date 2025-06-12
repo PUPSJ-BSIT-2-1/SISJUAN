@@ -25,7 +25,7 @@
                         <Image url="@../Images/pupsj-logo.png" />
                      </image>
                   </ImageView>
-                  <Label prefHeight="117.0" prefWidth="666.0" styleClass="description" text="Welcome to PUPSIS Replica - a comprehensive student information system designed for the Polytechnic University of the Philippines. This system is designed to simplify access to student services and academic records, providing a seamless experience for students throughout their academic journey.">
+                  <Label prefHeight="117.0" prefWidth="666.0" styleClass="description" text="Welcome to PUPSJ Student Information System (PUPSJ-SIS) - a comprehensive student information system designed for the Polytechnic University of the Philippines. This system is designed to simplify access to student services and academic records, providing a seamless experience for students throughout their academic journey.">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
@@ -38,13 +38,13 @@
       <VBox prefHeight="737.0" prefWidth="810.0" spacing="1.0" styleClass="about-containers">
          <children>
             <Label prefHeight="42.0" prefWidth="755.0" styleClass="about-headers" text="System Overview" />
-            <Label prefHeight="173.0" prefWidth="755.0" styleClass="description" text="The PUPSJ Student Portal is a desktop-based academic management system developed for the Polytechnic University of the Philippines – San Juan Campus. Designed using JavaFX and powered by PostgreSQL via Supabase, the system streamlines essential academic operations for students, faculty, and administrative staff.The portal provides centralized access to enrollment processes, class schedules, grades, payments, and faculty assignments. Each user role—Student, Faculty, and Admin—is given a tailored interface to ensure efficient and secure interaction with the system." textAlignment="CENTER" />
+            <Label prefHeight="173.0" prefWidth="755.0" styleClass="description" text="The PUPSJ Student Information System (PUPSJ-SIS) is a desktop-based academic management system developed for the Polytechnic University of the Philippines – San Juan Campus. Designed using JavaFX and powered by PostgreSQL via Supabase, the system streamlines essential academic operations for students, faculty, and administrative staff. The portal provides centralized access to enrollment processes, class schedules, grades, payments, and faculty assignments. Each user role—Student, Faculty, and Admin—is given a tailored interface to ensure efficient and secure interaction with the system." textAlignment="CENTER" />
             <VBox spacing="15.0" styleClass="dev-containers">
                <children>
                   <Label prefHeight="43.0" prefWidth="790.0" styleClass="about-headers" text="Main Features" />
                   <VBox spacing="10.0">
                      <children>
-                        <Label styleClass="description" text="PUPSIS Replica provides the following key modules:" wrapText="true" />
+                        <Label styleClass="description" text="PUPSJ Student Information System (PUPSJ-SIS) provides the following key modules:" wrapText="true" />
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Region prefWidth="10.0" />
@@ -121,7 +121,7 @@
       <VBox spacing="15.0" styleClass="about-containers">
          <children>
             <Label prefHeight="43.0" prefWidth="776.0" styleClass="about-headers" text="Technical Information" />
-            <Label styleClass="description" text="PUPSIS Replica is a student project built using modern technologies:" wrapText="true" />
+            <Label styleClass="description" text="PUPSJ Student Information System (PUPSJ-SIS) is a student project built using modern technologies:" wrapText="true" />
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                   <Region prefWidth="10.0" />
@@ -213,7 +213,7 @@
          </children>
       </VBox>
       <Region layoutX="10.0" layoutY="1369.0" prefHeight="20.0" prefWidth="810.0" />
-      <VBox spacing="15.0" styleClass="about-containers">
+      <VBox prefHeight="329.0" prefWidth="810.0" spacing="15.0" styleClass="about-containers">
          <children>
             <Label prefHeight="43.0" prefWidth="824.0" styleClass="about-headers" text="Professor Recognition" />
             <Label prefHeight="70.0" prefWidth="766.0" styleClass="description" text="We would like to express our sincere gratitude to our supervising professor for their guidance and support throughout the development of this project:" wrapText="true" />
@@ -223,7 +223,7 @@
                   <VBox spacing="5.0">
                      <children>
                         <Label styleClass="dev-name" text="Prof. Elias Austria" />
-                        <Label styleClass="description" text="For providing expert guidance on system architecture, database design, and overall project management. His insights and feedback were invaluable to the success of this project." wrapText="true" />
+                        <Label styleClass="description" text="For guiding us throughout the documentation process by explaining what to include in each section, and for sharing valuable insights on how the Student Information System should function from the perspective of students, faculty, and administrators. His support played a key role in shaping the direction of the project." wrapText="true" />
                      </children>
                   </VBox>
                </children>
@@ -244,12 +244,6 @@
                <children>
                   <Label styleClass="description" text="Version:" />
                   <Label styleClass="description" text="1.0.0" />
-               </children>
-            </HBox>
-            <HBox spacing="10.0">
-               <children>
-                  <Label styleClass="description" text="Release Date:" />
-                  <Label styleClass="description" text="2025" />
                </children>
             </HBox>
             <Label styleClass="description" text=" 2025 BSIT Students, Polytechnic University of the Philippines - San Juan Campus. All rights reserved." wrapText="true" />

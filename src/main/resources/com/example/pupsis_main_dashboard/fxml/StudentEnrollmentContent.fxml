@@ -102,19 +102,19 @@
                      </HBox.margin>
                   </Label>
                   <!-- Subject Code header (200px) -->
-                  <Label alignment="CENTER" prefHeight="15.0" prefWidth="170.0" styleClass="section-header" text="Subject Code">
+                  <Label alignment="CENTER" prefHeight="15.0" prefWidth="170.0" styleClass="section-header" text="Subject Code         ">
                      <HBox.margin>
                         <Insets left="0.0" />
                      </HBox.margin>
                   </Label>
                   <!-- Description header (300px) -->
-                  <Label alignment="CENTER" prefHeight="15.0" prefWidth="336.0" styleClass="section-header" text="Description">
+                  <Label alignment="CENTER" prefHeight="15.0" prefWidth="336.0" styleClass="section-header" text="Description                 ">
                      <HBox.margin>
                         <Insets left="0.0" />
                      </HBox.margin>
                   </Label>
                   <!-- Schedule header (200px) -->
-                  <Label alignment="CENTER" prefWidth="200.0" styleClass="section-header" text="Schedule">
+                  <Label alignment="CENTER" prefWidth="200.0" styleClass="section-header" text="Schedule     ">
                      <HBox.margin>
                         <Insets left="0.0" />
                      </HBox.margin>

@@ -473,3 +473,17 @@
     -fx-border-radius: 12px;
     -fx-border-color: #4A90E2;
 }
+.custom-dialog-total-fees {
+    -fx-font-size: 15px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #008000;
+    -fx-padding: 8, 0, 0, 0;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .custom-dialog-total-fees {
+    -fx-font-size: 15px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-padding: 8, 0, 0, 0;
+    -fx-text-fill: #00ff00;
+}
