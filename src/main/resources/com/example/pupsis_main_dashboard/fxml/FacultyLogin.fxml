@@ -75,7 +75,7 @@
                          <Insets bottom="10.0" />
                      </VBox.margin>
                  </Label>
-                 <TextField fx:id="facultyIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="254.0" promptText="Faculty ID/Email" styleClass="fields">
+                 <TextField fx:id="facultyIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="254.0" promptText="Faculty ID" styleClass="fields">
                      <padding>
                          <Insets left="15.0" />
                      </padding>
