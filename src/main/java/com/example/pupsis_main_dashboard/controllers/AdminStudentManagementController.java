@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.DatePicker;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -29,13 +30,12 @@ import org.slf4j.LoggerFactory;
 import jakarta.mail.MessagingException;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.HashSet;
 
 import static com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils.showAlert;
 
@@ -48,8 +48,16 @@ public class AdminStudentManagementController implements Initializable {
     private VBox studentListContainer; 
     private VBox studentList; 
     private CheckBox selectAllCheckBox;
+    @FXML
+    private Button advanceAllButton;
+    @FXML
     private Button batchAcceptButton;
     private List<StudentData> currentDisplayedStudents = new ArrayList<>(); 
+
+    @FXML private DatePicker firstSemStartDatePicker;
+    @FXML private DatePicker secondSemStartDatePicker;
+    @FXML private Button confirmFirstSemButton;
+    @FXML private Button confirmSecondSemButton;
 
     private static class StudentData {
         int id;
@@ -91,9 +99,15 @@ public class AdminStudentManagementController implements Initializable {
             }
         });
 
-        batchAcceptButton = new Button("Batch Accept Selected");
         batchAcceptButton.getStyleClass().add("batch-accept-button");
         batchAcceptButton.setOnAction(event -> handleBatchAcceptSelected());
+
+        if (confirmFirstSemButton != null) {
+            confirmFirstSemButton.setOnAction(event -> handleConfirmSemesterStartDate(1));
+        }
+        if (confirmSecondSemButton != null) {
+            confirmSecondSemButton.setOnAction(event -> handleConfirmSemesterStartDate(3));
+        }
 
         HBox headerControls = new HBox(10, selectAllCheckBox, batchAcceptButton);
         headerControls.setPadding(new Insets(5, 0, 10, 0));
@@ -162,12 +176,14 @@ public class AdminStudentManagementController implements Initializable {
                     selectAllCheckBox.setSelected(false);
                     selectAllCheckBox.setDisable(true);
                     batchAcceptButton.setDisable(true);
+                    advanceAllButton.setDisable(true);
                     Label noStudentsLabel = new Label("No pending student registrations found.");
                     noStudentsLabel.setPadding(new Insets(10));
                     studentList.getChildren().add(noStudentsLabel);
                 } else {
                     selectAllCheckBox.setDisable(false);
                     batchAcceptButton.setDisable(false);
+                    advanceAllButton.setDisable(false);
                     for (StudentData student : pendingStudentsList) {
                         studentList.getChildren().add(createStudentRow(student));
                         studentList.getChildren().add(new Separator()); 
@@ -293,6 +309,7 @@ public class AdminStudentManagementController implements Initializable {
             selectAllCheckBox.setSelected(false);
             selectAllCheckBox.setDisable(true);
             batchAcceptButton.setDisable(true);
+            advanceAllButton.setDisable(true);
         }
 
         logger.info("Batch accept initiated for {} students.", selectedStudents.size());
@@ -338,6 +355,103 @@ public class AdminStudentManagementController implements Initializable {
                 loadPendingStudents(); 
             });
         }).start();
+    }
+
+    @FXML
+    private void handleAdvanceAllEligible() {
+        // 1. Eligibility logging query
+        String eligibilitySql = """
+            SELECT s.student_id,
+                   COUNT(DISTINCT req.subject_id) AS required_count,
+                   COUNT(DISTINCT g.subject_id) AS passed_count
+            FROM students s
+            JOIN student_statuses ss ON s.student_status_id = ss.student_status_id
+            JOIN section sec ON s.current_year_section_id = sec.section_id
+            JOIN faculty_load fl ON fl.section_id = sec.section_id AND fl.semester_id = sec.semester_id
+            JOIN subjects req ON req.subject_id = fl.subject_id
+            LEFT JOIN grade g ON g.student_pk_id = s.student_id AND g.subject_id = req.subject_id AND g.grade_status_id = 2
+            WHERE ss.status_name = 'Enrolled'
+            GROUP BY s.student_id
+        """;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(eligibilitySql);
+             ResultSet rs = stmt.executeQuery()) {
+            logger.info("Eligibility query results:");
+            while (rs.next()) {
+                int studentId = rs.getInt("student_id");
+                int required = rs.getInt("required_count");
+                int passed = rs.getInt("passed_count");
+                boolean eligible = (required > 0 && required == passed);
+                logger.info("Student {}: required={}, passed={}, eligible={}", studentId, required, passed, eligible);
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching eligibility data for advancement (batch)", e);
+        }
+
+        // 2. Batch advancement: single SQL for eligibility and update
+        String sql = """
+WITH eligible AS (
+    SELECT
+        s.student_id,
+        sec.section_id AS current_section_id,
+        sec.year_level,
+        sec.semester_id,
+        sec.academic_year_id,
+        CASE
+            WHEN sec.semester_id < 3 THEN sec.year_level
+            ELSE sec.year_level + 1
+        END AS next_year_level,
+        CASE
+            WHEN sec.semester_id < 3 THEN sec.semester_id + 1
+            ELSE 1
+        END AS next_semester_id,
+        sec.academic_year_id AS next_academic_year_id
+    FROM students s
+    JOIN student_statuses ss ON s.student_status_id = ss.student_status_id
+    JOIN section sec ON s.current_year_section_id = sec.section_id
+    JOIN faculty_load fl ON fl.section_id = sec.section_id AND fl.semester_id = sec.semester_id
+    JOIN subjects req ON req.subject_id = fl.subject_id
+    LEFT JOIN grade g ON g.student_pk_id = s.student_id AND g.subject_id = req.subject_id AND g.grade_status_id = 2
+    WHERE ss.status_name = 'Enrolled'
+    GROUP BY s.student_id, sec.section_id, sec.year_level, sec.semester_id, sec.academic_year_id
+    HAVING COUNT(DISTINCT req.subject_id) > 0
+       AND COUNT(DISTINCT req.subject_id) = COUNT(DISTINCT g.subject_id)
+),
+next_sections AS (
+    SELECT
+        e.student_id,
+        MIN(ns.section_id) AS next_section_id
+    FROM eligible e
+    JOIN section ns ON ns.year_level = e.next_year_level
+                   AND ns.semester_id = e.next_semester_id
+                   AND ns.academic_year_id = e.next_academic_year_id
+    GROUP BY e.student_id
+)
+UPDATE students s
+SET current_year_section_id = ns.next_section_id
+FROM next_sections ns
+WHERE s.student_id = ns.student_id
+RETURNING s.student_id, ns.next_section_id;
+        """;
+        int advancedCount = 0;
+        List<Integer> advancedStudentIds = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            logger.info("Batch advancement result:");
+            while (rs.next()) {
+                int studentId = rs.getInt("student_id");
+                int nextSectionId = rs.getInt("next_section_id");
+                logger.info("Advanced student {} to section {}", studentId, nextSectionId);
+                advancedStudentIds.add(studentId);
+                advancedCount++;
+            }
+        } catch (SQLException e) {
+            logger.error("Error during batch advancement", e);
+            showAlert("Error", "Could not advance eligible students.");
+            return;
+        }
+        showAlert("Advancement Complete", advancedCount + " students advanced.");
     }
 
     private String processSingleStudentAcceptance(int studentId) throws SQLException {
@@ -687,5 +801,162 @@ public class AdminStudentManagementController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
         logger.debug("Showing alert: Title='{}', Content='{}'", title, content);
+    }
+
+    // === Advancement Logic ===
+    private List<Integer> getAllStudentIds() {
+        List<Integer> ids = new ArrayList<>();
+        String sql = "SELECT student_id FROM public.students";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                ids.add(rs.getInt("student_id"));
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching all student IDs", e);
+        }
+        return ids;
+    }
+
+    // Returns true if student was advanced, false otherwise
+    private boolean advanceStudentIfEligible(int studentId) {
+        // 1. Fetch current context
+        int sectionId = -1, yearLevel = -1, semesterId = -1, academicYearId = -1;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                "SELECT s.current_year_section_id, sec.year_level, sec.semester_id, sec.academic_year_id " +
+                "FROM public.students s JOIN public.section sec ON s.current_year_section_id = sec.section_id " +
+                "WHERE s.student_id = ?")) {
+            stmt.setInt(1, studentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    sectionId = rs.getInt("current_year_section_id");
+                    yearLevel = rs.getInt("year_level");
+                    semesterId = rs.getInt("semester_id");
+                    academicYearId = rs.getInt("academic_year_id");
+                } else {
+                    logger.warn("Student {} not found for advancement", studentId);
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching student context for advancement", e);
+            return false;
+        }
+        // 2. Get required subjects for current section/year/semester
+        Set<Integer> requiredSubjectIds = new HashSet<>();
+        String requiredSubjectsSql = "SELECT s.subject_id FROM subjects s " +
+                "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
+                "WHERE fl.section_id = ? AND fl.semester_id = ? AND s.year_level = ? AND s.semester_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(requiredSubjectsSql)) {
+            stmt.setInt(1, sectionId);
+            stmt.setInt(2, semesterId);
+            stmt.setInt(3, yearLevel);
+            stmt.setInt(4, semesterId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    requiredSubjectIds.add(rs.getInt("subject_id"));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching required subjects for advancement", e);
+            return false;
+        }
+        if (requiredSubjectIds.isEmpty()) {
+            logger.warn("No required subjects found for student {} (section/year/semester)", studentId);
+            return false;
+        }
+        // 3. Check passed grades
+        Set<Integer> passedSubjectIds = new HashSet<>();
+        String passedGradesSql = "SELECT subject_id FROM grade WHERE student_pk_id = ? AND subject_id = ANY (?) AND grade_status_id = 2";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(passedGradesSql)) {
+            stmt.setInt(1, studentId);
+            Array subjectArray = conn.createArrayOf("INTEGER", requiredSubjectIds.toArray());
+            stmt.setArray(2, subjectArray);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    passedSubjectIds.add(rs.getInt("subject_id"));
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error fetching passed grades for advancement", e);
+            return false;
+        }
+        if (!passedSubjectIds.containsAll(requiredSubjectIds)) {
+            logger.info("Student {} not eligible for advancement: not all required subjects passed", studentId);
+            return false;
+        }
+        // 4. Find next section
+        int nextYearLevel = yearLevel;
+        int nextSemesterId = semesterId + 1;
+        if (nextSemesterId > 3) { // 1=1st, 2=Summer, 3=2nd
+            nextSemesterId = 1;
+            nextYearLevel++;
+        }
+        int nextSectionId = -1;
+        String nextSectionSql = "SELECT section_id FROM section WHERE year_level = ? AND semester_id = ? AND academic_year_id = ? LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(nextSectionSql)) {
+            stmt.setInt(1, nextYearLevel);
+            stmt.setInt(2, nextSemesterId);
+            stmt.setInt(3, academicYearId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    nextSectionId = rs.getInt("section_id");
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error finding next section for advancement", e);
+            return false;
+        }
+        if (nextSectionId == -1) {
+            logger.warn("No next section found for advancement for student {}. Advancement halted.", studentId);
+            return false;
+        }
+        // 5. Update student record
+        String updateStudentSql = "UPDATE students SET current_year_section_id = ? WHERE student_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateStudentSql)) {
+            stmt.setInt(1, nextSectionId);
+            stmt.setInt(2, studentId);
+            int updated = stmt.executeUpdate();
+            if (updated > 0) {
+                logger.info("Student {} advanced to section {}", studentId, nextSectionId);
+                return true;
+            }
+        } catch (SQLException e) {
+            logger.error("Error updating student section for advancement", e);
+        }
+        return false;
+    }
+
+    // Semester start date confirmation handler
+    private void handleConfirmSemesterStartDate(int semesterId) {
+        DatePicker picker = (semesterId == 1) ? firstSemStartDatePicker : secondSemStartDatePicker;
+        if (picker == null || picker.getValue() == null) {
+            showAlert("Invalid Date", "Please select a valid start date.");
+            return;
+        }
+        java.sql.Date newDate = java.sql.Date.valueOf(picker.getValue());
+        String updateSql = "UPDATE semesters SET start_date = ? WHERE semester_id = ?";
+        new Thread(() -> {
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(updateSql)) {
+                stmt.setDate(1, newDate);
+                stmt.setInt(2, semesterId);
+                int updated = stmt.executeUpdate();
+                if (updated > 0) {
+                    Platform.runLater(() -> showAlert("Success", "Semester start date updated."));
+                } else {
+                    Platform.runLater(() -> showAlert("Error", "Failed to update semester start date."));
+                }
+            } catch (SQLException e) {
+                logger.error("Error updating semester start date", e);
+                Platform.runLater(() -> showAlert("Database Error", "Failed to update semester start date."));
+            }
+        }).start();
     }
 }
