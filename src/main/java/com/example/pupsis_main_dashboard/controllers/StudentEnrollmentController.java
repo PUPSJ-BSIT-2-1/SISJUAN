@@ -41,6 +41,7 @@ public class StudentEnrollmentController implements Initializable {
 
     private StudentEnrollmentContext studentEnrollmentContext; 
     private List<SubjectData> availableSubjects;
+    private List<SubjectData> enrolledSubjects = new ArrayList<>();
     private List<CheckBox> subjectCheckboxes = new ArrayList<>();
     private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
     private Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
@@ -292,7 +293,8 @@ public class StudentEnrollmentController implements Initializable {
         checkboxSubjectMap.clear();
         subjectScheduleMap.clear();
 
-        this.availableSubjects = subjectLists.availableSubjects; 
+        this.availableSubjects = subjectLists.availableSubjects;
+        this.enrolledSubjects = subjectLists.enrolledSubjects;
 
         if (enrolledSubjectsDisplayContainer != null && subjectLists.enrolledSubjects != null && !subjectLists.enrolledSubjects.isEmpty()) {
             // Optional: Add headers for enrolled subjects section for consistency
@@ -418,10 +420,9 @@ public class StudentEnrollmentController implements Initializable {
                     scheduleComboBox.getItems().add("No schedules available");
                     scheduleComboBox.setValue("No schedules available");
                     scheduleComboBox.setDisable(true);
-                    checkBox.setSelected(false); // Unselect if it was somehow selected
-                    checkBox.setDisable(true);   // Disable the checkbox
-                    codeLabel.setDisable(true);
-                    descriptionLabel.setDisable(true);
+                    codeLabel.setStyle("-fx-text-fill: gray;");
+                    descriptionLabel.setStyle("-fx-text-fill: gray;");
+                    checkBox.setDisable(true);
                 } else {
                     scheduleComboBox.setDisable(false);
                     checkBox.setDisable(false); // Ensure checkbox is enabled if schedules are present
@@ -585,33 +586,35 @@ public class StudentEnrollmentController implements Initializable {
         logger.debug("fetchEnrollmentSubjectLists (Phase 1 - Enrolled): Found {} enrolled subjects.", enrolledSubjects.size());
 
         // Helper record to store intermediate data for available subjects
-        record AvailableSubjectInfo(String subjectCode, String description, int units, String subjectId, String facultyLoadId) {}
+        record AvailableSubjectInfo(String subjectCode, String description, int units, String subjectId) {}
         List<AvailableSubjectInfo> tempAvailableSubjectInfos = new ArrayList<>();
 
-        // Phase 2: Query for AVAILABLE subjects (Get subject details and faculty_load_id)
-        String availableQuery = "SELECT s.subject_code, s.description, CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, s.subject_id, " +
-                                "fl.load_id AS faculty_load_id, " +
-                                "(SELECT COUNT(*) FROM student_load sl_count WHERE sl_count.faculty_load = fl.load_id AND sl_count.academic_year_id = fl.academic_year_id AND sl_count.semester_id = fl.semester_id) AS current_enrollees " +
-                                "FROM subjects s " +
-                                "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
-                                "WHERE fl.section_id = ? AND fl.semester_id = ? " +
-                                "AND fl.load_id NOT IN (" +
-                                "  SELECT sl_inner.faculty_load FROM student_load sl_inner " +
-                                "  WHERE sl_inner.student_pk_id = ? AND sl_inner.semester_id = ?" +
-                                ") AND s.year_level = ? AND s.semester_id = ?"; // Corrected: s.year_level instead of s.year_level_id
+        // Phase 2: Query for AVAILABLE subjects (Get subject details)
+        String availableQuery = "SELECT DISTINCT s.subject_code, s.description, " +
+                "CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, " +
+                "s.subject_id " +
+                "FROM subjects s " +
+                "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
+                "WHERE fl.section_id = ? " +
+                "AND fl.semester_id = ? " +
+                "AND s.year_level = ? " +
+                "AND s.semester_id = ? " +
+                "AND fl.load_id NOT IN (" +
+                "  SELECT sl_inner.faculty_load FROM student_load sl_inner " +
+                "  WHERE sl_inner.student_pk_id = ? AND sl_inner.semester_id = ?" +
+                ")";
 
-        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, studentId={}, semesterIdSubQuery={}, yearLevel={}, semesterIdSubject={}]",
-            availableQuery, context.sectionId(), context.semesterId(),
-            context.studentId(), context.semesterId(), context.yearLevel(), context.semesterId());
+        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, yearLevel={}, semesterIdSubject={}, studentId={}, semesterIdSubQuery={}]",
+            availableQuery, context.sectionId(), context.semesterId(), context.yearLevel(), context.semesterId(), context.studentId(), context.semesterId());
 
         try (Connection connAvailableDetails = DBConnection.getConnection(); // Separate connection for available subject details
              PreparedStatement pstmtAvailable = connAvailableDetails.prepareStatement(availableQuery)) {
             
             pstmtAvailable.setInt(1, context.sectionId());
             pstmtAvailable.setInt(2, context.semesterId());
-            pstmtAvailable.setInt(3, context.studentId());
+            pstmtAvailable.setInt(3, context.yearLevel());
             pstmtAvailable.setInt(4, context.semesterId());
-            pstmtAvailable.setInt(5, context.yearLevel());
+            pstmtAvailable.setInt(5, context.studentId());
             pstmtAvailable.setInt(6, context.semesterId());
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
@@ -620,8 +623,7 @@ public class StudentEnrollmentController implements Initializable {
                             rs.getString("subject_code"),
                             rs.getString("description"),
                             rs.getInt("units"),
-                            String.valueOf(rs.getInt("subject_id")),
-                            String.valueOf(rs.getInt("faculty_load_id"))
+                            String.valueOf(rs.getInt("subject_id"))
                     ));
                 }
             }
@@ -642,7 +644,7 @@ public class StudentEnrollmentController implements Initializable {
                 
                 for (AvailableSubjectInfo info : tempAvailableSubjectInfos) {
                     List<String> schedulesForSubject = new ArrayList<>();
-                    pstmtSchedule.setInt(1, Integer.parseInt(info.facultyLoadId()));
+                    pstmtSchedule.setInt(1, Integer.parseInt(info.subjectId()));
                     
                     try (ResultSet rsSchedule = pstmtSchedule.executeQuery()) {
                         while (rsSchedule.next()) {
@@ -679,7 +681,8 @@ public class StudentEnrollmentController implements Initializable {
                             info.units(),
                             info.subjectId(),
                             schedulesForSubject,
-                            info.facultyLoadId()
+                            null, // Removed offeringId
+                            null // Removed enrolledSchedule
                     ));
                 }
             } // connSchedule and pstmtSchedule are closed here
@@ -806,50 +809,31 @@ public class StudentEnrollmentController implements Initializable {
     }
 
     private void updateDynamicUnitCountAndEnrollButtonState() {
-        currentSelectedUnits = 0;
-        boolean anySelected = false;
-        for (CheckBox cb : subjectCheckboxes) {
-            if (cb.isSelected()) {
-                anySelected = true;
-                SubjectData sd = checkboxSubjectMap.get(cb);
-                if (sd != null && sd.units() != 0) {
-                    currentSelectedUnits += sd.units();
-                }
-            }
+        if (unitCounterLabel == null) return;
+
+        int selectedUnits = subjectCheckboxes.stream()
+                .filter(CheckBox::isSelected)
+                .mapToInt(cb -> checkboxSubjectMap.get(cb).units())
+                .sum();
+
+        int enrolledUnits = 0;
+        if (this.enrolledSubjects != null) {
+            enrolledUnits = this.enrolledSubjects.stream()
+                    .mapToInt(SubjectData::units)
+                    .sum();
         }
 
-        if (unitCounterLabel != null) {
-            unitCounterLabel.setText("Selected Units: " + currentSelectedUnits + "/" + MAX_UNITS);
-            if (currentSelectedUnits > MAX_UNITS) {
-                unitCounterLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;"); // Highlight if over limit
-            } else {
-                unitCounterLabel.setStyle("-fx-text-fill: -fx-text-base-color; -fx-font-weight: normal;"); // Default style
-            }
-        }
+        currentSelectedUnits = selectedUnits + enrolledUnits;
 
-        if (enrollButton != null) {
-            enrollButton.setDisable(!anySelected || currentSelectedUnits == 0 || currentSelectedUnits > MAX_UNITS);
-        }
+        unitCounterLabel.setText(String.format("Selected Units: %d/%d", currentSelectedUnits, MAX_UNITS));
 
-        // Advanced UX: Disable checkboxes that would exceed MAX_UNITS if selected
-        for (CheckBox cb : subjectCheckboxes) {
-            if (!cb.isSelected()) {
-                SubjectData sd = checkboxSubjectMap.get(cb);
-                if (sd != null && sd.units() != 0) {
-                    if (currentSelectedUnits + sd.units() > MAX_UNITS) {
-                        cb.setDisable(true);
-                    } else {
-                        cb.setDisable(false);
-                    }
-                }
-            } else {
-                 cb.setDisable(false); // Ensure selected checkboxes are always enabled (so they can be deselected)
-            }
-        }
-        if (selectAllButton != null) {
-            boolean allDisabled = subjectCheckboxes.stream().allMatch(Node::isDisabled);
-            boolean allSelected = !subjectCheckboxes.isEmpty() && subjectCheckboxes.stream().allMatch(CheckBox::isSelected);
-            selectAllButton.setDisable(subjectCheckboxes.isEmpty() || allDisabled || allSelected);
+        if (currentSelectedUnits > MAX_UNITS) {
+            unitCounterLabel.setStyle("-fx-text-fill: red;");
+            enrollButton.setDisable(true);
+        } else {
+            unitCounterLabel.setStyle(""); // Revert to default style
+            // Enable enroll button only if at least one subject is selected and units are within limit.
+            enrollButton.setDisable(selectedUnits == 0);
         }
     }
 }
