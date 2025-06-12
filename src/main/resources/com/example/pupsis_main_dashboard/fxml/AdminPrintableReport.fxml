@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="printable-list" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminPrintableReportController">
+<BorderPane styleClass="printable-list" stylesheets="@../css/AdminPrintableReport.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminPrintableReportController">
 
     <!-- HEADER -->
     <top>
@@ -24,7 +24,7 @@
 
     <!-- TABLE CONTENT -->
     <center>
-        <TableView fx:id="reportTable" prefHeight="500">
+        <TableView fx:id="reportTable" prefHeight="500" styleClass="printable-table">
             <columns>
                 <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
                 <TableColumn fx:id="firstNameColumn" prefWidth="120" text="First Name" />
@@ -33,8 +33,8 @@
                 <TableColumn fx:id="emailColumn" prefWidth="180" text="Email" />
                 <TableColumn fx:id="contactColumn" prefWidth="120" text="Contact" />
                 <TableColumn fx:id="birthdateColumn" prefWidth="100" text="Birthdate" />
-                <TableColumn fx:id="dateJoinedColumn" prefWidth="100" text="Date Joined" />
-                <TableColumn fx:id="statusColumn" prefWidth="80" text="Status" />
+                <TableColumn fx:id="dateJoinedColumn" prefWidth="100.0" text="Date Joined" />
+                <TableColumn fx:id="statusColumn" text="Status" />
             </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
