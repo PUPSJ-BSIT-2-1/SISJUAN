@@ -1,5 +1,6 @@
 package com.example.pupsis_main_dashboard.utilities;
 
+import com.example.pupsis_main_dashboard.models.FacultyAssignment;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ public class FacultyLoadDAO {
     /**
      * Adds a faculty load entry (assignment of a subject to faculty).
      *
-     * @param facultyId      the faculty identifier (String)
+     * @param facultyId      the faculty identifier (int)
      * @param subjectId      the subject identifier (int)
      * @param sectionId      the section identifier (int) from the 'section' table
      * @param semesterId     the semester identifier (int)
@@ -75,7 +76,45 @@ public class FacultyLoadDAO {
         return facultyLoads;
     }
 
-    public record FacultyLoad(int facultyId, int subjectId, int sectionId, int semesterId, int academicYearId) {
-
+    /**
+     * Retrieves all subject assignments for a given faculty (for the "Assigned Subjects" dialog)
+     * Make sure your joined tables and columns match your schema.
+     */
+    public List<FacultyAssignment> getAssignmentsForFaculty(int facultyId) {
+        List<FacultyAssignment> assignments = new ArrayList<>();
+        String sql = """
+        SELECT s.subject_code,
+               s.description,
+               sec.section_name,
+               sem.semester_name,
+               s.year_level
+        FROM faculty_load fl
+        JOIN subjects s ON fl.subject_id = s.subject_id
+        JOIN section sec ON fl.section_id = sec.section_id
+        JOIN semesters sem ON fl.semester_id = sem.semester_id
+        WHERE fl.faculty_id = ?
+    """;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, facultyId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                FacultyAssignment assignment = new FacultyAssignment(
+                        rs.getString("subject_code"),
+                        rs.getString("description"),
+                        rs.getString("section_name"),
+                        rs.getString("semester_name"),
+                        rs.getString("year_level")
+                );
+                assignments.add(assignment);
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL Error (getAssignmentsForFaculty): " + e.getMessage());
+        }
+        return assignments;
     }
+
+
+    // Simple record to represent a faculty load entry.
+    public record FacultyLoad(int facultyId, int subjectId, int sectionId, int semesterId, int academicYearId) {}
+
 }
