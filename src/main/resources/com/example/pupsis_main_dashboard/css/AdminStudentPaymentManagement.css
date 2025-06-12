@@ -1,0 +1,177 @@
+.root {
+    -background-color: transparent;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%) !important;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.table-header {
+    -fx-background-color: #f8fcfc;
+    -fx-text-fill: #000000;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cccccc;
+}
+/* Dark theme styles */
+
+.dark-theme .root {
+    -background-color: #2b2b2b;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3)) !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+
+.dark-theme .cards {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .table-header {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 14px;
+}
+
+/* === Modern Button Styles === */
+
+/* Base style for accept and reject buttons */
+.accept-button,
+.reject-button {
+    -fx-background-radius: 5px; /* Rounded corners */
+    -fx-padding: 5px 10px;      /* Padding around text */
+    -fx-font-size: 14px;        /* Font size */
+    -fx-font-weight: bold;      /* Bold text, matches FXML */
+    -fx-text-fill: white;       /* White text color */
+    -fx-border-width: 0;        /* No border by default */
+    -fx-cursor: hand;           /* Hand cursor on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0.0, 0, 1); /* Subtle shadow */
+    -fx-min-width: 30px;        /* Ensure buttons have some width for the symbols */
+    -fx-alignment: CENTER;
+}
+
+/* Accept Button - Green */
+.accept-button {
+    -fx-background-color: #28a745; /* Green background (Bootstrap success green) */
+}
+
+.accept-button:hover {
+    -fx-background-color: #218838; /* Darker green on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.0, 0, 2);
+}
+
+.accept-button:pressed {
+    -fx-background-color: #1e7e34; /* Even darker green when pressed */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.0, 0, 1);
+}
+
+/* Reject Button - Red */
+.reject-button {
+    -fx-background-color: #dc3545; /* Red background (Bootstrap danger red) */
+}
+
+.reject-button:hover {
+    -fx-background-color: #c82333; /* Darker red on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.0, 0, 2);
+}
+
+.reject-button:pressed {
+    -fx-background-color: #bd2130; /* Even darker red when pressed */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.0, 0, 1);
+}
+
+.payment-check-box {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.payment-check-box .box {
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+}
+
+
+.dark-theme .payment-check-box {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .payment-check-box .box {
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.icon {
+    -fx-fill: #6b6b6b;
+}
+
+.dark-theme .icon {
+    -fx-fill: #b0b0b0;
+}

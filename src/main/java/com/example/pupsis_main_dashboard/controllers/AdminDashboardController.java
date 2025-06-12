@@ -31,7 +31,7 @@ public class AdminDashboardController {
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
-    @FXML private HBox usersHBox;
+    @FXML private HBox paymentInfoHBox;
     @FXML private HBox facultyHBox;
     @FXML private HBox subjectsHBox;
     @FXML private HBox scheduleHBox;
@@ -46,7 +46,7 @@ public class AdminDashboardController {
 
     private static final String USER_TYPE = "ADMIN";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
-    private static final String USERS_FXML = null;
+    private static final String PAYMENT_INFO_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentPaymentManagement.fxml";
     private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminSubjectModule.fxml";
     private static final String FACULTY_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminFacultyPreview.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminClassSchedule.fxml";
@@ -107,7 +107,7 @@ public class AdminDashboardController {
         homeHBox.setOnMouseClicked(this::handleSidebarItemClick);
         settingsHBox.setOnMouseClicked(this::handleSidebarItemClick);
         aboutHBox.setOnMouseClicked(this::handleSidebarItemClick);
-        usersHBox.setOnMouseClicked(this::handleSidebarItemClick);
+        paymentInfoHBox.setOnMouseClicked(this::handleSidebarItemClick);
         facultyHBox.setOnMouseClicked(this::handleSidebarItemClick);
         subjectsHBox.setOnMouseClicked(this::handleSidebarItemClick);
         scheduleHBox.setOnMouseClicked(this::handleSidebarItemClick);
@@ -159,6 +159,7 @@ public class AdminDashboardController {
             preloadFxmlContent(CALENDAR_FXML);
             preloadFxmlContent(ABOUT_FXML);
             preloadFxmlContent(STUDENT_MANAGEMENT_FXML);
+           preloadFxmlContent(PAYMENT_INFO_FXML);
             preloadFxmlContent(SUBJECTS_FXML);
             preloadFxmlContent(FACULTY_FXML);
 
@@ -319,13 +320,12 @@ public class AdminDashboardController {
         return switch (clickedHBox.getId()) {
             case "registrationHBox" ->
                     null;
-            case "paymentInfoHBox" ->null;
+            case "paymentInfoHBox" -> PAYMENT_INFO_FXML;
             case "subjectsHBox" -> SUBJECTS_FXML;
             case "gradesHBox" -> null;
             case "scheduleHBox" -> SCHEDULE_FXML;
             case "calendarHBox" -> CALENDAR_FXML;
             case "aboutHBox" ->ABOUT_FXML;
-            case "usersHBox" -> USERS_FXML;
             case "facultyHBox" -> FACULTY_FXML;
             case "homeHBox" -> HOME_FXML;
             case "studentsHBox" -> STUDENT_MANAGEMENT_FXML;
@@ -430,7 +430,7 @@ public class AdminDashboardController {
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
-        usersHBox.getStyleClass().remove("selected");
+        paymentInfoHBox.getStyleClass().remove("selected");
         facultyHBox.getStyleClass().remove("selected");
         studentsHBox.getStyleClass().remove("selected");
         subjectsHBox.getStyleClass().remove("selected");
