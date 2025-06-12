@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyAssignmentsDialogController"
+      spacing="12.0" prefWidth="540.0" prefHeight="380.0">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <children>
+        <Label fx:id="facultyLabel" text="Assigned Subjects for [Faculty Name]" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
+        <TableView fx:id="assignmentsTable" prefHeight="260.0" prefWidth="500.0">
+            <columns>
+                <TableColumn fx:id="subjectCodeColumn" text="Subject Code" prefWidth="110.0"/>
+                <TableColumn fx:id="subjectDescColumn" text="Description" prefWidth="180.0"/>
+                <TableColumn fx:id="sectionColumn" text="Section" prefWidth="70.0"/>
+                <TableColumn fx:id="semesterColumn" text="Semester" prefWidth="100.0"/>
+                <TableColumn fx:id="yearLevelColumn" text="Year" prefWidth="44.0"/>
+            </columns>
+        </TableView>
+        <HBox alignment="CENTER_RIGHT">
+            <children>
+                <Button text="Close" onAction="#handleClose" prefWidth="80"/>
+            </children>
+        </HBox>
+    </children>
+</VBox>
