@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="656.0" prefWidth="810.0" spacing="6" stylesheets="@../css/StudentPaymentInfo.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.StudentPaymentHistoryController">
+   <HBox styleClass="red-card">
+      <children>
+         <VBox prefHeight="69.0" prefWidth="374.0" spacing="4.0">
+            <children>
+               <Label styleClass="header" text="Payment History Overview" />
+               <Label styleClass="sub-header" text="View Past Transactions and Billing Records" />
+            </children>
+            <padding>
+               <Insets left="10.0" />
+            </padding>
+         </VBox>
+         <HBox alignment="CENTER_RIGHT" prefHeight="70.0" prefWidth="442.0">
+            <children>
+                 <Button fx:id="backButton" alignment="CENTER" prefHeight="27.0" prefWidth="170.0" styleClass="back-to-payment-section" text="← Back to Payment Info" />
+            </children>
+         </HBox>
+      </children>
+   </HBox>
+
+    <!-- Back Button -->
+    <HBox alignment="CENTER_RIGHT" spacing="6" style="-fx-padding: -50 0 0 0;" />
+
+    <!-- Transaction Table -->
+    <VBox prefHeight="497.0" prefWidth="810.0" spacing="6" styleClass="cards" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets bottom="6" left="12" right="12" top="6" />
+        </padding>
+
+        <Label styleClass="cards-header" text="Transaction History" />
+
+        <TableView fx:id="transactionTable" VBox.vgrow="ALWAYS">
+            <columns>
+            <TableColumn fx:id="schoolYearColumn" prefWidth="97.60000324249268" text="School Year" />
+                <TableColumn fx:id="semesterColumn" prefWidth="103.99996948242188" text="Semester" />
+                <TableColumn fx:id="descriptionColumn" prefWidth="207.2000274658203" text="Description" />
+                <TableColumn fx:id="orDateColumn" prefWidth="84.79998779296875" text="O.R. Date" />
+                <TableColumn fx:id="assessmentColumn" prefWidth="95.46661376953125" text="Debit (₱)" />
+                <TableColumn fx:id="creditColumn" prefWidth="101.33331298828125" text="Credit (₱)" />
+                <TableColumn fx:id="balanceColumn" prefWidth="87.7333984375" text="Balance (₱)" />
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>
