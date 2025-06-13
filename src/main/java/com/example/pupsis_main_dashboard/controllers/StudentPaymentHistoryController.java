@@ -27,6 +27,7 @@ import java.util.TimerTask;
 
 public class StudentPaymentHistoryController {
 
+
     Logger logger = LoggerFactory.getLogger(StudentPaymentHistoryController.class.getName());
 
     @FXML
@@ -52,6 +53,7 @@ public class StudentPaymentHistoryController {
 
     @FXML
     public void initialize() {
+
         logger.info("Initializing StudentPaymentHistoryController.");
 
         schoolYearColumn.setCellValueFactory(new PropertyValueFactory<>("schoolYear"));
@@ -77,6 +79,7 @@ public class StudentPaymentHistoryController {
     }
 
     private void loadTransactionHistory() {
+
         logger.info("Loading transaction history.");
 
         String studentNumber = SessionData.getInstance().getStudentNumber();
@@ -130,8 +133,10 @@ public class StudentPaymentHistoryController {
         }
     }
 
+
     @FXML
     private void handleBackToDashboard() {
+
         try {
             // Find the ScrollPane with fx:id "contentPane" in the current scene
             contentPane = (ScrollPane) transactionTable.getScene().lookup("#contentPane");
@@ -153,6 +158,7 @@ public class StudentPaymentHistoryController {
     }
 
     private void resetScrollPosition() {
+
         Platform.runLater(() -> {
             contentPane.setVvalue(0);
             new Timer().schedule(new TimerTask() {

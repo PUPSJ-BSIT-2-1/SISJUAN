@@ -7,6 +7,7 @@
     -fx-background-color: transparent;
 }
 
+
 .red-card {
     -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
     -fx-background-radius: 10;
@@ -371,6 +372,7 @@
     -fx-cursor: hand;
 }
 
+
 /* ============== CSS FOR PAYMENT HISTORY ============== */
 
 .back-to-payment-section {
@@ -400,6 +402,7 @@
     -fx-text-fill: #e0e0e0;
     -fx-cursor: hand;
 }
+
 
 .table-view {
     -fx-background-color: #f8fcfc;
@@ -446,6 +449,7 @@
     -fx-background-color: transparent;
     -fx-text-fill: #e0e0e0;
 }
+
 
 .table-view .column-header .label {
     -fx-font-size: 12px;
@@ -511,6 +515,7 @@
     -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
+
 
 .dark-theme .semester-button:hover {
     -fx-text-fill: #e57373;

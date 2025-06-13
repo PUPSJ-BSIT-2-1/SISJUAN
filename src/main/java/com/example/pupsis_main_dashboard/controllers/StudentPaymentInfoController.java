@@ -44,6 +44,7 @@ public class StudentPaymentInfoController {
     @FXML private Label studentYearSection;
     @FXML private Button viewAccountsButton;
 
+
     // Payment Method
     @FXML private RadioButton cardRadio;
     @FXML private RadioButton bankRadio;
@@ -95,6 +96,7 @@ public class StudentPaymentInfoController {
 
     @FXML
     public void initialize() {
+
         logger.info("Initializing StudentPaymentInfoController...");
 
         // Initialize UI state
@@ -115,6 +117,7 @@ public class StudentPaymentInfoController {
 
     private void setupInitialUIState() {
         // Show loading state
+
         if (loadingIndicator != null) {
             loadingIndicator.setVisible(true);
         }
@@ -145,6 +148,7 @@ public class StudentPaymentInfoController {
 
     private void setupInputValidation() {
         // Enhanced amount of field validation with real-time feedback
+
         amountPaidField.textProperty().addListener((_, oldValue, newValue) -> {
             // Allow only numbers, commas, and decimal points
             if (!newValue.matches("[\\d,.]*(\\.\\d{0,2})?")) {
@@ -171,17 +175,20 @@ public class StudentPaymentInfoController {
     }
 
     private void setupEventHandlers() {
+
         viewAccountsButton.setOnAction(this::handleViewAccounts);
         informationPaymentHBox.setOnMouseClicked(_ -> showPaymentInformationAlert(root.getScene().getRoot()));
         submitPaymentButton.setOnAction(_ -> handleSubmitPaymentAsync());
     }
 
     private void loadDataAsync() {
+
         String studentNumber = SessionData.getInstance().getStudentNumber();
 
         Task<Void> loadDataTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
+
                 // Simulate realistic loading time for better UX
                 Thread.sleep(500);
 
@@ -195,6 +202,7 @@ public class StudentPaymentInfoController {
 
             @Override
             protected void succeeded() {
+
                 Platform.runLater(() -> {
                     try {
                         setFeeBreakdown();
@@ -218,6 +226,7 @@ public class StudentPaymentInfoController {
 
             @Override
             protected void failed() {
+
                 Platform.runLater(() -> {
                     logger.error("Failed to load payment information", getException());
                     handleLoadingError(getException());
@@ -234,6 +243,7 @@ public class StudentPaymentInfoController {
     private void handleLoadingError(Throwable error) {
         if (loadingIndicator != null) {
             loadingIndicator.setVisible(false);
+
         }
         if (mainContent != null) {
             mainContent.setDisable(false);
@@ -249,6 +259,7 @@ public class StudentPaymentInfoController {
     private void validatePaymentForm() {
         boolean isValid = true;
         String errorMessage = "";
+
 
         // Check if a payment method is selected
         ToggleGroup paymentGroup = cardRadio.getToggleGroup();
@@ -293,6 +304,7 @@ public class StudentPaymentInfoController {
         try {
             String text = amountPaidField.getText().replaceAll("[₱,\\s]", "");
             if (!text.isEmpty()) {
+
                 double amount = Double.parseDouble(text);
                 amountPaidField.setText(String.format("₱%,.2f", amount));
             }
@@ -305,6 +317,7 @@ public class StudentPaymentInfoController {
         String studentNumber = SessionData.getInstance().getStudentNumber();
 
         String query = """
+            
             SELECT f.status_name
             FROM public.students s
             JOIN public.fhe_act_statuses f ON s.fhe_eligible_id = f.fhe_id
@@ -340,6 +353,7 @@ public class StudentPaymentInfoController {
 
     private void loadStudentInfo(String studentNumber) {
         String query = """
+            
             SELECT s.student_number, s.firstname || ' ' || s.middlename || ' ' || s.lastname AS full_name, sc.section_name
             FROM students s
             JOIN section sc ON sc.section_id = s.current_year_section_id
@@ -351,6 +365,7 @@ public class StudentPaymentInfoController {
             stmt.setString(1, studentNumber);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+
                     final String studentId = rs.getString("student_number");
                     final String fullName = rs.getString("full_name");
                     final String sectionName = rs.getString("section_name");
@@ -368,6 +383,7 @@ public class StudentPaymentInfoController {
     }
 
     private void splitStudentProgram(String studentSectionName) {
+
         String[] parts = studentSectionName.split(" ");
         String programName = parts[0];
 
@@ -385,6 +401,7 @@ public class StudentPaymentInfoController {
     }
 
     private void loadFeeBreakdown() {
+
         String query = "SELECT tuition_name, price FROM fees";
 
         try (Connection connection = DBConnection.getConnection();
@@ -406,6 +423,7 @@ public class StudentPaymentInfoController {
     }
 
     private void setFeeBreakdown() {
+
         totalFees = 0.00; // Reset total
 
         // Set existing fee breakdown labels
@@ -439,6 +457,7 @@ public class StudentPaymentInfoController {
     }
 
     private void showPaymentInformationAlert(javafx.scene.Parent borderPane) {
+
         Dialog<Void> dialog = new Dialog<>();
 
         dialog.getDialogPane().setPrefSize(450, 300);
@@ -505,6 +524,7 @@ public class StudentPaymentInfoController {
     }
 
     private void handleSubmitPaymentAsync() {
+
         String method = getSelectedPaymentMethod();
         if (method == null) {
             StageAndSceneUtils.showAlert("Payment Method Required",
@@ -523,6 +543,7 @@ public class StudentPaymentInfoController {
     }
 
     private Alert getConfirmAlert(String method) {
+
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Payment");
         confirmAlert.setHeaderText("Submit Payment Confirmation");
@@ -537,11 +558,13 @@ public class StudentPaymentInfoController {
     }
 
     private void submitPaymentToDatabase(String method) {
+
         // Disable UI during submission
         submitPaymentButton.setDisable(true);
         submitPaymentButton.setText("Processing...");
 
         Task<Boolean> submitTask = new Task<>() {
+
             @Override
             protected Boolean call() {
                 try {
@@ -559,6 +582,7 @@ public class StudentPaymentInfoController {
                     throw new IllegalArgumentException("Invalid amount format");
                 }
             }
+
 
             @Override
             protected void succeeded() {
@@ -583,6 +607,7 @@ public class StudentPaymentInfoController {
 
             @Override
             protected void failed() {
+
                 Platform.runLater(() -> {
                     submitPaymentButton.setText("Submit Payment");
                     submitPaymentButton.setDisable(false);
@@ -626,6 +651,7 @@ public class StudentPaymentInfoController {
     }
 
     private void resetPaymentFields() {
+
         amountPaidField.setText("");
         amountPaidField.setPromptText("Enter payment amount");
 
@@ -640,6 +666,7 @@ public class StudentPaymentInfoController {
     }
 
     private String getSelectedPaymentMethod() {
+
         if (cardRadio.isSelected()) return "Credit/Debit Card";
         if (bankRadio.isSelected()) return "Bank Transfer";
         if (gcashRadio.isSelected()) return "GCash";
@@ -648,6 +675,7 @@ public class StudentPaymentInfoController {
     }
 
     private void determineEnrollmentStatus() {
+
         String studentNumber = SessionData.getInstance().getStudentNumber();
 
         Task<String> statusTask = new Task<>() {
@@ -665,8 +693,10 @@ public class StudentPaymentInfoController {
                 return null;
             }
 
+
             @Override
             protected void succeeded() {
+
                 Platform.runLater(() -> {
                     String status = getValue();
                     if (status != null && status.equals("Approved")) {
@@ -701,6 +731,7 @@ public class StudentPaymentInfoController {
 
     @FXML
     private void handleViewAccounts(ActionEvent event) {
+
         try {
             ScrollPane contentPane = (ScrollPane) root.getScene().lookup("#contentPane");
 

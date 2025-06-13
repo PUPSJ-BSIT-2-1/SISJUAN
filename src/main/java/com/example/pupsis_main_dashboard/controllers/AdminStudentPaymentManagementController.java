@@ -24,6 +24,7 @@ import java.util.List;
 
 public class AdminStudentPaymentManagementController {
 
+
     private static final Logger logger = LoggerFactory.getLogger(AdminStudentPaymentManagementController.class);
 
     @FXML private VBox studentPaymentContainer;
@@ -59,6 +60,7 @@ public class AdminStudentPaymentManagementController {
     }
 
     private void loadPendingStudentPayments() {
+
         logger.info("Loading pending student payments...");
         currentDisplayedPayments.clear();
 
@@ -143,6 +145,7 @@ public class AdminStudentPaymentManagementController {
     }
 
     private GridPane createPaymentRow(Payment payment) {
+
         logger.debug("Creating student row for student ID: {}", payment.getStudentNumber());
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
@@ -241,6 +244,7 @@ public class AdminStudentPaymentManagementController {
     }
 
     private void handlePaymentStatusUpdate(int paymentId, String newStatus) {
+
         logger.info("{} student payment: {}", newStatus, paymentId);
         new Thread(() -> {
             try {
