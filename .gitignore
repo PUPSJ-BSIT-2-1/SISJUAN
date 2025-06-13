@@ -36,3 +36,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+*.java~
+*.css~
+*.java~
+*.fxml~
+*.json~
+*.java~
