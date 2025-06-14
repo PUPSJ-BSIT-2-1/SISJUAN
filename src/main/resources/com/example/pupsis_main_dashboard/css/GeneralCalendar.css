@@ -104,8 +104,11 @@
     -fx-background-color: #800000;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-padding: 10 10;
-    -fx-background-radius: 20;
+    -fx-padding: 5;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #800000;
+    -fx-border-width: 2;
 }
 
 .custom-dialog .button:hover {
@@ -131,6 +134,12 @@
 .custom-dialog-description {
     -fx-font-family: "Inter 14pt Regular";
     -fx-font-size: 13px;
+    -fx-padding: 8, 0, 0, 0;
+}
+
+.custom-dialog-subheader {
+    -fx-font-family: "Inter 1pt Regular";
+    -fx-font-size: 14px;
     -fx-padding: 8, 0, 0, 0;
 }
 
@@ -324,8 +333,8 @@
 /* Dark theme dialog styles */
 .dark-custom-dialog {
     -fx-background-color: #2b2b2b;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
     -fx-border-color: #3a3a3a;
     -fx-border-width: 2;
     -fx-text-fill: #f0f0f0;
@@ -346,6 +355,10 @@
 }
 
 .dark-theme .custom-dialog-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .custom-dialog-subheader {
     -fx-text-fill: #e0e0e0;
 }
 
