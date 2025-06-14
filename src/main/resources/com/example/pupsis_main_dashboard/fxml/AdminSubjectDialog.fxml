@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="584.0" prefWidth="451.0" styleClass="subject-form" stylesheets="@../css/AdminSubjectModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectFormController">
+<AnchorPane prefHeight="584.0" prefWidth="451.0" styleClass="subject-form" stylesheets="@../css/AdminSubjectManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectDialogController">
     <children>
         <VBox alignment="TOP_LEFT" layoutX="50.4" layoutY="50.4" prefHeight="478.0" prefWidth="384.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <padding>

@@ -30,9 +30,9 @@ import java.sql.ResultSet;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class AdminSubjectController implements Initializable {
+public class AdminSubjectManagementController implements Initializable {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectManagementController.class);
 
     @FXML private TableView<SubjectManagement> tableView;
     @FXML private TableColumn<SubjectManagement, String> subjectCodeColumn;
@@ -55,7 +55,7 @@ public class AdminSubjectController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        logger.info("Initializing AdminSubjectController");
+        logger.info("Initializing AdminSubjectManagementController");
 
         tableView.setRowFactory(_ -> {
             TableRow<SubjectManagement> row = new TableRow<>();
@@ -291,10 +291,10 @@ public class AdminSubjectController implements Initializable {
     // Helper method to show the subject form dialog
     private void showSubjectFormDialog(SubjectManagement subjectToEdit) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminSubjectForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminSubjectDialog.fxml"));
             Parent root = loader.load();
 
-            AdminSubjectFormController controller = loader.getController();
+            AdminSubjectDialogController controller = loader.getController();
 
             Stage stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);

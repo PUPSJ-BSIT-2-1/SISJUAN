@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="200.0" prefWidth="810.0" spacing="10.0" style="-fx-background-color: white;" styleClass="root" stylesheets="@../css/AdminStudentManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminStudentManagementController">
+<VBox prefHeight="200.0" prefWidth="810.0" spacing="10.0" styleClass="root" stylesheets="@../css/AdminStudentManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminStudentManagementController">
    <children>
       <HBox prefHeight="90.0" prefWidth="810.0" styleClass="red-card">
          <padding>

@@ -50,6 +50,7 @@
     -fx-font-family: 'Inter';
     -fx-alignment: CENTER;
     -fx-text-fill: black;
+    -fx-padding: 10px;
 }
 
 .grades-table {
