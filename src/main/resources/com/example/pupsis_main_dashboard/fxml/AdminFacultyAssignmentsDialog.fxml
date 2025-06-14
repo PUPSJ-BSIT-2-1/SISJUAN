@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyAssignmentsDialogController"
-      spacing="12.0" prefWidth="540.0" prefHeight="380.0">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="392.0" prefWidth="606.0" spacing="12.0" styleClass="view-faculty-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyAssignmentsDialogController">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
     <children>
-        <Label fx:id="facultyLabel" text="Assigned Subjects for [Faculty Name]" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
+      <HBox styleClass="red-card">
+         <children>
+              <Label fx:id="facultyLabel" styleClass="view-header" text="Assigned Subjects for [Faculty Name]" />
+         </children>
+      </HBox>
         <TableView fx:id="assignmentsTable" prefHeight="260.0" prefWidth="500.0">
             <columns>
-                <TableColumn fx:id="subjectCodeColumn" text="Subject Code" prefWidth="110.0"/>
-                <TableColumn fx:id="subjectDescColumn" text="Description" prefWidth="180.0"/>
-                <TableColumn fx:id="sectionColumn" text="Section" prefWidth="70.0"/>
-                <TableColumn fx:id="semesterColumn" text="Semester" prefWidth="100.0"/>
-                <TableColumn fx:id="yearLevelColumn" text="Year" prefWidth="44.0"/>
+                <TableColumn fx:id="subjectCodeColumn" prefWidth="101.60003280639648" text="Subject Code" />
+                <TableColumn fx:id="subjectDescColumn" prefWidth="183.9999542236328" text="Description" />
+                <TableColumn fx:id="sectionColumn" prefWidth="86.39996337890625" text="Section" />
+                <TableColumn fx:id="semesterColumn" prefWidth="109.5999755859375" text="Semester" />
+                <TableColumn fx:id="yearLevelColumn" prefWidth="76.79998779296875" text="Year" />
             </columns>
         </TableView>
         <HBox alignment="CENTER_RIGHT">
             <children>
-                <Button text="Close" onAction="#handleClose" prefWidth="80"/>
+                <Button onAction="#handleClose" prefWidth="80" styleClass="cancel-button" text="Close" />
             </children>
         </HBox>
     </children>

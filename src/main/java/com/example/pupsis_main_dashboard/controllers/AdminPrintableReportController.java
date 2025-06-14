@@ -13,9 +13,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -120,9 +122,9 @@ public class AdminPrintableReportController {
             controller.setFacultyList(facultyList);
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Printable Faculty Report");
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
             dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();

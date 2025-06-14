@@ -134,7 +134,6 @@
     -fx-border-width: 2px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
-    -fx-padding: 5 10 5 10px;
 }
 
 .table-view .column-header-background {
@@ -174,7 +173,6 @@
 
 .table-row-cell {
     -fx-background-color: transparent;
-    -fx-padding: 8px;
     -fx-border-width: 0;
     -fx-border-color: transparent;
     -fx-border-radius: 0;
@@ -333,7 +331,6 @@
 
 .dark-theme .table-row-cell {
     -fx-background-color: transparent;
-    -fx-padding: 8px;
     -fx-border-width: 0;
     -fx-border-color: transparent;
     -fx-border-radius: 0;
@@ -413,6 +410,11 @@
 .assign-sub-container {
     -fx-background-color: white;
     -fx-padding: 20;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+
 }
 
 .dark-theme .assign-sub-container {
@@ -627,6 +629,8 @@
     -fx-padding: 20;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
 }
 
 .dark-theme .view-faculty-container {
@@ -635,7 +639,7 @@
 
 .view-header {
     -fx-font-size: 18;
-    -fx-text-fill: #800000;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
@@ -779,4 +783,16 @@
 .dark-theme .status-combo-box .list-cell:hover {
     -fx-background-color: #555555;
     -fx-cursor: hand;
+}
+
+.faculty-registration-container {
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+}
+
+.dark-theme .faculty-registration-container {
+    -fx-background-color: #3a3a3a;
 }

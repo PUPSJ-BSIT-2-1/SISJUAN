@@ -481,6 +481,8 @@
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+    -fx-border-width: 2px;
+    -fx-border-color: #ddd;
 }
 
 .dark-theme .subject-form {
@@ -675,4 +677,10 @@
 .dark-theme .cancel-button:hover {
     -fx-background-color: #777777;
     -fx-cursor: hand;
+}
+
+.view-header {
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }

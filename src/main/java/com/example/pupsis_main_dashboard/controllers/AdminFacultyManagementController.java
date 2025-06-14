@@ -19,10 +19,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.stage.StageStyle;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -130,11 +132,10 @@ public class AdminFacultyManagementController {
             controller.setFacultyLoadDAO(facultyLoadDAO);
             controller.setFaculty(faculty);
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Assigned Subjects");
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
             controller.setDialogStage(dialogStage);
-
             dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,9 +181,9 @@ public class AdminFacultyManagementController {
             controller.setFaculty(faculty);
 
             Stage stage = new Stage();
+            stage.initStyle(StageStyle.TRANSPARENT);
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Faculty Details - " + faculty.getFirstName() + " " + faculty.getLastName());
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, Color.TRANSPARENT));
             controller.setDialogStage(stage);
             stage.showAndWait();
         } catch (IOException e) {
@@ -235,10 +236,9 @@ public class AdminFacultyManagementController {
             controller.setSchoolYearAndSemester(schoolYear, semester);
 
             Stage dialogStage = new Stage();
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            String facultyFullName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
-            dialogStage.setTitle("Assign Subject to " + facultyFullName);
-            dialogStage.setScene(new Scene(root));
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
             controller.setDialogStage(dialogStage);
             dialogStage.showAndWait();
 
@@ -338,9 +338,9 @@ public class AdminFacultyManagementController {
 
             AdminFacultyDialogController controller = loader.getController();
             Stage dialogStage = new Stage();
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setTitle("Add New Faculty");
-            dialogStage.setScene(new Scene(root));
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
             controller.setFacultyDAO(facultyDAO);
             controller.setDialogStage(dialogStage);
             controller.setFaculty(null); // Pass null for a new faculty
@@ -373,9 +373,9 @@ public class AdminFacultyManagementController {
             controller.setFacultyDAO(facultyDAO);
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Faculty");
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
             controller.setDialogStage(dialogStage);
 
             dialogStage.showAndWait();

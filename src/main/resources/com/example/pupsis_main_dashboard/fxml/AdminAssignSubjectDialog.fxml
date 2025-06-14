@@ -11,12 +11,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="340.0" prefWidth="443.0" spacing="15" styleClass="assign-sub-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminAssignSubjectDialogController">
-
-    <Label styleClass="assign-header" text="Assign Subject to Faculty">
+<VBox prefHeight="390.0" prefWidth="443.0" spacing="15" styleClass="assign-sub-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminAssignSubjectDialogController">
+   <HBox styleClass="red-card">
       <VBox.margin>
          <Insets bottom="15.0" />
-      </VBox.margin></Label>
+      </VBox.margin>
+      <children>
+      
+          <Label styleClass="view-header" text="Assign Subject to Faculty" />
+      </children>
+   </HBox>
 
     <GridPane alignment="CENTER_LEFT" hgap="10" prefHeight="106.0" prefWidth="418.0" vgap="20.0">
         <Label styleClass="assign-sub-text" text="Subject Code:" GridPane.columnIndex="0" GridPane.rowIndex="0" />

@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,78 +13,79 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<DialogPane prefHeight="602.0" prefWidth="500.0" styleClass="root" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDialogController">
-
-    <content>
-        <VBox prefHeight="566.0" prefWidth="500.0" spacing="20.0">
+<VBox prefHeight="590.0" prefWidth="500.0" styleClass="faculty-registration-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDialogController">
+   <children>
+        <VBox prefHeight="591.0" prefWidth="495.0">
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
             <children>
-
-                <Label styleClass="view-header" text="Faculty Registration">
-                    <font>
-                        <Font size="20.0" />
-                    </font>
+            <HBox prefHeight="63.0" prefWidth="478.0" styleClass="red-card">
                <VBox.margin>
                   <Insets bottom="15.0" />
                </VBox.margin>
-                </Label>
+               <children>
+      
+                            <Label styleClass="view-header" text="Faculty Registration">
+                          <font>
+                              <Font size="20.0" />
+                          </font>
+                      </Label>
+               </children>
+            </HBox>
 
-                <GridPane hgap="10" vgap="10">
-                    <padding>
-                        <Insets bottom="10" left="0" right="0" top="10" />
-                    </padding>
+                      <GridPane hgap="10" vgap="10">
                     <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" maxWidth="115.20001220703125" minWidth="99.20000457763672" prefWidth="112.79998779296875" />
                         <ColumnConstraints maxWidth="349.9999954223633" minWidth="333.9999877929688" prefWidth="336.4000122070313" />
                     </columnConstraints>
 
-                    <!-- Row 0 -->
+                          <!-- Row 0 -->
                     <Label styleClass="view-text" text="Faculty ID:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                     <TextField fx:id="facultyIdField" prefHeight="26.0" prefWidth="262.0" promptText="Enter Faculty ID" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                    <!-- Row 1 -->
+                          <!-- Row 1 -->
                     <Label styleClass="view-text" text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                     <TextField fx:id="firstNameField" promptText="Enter First Name" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                    <!-- Row 2 -->
+                          <!-- Row 2 -->
                     <Label styleClass="view-text" text="Middle Name:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                     <TextField fx:id="middleNameField" promptText="Enter Middle Name" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                    <!-- Row 3 -->
+                          <!-- Row 3 -->
                     <Label styleClass="view-text" text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                     <TextField fx:id="lastNameField" promptText="Enter Last Name" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                    <!-- Row 4 -->
-                    <Label styleClass="view-text" text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                    <ComboBox fx:id="departmentComboBox" prefHeight="20.0" prefWidth="150.0"  GridPane.columnIndex="1" GridPane.rowIndex="5">
+                          <!-- Row 4 -->
+                    <Label styleClass="view-text" text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                    <ComboBox fx:id="departmentComboBox" prefHeight="20.0" prefWidth="200.0" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="8">
                         <GridPane.margin>
                             <Insets />
                         </GridPane.margin>
                     </ComboBox>
 
+      
+                          <!-- Row 5 -->
+                    <Label styleClass="view-text" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                    <TextField fx:id="emailField" promptText="Enter Email Address" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-                    <!-- Row 5 -->
-                    <Label styleClass="view-text" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-                    <TextField fx:id="emailField" promptText="Enter Email Address" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                          <!-- Row 6 -->
+                    <Label styleClass="view-text" text="Contact Number:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                    <TextField fx:id="contactField" promptText="Enter Contact Number" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
-                    <!-- Row 6 -->
-                    <Label styleClass="view-text" text="Contact Number:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-                    <TextField fx:id="contactField" promptText="Enter Contact Number" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                          <!-- Row 7 -->
+                    <Label styleClass="view-text" text="Birthdate:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                    <DatePicker fx:id="birthdatePicker" prefWidth="200.0" promptText="Birthdate" styleClass="register-date-picker" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-                    <!-- Row 7 -->
-                    <Label styleClass="view-text" text="Birthdate:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-                    <DatePicker fx:id="birthdatePicker" prefWidth="200.0" promptText="Birthdate" styleClass="register-date-picker" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-
-                    <!-- Row 8 -->
+                          <!-- Row 8 -->
                     <Label styleClass="view-text" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
                     <ComboBox fx:id="statusComboBox" prefHeight="27.0" prefWidth="200.0" promptText="Status" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="9">
                   <GridPane.margin>
                      <Insets />
-                  </GridPane.margin></ComboBox>
+                  </GridPane.margin>
+               </ComboBox>
 
-                    <!-- Row 9 -->
+                          <!-- Row 9 -->
                     <Label styleClass="view-text" text="Date Joined:" GridPane.columnIndex="0" />
                     <DatePicker fx:id="dateJoinedPicker" prefWidth="200.0" promptText="Date Joined" styleClass="register-date-picker" GridPane.columnIndex="1" />
                <rowConstraints>
@@ -104,9 +104,9 @@
                   <Insets right="10.0" />
                </VBox.margin>
 
-                </GridPane>
+                      </GridPane>
 
-                <!-- Buttons -->
+                      <!-- Buttons -->
                 <HBox alignment="CENTER_RIGHT" spacing="10">
                     <padding>
                         <Insets top="10" />
@@ -117,7 +117,7 @@
                     </children>
                 </HBox>
 
-            </children>
+                  </children>
         </VBox>
-    </content>
-</DialogPane>
+   </children>
+</VBox>

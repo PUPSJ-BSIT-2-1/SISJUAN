@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import javafx.scene.paint.Color;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,9 +297,9 @@ public class AdminSubjectController implements Initializable {
             AdminSubjectFormController controller = loader.getController();
 
             Stage stage = new Stage();
+            stage.initStyle(StageStyle.TRANSPARENT);
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(subjectToEdit == null ? "Add New Subject" : "Edit Subject");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, Color.TRANSPARENT));
 
             // This callback is executed when the form's save button is clicked.
             controller.showForm(subjectToEdit, () -> {
