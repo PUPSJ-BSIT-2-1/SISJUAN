@@ -37,6 +37,7 @@ public class AdminSubjectManagementController implements Initializable {
     @FXML private TableView<SubjectManagement> tableView;
     @FXML private TableColumn<SubjectManagement, String> subjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> prerequisiteColumn;
+    @FXML private TableColumn<SubjectManagement, String> equivSubjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> descriptionColumn;
     @FXML private TableColumn<SubjectManagement, Double> unitColumn;
     @FXML private ComboBox<String> yearSemComboBox;
@@ -63,7 +64,7 @@ public class AdminSubjectManagementController implements Initializable {
             return row;
         });
 
-        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, descriptionColumn, unitColumn}; 
+        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, equivSubjectCodeColumn, descriptionColumn, unitColumn};
         for (var col : columns) {
             col.setReorderable(false);
             col.setSortable(false);

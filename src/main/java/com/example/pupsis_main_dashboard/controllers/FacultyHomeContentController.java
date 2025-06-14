@@ -42,6 +42,7 @@ public class FacultyHomeContentController {
     @FXML private VBox eventsVBox;
     @FXML private Button inputGradesButton;
     @FXML private Button checkScheduleButton;
+    @FXML private Button viewClassListButton;
     private String facultyId;
     private static final Logger logger = LoggerFactory.getLogger(FacultyHomeContentController.class);
 
@@ -71,6 +72,10 @@ public class FacultyHomeContentController {
 
         if (checkScheduleButton != null) {
             checkScheduleButton.setOnAction(this::checkScheduleButtonClick);
+        }
+
+        if (viewClassListButton != null) {
+            viewClassListButton.setOnAction(this::viewClassListButtonClick);
         }
     }
 
@@ -122,6 +127,14 @@ public class FacultyHomeContentController {
             String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassSchedule.fxml";
             facultyDashboardController.loadContent(SCHEDULE_FXML);
             facultyDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
+        }
+    }
+
+    private void viewClassListButtonClick(javafx.event.ActionEvent actionEvent) {
+        if (facultyDashboardController != null) {
+            String CLASS_PREVIEW_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassPreview.fxml";
+            facultyDashboardController.loadContent(CLASS_PREVIEW_FXML);
+            facultyDashboardController.handleQuickActionClicks(CLASS_PREVIEW_FXML);
         }
     }
     

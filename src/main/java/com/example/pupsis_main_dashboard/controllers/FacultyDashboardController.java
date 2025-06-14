@@ -29,7 +29,7 @@ import java.util.prefs.Preferences;
 public class FacultyDashboardController {
 
     @FXML private HBox homeHBox;
-    @FXML private HBox subjectsHBox;
+    @FXML private HBox classListHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox schoolCalendarHBox;
     @FXML private HBox scheduleHBox;
@@ -56,6 +56,7 @@ public class FacultyDashboardController {
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassSchedule.fxml";
+    private static final String CLASS_LIST_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassPreview.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -125,6 +126,7 @@ public class FacultyDashboardController {
         preloadFxmlContent(SETTINGS_FXML);
         preloadFxmlContent(ABOUT_FXML);
         preloadFxmlContent(SCHEDULE_FXML);
+        preloadFxmlContent(CLASS_LIST_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -264,7 +266,7 @@ public class FacultyDashboardController {
     // Get FXML path based on clicked HBox
     private String getFxmlPathFromHBox(HBox clickedHBox) {
         return switch (clickedHBox.getId()) {
-            case "subjectsHBox" -> null;
+            case "classListHBox" -> CLASS_LIST_FXML;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" -> SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
@@ -364,12 +366,17 @@ public class FacultyDashboardController {
             clearAllSelections();
             schoolCalendarHBox.getStyleClass().add("selected");
         }
+
+        if (fxmlPath.equals(CLASS_LIST_FXML)) {
+            clearAllSelections();
+            classListHBox.getStyleClass().add("selected");
+        }
     }
 
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
-        subjectsHBox.getStyleClass().remove("selected");
+        classListHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
         scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");

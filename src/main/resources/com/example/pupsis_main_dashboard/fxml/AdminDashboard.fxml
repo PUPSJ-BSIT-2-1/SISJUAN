@@ -170,7 +170,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </SVGPath>
-                  <Label styleClass="sidebar-label-font" text="Calendar" />
+                  <Label styleClass="sidebar-label-font" text="University Calendar" />
                </children>
                <padding>
                   <Insets left="10.0" />

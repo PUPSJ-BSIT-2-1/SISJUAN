@@ -25,6 +25,13 @@
     -fx-text-fill: black;
 }
 
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
 /* Column headers */
 .table-view .column-header-background {
     -fx-background-color: transparent;
@@ -506,4 +513,28 @@
     -fx-border-color: #555555;
     -fx-border-width: 1.5;
     -fx-border-radius: 8;
+}
+
+.back-button {
+    -fx-background-color: maroon;
+    -fx-background-radius: 8;
+    -fx-border-color: maroon;
+    -fx-border-radius: 8;
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.back-button:hover {
+    -fx-background-color: #5e0000; /* Darker maroon on hover */
+}
+
+.dark-theme .back-button {
+    -fx-background-color: #b22222;
+    -fx-border-color: #b22222;
+}
+
+.dark-theme .back-button:hover {
+    -fx-background-color: #e57373; /* Lighter maroon on hover */
 }
