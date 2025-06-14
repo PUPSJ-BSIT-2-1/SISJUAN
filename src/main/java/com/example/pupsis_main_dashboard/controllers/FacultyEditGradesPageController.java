@@ -413,48 +413,93 @@ public class FacultyEditGradesPageController implements Initializable {
     }
 
     private void updateGradeInDatabase(Student student) {
-        logger.info("Updating grade for grade_id: " + student.getStudentNo() +
+        logger.info("Updating grade for load_id: " + student.getLoadId() +
                 ", Student Number: " + student.getStudentId() +
                 ", New Grade: " + student.getFinalGrade() + ", Status: " + student.getGradeStatus());
+
         try (Connection conn = DBConnection.getConnection()) {
             // First, determine the grade_status_id based on the final grade
             String newGradeStatus = determineGradeStatus(student.getFinalGrade());
             int gradeStatusId = getGradeStatusId(newGradeStatus, conn);
 
-            // Update both final grade and grade_status_id using grade_id
-            String query = "UPDATE grade SET final_grade = ?, grade_status_id = ? WHERE grade_id = ?";
+            String query;
+            PreparedStatement pstmt;
 
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            // Check if grade record already exists
+            if (student.getGradeId() != null && !student.getGradeId().isEmpty()) {
+                // Update existing grade record
+                query = "UPDATE grade SET final_grade = ?, grade_status_id = ? WHERE grade_id = ?";
+                pstmt = conn.prepareStatement(query);
                 pstmt.setString(1, student.getFinalGrade());
-                pstmt.setInt(2, gradeStatusId);  // Use the actual ID from grade_status table
-                pstmt.setInt(3, Integer.parseInt(student.getStudentNo()));
+                pstmt.setInt(2, gradeStatusId);
+                pstmt.setInt(3, Integer.parseInt(student.getGradeId()));
+            } else {
+                // Insert new grade record
+                // First get the faculty_load and student_pk_id from student_load
+                String selectQuery = """
+                SELECT fl.load_id, sl.student_pk_id 
+                FROM student_load sl 
+                JOIN faculty_load fl ON sl.load_id = fl.load_id 
+                WHERE sl.load_id = ?
+                """;
 
-                int rowsAffected = pstmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    // Update the student object's grade status with the text value
-                    student.setGradeStatus(newGradeStatus);
+                try (PreparedStatement selectStmt = conn.prepareStatement(selectQuery)) {
+                    selectStmt.setInt(1, Integer.parseInt(student.getLoadId()));
+                    ResultSet rs = selectStmt.executeQuery();
 
-                    // Refresh the specific row in the table
-                    int rowIndex = studentsList.indexOf(student);
-                    if (rowIndex >= 0) {
-                        studentsList.set(rowIndex, student);
+                    if (rs.next()) {
+                        int facultyLoadId = rs.getInt("load_id");
+                        int studentPkId = rs.getInt("student_pk_id");
+
+                        query = """
+                        INSERT INTO grade (faculty_load, student_pk_id, final_grade, grade_status_id) 
+                        VALUES (?, ?, ?, ?)
+                        """;
+                        pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                        pstmt.setInt(1, facultyLoadId);
+                        pstmt.setInt(2, studentPkId);
+                        pstmt.setString(3, student.getFinalGrade());
+                        pstmt.setInt(4, gradeStatusId);
+                    } else {
+                        throw new SQLException("Could not find faculty_load and student_pk_id for load_id: " + student.getLoadId());
                     }
-
-                    // Refresh the TableView
-                    studentsTable.refresh();
-
-                    // Show a success message with the formatted grade
-                    showSuccess("Success", String.format(
-                            "Grade successfully updated to: %s\nStatus: %s",
-                            formatGradeForDisplay(student.getFinalGrade()), student.getGradeStatus()));
                 }
             }
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // If this was an insert, get the generated grade_id
+                if (student.getGradeId() == null || student.getGradeId().isEmpty()) {
+                    ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        student.setGradeId(String.valueOf(generatedKeys.getInt(1)));
+                    }
+                }
+
+                // Update the student object's grade status with the text value
+                student.setGradeStatus(newGradeStatus);
+
+                // Refresh the specific row in the table
+                int rowIndex = studentsList.indexOf(student);
+                if (rowIndex >= 0) {
+                    studentsList.set(rowIndex, student);
+                }
+
+                // Refresh the TableView
+                studentsTable.refresh();
+
+                // Show a success message with the formatted grade
+                showSuccess("Success", String.format(
+                        "Grade successfully updated to: %s\nStatus: %s",
+                        formatGradeForDisplay(student.getFinalGrade()), student.getGradeStatus()));
+            }
+            pstmt.close();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error updating grade in database for grade_id: " + student.getStudentNo(), e);
+            logger.log(Level.SEVERE, "Error updating grade in database for load_id: " + student.getLoadId(), e);
             showError("Database Error", "Failed to update grade: " + e.getMessage());
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "Error parsing grade_id: " + student.getStudentNo(), e);
-            showError("Data Error", "Invalid grade ID format: " + student.getStudentNo());
+            logger.log(Level.SEVERE, "Error parsing load_id: " + student.getLoadId(), e);
+            showError("Data Error", "Invalid load ID format: " + student.getLoadId());
         }
     }
 
@@ -469,26 +514,27 @@ public class FacultyEditGradesPageController implements Initializable {
                 try (Connection conn = DBConnection.getConnection()) {
                     StringBuilder queryBuilder = new StringBuilder();
                     queryBuilder.append("""
-                    SELECT DISTINCT
-                           g.grade_id as id,
-                           s.student_id,
-                           su.subject_code,
-                           g.final_grade,
-                           gs.status_name as grade_status,
-                           s.firstname,
-                           s.lastname,
-                           CONCAT(s.lastname, ', ', s.firstname, ' ', s.middlename) AS \"Student Name\",
-                           sec.section_name,  
-                           f.load_id
-                    FROM faculty_load f
-                    JOIN subjects su ON f.subject_id = su.subject_id
-                    JOIN section sec ON f.section_id = sec.section_id 
-                    JOIN grade g ON g.faculty_load = f.load_id
-                    JOIN students s ON g.student_pk_id = s.student_id
-                    LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
-                    WHERE su.subject_code = ?
-                    AND CAST(f.faculty_id AS TEXT) = ?
-                    """);
+                SELECT DISTINCT
+                       sl.load_id,
+                       s.student_id,
+                       su.subject_code,
+                       COALESCE(g.final_grade, '') as final_grade,
+                       COALESCE(gs.status_name, 'Incomplete') as grade_status,
+                       s.firstname,
+                       s.lastname,
+                       CONCAT(s.lastname, ', ', s.firstname, ' ', COALESCE(s.middlename, '')) AS "Student Name",
+                       sec.section_name,
+                       g.grade_id
+                FROM student_load sl
+                JOIN faculty_load fl ON sl.load_id = fl.load_id
+                JOIN subjects su ON fl.subject_id = su.subject_id
+                JOIN section sec ON fl.section_id = sec.section_id 
+                JOIN students s ON sl.student_pk_id = s.student_id
+                LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_pk_id = s.student_id
+                LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
+                WHERE su.subject_code = ?
+                AND CAST(fl.faculty_id AS TEXT) = ?
+                """);
 
                     // Only add section filter if selectedYearSection is not null and not "All"
                     if (selectedYearSection != null) {
@@ -515,14 +561,23 @@ public class FacultyEditGradesPageController implements Initializable {
                                 String finalGradeFromDB = rs.getString("final_grade");
                                 String formattedGrade = formatGradeFromDB(finalGradeFromDB);
 
+                                // Use load_id as the identifier for updates, but display row number
+                                String loadId = rs.getString("load_id");
+                                String gradeId = rs.getString("grade_id");
+
                                 Student student = new Student(
-                                        String.valueOf(rowNum++), // Use an auto-incrementing number instead of grade_id
+                                        String.valueOf(rowNum++), // Display row number
                                         rs.getString("student_id"),
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
                                         formattedGrade != null ? formattedGrade : "",
-                                        rs.getString("grade_status") != null ? rs.getString("grade_status") : ""
+                                        rs.getString("grade_status") != null ? rs.getString("grade_status") : "Incomplete"
                                 );
+
+                                // Store the actual identifiers we need for database operations
+                                student.setLoadId(loadId); // Add this field to Student model
+                                student.setGradeId(gradeId); // Add this field to Student model
+
                                 tempList.add(student);
                             }
                         }
@@ -530,35 +585,35 @@ public class FacultyEditGradesPageController implements Initializable {
                     return tempList;
                 }
             }
-    };
+        };
 
-    loadTask.setOnSucceeded(e -> {
-        ObservableList<Student> result = loadTask.getValue();
-        studentCache.put(subjectCode, result);
-        updateTableView(result);
-        setupSearch();
+        loadTask.setOnSucceeded(e -> {
+            ObservableList<Student> result = loadTask.getValue();
+            studentCache.put(subjectCode, result);
+            updateTableView(result);
+            setupSearch();
 
-        Platform.runLater(() -> {
-            if (gradesHeaderLbl != null) {
-                String headerText = selectedYearSection != null && !selectedYearSection.equals("All")
-                        ? String.format("%s - %s", subjectCode, selectedYearSection)
-                        : subjectCode;
-                numStudLbl.setText(String.valueOf(tempList.size()));
-            } else {
-                logger.severe("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
-                System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
-            }
+            Platform.runLater(() -> {
+                if (gradesHeaderLbl != null) {
+                    String headerText = selectedYearSection != null && !selectedYearSection.equals("All")
+                            ? String.format("%s - %s", subjectCode, selectedYearSection)
+                            : subjectCode;
+                    numStudLbl.setText(String.valueOf(tempList.size()));
+                } else {
+                    logger.severe("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
+                    System.err.println("Warning: gradesHeaderLbl is null. Check FXML file for proper fx:id.");
+                }
+            });
         });
-    });
 
-    loadTask.setOnFailed(e -> {
-        Throwable ex = loadTask.getException();
-        logger.log(Level.SEVERE, "Error loading students by subject code: " + subjectCode, ex);
-        showError("Database Error", "Failed to load data: " + ex.getMessage());
-    });
+        loadTask.setOnFailed(e -> {
+            Throwable ex = loadTask.getException();
+            logger.log(Level.SEVERE, "Error loading students by subject code: " + subjectCode, ex);
+            showError("Database Error", "Failed to load data: " + ex.getMessage());
+        });
 
-    new Thread(loadTask).start();
-}
+        new Thread(loadTask).start();
+    }
 
     private int getGradeStatusId(String statusName, Connection conn) throws SQLException {
         String query = "SELECT grade_status_id FROM grade_statuses WHERE status_name = ?";
