@@ -47,7 +47,7 @@ public class AdminDashboardController {
     private static final String USER_TYPE = "ADMIN";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
     private static final String PAYMENT_INFO_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminStudentPaymentManagement.fxml";
-    private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminSubjectModule.fxml";
+    private static final String SUBJECTS_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminSubjectManagement.fxml";
     private static final String FACULTY_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminFacultyPreview.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminClassSchedule.fxml";
     private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralCalendar.fxml";
@@ -233,7 +233,7 @@ public class AdminDashboardController {
                 if (rs.next()) {
                     updateFacultyUI(rs);
                 } else {
-                    // Faculty with this ID not found or is not an admin
+                    // Faculty with this ID isn't found or is not an admin
                     logger.warn("Admin data not found for faculty_id: {} or user is not admin_type=TRUE", facultyIdStr);
                     Platform.runLater(() -> {
                         studentNameLabel.setText("Admin Not Found");

@@ -8,12 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyGradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyGradingModuleController">
+<AnchorPane prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyGradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyClassPreviewController">
    <children>
       <BorderPane prefWidth="810.0">
          <top>
@@ -21,7 +20,7 @@
                <children>
                   <VBox prefHeight="27.0" prefWidth="502.0">
                      <children>
-                        <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Grade Submission Panel" textFill="WHITE">
+                        <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Class List Selection Panel" textFill="WHITE">
                            <font>
                               <Font size="30.0" />
                            </font>
@@ -29,7 +28,7 @@
                               <Insets top="4.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="gradesHeaderLbl1" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="78.0" prefWidth="502.0" styleClass="sub-header" text="Select Section for Grade Entry" textFill="WHITE">
+                        <Label fx:id="gradesHeaderLbl1" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="78.0" prefWidth="502.0" styleClass="sub-header" text="Choose a Subject to View Enrolled Students" textFill="WHITE">
                            <font>
                               <Font size="24.0" />
                            </font>
@@ -81,10 +80,10 @@
                            <children>
                               <TableView id="mainGradingTable" fx:id="subjectsTable" prefWidth="700.0">
                                  <columns>
-                                    <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" resizable="false" text="Year &amp; Section" />
-                                    <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Semester" />
                                     <TableColumn fx:id="subjCodeCol" editable="false" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" resizable="false" text="Subject Code" />
                                     <TableColumn fx:id="subjDescCol" editable="false" maxWidth="290.0" minWidth="290.0" prefWidth="290.0" resizable="false" text="Subject Description" />
+                                    <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" resizable="false" text="Year &amp; Section" />
+                                    <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Semester" />
                                  </columns>
                               </TableView>
                            </children>
@@ -97,14 +96,6 @@
                </children>
             </HBox>
          </center>
-         <bottom>
-            <Pane prefHeight="80.0" prefWidth="200.0" styleClass="cards" BorderPane.alignment="CENTER">
-               <padding>
-
-                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-               </padding>
-            </Pane>
-         </bottom>
       </BorderPane>
    </children>
 </AnchorPane>

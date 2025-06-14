@@ -105,8 +105,8 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-padding: 5;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
     -fx-border-color: #800000;
     -fx-border-width: 2;
 }

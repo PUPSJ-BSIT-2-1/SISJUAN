@@ -9,6 +9,7 @@ public class Student {
     private final StringProperty firstName;
     private final StringProperty middleName;
     private final StringProperty lastName;
+    private final StringProperty fullName;
     private final StringProperty email;
     private final StringProperty birthday;
     private final StringProperty address;
@@ -33,6 +34,7 @@ public class Student {
         this.yearLevel = new SimpleStringProperty(grade);
         this.studentNo = new SimpleStringProperty(no);
         this.finalGrade = new SimpleStringProperty(grade);
+        this.fullName = new SimpleStringProperty("");
     }
     
     // Constructor for student management with comprehensive properties
@@ -50,6 +52,7 @@ public class Student {
         this.yearLevel = new SimpleStringProperty("");
         this.studentNo = new SimpleStringProperty("");
         this.finalGrade = new SimpleStringProperty("");
+        this.fullName = new SimpleStringProperty("");
     }
     
     // Full constructor with all properties
@@ -68,6 +71,24 @@ public class Student {
         this.yearLevel = new SimpleStringProperty(yearLevel);
         this.studentNo = new SimpleStringProperty("");
         this.finalGrade = new SimpleStringProperty(yearLevel);
+        this.fullName = new SimpleStringProperty("");
+    }
+
+    public Student(String studentNo, String studentId, String fullName,
+                  String email, String address, String status, String birthday) {
+        this.studentNo = new SimpleStringProperty(studentNo);
+        this.studentId = new SimpleStringProperty(studentId);
+        this.fullName = new SimpleStringProperty(fullName);
+        this.email = new SimpleStringProperty(email);
+        this.address = new SimpleStringProperty(address);
+        this.status = new SimpleStringProperty(status);
+        this.birthday = new SimpleStringProperty(birthday);
+        this.program = new SimpleStringProperty("");
+        this.yearLevel = new SimpleStringProperty("");
+        this.finalGrade = new SimpleStringProperty("");
+        this.firstName = new SimpleStringProperty("");
+        this.middleName = new SimpleStringProperty("");
+        this.lastName = new SimpleStringProperty("");
     }
 
     // Getters and setters for each property
@@ -81,6 +102,18 @@ public class Student {
 
     public void setStudentId(String id) {
         this.studentId.set(id);
+    }
+
+    public String getFullNameProperty() {
+        return fullName.get();
+    }
+
+    public StringProperty fullNameProperty() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName.set(fullName);
     }
     
     public String getFirstName() {
@@ -226,15 +259,15 @@ public class Student {
     public void setStudentNa(String no) {
         this.studentNa.set(no);
     }
-    
+
     public String getSubjCode() {
         return program.get();
     }
-    
+
     public void setSubjCode(String code) {
         this.program.set(code);
     }
-    
+
     public String getFinalGrade() {
         return finalGrade.get();
     }

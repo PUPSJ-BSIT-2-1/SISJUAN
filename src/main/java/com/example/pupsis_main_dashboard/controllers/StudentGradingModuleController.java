@@ -184,10 +184,9 @@ public class StudentGradingModuleController {
                     studentID = rs2.getInt("student_id");
                     String currentSectionName = rs2.getString("section_name");
                     int studentActualYearLevel = rs2.getInt("year_level");
-                    String currentScholasticStatus = rs2.getString("current_scholastic_status");
-                    
+
                     // Update labels on JavaFX Application Thread
-                    final String finalCurrentScholasticStatus = currentScholasticStatus;
+                    final String finalCurrentScholasticStatus = rs2.getString("current_scholastic_status");
                     final int finalStudentActualYearLevel = studentActualYearLevel;
                     javafx.application.Platform.runLater(() -> {
                         yearLevel.setText(String.valueOf(finalStudentActualYearLevel));
@@ -215,7 +214,7 @@ public class StudentGradingModuleController {
                             Double.parseDouble(finalGradeStr); // Check if numeric
                             finalGradeDisplay = finalGradeStr; // It's numeric, so display it
                         } catch (NumberFormatException e) {
-                            // Non-numeric, keep finalGradeDisplay as "" (blank)
+                            // Non-numeric, keep the finalGradeDisplay as "" (blank)
                         }
                     }
 
@@ -236,7 +235,7 @@ public class StudentGradingModuleController {
                     if (studentsList.isEmpty()) {
                         studentsTable.setPlaceholder(new Label("No Grades available."));
                     } else {
-                        studentsTable.setPlaceholder(null); // Remove placeholder if data is loaded
+                        studentsTable.setPlaceholder(null); // Remove the placeholder if data is loaded
                     }
                 });
             } catch (SQLException e) {
@@ -262,18 +261,26 @@ public class StudentGradingModuleController {
             protected ObservableList<String> call() throws Exception {
                 ObservableList<String> sections = FXCollections.observableArrayList();
                 sections.add("All Sections"); // Add the "All Sections" option first
-                String sql = "SELECT DISTINCT section_name FROM section ORDER BY section_name";
+                String sql = "SELECT DISTINCT year_level FROM section ORDER BY year_level; ";
                 try (Connection conn = DBConnection.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql);
                      ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        sections.add(rs.getString("section_name"));
+                        int yearLevel = rs.getInt("year_level");
+                        String yearLevelStr = switch (yearLevel) {
+                            case 1 -> "1st Year";
+                            case 2 -> "2nd Year";
+                            case 3 -> "3rd Year";
+                            case 4 -> "4th Year";
+                            default -> "Unknown Year";
+                        };
+                        sections.add(yearLevelStr);
                     }
                 }
                 return sections;
             }
         };
-        task.setOnSucceeded(event -> yearSectionComboBox.setItems(task.getValue()));
+        task.setOnSucceeded(_ -> yearSectionComboBox.setItems(task.getValue()));
         new Thread(task).start();
     }
 

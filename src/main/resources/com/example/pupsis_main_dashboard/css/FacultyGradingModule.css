@@ -404,3 +404,17 @@
     -fx-padding: 3px;
     -fx-font-weight: bold;
 }
+
+.validation-label {
+    -fx-font-size: 13px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #800000; /* Light red */
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .validation-label {
+    -fx-font-size: 13px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #b22222; /* Dark red */
+}
