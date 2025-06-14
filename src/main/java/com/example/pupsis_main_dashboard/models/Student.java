@@ -261,8 +261,8 @@ public class Student {
         return status.get();
     }
 
-    public void setGradeStatus(String status) {
-        this.status.set(status);
+    public void setGradeStatus(String gradeStatus) {
+        this.status.set(gradeStatus);
     }
 
     // New getters and setters for loadId and gradeId

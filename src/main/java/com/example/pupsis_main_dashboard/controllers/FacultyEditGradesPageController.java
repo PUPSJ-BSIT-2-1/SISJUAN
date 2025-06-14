@@ -95,6 +95,7 @@ public class FacultyEditGradesPageController implements Initializable {
                 label.setPrefHeight(25);
                 label.setMinWidth(Region.USE_PREF_SIZE);
                 label.setMaxWidth(Region.USE_PREF_SIZE);
+                label.setStyle("-fx-padding: 5px; -fx-alignment: center;");
             }
 
             @Override
@@ -106,28 +107,30 @@ public class FacultyEditGradesPageController implements Initializable {
 
                 if (empty || gradeStatus == null || gradeStatus.trim().isEmpty()) {
                     setGraphic(null);
+                    setText(null);
                 } else {
-                    label.setText(gradeStatus);
+                    // Trim and normalize the status text
+                    String normalizedStatus = gradeStatus.trim();
+                    label.setText(normalizedStatus);
 
-                    // Apply CSS class based on grade status
-                    switch (gradeStatus.toLowerCase()) {
-                        case "passed":
-                            label.getStyleClass().add("grade-status-passed");
-                            break;
-                        case "failed":
-                            label.getStyleClass().add("grade-status-failed");
-                            break;
-                        case "incomplete":
-                        case "withdrawn":
-                        case "dropped":
-                            label.getStyleClass().add("grade-status-other");
-                            break;
-                        default:
-                            // No special styling for unknown statuses
-                            break;
+                    // Apply CSS class based on grade status (case-insensitive)
+                    String lowerStatus = normalizedStatus.toLowerCase();
+                    if (lowerStatus.contains("passed")) {
+                        label.getStyleClass().add("grade-status-passed");
+                    } else if (lowerStatus.contains("failed")) {
+                        label.getStyleClass().add("grade-status-failed");
+                    } else if (lowerStatus.contains("incomplete") ||
+                               lowerStatus.contains("withdrawn") ||
+                               lowerStatus.contains("dropped") ||
+                               lowerStatus.contains("not graded yet")) {
+                        label.getStyleClass().add("grade-status-other");
+                    } else {
+                        // Default styling for unknown statuses
+                        label.getStyleClass().add("grade-status-other");
                     }
 
                     setGraphic(label);
+                    setText(null); // Clear text since we're using the graphic
                 }
             }
         });
@@ -358,7 +361,7 @@ public class FacultyEditGradesPageController implements Initializable {
         // Check for numeric grade (including 0 for incomplete)
         try {
             float gradeValue = Float.parseFloat(trimmedGrade);
-            return gradeValue >= 0.0 && gradeValue <= 5.0; // Changed from 1.0 to 0.0
+            return gradeValue >= 0.0 && gradeValue <= 5.0; // Allow 0.0 for incomplete
         } catch (NumberFormatException e) {
             return false;
         }
@@ -368,139 +371,147 @@ public class FacultyEditGradesPageController implements Initializable {
     private String getGradeValidationMessage() {
         return "Please enter a valid grade:\n" +
                 "• Numeric grade between 1.00 and 3.00 (grades above 3.00 will be set to 5.00)\n" +
+                "• 0.00 for incomplete\n" +
                 "• 'W' for withdrawn\n" +
                 "• 'D' for dropped";
     }
 
     // Updated method to handle grade status determination
+    // Returns status names that exactly match those in the grade_statuses table
     private String determineGradeStatus(String finalGrade) {
         if (finalGrade == null || finalGrade.trim().isEmpty()) {
-            return "Incomplete";
+            return "Not Graded Yet";
         }
 
         String trimmedGrade = finalGrade.trim().toUpperCase();
 
         // Handle special cases first
-        if (trimmedGrade.equals("W")) {
-            return "Withdrawn";
-        }
-        if (trimmedGrade.equals("D")) {
-            return "Dropped";
-        }
+        if (trimmedGrade.equals("W")) return "Withdrawn";
+        if (trimmedGrade.equals("D")) return "Dropped";
 
         // Handle numeric grades
         try {
             float gradeValue = Float.parseFloat(trimmedGrade);
 
-            if (gradeValue == 0.0f) { // 0.0 is Incomplete
+            // Special case: 0.0 means Incomplete
+            if (gradeValue == 0.0f) {
                 return "Incomplete";
             }
 
-            // Per user: 3.0 is Passed.
-            // Grades <3.0 (and >=1.0) or >3.0 (and <=5.0) are Failed.
-            if (gradeValue >= 1.0f && gradeValue <= 3.0f) {
+            // Grades >=1.0 and <=3.0 are Passed
+            // Grades >3.0 and <=5.0 are Failed
+            if (gradeValue >= 1.0f && gradeValue <= 3.13f) {
                 return "Passed";
             } else if (gradeValue > 3.0f && gradeValue <= 5.0f) {
                 return "Failed";
             } else {
                 // For numeric grades outside the 1.0-5.0 range
-                return "Incomplete";
+                return "Not Graded Yet";
             }
         } catch (NumberFormatException e) {
-            // If it's not W, D, or a parseable number.
-            return "Incomplete";
+            // If it's not W, D, or a parseable number
+            return "Not Graded Yet";
         }
     }
 
+
     private void updateGradeInDatabase(Student student) {
-        logger.info("Updating grade for load_id: " + student.getLoadId() +
-                ", Student Number: " + student.getStudentId() +
-                ", New Grade: " + student.getFinalGrade() + ", Status: " + student.getGradeStatus());
+        logger.info("Updating grade for grade_id: " + student.getGradeId() +
+                ", Student ID: " + student.getStudentId() +
+                ", New Grade: " + student.getFinalGrade());
 
         try (Connection conn = DBConnection.getConnection()) {
-            // First, determine the grade_status_id based on the final grade
             String newGradeStatus = determineGradeStatus(student.getFinalGrade());
             int gradeStatusId = getGradeStatusId(newGradeStatus, conn);
 
-            String query;
-            PreparedStatement pstmt;
+            String query = "UPDATE grade SET final_grade = ?, grade_status_id = ? WHERE grade_id = ?";
 
-            // Check if grade record already exists
-            if (student.getGradeId() != null && !student.getGradeId().isEmpty()) {
-                // Update existing grade record
-                query = "UPDATE grade SET final_grade = ?, grade_status_id = ? WHERE grade_id = ?";
-                pstmt = conn.prepareStatement(query);
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setString(1, student.getFinalGrade());
                 pstmt.setInt(2, gradeStatusId);
                 pstmt.setInt(3, Integer.parseInt(student.getGradeId()));
-            } else {
-                // Insert new grade record
-                // First get the faculty_load and student_pk_id from student_load
-                String selectQuery = """
-                SELECT fl.load_id, sl.student_pk_id 
-                FROM student_load sl 
-                JOIN faculty_load fl ON sl.load_id = fl.load_id 
-                WHERE sl.load_id = ?
-                """;
 
-                try (PreparedStatement selectStmt = conn.prepareStatement(selectQuery)) {
-                    selectStmt.setInt(1, Integer.parseInt(student.getLoadId()));
-                    ResultSet rs = selectStmt.executeQuery();
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    student.setGradeStatus(newGradeStatus);
 
-                    if (rs.next()) {
-                        int facultyLoadId = rs.getInt("load_id");
-                        int studentPkId = rs.getInt("student_pk_id");
-
-                        query = """
-                        INSERT INTO grade (faculty_load, student_pk_id, final_grade, grade_status_id) 
-                        VALUES (?, ?, ?, ?)
-                        """;
-                        pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                        pstmt.setInt(1, facultyLoadId);
-                        pstmt.setInt(2, studentPkId);
-                        pstmt.setString(3, student.getFinalGrade());
-                        pstmt.setInt(4, gradeStatusId);
-                    } else {
-                        throw new SQLException("Could not find faculty_load and student_pk_id for load_id: " + student.getLoadId());
+                    int rowIndex = studentsList.indexOf(student);
+                    if (rowIndex >= 0) {
+                        studentsList.set(rowIndex, student);
                     }
+
+                    studentsTable.refresh();
+
+                    showSuccess("Success", String.format(
+                            "Grade successfully updated to: %s\nStatus: %s",
+                            formatGradeForDisplay(student.getFinalGrade()), student.getGradeStatus()));
+                } else {
+                    showError("Update Failed", "No rows were updated. Please try again.");
                 }
             }
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                // If this was an insert, get the generated grade_id
-                if (student.getGradeId() == null || student.getGradeId().isEmpty()) {
-                    ResultSet generatedKeys = pstmt.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        student.setGradeId(String.valueOf(generatedKeys.getInt(1)));
-                    }
-                }
-
-                // Update the student object's grade status with the text value
-                student.setGradeStatus(newGradeStatus);
-
-                // Refresh the specific row in the table
-                int rowIndex = studentsList.indexOf(student);
-                if (rowIndex >= 0) {
-                    studentsList.set(rowIndex, student);
-                }
-
-                // Refresh the TableView
-                studentsTable.refresh();
-
-                // Show a success message with the formatted grade
-                showSuccess("Success", String.format(
-                        "Grade successfully updated to: %s\nStatus: %s",
-                        formatGradeForDisplay(student.getFinalGrade()), student.getGradeStatus()));
-            }
-            pstmt.close();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error updating grade in database for load_id: " + student.getLoadId(), e);
+            logger.log(Level.SEVERE, "Error updating grade in database for grade_id: " + student.getGradeId(), e);
             showError("Database Error", "Failed to update grade: " + e.getMessage());
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "Error parsing load_id: " + student.getLoadId(), e);
-            showError("Data Error", "Invalid load ID format: " + student.getLoadId());
+            logger.log(Level.SEVERE, "Error parsing grade_id: " + student.getGradeId(), e);
+            showError("Data Error", "Invalid grade ID format: " + student.getGradeId());
         }
+    }
+
+    private String createGradeRecord(Connection conn, ResultSet rs) throws SQLException {
+        // First check if a grade record already exists
+        String checkQuery = """
+        SELECT grade_id FROM grade 
+        WHERE faculty_load = ? 
+        AND student_pk_id = ? 
+        AND subject_id = ? 
+        AND academic_year_id = ?
+        """;
+
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+            checkStmt.setInt(1, rs.getInt("faculty_load"));
+            checkStmt.setInt(2, rs.getInt("student_pk_id"));
+            checkStmt.setInt(3, rs.getInt("subject_id"));
+            checkStmt.setInt(4, rs.getInt("academic_year_id"));
+
+            try (ResultSet checkRs = checkStmt.executeQuery()) {
+                if (checkRs.next()) {
+                    // Record already exists, return existing grade_id
+                    return checkRs.getString("grade_id");
+                }
+            }
+        }
+
+        // If no existing record, insert a new one
+        String insertQuery = """
+        INSERT INTO grade (
+            faculty_load, 
+            student_pk_id, 
+            subject_id, 
+            academic_year_id, 
+            final_grade, 
+            grade_status_id
+        ) VALUES (?, ?, ?, ?, '', 6)
+        RETURNING grade_id
+        """;
+
+        try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+            insertStmt.setInt(1, rs.getInt("faculty_load"));
+            insertStmt.setInt(2, rs.getInt("student_pk_id"));
+            insertStmt.setInt(3, rs.getInt("subject_id"));
+            insertStmt.setInt(4, rs.getInt("academic_year_id"));
+
+            int rowsAffected = insertStmt.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return String.valueOf(generatedKeys.getInt(1));
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private void loadStudentsBySubjectCode(String subjectCode) {
@@ -509,7 +520,7 @@ public class FacultyEditGradesPageController implements Initializable {
         Task<ObservableList<Student>> loadTask = new Task<>() {
             @Override
             protected ObservableList<Student> call() throws Exception {
-                int rowNum = 1; // Initialize counter for auto-incrementing numbers
+                int rowNum = 1;
 
                 try (Connection conn = DBConnection.getConnection()) {
                     StringBuilder queryBuilder = new StringBuilder();
@@ -519,18 +530,25 @@ public class FacultyEditGradesPageController implements Initializable {
                        s.student_id,
                        su.subject_code,
                        COALESCE(g.final_grade, '') as final_grade,
-                       COALESCE(gs.status_name, 'Incomplete') as grade_status,
+                       COALESCE(gs.status_name, 'Not Graded Yet') as grade_status,
                        s.firstname,
                        s.lastname,
                        CONCAT(s.lastname, ', ', s.firstname, ' ', COALESCE(s.middlename, '')) AS "Student Name",
                        sec.section_name,
-                       g.grade_id
+                       g.grade_id,
+                       sl.faculty_load,
+                       sl.student_pk_id,
+                       sl.subject_id,
+                       sl.academic_year_id
                 FROM student_load sl
-                JOIN faculty_load fl ON sl.load_id = fl.load_id
-                JOIN subjects su ON fl.subject_id = su.subject_id
+                JOIN faculty_load fl ON sl.faculty_load = fl.load_id
+                JOIN subjects su ON sl.subject_id = su.subject_id
                 JOIN section sec ON fl.section_id = sec.section_id 
                 JOIN students s ON sl.student_pk_id = s.student_id
-                LEFT JOIN grade g ON g.faculty_load = fl.load_id AND g.student_pk_id = s.student_id
+                LEFT JOIN grade g ON (g.faculty_load = sl.faculty_load 
+                                    AND g.student_pk_id = sl.student_pk_id 
+                                    AND g.subject_id = sl.subject_id
+                                    AND g.academic_year_id = sl.academic_year_id)
                 LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
                 WHERE su.subject_code = ?
                 AND CAST(fl.faculty_id AS TEXT) = ?
@@ -551,7 +569,6 @@ public class FacultyEditGradesPageController implements Initializable {
                         pstmt.setString(1, subjectCode);
                         pstmt.setString(2, String.valueOf(SessionData.getInstance().getFacultyId()));
 
-                        // Only set the section parameter if we have a specific section
                         if (selectedYearSection != null) {
                             pstmt.setString(3, selectedYearSection);
                         }
@@ -559,25 +576,35 @@ public class FacultyEditGradesPageController implements Initializable {
                         try (ResultSet rs = pstmt.executeQuery()) {
                             while (rs.next() && !isCancelled()) {
                                 String finalGradeFromDB = rs.getString("final_grade");
+                                String gradeStatusFromDB = rs.getString("grade_status");
                                 String formattedGrade = formatGradeFromDB(finalGradeFromDB);
 
-                                // Use load_id as the identifier for updates, but display row number
-                                String loadId = rs.getString("load_id");
+                                // Auto-create grade record if it doesn't exist
                                 String gradeId = rs.getString("grade_id");
+                                if (gradeId == null) {
+                                    gradeId = createGradeRecord(conn, rs);
+                                }
+
+                                String correctGradeStatus;
+                                if (finalGradeFromDB == null || finalGradeFromDB.trim().isEmpty()) {
+                                    correctGradeStatus = "Not Graded Yet";
+                                } else {
+                                    correctGradeStatus = determineGradeStatus(formattedGrade);
+                                }
+
+                                String loadId = rs.getString("load_id");
 
                                 Student student = new Student(
-                                        String.valueOf(rowNum++), // Display row number
+                                        String.valueOf(rowNum++),
                                         rs.getString("student_id"),
                                         rs.getString("Student Name"),
                                         rs.getString("subject_code"),
                                         formattedGrade != null ? formattedGrade : "",
-                                        rs.getString("grade_status") != null ? rs.getString("grade_status") : "Incomplete"
+                                        correctGradeStatus
                                 );
 
-                                // Store the actual identifiers we need for database operations
-                                student.setLoadId(loadId); // Add this field to Student model
-                                student.setGradeId(gradeId); // Add this field to Student model
-
+                                student.setLoadId(loadId);
+                                student.setGradeId(gradeId);
                                 tempList.add(student);
                             }
                         }
@@ -615,16 +642,84 @@ public class FacultyEditGradesPageController implements Initializable {
         new Thread(loadTask).start();
     }
 
+    public void migrateStudentLoadToGrade() {
+        logger.info("Starting migration of student_load data to grade table...");
+
+        Task<Integer> migrationTask = new Task<>() {
+            @Override
+            protected Integer call() throws Exception {
+                try (Connection conn = DBConnection.getConnection()) {
+                    // First, ensure we have a grade record for each student_load
+                    String migrationQuery = """
+                    INSERT INTO grade (
+                        faculty_load, 
+                        student_pk_id, 
+                        subject_id, 
+                        academic_year_id, 
+                        final_grade, 
+                        grade_status_id
+                    )
+                    SELECT 
+                        sl.faculty_load, 
+                        sl.student_pk_id, 
+                        sl.subject_id, 
+                        sl.academic_year_id, 
+                        '', 
+                        6
+                    FROM student_load sl
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM grade g 
+                        WHERE g.faculty_load = sl.faculty_load
+                        AND g.student_pk_id = sl.student_pk_id
+                        AND g.subject_id = sl.subject_id
+                        AND g.academic_year_id = sl.academic_year_id
+                    )
+                    """;
+
+                    try (PreparedStatement pstmt = conn.prepareStatement(migrationQuery)) {
+                        return pstmt.executeUpdate();
+                    }
+                }
+            }
+        };
+
+        migrationTask.setOnSucceeded(e -> {
+            int recordsMigrated = migrationTask.getValue();
+            logger.info("Migration completed. " + recordsMigrated + " records migrated.");
+            showSuccess("Migration Complete",
+                    recordsMigrated + " student records migrated to grade table.\n" +
+                            "No action needed if the count is 0 - this means all records are already migrated.");
+
+            // Refresh current view if a subject is selected
+            if (selectedSubjectCode != null) {
+                loadStudentsBySubjectCode(selectedSubjectCode);
+            }
+        });
+
+        migrationTask.setOnFailed(e -> {
+            Throwable ex = migrationTask.getException();
+            logger.log(Level.SEVERE, "Migration failed", ex);
+            showError("Migration Error",
+                    "Failed to migrate data: " + ex.getMessage() +
+                            "\n\nThis might be because the records already exist in the grade table. " +
+                            "You can safely ignore this message if you've already run the migration before.");
+        });
+
+        new Thread(migrationTask).start();
+    }
+
     private int getGradeStatusId(String statusName, Connection conn) throws SQLException {
-        String query = "SELECT grade_status_id FROM grade_statuses WHERE status_name = ?";
+        // Map status names to their corresponding IDs based on the database
+        String query = "SELECT grade_status_id FROM grade_statuses WHERE LOWER(TRIM(status_name)) = LOWER(TRIM(?))";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, statusName);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("grade_status_id");
                 } else {
-                    // If status not found, you might want to create it or use a default
-                    throw new SQLException("Grade status '" + statusName + "' not found in database");
+                    // If status not found, log a warning and return a default status ID (6 for "Not Graded Yet")
+                    logger.warning("Grade status '" + statusName + "' not found in database, using default status");
+                    return 6; // Default to "Not Graded Yet"
                 }
             }
         }
