@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class AdminHomeContentController {
 
@@ -54,6 +55,9 @@ public class AdminHomeContentController {
     @FXML
     private VBox programCompletionRates;
 
+    @FXML
+    private VBox eventsVBox;
+
     // TODO: Add ListView for recent activity, documents if needed
     // @FXML
     // private ListView<?> recentActivityListView;
@@ -76,6 +80,8 @@ public class AdminHomeContentController {
         // enrollmentCountLabel.setText("0%"); // Will be set by loadDashboardData()
         // pendingActionsLabel.setText("0"); // Will be set by loadDashboardData()
         // academicCalendarLabel.setText("N/A"); // Will be set by loadDashboardData()
+
+        populateEventsVBox();
     }
 
     private void loadDashboardData() {
@@ -256,6 +262,60 @@ public class AdminHomeContentController {
 
         if (!hasData) {
             contentVBox.getChildren().add(new Label("No scholastic status data available."));
+        }
+    }
+
+    private void populateEventsVBox() {
+        eventsVBox.getChildren().clear();
+        GeneralCalendarController gcc = new GeneralCalendarController();
+        gcc.loadSchoolEvents();
+        List<String> allEvents = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : gcc.eventsMap.entrySet()) {
+            allEvents.addAll(entry.getValue());
+        }
+        allEvents.sort(Comparator.comparing(ev -> LocalDate.parse(ev.split(",")[0])));
+        // Group events by (eventType, eventDesc), collect their dates
+        Map<String, List<LocalDate>> grouped = new LinkedHashMap<>();
+        Map<String, String[]> eventDetails = new HashMap<>();
+        for (String event : allEvents) {
+            String[] parts = event.split(",");
+            LocalDate date = LocalDate.parse(parts[0]);
+            String eventType = parts[1];
+            String eventDesc = parts[2];
+            String key = eventType + "||" + eventDesc;
+            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(date);
+            eventDetails.put(key, new String[]{eventType, eventDesc});
+        }
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+        int count = 0;
+        for (Map.Entry<String, List<LocalDate>> entry : grouped.entrySet()) {
+            if (count >= 10) break;
+            List<LocalDate> dates = entry.getValue();
+            dates.sort(Comparator.naturalOrder());
+            String dateStr;
+            if (dates.size() == 1) {
+                dateStr = dates.get(0).format(dateFormatter);
+            } else {
+                LocalDate start = dates.get(0);
+                LocalDate end = dates.get(dates.size()-1);
+                if (start.getMonth().equals(end.getMonth()) && start.getYear() == end.getYear()) {
+                    dateStr = start.format(DateTimeFormatter.ofPattern("MMMM d")) + "-" + end.format(DateTimeFormatter.ofPattern("d, yyyy"));
+                } else {
+                    dateStr = start.format(dateFormatter) + " - " + end.format(dateFormatter);
+                }
+            }
+            String[] details = eventDetails.get(entry.getKey());
+            String eventType = details[0];
+            String eventDesc = details[1];
+            Label dateLabel = new Label(dateStr);
+            dateLabel.getStyleClass().add("event-date");
+            Label titleLabel = new Label(eventType);
+            titleLabel.getStyleClass().add("event-title");
+            Label descLabel = new Label(eventDesc);
+            descLabel.getStyleClass().add("event-description");
+            VBox.setMargin(dateLabel, new Insets(15, 0, 0, 0));
+            eventsVBox.getChildren().addAll(dateLabel, titleLabel, descLabel);
+            count++;
         }
     }
 
