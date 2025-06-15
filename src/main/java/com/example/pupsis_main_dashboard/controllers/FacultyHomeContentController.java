@@ -40,6 +40,7 @@ public class FacultyHomeContentController {
     @FXML private VBox todayScheduleVBox;
     @FXML private PieChart classDistributionChart;
     @FXML private VBox eventsVBox;
+    @FXML private VBox announcementVBox;
     @FXML private Button inputGradesButton;
     @FXML private Button checkScheduleButton;
     @FXML private Button viewClassListButton;
@@ -182,6 +183,7 @@ public class FacultyHomeContentController {
             executor.submit(() -> {
                 try {
                     loadUpcomingEvents();
+                    loadAnnouncements();
                 } finally {
                     latch.countDown();
                 }
@@ -376,7 +378,7 @@ public class FacultyHomeContentController {
                      "WHERE sd.event_date >= CURRENT_DATE " +
                      "GROUP BY se.event_id " + // Corrected GROUP BY
                      "ORDER BY first_date " +
-                     "LIMIT 3;";
+                     "LIMIT 10;";
         logger.info("loadUpcomingEvents: Attempting to load upcoming events with query: {}", sql);
         List<Node> eventNodes = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -411,6 +413,53 @@ public class FacultyHomeContentController {
                 Label errorLabel = new Label("Error loading events.");
                 errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
                 eventsVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
+
+    private void loadAnnouncements() {
+        String sql = """
+            SELECT an.*, an.date AS first_date
+            FROM announcement an
+            WHERE an.date >= CURRENT_DATE AND an.is_faculty = true OR
+            an.is_all = true
+            ORDER BY an.date
+            LIMIT 5;
+            """;
+        logger.info("loadAnnouncements: Attempting to load announcements with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("title");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("message");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
+            }
+
+            logger.info("loadAnnouncements: Found {} announcements.", eventCount);
+            Platform.runLater(() -> {
+                announcementVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No announcements.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    announcementVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadAnnouncements: No events found, displaying 'No announcements' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadAnnouncements: SQL error while loading announcements.. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading announcements.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                announcementVBox.getChildren().setAll(errorLabel);
             });
         }
     }
