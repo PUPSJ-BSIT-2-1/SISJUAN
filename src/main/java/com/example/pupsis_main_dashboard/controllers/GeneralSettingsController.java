@@ -57,14 +57,14 @@ public class GeneralSettingsController {
             userType = RememberMeHandler.getUserTypeFromIdentifier(currentUserIdentifier);
         }
 
-        if (userType != null && !userType.equals("UNKNOWN") && !userType.isEmpty()) {
-            prefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(userType.toUpperCase()); // Ensure consistent casing for node name
-            logger.info("GeneralSettingsController initialized for userType: {}", userType);
-        } else {
-            // Fallback to a general node if user type cannot be determined or is invalid
-            prefs = Preferences.userNodeForPackage(GeneralSettingsController.class);
-            logger.warn("GeneralSettingsController could not determine a valid user type for identifier: '{}'. Falling back to general preferences.", currentUserIdentifier);
+        // --- FORCE userType to FACULTY if this is the Faculty Dashboard context ---
+        // You can refine this check if you have a better way to know the context
+        if (userType == null || userType.equals("UNKNOWN") || userType.isEmpty() || userType.equalsIgnoreCase("faculty")) {
+            userType = "FACULTY";
         }
+
+        prefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(userType.toUpperCase()); // Ensure consistent casing for node name
+        logger.info("GeneralSettingsController initialized for userType: {}", userType);
 
         notificationManager = NotificationManager.getInstance();
         

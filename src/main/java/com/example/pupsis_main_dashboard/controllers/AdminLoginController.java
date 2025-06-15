@@ -58,7 +58,8 @@ public class AdminLoginController {
         loginButton.setOnAction(_ -> handleLogin(leftSide));
         setupInitialState();
         requestInitialFocus();
-        // Platform.runLater(this::applyInitialTheme); // Will be called after scene is available
+        // Always re-apply theme on initialize (scene may not be ready yet)
+        Platform.runLater(this::applyInitialTheme);
     }
 
     // Called when the scene is ready to apply the theme
@@ -252,7 +253,6 @@ public class AdminLoginController {
             boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
             PUPSIS.applyThemeToSingleScene(mainLoginPane.getScene(), darkModeEnabled);
         } else {
-            // Scene might not be ready yet, try again later or ensure this is called when scene is set
             Platform.runLater(() -> {
                 if (mainLoginPane != null && mainLoginPane.getScene() != null) {
                     Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);

@@ -195,15 +195,6 @@ public class StudentDashboardController {
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
                     Parent content = FXMLLoader.load(resource);
-                    // Apply theme to this loaded content
-                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
-
-                    if (content != null) {
-                        // Apply appropriate CSS classes based on the current theme
-                        content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
-                        content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
-                    }
                     contentCache.put(fxmlPath, content);
                     logger.info("preloadFxmlContent({}) - LOADED and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - startTime));
                 } else {
@@ -377,7 +368,7 @@ public class StudentDashboardController {
         };
     }
 
-    // Load content into the contentPane
+    // Loads FXML content and applies the global theme to the root scene
     void loadContent(String fxmlPath) {
         try {
             Parent contentNode;
@@ -393,6 +384,13 @@ public class StudentDashboardController {
                 StudentHomeContentController controller = loader.getController();
                 controller.setStudentDashboardController(this);
                 logger.info("loadContent({}) - Loaded from FXML and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadStartTime));
+            }
+            // Remove direct theme class assignment from content node
+            // Instead, apply global theme to the scene root
+            if (contentPane.getScene() != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
             }
             contentPane.setContent(contentNode);
             resetScrollPosition();
