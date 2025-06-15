@@ -72,16 +72,31 @@ public class AdminHomeContentController {
         // Populate data from the database or services
         loadDashboardData();
 
-        // TODO: Populate these labels with actual data from the database or services
-        facultyNameLabel.setText("Admin User"); // Placeholder
-        // totalStudentsLabel.setText("0"); // Will be set by loadDashboardData()
-        // totalFacultyLabel.setText("0"); // Will be set by loadDashboardData()
-        // totalCoursesLabel.setText("0"); // Will be set by loadDashboardData()
-        // enrollmentCountLabel.setText("0%"); // Will be set by loadDashboardData()
-        // pendingActionsLabel.setText("0"); // Will be set by loadDashboardData()
-        // academicCalendarLabel.setText("N/A"); // Will be set by loadDashboardData()
+        // Set admin name from session or preferences
+        String adminIdentifier = com.example.pupsis_main_dashboard.utilities.RememberMeHandler.getCurrentUserFacultyNumber();
+        String adminName = getAdminFullName(adminIdentifier);
+        facultyNameLabel.setText(adminName != null ? adminName : "Admin User");
 
         populateEventsVBox();
+    }
+
+    private String getAdminFullName(String identifier) {
+        if (identifier == null || identifier.trim().isEmpty()) return null;
+        String fullName = null;
+        String sql = "SELECT firstname, lastname FROM faculty WHERE faculty_number = ? OR LOWER(email) = LOWER(?) LIMIT 1";
+        try (Connection conn = com.example.pupsis_main_dashboard.utilities.DBConnection.getConnection();
+             java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, identifier);
+            stmt.setString(2, identifier.toLowerCase());
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    fullName = rs.getString("firstname") + " " + rs.getString("lastname");
+                }
+            }
+        } catch (Exception e) {
+            // Optionally log error
+        }
+        return fullName;
     }
 
     private void loadDashboardData() {
