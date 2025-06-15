@@ -345,6 +345,7 @@ public class AdminDashboardController {
         };
     }
 
+    // Loads FXML content and applies the global theme to the root scene
     public void loadContent(String fxmlPath) {
         try {
             Parent content = contentCache.get(fxmlPath);
@@ -353,23 +354,20 @@ public class AdminDashboardController {
                         Objects.requireNonNull(getClass().getResource(fxmlPath))
                 );
                 content = loader.load();
-
-                if (fxmlPath.equals(HOME_FXML)) {// Set faculty ID in SessionData when loading grading module
+                if (fxmlPath.equals(HOME_FXML)) {
                     String facultyId = studentIdLabel.getText();
                     SessionData.getInstance().setStudentId(facultyId);
                 }
-              
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
-            // Ensure the content has the correct theme applied before displaying
-            if (content != null) {
+            // Remove direct theme class assignment from content node
+            // Instead, apply global theme to the scene root
+            if (contentPane.getScene() != null) {
                 Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
                 boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
-                content.getStyleClass().removeAll("light-theme", "dark-theme");
-                content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
             }
-
             contentPane.setContent(content);
             resetScrollPosition();
         } catch (IOException e) {
