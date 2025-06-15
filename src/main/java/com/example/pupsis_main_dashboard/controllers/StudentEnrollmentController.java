@@ -63,9 +63,7 @@ public class StudentEnrollmentController implements Initializable {
             enrollButton.setOnAction(this::handleEnrollment);
             enrollButton.setDisable(true); // Initially disable until subjects are selected
         }
-        if (loadingIndicator != null) {
-            loadingIndicator.setVisible(false);
-        }
+        if (loadingIndicator != null) loadingIndicator.setVisible(false);
         if (unitCounterLabel == null) {
             logger.warn("unitCounterLabel is not injected. Unit counting UI will not be updated.");
         } else {
@@ -92,13 +90,25 @@ public class StudentEnrollmentController implements Initializable {
                     ComboBox<String> scheduleComboBox = subjectScheduleMap.get(cb);
                     String selectedScheduleDisplayString = scheduleComboBox.getValue(); // This is the display string like "MWF 9:00-10:00 AM - Room 101"
 
-                    if (selectedScheduleDisplayString == null || selectedScheduleDisplayString.equals("No schedules available") || selectedScheduleDisplayString.equals("No specific schedules listed") || selectedScheduleDisplayString.equals("Schedule TBD")) {
+                    if (selectedScheduleDisplayString == null || selectedScheduleDisplayString.equals("No schedules available") || selectedScheduleDisplayString.equals("No schedules available for this offering") || selectedScheduleDisplayString.equals("No specific schedules listed") || selectedScheduleDisplayString.equals("Schedule TBD")) {
                         showAlert("Invalid Selection", "Please select a valid schedule for " + subjectData.subjectCode() + ".", Alert.AlertType.WARNING);
                         return null;
                     }
                     // The EnrollmentData's 'schedule' field is used as faculty_load_id in the INSERT query.
-                    // subjectData.offeringId() holds the faculty_load_id for this subject offering.
-                    return new EnrollmentData(subjectData.subjectId(), subjectData.offeringId());
+                    // For enrolled subjects, use enrolledSchedule, for available subjects use offeringId
+                    String scheduleId = subjectData.enrolledSchedule() != null ? subjectData.enrolledSchedule() : subjectData.offeringId();
+                    
+                    if (scheduleId == null) {
+                        // Check if this is an available subject with no faculty load
+                        if (subjectData.offeringId() == null) {
+                            logger.error("Subject {} is not available for enrollment: No faculty load assigned", subjectData.subjectCode());
+                            showAlert("Invalid Selection", "Subject " + subjectData.subjectCode() + " is not available for enrollment. Please contact your academic advisor.", Alert.AlertType.WARNING);
+                            return null;
+                        }
+                        logger.error("Invalid subject data: Both enrolledSchedule and offeringId are null for subject {}", subjectData.subjectCode());
+                        throw new IllegalStateException("Invalid subject data: No schedule ID available for subject " + subjectData.subjectCode());
+                    }
+                    return new EnrollmentData(subjectData.subjectId(), scheduleId);
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -145,37 +155,54 @@ public class StudentEnrollmentController implements Initializable {
                     connection = DBConnection.getConnection();
                     connection.setAutoCommit(false);
 
-                    // Get the next load_id for student_load. This assumes load_id is an auto-increment or needs manual sequence handling.
-                    // For simplicity, let's assume it's manually handled or you have a sequence. Here, we'll find max + 1.
-                    // THIS IS NOT ROBUST FOR CONCURRENT ENVIRONMENTS. A SEQUENCE IS PREFERRED.
-                    int nextLoadId = 0;
-                    try (Statement stmtMaxId = connection.createStatement();
-                         ResultSet rsMaxId = stmtMaxId.executeQuery("SELECT MAX(load_id) FROM student_load")) {
-                        if (rsMaxId.next()) {
-                            nextLoadId = rsMaxId.getInt(1) + 1;
-                        }
-                        if (nextLoadId == 0) nextLoadId = 1; // First entry
-                    }
+                    // Updated INSERT: Remove load_id as PK, use composite PK, and check for duplicates
+                    String insertSql = "INSERT INTO student_load (student_pk_id, subject_id, semester_id, academic_year_id, section_id, faculty_load) " +
+                            "VALUES (?, ?, ?, ?, ?, ?)";
+                    String duplicateCheckSql = "SELECT 1 FROM student_load WHERE student_pk_id = ? AND subject_id = ? AND semester_id = ? AND academic_year_id = ? AND section_id = ?";
 
-                    // student_load: student_pk_id, subject_id, semester_id, load_id (PK), academic_year_id, section_id, faculty_load (FK to faculty_load.load_id)
-                    // Note: year_section string is not directly stored in student_load, section_id is used.
-                    // academic_year string is not directly stored, academic_year_id is used.
-                    String insertSql = "INSERT INTO student_load (student_pk_id, subject_id, semester_id, load_id, academic_year_id, section_id, faculty_load) " +
-                                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-                    try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
+                    try (PreparedStatement stmt = connection.prepareStatement(insertSql);
+                         PreparedStatement dupStmt = connection.prepareStatement(duplicateCheckSql)) {
                         for (EnrollmentData enrollment : selectedSubjects) {
-                            stmt.setInt(1, studentDbId); // student_pk_id from students table
-                            stmt.setInt(2, Integer.parseInt(enrollment.subjectId())); // subject_id from subjects table
-                            stmt.setInt(3, currentContext.semesterId()); // semester_id from context
-                            stmt.setInt(4, nextLoadId++); // PK for student_load
-                            stmt.setInt(5, currentContext.academicYearId()); // academic_year_id from context
-                            stmt.setInt(6, currentContext.sectionId()); // section_id from context (represents student's year_section)
-                            stmt.setInt(7, Integer.parseInt(enrollment.schedule())); // faculty_load (offeringId)
+                            try {
+                                String subjectIdStr = enrollment.subjectId();
+                                String scheduleStr = enrollment.schedule();
 
-                            logger.debug("Adding to batch: student_pk_id={}, subject_id={}, semester_id={}, load_id={}, academic_year_id={}, section_id={}, faculty_load={}",
-                                    studentDbId, enrollment.subjectId(), currentContext.semesterId(), nextLoadId - 1, currentContext.academicYearId(), currentContext.sectionId(), enrollment.schedule());
-                            stmt.addBatch();
+                                if (subjectIdStr == null || scheduleStr == null) {
+                                    logger.error("Invalid enrollment data: subjectId='{}' or schedule='{}' is null", subjectIdStr, scheduleStr);
+                                    throw new SQLException("Invalid enrollment data: Subject ID or Schedule ID cannot be null");
+                                }
+
+                                int subjectId = Integer.parseInt(subjectIdStr);
+                                int facultyLoad = Integer.parseInt(scheduleStr);
+
+                                // Duplicate check
+                                dupStmt.setInt(1, studentDbId);
+                                dupStmt.setInt(2, subjectId);
+                                dupStmt.setInt(3, currentContext.semesterId());
+                                dupStmt.setInt(4, currentContext.academicYearId());
+                                dupStmt.setInt(5, currentContext.sectionId());
+                                try (ResultSet rs = dupStmt.executeQuery()) {
+                                    if (rs.next()) {
+                                        logger.warn("Duplicate enrollment detected for student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, section_id={}",
+                                                studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), currentContext.sectionId());
+                                        continue; // Skip duplicate
+                                    }
+                                }
+
+                                stmt.setInt(1, studentDbId); // student_pk_id
+                                stmt.setInt(2, subjectId); // subject_id
+                                stmt.setInt(3, currentContext.semesterId()); // semester_id
+                                stmt.setInt(4, currentContext.academicYearId()); // academic_year_id
+                                stmt.setInt(5, currentContext.sectionId()); // section_id
+                                stmt.setInt(6, facultyLoad); // faculty_load (offeringId)
+
+                                logger.debug("Adding to batch: student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, section_id={}, faculty_load={}",
+                                        studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), currentContext.sectionId(), facultyLoad);
+                                stmt.addBatch();
+                            } catch (NumberFormatException e) {
+                                logger.error("Invalid enrollment data: subjectId='{}' or schedule='{}' cannot be parsed as integers", enrollment.subjectId(), enrollment.schedule(), e);
+                                throw new SQLException("Invalid enrollment data: Subject ID or Schedule ID is not a valid number", e);
+                            }
                         }
                         stmt.executeBatch();
                     }
@@ -586,22 +613,24 @@ public class StudentEnrollmentController implements Initializable {
         logger.debug("fetchEnrollmentSubjectLists (Phase 1 - Enrolled): Found {} enrolled subjects.", enrolledSubjects.size());
 
         // Helper record to store intermediate data for available subjects
-        record AvailableSubjectInfo(String subjectCode, String description, int units, String subjectId) {}
+        record AvailableSubjectInfo(String subjectCode, String description, int units, String subjectId, String facultyLoadId) {}
         List<AvailableSubjectInfo> tempAvailableSubjectInfos = new ArrayList<>();
 
         // Phase 2: Query for AVAILABLE subjects (Get subject details)
         String availableQuery = "SELECT DISTINCT s.subject_code, s.description, " +
                 "CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, " +
-                "s.subject_id " +
+                "s.subject_id, fl.load_id AS faculty_load_id " +
                 "FROM subjects s " +
                 "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
                 "WHERE fl.section_id = ? " +
                 "AND fl.semester_id = ? " +
                 "AND s.year_level = ? " +
                 "AND s.semester_id = ? " +
-                "AND fl.load_id NOT IN (" +
-                "  SELECT sl_inner.faculty_load FROM student_load sl_inner " +
-                "  WHERE sl_inner.student_pk_id = ? AND sl_inner.semester_id = ?" +
+                "AND s.subject_id NOT IN (" +
+                "  SELECT s2.subject_id FROM student_load sl " +
+                "  JOIN faculty_load fl2 ON sl.faculty_load = fl2.load_id " +
+                "  JOIN subjects s2 ON fl2.subject_id = s2.subject_id " +
+                "  WHERE sl.student_pk_id = ? AND sl.semester_id = ?" +
                 ")";
 
         logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, yearLevel={}, semesterIdSubject={}, studentId={}, semesterIdSubQuery={}]",
@@ -623,7 +652,8 @@ public class StudentEnrollmentController implements Initializable {
                             rs.getString("subject_code"),
                             rs.getString("description"),
                             rs.getInt("units"),
-                            String.valueOf(rs.getInt("subject_id"))
+                            String.valueOf(rs.getInt("subject_id")),
+                            String.valueOf(rs.getInt("faculty_load_id"))
                     ));
                 }
             }
@@ -644,7 +674,7 @@ public class StudentEnrollmentController implements Initializable {
                 
                 for (AvailableSubjectInfo info : tempAvailableSubjectInfos) {
                     List<String> schedulesForSubject = new ArrayList<>();
-                    pstmtSchedule.setInt(1, Integer.parseInt(info.subjectId()));
+                    pstmtSchedule.setInt(1, Integer.parseInt(info.facultyLoadId()));
                     
                     try (ResultSet rsSchedule = pstmtSchedule.executeQuery()) {
                         while (rsSchedule.next()) {
@@ -681,8 +711,8 @@ public class StudentEnrollmentController implements Initializable {
                             info.units(),
                             info.subjectId(),
                             schedulesForSubject,
-                            null, // Removed offeringId
-                            null // Removed enrolledSchedule
+                            info.facultyLoadId(),
+                            null
                     ));
                 }
             } // connSchedule and pstmtSchedule are closed here
