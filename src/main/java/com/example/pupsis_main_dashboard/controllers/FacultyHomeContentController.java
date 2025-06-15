@@ -218,13 +218,8 @@ public class FacultyHomeContentController {
      */
     private void loadTeachingLoad() {
         logger.info("loadTeachingLoad: Attempting to load teaching load for facultyId: {}", facultyId);
-        String totalClassesQuery = "SELECT COUNT(DISTINCT fl.load_id) AS total_classes " +
-                                   "FROM faculty_load fl " +
-                                   "WHERE fl.faculty_id = ? AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
-        String totalStudentsQuery = "SELECT COUNT(DISTINCT sl.student_pk_id) AS total_students " +
-                                    "FROM student_load sl " +
-                                    "JOIN faculty_load fl ON sl.faculty_load = fl.load_id " +
-                                    "WHERE fl.faculty_id = ? AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
+        String totalClassesQuery = "SELECT COUNT(DISTINCT fl.load_id) AS total_classes FROM faculty_load fl WHERE fl.faculty_id = ?";
+        String totalStudentsQuery = "SELECT COUNT(DISTINCT sl.student_pk_id) AS total_students FROM student_load sl JOIN faculty_load fl ON sl.faculty_load = fl.load_id WHERE fl.faculty_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement psClasses = conn.prepareStatement(totalClassesQuery);
@@ -275,7 +270,7 @@ public class FacultyHomeContentController {
                      "JOIN subjects s ON fl.subject_id = s.subject_id " +
                      "LEFT JOIN room r ON sch.room_id = r.room_id " +
                      "JOIN section sec ON sec.section_id = fl.section_id " +
-                     "WHERE fl.faculty_id = ? AND sch.days LIKE '%' || ? || '%' AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
+                     "WHERE fl.faculty_id = ? AND sch.days LIKE '%' || ? || '%'";
         List<Node> scheduleNodes = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection();
@@ -445,17 +440,17 @@ public class FacultyHomeContentController {
      * Creates a pie chart showing class distribution by subject.
      */
     private void createClassDistributionChart() {
-        String sql = "SELECT s.subject_code, COUNT(fl.load_id) AS class_count " +
-                     "FROM faculty_load fl " +
-                     "JOIN subjects s ON fl.subject_id = s.subject_id " +
-                     "WHERE fl.faculty_id = ? AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1) " +
-                     "GROUP BY s.subject_code " +
-                     "ORDER BY class_count DESC;";
-        logger.info("createClassDistributionChart: Attempting to load class distribution for facultyId: {} with query: {}", facultyId, sql);
+        String query = "SELECT s.subject_code, COUNT(fl.load_id) AS class_count " +
+                      "FROM faculty_load fl " +
+                      "JOIN subjects s ON fl.subject_id = s.subject_id " +
+                      "WHERE fl.faculty_id = ? " +
+                      "GROUP BY s.subject_code " +
+                      "ORDER BY class_count DESC;";
+        logger.info("createClassDistributionChart: Attempting to load class distribution for facultyId: {} with query: {}", facultyId, query);
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, Integer.parseInt(facultyId));
             ResultSet rs = stmt.executeQuery();
 
