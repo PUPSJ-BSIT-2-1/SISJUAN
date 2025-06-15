@@ -46,6 +46,7 @@ public class AdminDashboardController {
     @FXML private Node fade1;
     @FXML private Node fade2;
     @FXML private StackPane loadingOverlay;
+    @FXML private HBox refreshHBox;
 
     private static final String USER_TYPE = "ADMIN";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
@@ -155,6 +156,7 @@ public class AdminDashboardController {
                 logger.error("Failed to handle logout button click", e);
             }
         });
+        refreshHBox.setOnMouseClicked(this::handleRefreshButton);
     }
     
     // Set up scroll pane fade effects based on scroll position
@@ -409,6 +411,80 @@ public class AdminDashboardController {
             Stage currentStage = (Stage) logoutHBox.getScene().getWindow();
             stageUtils.loadStage(currentStage, "/com/example/pupsis_main_dashboard/fxml/AdminLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
         }
+    }
+
+    @FXML
+    private void handleRefreshButton(MouseEvent event) {
+        logger.info("Admin Refresh button clicked. Reloading dashboard data.");
+        // Save the currently selected sidebar HBox and FXML path
+        HBox selectedHBox = getCurrentlySelectedSidebarHBox();
+        String selectedFxml = getFxmlPathFromHBox(selectedHBox);
+        refreshAllDashboardData(selectedHBox, selectedFxml);
+    }
+
+    private HBox getCurrentlySelectedSidebarHBox() {
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, paymentInfoHBox, facultyHBox, subjectsHBox, scheduleHBox, calendarHBox, studentsHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null && item.getStyleClass().contains("selected")) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private void refreshAllDashboardData(HBox selectedHBox, String selectedFxml) {
+        contentCache.clear();
+        // Only call initialize parts that do not reload the sidebar selection/content
+        // Instead of calling initialize(), just reload user info and theme if needed
+        reloadUserInfo();
+        // Restore sidebar selection visually
+        if (selectedHBox != null) updateSelectedSidebarItem(selectedHBox);
+        // Reload the previously selected content
+        if (selectedFxml != null) {
+            loadContent(selectedFxml);
+        } else {
+            loadContent(HOME_FXML);
+        }
+    }
+
+    private void reloadUserInfo() {
+        Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class);
+        String facultyId = prefs.get("faculty_id", null);
+        if (facultyId != null && !facultyId.isEmpty()) {
+            loadFacultyInfo(facultyId);
+        } else {
+            studentNameLabel.setText("User not identified");
+            studentIdLabel.setText("");
+            departmentLabel.setText("");
+        }
+    }
+
+    private String getFxmlPathForHBox(HBox hBox) {
+        return switch (hBox.getId()) {
+            case "paymentInfoHBox" -> PAYMENT_INFO_FXML;
+            case "facultyHBox" -> FACULTY_FXML;
+            case "subjectsHBox" -> SUBJECTS_FXML;
+            case "scheduleHBox" -> SCHEDULE_FXML;
+            case "calendarHBox" -> CALENDAR_FXML;
+            case "studentsHBox" -> STUDENT_MANAGEMENT_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
+            case "aboutHBox" -> ABOUT_FXML;
+            default -> HOME_FXML;
+        };
+    }
+
+    private void updateSelectedSidebarItem(HBox selectedHBox) {
+        // Remove 'selected' from all
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, paymentInfoHBox, facultyHBox, subjectsHBox, scheduleHBox, calendarHBox, studentsHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null) item.getStyleClass().remove("selected");
+        }
+        // Add 'selected' to the chosen one
+        if (selectedHBox != null) selectedHBox.getStyleClass().add("selected");
     }
 
     public void handleQuickActionClicks(String fxmlPath) {

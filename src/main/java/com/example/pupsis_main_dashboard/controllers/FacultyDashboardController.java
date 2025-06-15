@@ -35,6 +35,7 @@ public class FacultyDashboardController {
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox refreshHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private Label departmentLabel;
@@ -382,5 +383,58 @@ public class FacultyDashboardController {
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
+    }
+
+    @FXML
+    private void handleRefreshButton(MouseEvent event) {
+        logger.info("Faculty Refresh button clicked. Reloading dashboard data.");
+        // Save the currently selected sidebar HBox
+        HBox selectedHBox = getCurrentlySelectedSidebarHBox();
+        refreshAllDashboardData(selectedHBox);
+    }
+
+    private HBox getCurrentlySelectedSidebarHBox() {
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, classListHBox, gradesHBox, scheduleHBox, schoolCalendarHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null && item.getStyleClass().contains("selected")) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reload all dashboard data and refresh visible panels, preserving sidebar selection.
+     */
+    private void refreshAllDashboardData(HBox selectedHBox) {
+        contentCache.clear();
+        initialize();
+        // Restore sidebar selection
+        if (selectedHBox != null) {
+            updateSelectedSidebarItem(selectedHBox);
+        }
+        // Optionally reload the currently visible panel
+        if (contentPane != null && contentPane.getContent() != null) {
+            loadContent(getFxmlPathForHBox(selectedHBox != null ? selectedHBox : homeHBox));
+        }
+    }
+
+    private String getFxmlPathForHBox(HBox hBox) {
+        return switch (hBox.getId()) {
+            case "classListHBox" -> CLASS_LIST_FXML;
+            case "gradesHBox" -> GRADES_FXML;
+            case "scheduleHBox" -> SCHEDULE_FXML;
+            case "schoolCalendarHBox" -> CALENDAR_FXML;
+            case "aboutHBox" -> ABOUT_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
+            default -> HOME_FXML;
+        };
+    }
+
+    private void updateSelectedSidebarItem(HBox selectedHBox) {
+        clearAllSelections();
+        selectedHBox.getStyleClass().add("selected");
     }
 }

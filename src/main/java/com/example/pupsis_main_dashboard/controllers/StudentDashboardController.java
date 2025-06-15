@@ -42,6 +42,7 @@ public class StudentDashboardController {
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox refreshHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private ScrollPane contentPane;
@@ -526,5 +527,42 @@ public class StudentDashboardController {
         }
     }
 
+    @FXML
+    private void handleRefreshButton(MouseEvent event) {
+        logger.info("Refresh button clicked. Reloading dashboard data.");
+        if (loadingIndicator != null) loadingIndicator.setVisible(true);
+        // Save the currently selected sidebar HBox
+        HBox selectedHBox = getCurrentlySelectedSidebarHBox();
+        refreshAllDashboardData(selectedHBox);
+        if (loadingIndicator != null) loadingIndicator.setVisible(false);
+    }
 
+    private HBox getCurrentlySelectedSidebarHBox() {
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, registrationHBox, paymentInfoHBox, gradesHBox,
+            scheduleHBox, schoolCalendarHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null && item.getStyleClass().contains("selected")) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reload all dashboard data and refresh visible panels, preserving sidebar selection.
+     */
+    private void refreshAllDashboardData(HBox selectedHBox) {
+        contentCache.clear();
+        initialize();
+        // Restore sidebar selection
+        if (selectedHBox != null) {
+            updateSelectedSidebarItem(selectedHBox);
+        }
+        // Optionally reload the currently visible panel
+        if (contentPane != null && contentPane.getContent() != null) {
+            loadContent(getFxmlPathForHBox(selectedHBox != null ? selectedHBox : homeHBox));
+        }
+    }
 }
