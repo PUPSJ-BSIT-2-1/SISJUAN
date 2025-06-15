@@ -96,7 +96,7 @@
                      <children>
                         <Label styleClass="table-header" text="Student Name" />
                         <Label layoutX="10.0" layoutY="16.0" styleClass="table-header" text="Status" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="16.0" prefHeight="20.0" prefWidth="50.0" styleClass="table-header" text="Section" GridPane.columnIndex="2" />
+                        <Label layoutX="10.0" layoutY="16.0" prefHeight="18.0" prefWidth="129.0" styleClass="table-header" text="Section" GridPane.columnIndex="2" />
                         <Label layoutX="10.0" layoutY="7.0" styleClass="table-header" GridPane.columnIndex="3" />
                      </children>
                   </GridPane>

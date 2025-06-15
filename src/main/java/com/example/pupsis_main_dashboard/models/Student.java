@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 public class Student {
     private final StringProperty studentId;
     private StringProperty studentNa;
+    private final StringProperty studentNumber;
     private final StringProperty firstName;
     private final StringProperty middleName;
     private final StringProperty lastName;
@@ -39,6 +40,7 @@ public class Student {
         this.loadId = new SimpleStringProperty("");
         this.gradeId = new SimpleStringProperty("");
         this.fullName = new SimpleStringProperty("");
+        this.studentNumber = new SimpleStringProperty("");
     }
 
     // Constructor for student management with comprehensive properties
@@ -59,6 +61,7 @@ public class Student {
         this.loadId = new SimpleStringProperty("");
         this.gradeId = new SimpleStringProperty("");
         this.fullName = new SimpleStringProperty("");
+        this.studentNumber = new SimpleStringProperty("");
     }
 
     // Full constructor with all properties
@@ -80,17 +83,19 @@ public class Student {
         this.loadId = new SimpleStringProperty("");
         this.gradeId = new SimpleStringProperty("");
         this.fullName = new SimpleStringProperty("");
+        this.studentNumber = new SimpleStringProperty("");
     }
 
-    public Student(String studentNo, String studentId, String fullName,
+    public Student(String studentNo, String StudentNumber, String fullName,
                    String email, String address, String status, String birthday) {
         this.studentNo = new SimpleStringProperty(studentNo);
-        this.studentId = new SimpleStringProperty(studentId);
+        this.studentNumber = new SimpleStringProperty(StudentNumber);
         this.fullName = new SimpleStringProperty(fullName);
         this.email = new SimpleStringProperty(email);
         this.address = new SimpleStringProperty(address);
         this.status = new SimpleStringProperty(status);
         this.birthday = new SimpleStringProperty(birthday);
+        this.studentId = new SimpleStringProperty("");
         this.program = new SimpleStringProperty("");
         this.yearLevel = new SimpleStringProperty("");
         this.finalGrade = new SimpleStringProperty("");
@@ -112,7 +117,19 @@ public class Student {
         this.studentId.set(id);
     }
 
-    public String getFullNameProperty() {
+    public String getStudentNumber() {
+        return studentNumber.get();
+    }
+
+    public StringProperty studentNumberProperty() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(String studentNumber) {
+        this.studentNumber.set(studentNumber);
+    }
+
+    public String getFullNa() {
         return fullName.get();
     }
 

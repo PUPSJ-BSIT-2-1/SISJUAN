@@ -28,7 +28,9 @@ public class AdminStudentPaymentManagementController {
     private static final Logger logger = LoggerFactory.getLogger(AdminStudentPaymentManagementController.class);
 
     @FXML private VBox studentPaymentContainer;
+    @FXML private HBox viewTransactionHistory;
     private VBox paymentContainer;
+
     
     private final List<Payment> currentDisplayedPayments = new ArrayList<>();
 
@@ -54,6 +56,8 @@ public class AdminStudentPaymentManagementController {
                 this.paymentContainer = new VBox();
             }
         }
+
+        viewTransactionHistory.setOnMouseClicked(_ -> AdminPaymentTransactionController.showPaymentTransactionHistory());
 
         loadPendingStudentPayments();
         logger.info("AdminStudentManagementController initialized.");

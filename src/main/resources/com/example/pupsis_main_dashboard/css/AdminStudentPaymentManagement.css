@@ -1,5 +1,9 @@
 .root {
-    -background-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.dark-theme .root {
+    -fx-background-color: transparent;
 }
 
 .red-card {
@@ -172,6 +176,18 @@
     -fx-fill: #6b6b6b;
 }
 
+.icon:hover {
+    -fx-cursor: hand;
+}
+
+.dark-theme .icon:hover {
+    -fx-cursor: hand;
+}
+
 .dark-theme .icon {
     -fx-fill: #b0b0b0;
+}
+
+.icon-container:hover {
+    -fx-cursor: hand;
 }

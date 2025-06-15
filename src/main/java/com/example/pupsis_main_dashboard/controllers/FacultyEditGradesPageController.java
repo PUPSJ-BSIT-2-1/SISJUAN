@@ -10,12 +10,15 @@ import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
 import java.sql.*;
@@ -92,10 +95,14 @@ public class FacultyEditGradesPageController implements Initializable {
             private final Label label = new Label();
 
             {
+                // Set up the label properties
+                label.setWrapText(true);
+                label.setTextAlignment(TextAlignment.CENTER);
+                label.setAlignment(Pos.CENTER);
+                label.setPrefWidth(Region.USE_COMPUTED_SIZE);
+                label.setMaxWidth(100); // Set maximum width limit
+                label.setMinWidth(60);  // Set minimum width
                 label.setPrefHeight(25);
-                label.setMinWidth(Region.USE_PREF_SIZE);
-                label.setMaxWidth(Region.USE_PREF_SIZE);
-                label.setStyle("-fx-padding: 5px; -fx-alignment: center;");
             }
 
             @Override
@@ -107,30 +114,33 @@ public class FacultyEditGradesPageController implements Initializable {
 
                 if (empty || gradeStatus == null || gradeStatus.trim().isEmpty()) {
                     setGraphic(null);
-                    setText(null);
                 } else {
-                    // Trim and normalize the status text
                     String normalizedStatus = gradeStatus.trim();
+
+                    // Limit text length if needed (optional)
+                    if (normalizedStatus.length() > 15) {
+                        normalizedStatus = normalizedStatus.substring(0, 12) + "...";
+                    }
+
                     label.setText(normalizedStatus);
 
-                    // Apply CSS class based on grade status (case-insensitive)
-                    String lowerStatus = normalizedStatus.toLowerCase();
+                    // Apply CSS class based on grade status
+                    String lowerStatus = gradeStatus.toLowerCase();
                     if (lowerStatus.contains("passed")) {
                         label.getStyleClass().add("grade-status-passed");
                     } else if (lowerStatus.contains("failed")) {
                         label.getStyleClass().add("grade-status-failed");
                     } else if (lowerStatus.contains("incomplete") ||
-                               lowerStatus.contains("withdrawn") ||
-                               lowerStatus.contains("dropped") ||
-                               lowerStatus.contains("not graded yet")) {
+                            lowerStatus.contains("withdrawn") ||
+                            lowerStatus.contains("dropped") ||
+                            lowerStatus.contains("not graded yet")) {
                         label.getStyleClass().add("grade-status-other");
                     } else {
-                        // Default styling for unknown statuses
                         label.getStyleClass().add("grade-status-other");
                     }
 
                     setGraphic(label);
-                    setText(null); // Clear text since we're using the graphic
+                    setAlignment(Pos.CENTER);
                 }
             }
         });
@@ -402,7 +412,7 @@ public class FacultyEditGradesPageController implements Initializable {
             // Grades >3.0 and <=5.0 are Failed
             if (gradeValue >= 1.0f && gradeValue <= 3.13f) {
                 return "Passed";
-            } else if (gradeValue > 3.0f && gradeValue <= 5.0f) {
+            } else if (gradeValue > 3.13f && gradeValue <= 5.0f) {
                 return "Failed";
             } else {
                 // For numeric grades outside the 1.0-5.0 range
@@ -772,7 +782,6 @@ public class FacultyEditGradesPageController implements Initializable {
         Platform.runLater(() -> {
             studentsList.clear();
             studentsList.addAll(students);
-            studentsTable.setItems(studentsList);
         });
     }
 

@@ -99,15 +99,25 @@
 }
 
 .table-row-cell:hover .grade-status-passed {
-    -fx-background-color: #218838; /* Darker green on hover */
+    -fx-background-color: #218838;
+    -fx-font-weight: bold;
 }
 
 .table-row-cell:hover .grade-status-failed {
-    -fx-background-color: #c82333; /* Darker red on hover */
+    -fx-background-color: #c82333;
+    -fx-font-weight: bold;
 }
 
 .table-row-cell:hover .grade-status-other {
-    -fx-background-color: #5a6268; /* Darker gray on hover */
+    -fx-background-color: #5a6268;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:hover .grade-status-passed .label,
+.table-row-cell:hover .grade-status-failed .label,
+.table-row-cell:hover .grade-status-other .label {
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
 }
 
 /* Menu Button Base Styling */
@@ -281,6 +291,17 @@
     -fx-text-fill: #000000;
 }
 
+.table-row-cell .grade-status-passed,
+.table-row-cell .grade-status-failed,
+.table-row-cell .grade-status-other {
+    -fx-text-fill: white !important;
+}
+
+.table-row-cell .grade-status-passed .label,
+.table-row-cell .grade-status-failed .label,
+.table-row-cell .grade-status-other .label {
+    -fx-text-fill: white !important;
+}
 .grade-status-passed {
     -fx-background-color: #28a745;
     -fx-background-radius: 12px;
@@ -318,56 +339,67 @@
 }
 
 .table-row-cell:hover .grade-status-passed {
-    -fx-background-color: #218838; /* Darker green on hover */
+    -fx-background-color: #218838;
+    -fx-font-weight: bold;/* Darker green on hover */
 }
 
 .table-row-cell:hover .grade-status-failed {
-    -fx-background-color: #c82333; /* Darker red on hover */
+    -fx-background-color: #c82333;
+    -fx-font-weight: bold;/* Darker red on hover */
 }
 
 .table-row-cell:hover .grade-status-other {
-    -fx-background-color: #5a6268; /* Darker gray on hover */
+    -fx-background-color: #5a6268;
+    -fx-font-weight: bold;/* Darker gray on hover */
 }
 
 .grade-status-passed {
     -fx-background-color: #28a745;
-    -fx-background-radius: 12px;
-    -fx-max-width: 20px;
+    -fx-background-radius: 15px;
     -fx-text-fill: white;
-    -fx-padding: 6px 12px;
+    -fx-padding: 4px 8px;
     -fx-alignment: center;
-    -fx-font-size: 12px;
+    -fx-font-size: 11px;
     -fx-font-family: 'Inter';
     -fx-content-display: center;
+    -fx-pref-width: -1; /* Auto-size to content */
+    -fx-max-width: 100px;
+    -fx-min-width: 50px;
 }
-
-.grade-status-passed .label {
-    -fx-text-fill: white;
-}
-
 
 .grade-status-failed {
     -fx-background-color: #dc3545;
-    -fx-background-radius: 12px;
+    -fx-background-radius: 15px;
     -fx-text-fill: white;
-    -fx-padding: 6px 12px;
+    -fx-padding: 4px 8px;
     -fx-alignment: center;
-    -fx-font-size: 12px;
+    -fx-font-size: 11px;
     -fx-font-family: 'Inter';
     -fx-content-display: center;
+    -fx-pref-width: -1; /* Auto-size to content */
+    -fx-max-width: 100px;
+    -fx-min-width: 50px;
 }
 
 .grade-status-other {
     -fx-background-color: #6c757d;
-    -fx-background-radius: 12px;
+    -fx-background-radius: 15px;
     -fx-text-fill: white;
-    -fx-padding: 6px 12px;
+    -fx-padding: 4px 8px;
     -fx-alignment: center;
-    -fx-font-size: 12px;
+    -fx-font-size: 11px;
     -fx-font-family: 'Inter';
     -fx-content-display: center;
+    -fx-pref-width: -1; /* Auto-size to content */
+    -fx-max-width: 100px;
+    -fx-min-width: 50px;
 }
 
+.grade-status-passed .label,
+.grade-status-failed .label,
+.grade-status-other .label {
+    -fx-text-fill: white;
+}
 .icon {
     -fx-fill: #6b6b6b;
     -fx-scale-x: 1.1;
@@ -537,4 +569,15 @@
 
 .dark-theme .back-button:hover {
     -fx-background-color: #e57373; /* Lighter maroon on hover */
+}
+.dark-theme .table-row-cell .grade-status-passed,
+.dark-theme .table-row-cell .grade-status-failed,
+.dark-theme .table-row-cell .grade-status-other {
+    -fx-text-fill: white !important;
+}
+
+.dark-theme .table-row-cell .grade-status-passed .label,
+.dark-theme .table-row-cell .grade-status-failed .label,
+.dark-theme .table-row-cell .grade-status-other .label {
+    -fx-text-fill: white !important;
 }

@@ -14,9 +14,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -143,27 +148,24 @@ public class FacultyClassPreviewController implements Initializable {
                     String yearSection = selectedSubject.getYearSection();
 
                     try {
-                        ScrollPane contentPane = (ScrollPane) subjectsTable.getScene().lookup("#contentPane");
-                        if (contentPane != null) {
-                            // Create the FXMLLoader instance
-                            FXMLLoader loader = new FXMLLoader(
-                                    getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyClassList.fxml")
-                            );
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/FacultyClassList.fxml"));
+                        Parent newContent = loader.load();
 
-                            // Load the FXML
-                            Parent newContent = loader.load();
+                        // Get the controller after loading
+                        FacultyClassListController controller = loader.getController();
 
-                            // Get the controller after loading
-                            FacultyClassListController controller = loader.getController();
+                        controller.setSubjectCodeAndDesc(subjectCode, subjectDesc, yearSection);
 
-                            controller.setSubjectCodeAndDesc(subjectCode, subjectDesc, yearSection);
-
-                            Platform.runLater(this::refreshTable);
+                        Platform.runLater(this::refreshTable);
 
                             // Set the content
-                            contentPane.setContent(newContent);
-                        }
-                    } catch (IOException e) {
+                        Stage stage = new Stage();
+                        stage.initStyle(StageStyle.TRANSPARENT);
+                        stage.initModality(Modality.APPLICATION_MODAL);
+                        stage.setScene(new Scene(newContent, Color.TRANSPARENT));
+                        controller.setClassDialogStage(stage);
+                        stage.showAndWait();
+                        } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }

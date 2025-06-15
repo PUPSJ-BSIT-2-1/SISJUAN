@@ -1,0 +1,5 @@
+.root {
+    -fx-background-radius: 10; /* Rounded corners */
+    -fx-border-radius: 5;
+
+}

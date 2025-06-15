@@ -6,139 +6,76 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.SVGPath?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="790.0" prefWidth="811.0" styleClass="root" stylesheets="@../css/FacultyEditGradesPage.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyClassListController">
-    <children>
-        <BorderPane prefHeight="784.0" prefWidth="811.0">
-            <top>
-                <HBox prefHeight="99.0" prefWidth="811.0" styleClass="red-card" BorderPane.alignment="CENTER">
-                    <BorderPane.margin>
-                        <Insets />
-                    </BorderPane.margin>
-                    <children>
-                        <VBox prefHeight="84.0" prefWidth="502.0">
-                            <children>
-                                <Label fx:id="gradesHeaderLbl" contentDisplay="CENTER" maxHeight="63.0" minHeight="25.0" prefHeight="63.0" prefWidth="502.0" styleClass="header" text="Student Class List" textFill="WHITE">
-                                    <font>
-                                        <Font size="30.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets top="15.0" />
-                                    </VBox.margin>
-                                </Label>
-                                <Label contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="78.0" minHeight="24.0" prefHeight="30.0" prefWidth="502.0" styleClass="sub-header" text="View Enrolled Students by Subject and Section" textFill="WHITE">
-                                    <font>
-                                        <Font size="24.0" />
-                                    </font>
-                                    <padding>
-                                        <Insets bottom="3.0" />
-                                    </padding>
-                                </Label>
-                            </children>
-                            <HBox.margin>
-                                <Insets left="20.0" />
-                            </HBox.margin>
-                        </VBox>
-                    </children>
-                </HBox>
-            </top>
-            <center>
-                <HBox BorderPane.alignment="CENTER">
-                    <children>
-                        <VBox alignment="TOP_CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="7.0" styleClass="small-cards">
-                                    <children>
-                              <SVGPath content="M15.25 12c.966 0 1.75.784 1.75 1.75v4a1.75 1.75 0 0 1-1.75 1.75h-4.775l-.05-.05c.368-.737.575-1.57.575-2.45c0-1.177-.37-2.268-1-3.163V13.5h-.257a5.523 5.523 0 0 0-1.672-1.363c.209-.088.438-.137.679-.137h6.5Zm-3.75 4.5V18h3.75a.25.25 0 0 0 .25-.25V16.5h-4Zm4-1.5v-1.25a.25.25 0 0 0-.25-.25H11.5V15h4Zm2.5 6h-6.025l.512.513c.278.277.443.626.495.987H18a2 2 0 0 0 2-2V10.328a2 2 0 0 0-.586-1.414l-5.829-5.828a.491.491 0 0 0-.049-.04a.63.63 0 0 1-.036-.03a2.072 2.072 0 0 0-.219-.18a.652.652 0 0 0-.08-.044l-.048-.024l-.05-.029c-.054-.031-.109-.063-.166-.087a1.977 1.977 0 0 0-.624-.138a.56.56 0 0 1-.059-.007a.605.605 0 0 0-.082-.007H6a2 2 0 0 0-2 2v7.207a5.5 5.5 0 0 1 1.5-.207v-7A.5.5 0 0 1 6 4h6v4.5a2 2 0 0 0 2 2h4.5v10a.5.5 0 0 1-.5.5Zm-.622-12H14a.5.5 0 0 1-.5-.5V5.121L17.378 9ZM5.5 21.5a4.48 4.48 0 0 0 2.607-.832l2.613 2.612a.75.75 0 1 0 1.06-1.06l-2.612-2.613A4.5 4.5 0 1 0 5.5 21.5Zm0-1.5a3 3 0 1 1 0-6a3 3 0 0 1 0 6Z" fill="#b7b7b7" fillRule="EVEN_ODD" styleClass="icon">
-                                 <HBox.margin>
-                                    <Insets left="5.0" />
-                                 </HBox.margin></SVGPath>
-                                        <TextField fx:id="searchBar" prefHeight="33.0" prefWidth="212.0" promptText="Search..." styleClass="search-text-field" />
-                                        <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="533.0" spacing="20.0">
-                                            <padding>
-                                                <Insets left="30.0" />
-                                            </padding>
-                                 <children>
-                                    <Button fx:id="backButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" styleClass="back-button" text="Back" />
-                                 </children>
-                                        </HBox>
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets />
-                                    </VBox.margin>
-                                </HBox>
-                        <VBox alignment="TOP_CENTER" prefHeight="630.0" prefWidth="811.0" styleClass="small-cards">
-                           <children>
-                              <HBox alignment="CENTER_LEFT" maxHeight="35.0" minHeight="55.0" prefHeight="35.0" prefWidth="200.0">
-                                 <children>
-                                    <VBox prefHeight="200.0" prefWidth="380.0">
-                                       <children>
-                                                        <Label fx:id="subDesclbl" alignment="BOTTOM_CENTER" text="Subject Description: " textFill="#5d5d5d">
-                                                            <font>
-                                                                <Font size="9.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label fx:id="subjDescLbl" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="388.0" text="Object Oriented Programming" wrapText="true">
-                                             <padding>
-                                                <Insets left="20.0" top="5.0" />
-                                             </padding>
-                                          </Label>
-                                       </children>
-                                    </VBox>
-                                    <HBox alignment="TOP_CENTER" maxHeight="35.0" minHeight="10.0" prefHeight="35.0" prefWidth="177.0" styleClass="mini-cards">
-                                       <children>
-                                          <Label fx:id="NoOfStudentsDesc" prefHeight="20.0" prefWidth="111.0" styleClass="total-student" text="Total Students:" wrapText="true">
-                                             <HBox.margin>
-                                                <Insets />
-                                             </HBox.margin>
-                                             <padding>
-                                                <Insets right="10.0" />
-                                             </padding>
-                                          </Label>
-                                          <Label fx:id="numStudLbl" alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="26.0" styleClass="total-student" text="0" wrapText="true" />
-                                       </children>
-                                       <padding>
-                                          <Insets top="6.0" />
-                                       </padding>
-                                       <HBox.margin>
-                                          <Insets left="250.0" />
-                                       </HBox.margin>
-                                    </HBox>
-                                 </children>
-                                 <padding>
-                                    <Insets top="6.0" />
-                                 </padding>
-                              </HBox>
-                              <Region prefHeight="10.0" prefWidth="786.0" styleClass="region" />
-                              <Line endX="685.6929321289062" endY="0.09288102388381958" startX="-100.0" stroke="#cdd0d1" />
-                                        <TableView id="mainGradingTable" fx:id="classListTable" prefHeight="730.0" prefWidth="750.0">
-                                            <columns>
-                                                <TableColumn fx:id="noStudCol" editable="false" maxWidth="55.0" minWidth="47.20001411437988" prefWidth="51.20001411437988" resizable="false" text="#" />
-                                                <TableColumn fx:id="studIDCol" editable="false" maxWidth="140.0" minWidth="103.1999740600586" prefWidth="127.99996185302734" resizable="false" text="Student ID" />
-                                                <TableColumn fx:id="studNameCol" editable="false" maxWidth="207.20001220703125" minWidth="134.4000244140625" prefWidth="164.00006103515625" resizable="false" text="Student Name" />
-                                                <TableColumn fx:id="addressCol" editable="false" maxWidth="263.2000427246094" minWidth="125.0" prefWidth="207.20004272460938" text="Address" />
-                                                <TableColumn fx:id="emailCol" editable="true" maxWidth="200.0" minWidth="100.800048828125" prefWidth="157.5999755859375" resizable="false" text="Email" />
-                                                <TableColumn fx:id="statusCol" maxWidth="183.20004882812498" minWidth="67.2000732421875" prefWidth="76.79997558593755" resizable="false" text="Status" />
-                                            </columns>
-                                        </TableView>
-                                    </children>
-                                </VBox>
-                            </children>
-                            <padding>
-                                <Insets top="10.0" />
-                            </padding>
-                        </VBox>
-                    </children>
-                </HBox>
-            </center>
-        </BorderPane>
-    </children>
-</AnchorPane>
+<BorderPane fx:id="borderPane" styleClass="printable-list" stylesheets="@../css/AdminPrintableReport.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyClassListController">
+
+    <!-- HEADER -->
+    <top>
+        <VBox spacing="10">
+            <Label fx:id="headerLabel" styleClass="printable-header" text="Student Class List of Section " />
+         <HBox>
+            <children>
+                  <Label fx:id="subjectDescriptionLabel" styleClass="printable-sub-header" text="Subject Description: ">
+                  <HBox.margin>
+                     <Insets top="3.0" />
+                  </HBox.margin>
+               </Label>
+               <HBox prefHeight="26.0" prefWidth="704.0" />
+               <HBox>
+                  <children>
+                     <SVGPath content="M9 12q-1.65 0-2.825-1.175T5 8t1.175-2.825T9 4t2.825 1.175T13 8t-1.175 2.825T9 12m8 7q.85 0 1.413-.5T19 17q.025-.85-.562-1.425T17 15t-1.425.575T15 17t.575 1.425T17 19m4.6 4l-2.55-2.55q-.45.275-.962.413T17 21q-1.65 0-2.825-1.175T13 17t1.175-2.825T17 13t2.825 1.175T21 17q0 .575-.137 1.088t-.413.962L23 21.6zM1 20v-2.8q0-.85.438-1.562T2.6 14.55q1.55-.775 3.15-1.162T9 13q.8 0 1.613.088t1.612.287q-.6.8-.912 1.725T11 17q0 .8.2 1.563T11.8 20zM19 8q0 1.65-1.175 2.825T15 12q-.275 0-.7-.062t-.7-.138q.675-.8 1.038-1.775T15 8t-.362-2.025T13.6 4.2q.35-.125.7-.163T15 4q1.65 0 2.825 1.175T19 8" styleClass="icon">
+                        <HBox.margin>
+                           <Insets top="4.0" />
+                        </HBox.margin>
+                     </SVGPath>
+                     <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="231.0" styleClass="search-student">
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </TextField>
+                  </children>
+               </HBox>
+            </children>
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin>
+         </HBox>
+        </VBox>
+    </top>
+
+    <!-- TABLE CONTENT -->
+    <center>
+        <TableView fx:id="classListTable" prefHeight="500" styleClass="printable-table">
+            <columns>
+                <TableColumn fx:id="rowCountColumn" prefWidth="44.79995155334473" text="#" />
+                <TableColumn fx:id="studentNumberColumn" prefWidth="125.60001373291016" text="Student Number" />
+                <TableColumn fx:id="studentNameColumn" prefWidth="191.19996643066406" text="Student Name" />
+                <TableColumn fx:id="emailColumn" prefWidth="252.79989624023438" text="Email" />
+                <TableColumn fx:id="birthdayColumn" prefWidth="138.39996337890625" text="Birthday" />
+                <TableColumn fx:id="addressColumn" prefWidth="233.5999755859375" text="Address" />
+                <TableColumn fx:id="statusColumn" prefWidth="88.0" text="Status" />
+            </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+        </TableView>
+    </center>
+
+    <!-- FOOTER -->
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" prefWidth="1100.0" spacing="10">
+            <Button onAction="#handleClose" prefWidth="70.0" styleClass="cancel-button" text="Close" />
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+        </HBox>
+    </bottom>
+
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+</BorderPane>

@@ -2,18 +2,23 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
+import com.example.pupsis_main_dashboard.utilities.SessionData;
+import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent; 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalTime;
@@ -30,6 +35,7 @@ public class StudentEnrollmentController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(StudentEnrollmentController.class);
     private static final int MAX_UNITS = 24;
 
+    @FXML private VBox root;
     @FXML private VBox subjectListContainer;
     @FXML private VBox enrolledSubjectsDisplayContainer; 
     @FXML private Button selectAllButton;
@@ -46,6 +52,13 @@ public class StudentEnrollmentController implements Initializable {
     private Map<CheckBox, SubjectData> checkboxSubjectMap = new HashMap<>();
     private Map<CheckBox, ComboBox<String>> subjectScheduleMap = new HashMap<>();
     private int currentSelectedUnits = 0;
+
+    private StudentDashboardController studentDashboardController;
+
+    public void setStudentDashboardController(StudentDashboardController controller) {
+        this.studentDashboardController = controller;
+    }
+
 
     private static final List<String> TIME_SLOTS = Arrays.asList(
             "Mon/Wed 9:00-10:30 AM",
@@ -207,6 +220,9 @@ public class StudentEnrollmentController implements Initializable {
                         stmt.executeBatch();
                     }
                     connection.commit();
+                    SessionData.getInstance().setUnitsEnrolled(currentSelectedUnits);
+                    enrollButton.setOnAction(_ -> redirectToPaymentInfo());
+                    System.out.println("Enrollment successful. Trying to redirect to PaymentInfo.fxml...");
                     return true;
                 } catch (SQLException e) {
                     // Log error properly
@@ -246,6 +262,37 @@ public class StudentEnrollmentController implements Initializable {
         });
 
         new Thread(enrollmentTask).start(); 
+    }
+
+    private void redirectToPaymentInfo() {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Redirect to Payment Information");
+        alert.setHeaderText("Do you want to go to the Payment Information section?");
+        alert.setContentText("Make sure you have enrolled all the subjects you want before proceeding.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                ScrollPane contentPane = (ScrollPane) root.getScene().lookup("#contentPane");
+
+                if (contentPane != null) {
+                    FXMLLoader loader = new FXMLLoader(
+                            getClass().getResource("/com/example/pupsis_main_dashboard/fxml/StudentPaymentInfo.fxml")
+                    );
+
+                    Parent newContent = loader.load();
+                    StudentPaymentInfoController controller = loader.getController();
+
+                    contentPane.setContent(newContent);
+                    studentDashboardController.handleQuickActionClicks("/com/example/pupsis_main_dashboard/fxml/StudentPaymentInfo.fxml");
+                }
+            } catch (IOException e) {
+                logger.error("Error loading StudentPaymentInfo.fxml: {}", e.getMessage());
+                StageAndSceneUtils.showAlert("Navigation Error",
+                        "Unable to load payment information. Please try again.", Alert.AlertType.ERROR);
+            }
+        }
     }
 
     private void clearEnrollmentUIState() {
