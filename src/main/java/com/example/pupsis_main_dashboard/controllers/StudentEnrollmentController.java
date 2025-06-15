@@ -169,9 +169,9 @@ public class StudentEnrollmentController implements Initializable {
                     connection.setAutoCommit(false);
 
                     // Updated INSERT: Remove load_id as PK, use composite PK, and check for duplicates
-                    String insertSql = "INSERT INTO student_load (student_pk_id, subject_id, semester_id, academic_year_id, section_id, faculty_load) " +
-                            "VALUES (?, ?, ?, ?, ?, ?)";
-                    String duplicateCheckSql = "SELECT 1 FROM student_load WHERE student_pk_id = ? AND subject_id = ? AND semester_id = ? AND academic_year_id = ? AND section_id = ?";
+                    String insertSql = "INSERT INTO student_load (student_pk_id, subject_id, semester_id, academic_year_id, faculty_load) " +
+                            "VALUES (?, ?, ?, ?, ?)";
+                    String duplicateCheckSql = "SELECT 1 FROM student_load WHERE student_pk_id = ? AND subject_id = ? AND semester_id = ? AND academic_year_id = ?";
 
                     try (PreparedStatement stmt = connection.prepareStatement(insertSql);
                          PreparedStatement dupStmt = connection.prepareStatement(duplicateCheckSql)) {
@@ -193,11 +193,10 @@ public class StudentEnrollmentController implements Initializable {
                                 dupStmt.setInt(2, subjectId);
                                 dupStmt.setInt(3, currentContext.semesterId());
                                 dupStmt.setInt(4, currentContext.academicYearId());
-                                dupStmt.setInt(5, currentContext.sectionId());
                                 try (ResultSet rs = dupStmt.executeQuery()) {
                                     if (rs.next()) {
-                                        logger.warn("Duplicate enrollment detected for student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, section_id={}",
-                                                studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), currentContext.sectionId());
+                                        logger.warn("Duplicate enrollment detected for student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}",
+                                                studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId());
                                         continue; // Skip duplicate
                                     }
                                 }
@@ -206,11 +205,10 @@ public class StudentEnrollmentController implements Initializable {
                                 stmt.setInt(2, subjectId); // subject_id
                                 stmt.setInt(3, currentContext.semesterId()); // semester_id
                                 stmt.setInt(4, currentContext.academicYearId()); // academic_year_id
-                                stmt.setInt(5, currentContext.sectionId()); // section_id
-                                stmt.setInt(6, facultyLoad); // faculty_load (offeringId)
+                                stmt.setInt(5, facultyLoad); // faculty_load (offeringId)
 
-                                logger.debug("Adding to batch: student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, section_id={}, faculty_load={}",
-                                        studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), currentContext.sectionId(), facultyLoad);
+                                logger.debug("Adding to batch: student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, faculty_load={}",
+                                        studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), facultyLoad);
                                 stmt.addBatch();
                             } catch (NumberFormatException e) {
                                 logger.error("Invalid enrollment data: subjectId='{}' or schedule='{}' cannot be parsed as integers", enrollment.subjectId(), enrollment.schedule(), e);
@@ -621,17 +619,16 @@ public class StudentEnrollmentController implements Initializable {
                              "JOIN student_load sl ON fl.load_id = sl.faculty_load " +
                              "LEFT JOIN schedule sch ON fl.load_id = sch.faculty_load_id " +
                              "LEFT JOIN room r ON sch.room_id = r.room_id " +
-                             "WHERE sl.student_pk_id = ? AND fl.section_id = ? AND fl.semester_id = ? AND sl.academic_year_id = ?";
+                             "WHERE sl.student_pk_id = ? AND fl.semester_id = ? AND sl.academic_year_id = ?";
 
-        logger.debug("fetchEnrollmentSubjectLists (Phase 1 - Enrolled): Query: {}, Params: [studentId={}, sectionId={}, semesterId={}, academicYearId={}]",
-            enrolledQuery, context.studentId(), context.sectionId(), context.semesterId(), context.academicYearId());
+        logger.debug("fetchEnrollmentSubjectLists (Phase 1 - Enrolled): Query: {}, Params: [studentId={}, semesterId={}, academicYearId={}]",
+            enrolledQuery, context.studentId(), context.semesterId(), context.academicYearId());
 
         try (Connection connEnrolled = DBConnection.getConnection();
              PreparedStatement pstmtEnrolled = connEnrolled.prepareStatement(enrolledQuery)) {
             pstmtEnrolled.setInt(1, context.studentId());
-            pstmtEnrolled.setInt(2, context.sectionId());
-            pstmtEnrolled.setInt(3, context.semesterId());
-            pstmtEnrolled.setInt(4, context.academicYearId());
+            pstmtEnrolled.setInt(2, context.semesterId());
+            pstmtEnrolled.setInt(3, context.academicYearId());
 
             try (ResultSet rs = pstmtEnrolled.executeQuery()) {
                 while (rs.next()) {
@@ -664,34 +661,27 @@ public class StudentEnrollmentController implements Initializable {
         List<AvailableSubjectInfo> tempAvailableSubjectInfos = new ArrayList<>();
 
         // Phase 2: Query for AVAILABLE subjects (Get subject details)
-        String availableQuery = "SELECT DISTINCT s.subject_code, s.description, " +
-                "CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, " +
-                "s.subject_id, fl.load_id AS faculty_load_id " +
+        String availableQuery = "SELECT DISTINCT s.subject_id, s.subject_code, s.description, CASE WHEN s.units ~ '^[0-9]+$' THEN CAST(s.units AS INTEGER) ELSE 0 END AS units, fl.load_id AS faculty_load_id " +
                 "FROM subjects s " +
                 "JOIN faculty_load fl ON s.subject_id = fl.subject_id " +
-                "WHERE fl.section_id = ? " +
-                "AND fl.semester_id = ? " +
+                "WHERE fl.semester_id = ? " +
                 "AND s.year_level = ? " +
                 "AND s.semester_id = ? " +
                 "AND s.subject_id NOT IN (" +
-                "  SELECT s2.subject_id FROM student_load sl " +
-                "  JOIN faculty_load fl2 ON sl.faculty_load = fl2.load_id " +
-                "  JOIN subjects s2 ON fl2.subject_id = s2.subject_id " +
-                "  WHERE sl.student_pk_id = ? AND sl.semester_id = ?" +
+                "  SELECT subject_id FROM student_load sl WHERE sl.student_pk_id = ? AND sl.semester_id = ?" +
                 ")";
 
-        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [sectionId={}, semesterId={}, yearLevel={}, semesterIdSubject={}, studentId={}, semesterIdSubQuery={}]",
-            availableQuery, context.sectionId(), context.semesterId(), context.yearLevel(), context.semesterId(), context.studentId(), context.semesterId());
+        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [semesterId={}, yearLevel={}, semesterIdSubject={}, studentId={}, semesterIdSubQuery={}]",
+            availableQuery, context.semesterId(), context.yearLevel(), context.semesterId(), context.studentId(), context.semesterId());
 
         try (Connection connAvailableDetails = DBConnection.getConnection(); // Separate connection for available subject details
              PreparedStatement pstmtAvailable = connAvailableDetails.prepareStatement(availableQuery)) {
             
-            pstmtAvailable.setInt(1, context.sectionId());
-            pstmtAvailable.setInt(2, context.semesterId());
-            pstmtAvailable.setInt(3, context.yearLevel());
-            pstmtAvailable.setInt(4, context.semesterId());
-            pstmtAvailable.setInt(5, context.studentId());
-            pstmtAvailable.setInt(6, context.semesterId());
+            pstmtAvailable.setInt(1, context.semesterId());
+            pstmtAvailable.setInt(2, context.yearLevel());
+            pstmtAvailable.setInt(3, context.semesterId());
+            pstmtAvailable.setInt(4, context.studentId());
+            pstmtAvailable.setInt(5, context.semesterId());
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
                 while (rs.next()) {
@@ -767,9 +757,23 @@ public class StudentEnrollmentController implements Initializable {
 
         logger.debug("fetchEnrollmentSubjectLists (Phase 3 - Schedules): Processed schedules for {} available subjects.", availableSubjectsOutput.size());
 
-        List<SubjectData> allSubjects = new ArrayList<>(enrolledSubjects);
-        allSubjects.addAll(availableSubjectsOutput);
-        return new EnrollmentSubjectLists(enrolledSubjects, availableSubjectsOutput);
+        // Deduplicate available subjects by subjectId, merge schedules for each subject
+        Map<String, SubjectData> uniqueAvailableSubjects = new LinkedHashMap<>();
+        for (SubjectData subject : availableSubjectsOutput) {
+            if (uniqueAvailableSubjects.containsKey(subject.subjectId())) {
+                // Merge schedules if duplicate
+                List<String> existingSchedules = uniqueAvailableSubjects.get(subject.subjectId()).availableSchedules();
+                Set<String> mergedSchedules = new LinkedHashSet<>(existingSchedules);
+                mergedSchedules.addAll(subject.availableSchedules());
+                uniqueAvailableSubjects.get(subject.subjectId()).availableSchedules().clear();
+                uniqueAvailableSubjects.get(subject.subjectId()).availableSchedules().addAll(mergedSchedules);
+            } else {
+                uniqueAvailableSubjects.put(subject.subjectId(), subject);
+            }
+        }
+        List<SubjectData> dedupedAvailableSubjects = new ArrayList<>(uniqueAvailableSubjects.values());
+        logger.debug("fetchEnrollmentSubjectLists: Deduped available subjects count: {}", dedupedAvailableSubjects.size());
+        return new EnrollmentSubjectLists(enrolledSubjects, dedupedAvailableSubjects);
     }
 
     private record EnrollmentPageData(StudentEnrollmentContext context, EnrollmentSubjectLists subjectLists) {}
@@ -816,7 +820,6 @@ public class StudentEnrollmentController implements Initializable {
                 "    sec.section_name AS student_year_section, " +
                 "    sem.semester_name AS section_semester, " +
                 "    s.student_id, " +
-                "    sec.section_id, " +      
                 "    sec.semester_id, " +     
                 "    sec.academic_year_id " + 
                 "FROM " +
@@ -842,10 +845,9 @@ public class StudentEnrollmentController implements Initializable {
                     String studentYearSectionStr = rs.getString("student_year_section");
                     String semester = rs.getString("section_semester");
                     int studentId = rs.getInt("student_id");
-                    int sectionId = rs.getInt("section_id");
                     int semesterId = rs.getInt("semester_id");
                     int academicYearId = rs.getInt("academic_year_id");
-                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelInt, semester, studentId, studentYearSectionStr, sectionId, semesterId, academicYearId);
+                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelInt, semester, studentId, studentYearSectionStr, semesterId, semesterId, academicYearId);
                     logger.debug("fetchStudentEnrollmentContext: Fetched context: {}", context);
                     return context;
                 } else {
