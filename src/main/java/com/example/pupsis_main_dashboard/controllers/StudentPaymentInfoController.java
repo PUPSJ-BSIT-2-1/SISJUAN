@@ -30,10 +30,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class StudentPaymentInfoController {
 
@@ -87,14 +84,26 @@ public class StudentPaymentInfoController {
     private double initialBalance = 0.00;
     private double tuitionPerUnit = 0.00;
     private double totalFees = 0.00;
-    private int numberOfUnitsEnrolled = 12;
+    private int numberOfUnitsEnrolled;
     private final List<Fee> fees = new ArrayList<>();
     protected double xOffset = 0;
     protected double yOffset = 0;
 
     Logger logger = LoggerFactory.getLogger(StudentPaymentInfoController.class.getName());
 
-    @FXML
+    private StudentDashboardController studentDashboardController;
+    private StudentEnrollmentController enrollmentController;
+
+    public void setStudentDashboardController(StudentDashboardController controller) {
+        this.studentDashboardController = controller;
+    }
+
+    public void setEnrollmentController(StudentEnrollmentController controller) {
+        this.enrollmentController = controller;
+    }
+
+
+        @FXML
     public void initialize() {
 
         logger.info("Initializing StudentPaymentInfoController...");
@@ -177,6 +186,11 @@ public class StudentPaymentInfoController {
     private void setupEventHandlers() {
 
         viewAccountsButton.setOnAction(this::handleViewAccounts);
+        viewScheduleButton.setOnAction(_ -> {
+            handleViewSchedule();
+            String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentClassSchedule.fxml";
+            studentDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
+        });
         informationPaymentHBox.setOnMouseClicked(_ -> showPaymentInformationAlert(root.getScene().getRoot()));
         submitPaymentButton.setOnAction(_ -> handleSubmitPaymentAsync());
     }
@@ -317,7 +331,6 @@ public class StudentPaymentInfoController {
         String studentNumber = SessionData.getInstance().getStudentNumber();
 
         String query = """
-            
             SELECT f.status_name
             FROM public.students s
             JOIN public.fhe_act_statuses f ON s.fhe_eligible_id = f.fhe_id
@@ -515,8 +528,8 @@ public class StudentPaymentInfoController {
 
         // Center dialog
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-        double x = primScreenBounds.getMinX() + (primScreenBounds.getWidth() - dialog.getDialogPane().getPrefWidth()) / 2;
-        double y = primScreenBounds.getMinY() + (primScreenBounds.getHeight() - dialog.getDialogPane().getPrefHeight()) / 2;
+        double x = primScreenBounds.getMinX() + (primScreenBounds.getWidth() - dialog.getDialogPane().getPrefWidth()) / 2 + 40;
+        double y = primScreenBounds.getMinY() + (primScreenBounds.getHeight() - dialog.getDialogPane().getPrefHeight()) / 2 - 30;
         dialog.getDialogPane().getScene().getWindow().setX(x);
         dialog.getDialogPane().getScene().getWindow().setY(y);
 
@@ -744,11 +757,52 @@ public class StudentPaymentInfoController {
                 StudentPaymentHistoryController controller = loader.getController();
 
                 contentPane.setContent(newContent);
+
+                Platform.runLater(() -> {
+                    contentPane.setVvalue(0);
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> contentPane.setVvalue(0));
+                        }
+                    }, 100); // 100ms delay for final layout
+                });
             }
         } catch (IOException e) {
             logger.error("Error loading StudentPaymentHistory.fxml: {}", e.getMessage());
             StageAndSceneUtils.showAlert("Navigation Error",
                     "Unable to load payment history. Please try again.", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void handleViewSchedule() {
+        try {
+            ScrollPane contentPane = (ScrollPane) root.getScene().lookup("#contentPane");
+
+            if (contentPane != null) {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/com/example/pupsis_main_dashboard/fxml/StudentClassSchedule.fxml")
+                );
+
+                Parent newContent = loader.load();
+                StudentClassScheduleController controller = loader.getController();
+
+                contentPane.setContent(newContent);
+
+                Platform.runLater(() -> {
+                    contentPane.setVvalue(0);
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> contentPane.setVvalue(0));
+                        }
+                    }, 100); // 100ms delay for final layout
+                });
+            }
+        } catch (IOException e) {
+            logger.error("Error loading StudentClassSchedule.fxml: {}", e.getMessage());
+            StageAndSceneUtils.showAlert("Navigation Error",
+                    "Unable to load class schedule. Please try again.", Alert.AlertType.ERROR);
         }
     }
 

@@ -247,7 +247,6 @@ public class AdminSubjectManagementController implements Initializable {
     }
 
     private boolean isMatchesSearchText(SubjectManagement subject, String searchText) {
-        logger.debug("Checking if subject matches search text: {}", searchText);
         boolean matchesSearchText = true;
         if (searchText != null && !searchText.isEmpty()) {
             matchesSearchText = subject.getSubjectCode().toLowerCase().contains(searchText) ||

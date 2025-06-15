@@ -772,7 +772,6 @@ public class FacultyEditGradesPageController implements Initializable {
         Platform.runLater(() -> {
             studentsList.clear();
             studentsList.addAll(students);
-            studentsTable.setItems(studentsList);
         });
     }
 
