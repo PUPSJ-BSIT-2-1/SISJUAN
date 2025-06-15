@@ -114,8 +114,8 @@ public class StudentPaymentHistoryController {
                     semesterButton.getStyleClass().add("semester-button");
                     String schoolYear = rs.getString("academic_year_name");
                     String description = rs.getString("payment_source");
-                    String createdDate = rs.getDate("created_at").toLocalDate().toString();
-                    String approvedDate = rs.getDate("approved_at").toLocalDate().toString();
+                    String createdDate = String.valueOf(rs.getDate("created_at").toLocalDate());
+                    String approvedDate = String.valueOf(rs.getDate("approved_at").toLocalDate());
                     Double assessment = Double.valueOf(rs.getString("assessment"));
                     Double amount = Double.valueOf(rs.getString("amount"));
                     Double balance = Double.valueOf(rs.getString("balance"));

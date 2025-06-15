@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.StageStyle;
@@ -122,6 +123,7 @@ public class StudentPaymentInfoController {
 
         // Load data asynchronously
         loadDataAsync();
+
     }
 
     private void setupInitialUIState() {
@@ -195,7 +197,7 @@ public class StudentPaymentInfoController {
         submitPaymentButton.setOnAction(_ -> handleSubmitPaymentAsync());
     }
 
-    private void loadDataAsync() {
+    public void loadDataAsync() {
 
         String studentNumber = SessionData.getInstance().getStudentNumber();
 
@@ -209,8 +211,10 @@ public class StudentPaymentInfoController {
                 // Load data in the background thread
                 loadStudentInfo(studentNumber);
                 determineEligibility();
-                loadFeeBreakdown();
-
+                getTotalEnrolledUnits();
+                if (numberOfUnitsEnrolled > 0) {
+                    loadFeeBreakdown();
+                }
                 return null;
             }
 
@@ -341,20 +345,17 @@ public class StudentPaymentInfoController {
             stmt.setString(1, studentNumber);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                    String statusName = rs.getString("status_name"); // get before runLater
                     Platform.runLater(() -> {
-                        try {
-                            if (Objects.equals(rs.getString("status_name"), "Eligible")) {
-                                eligibleCard.setOpacity(1);
-                                notEligibleCard.setOpacity(0);
-                                fheActRadio.setSelected(true);
-                                fheActRadio.setDisable(false);
-                            } else {
-                                notEligibleCard.setOpacity(1);
-                                eligibleCard.setOpacity(0);
-                                fheActRadio.setDisable(true);
-                            }
-                        } catch (SQLException e) {
-                            logger.error("Error determining eligibility: {}", e.getMessage());
+                        if (Objects.equals(statusName, "Eligible")) {
+                            eligibleCard.setOpacity(1);
+                            notEligibleCard.setOpacity(0);
+                            fheActRadio.setSelected(true);
+                            fheActRadio.setDisable(false);
+                        } else {
+                            notEligibleCard.setOpacity(1);
+                            eligibleCard.setOpacity(0);
+                            fheActRadio.setDisable(true);
                         }
                     });
                 }
@@ -562,11 +563,16 @@ public class StudentPaymentInfoController {
         confirmAlert.setHeaderText("Submit Payment Confirmation");
         confirmAlert.setContentText(String.format(
                 """
-                        Are you sure you want to submit a payment of ₱%,.2f using %s?
-                        This action cannot be undone and the payment will be
-                        immediately reviewed by administration.""",
+                Are you sure you want to submit a payment of ₱%,.2f using %s?
+                This action cannot be undone and the payment will be
+                immediately reviewed by administration.""",
                 totalFees, method
         ));
+
+        DialogPane dialogPane = confirmAlert.getDialogPane();
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE); // ensures it respects preferred height
+        dialogPane.setPrefWidth(400); // set preferred width
+        dialogPane.setPrefHeight(200); // set preferred height
         return confirmAlert;
     }
 
@@ -803,6 +809,27 @@ public class StudentPaymentInfoController {
             logger.error("Error loading StudentClassSchedule.fxml: {}", e.getMessage());
             StageAndSceneUtils.showAlert("Navigation Error",
                     "Unable to load class schedule. Please try again.", Alert.AlertType.ERROR);
+        }
+    }
+
+    public void getTotalEnrolledUnits() {
+        String studentNumber = SessionData.getInstance().getStudentNumber();
+
+        String sql = "SELECT SUM(CAST(s.units AS INTEGER)) AS total_units " +
+                "FROM student_load e " +
+                "JOIN subjects s ON e.subject_id = s.subject_id " +
+                "WHERE e.student_pk_id = (SELECT student_id FROM students WHERE student_number = ?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, studentNumber);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                numberOfUnitsEnrolled = rs.getInt("total_units");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
