@@ -16,6 +16,7 @@ module com.example.pupsis_main_dashboard {
     requires java.prefs;
     requires mysql.connector.j;
     requires jbcrypt;
+    requires com.zaxxer.hikari;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml;
     exports com.example.pupsis_main_dashboard;

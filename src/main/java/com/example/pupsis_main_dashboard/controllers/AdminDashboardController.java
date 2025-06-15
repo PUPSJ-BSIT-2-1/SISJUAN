@@ -5,6 +5,7 @@ import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ public class AdminDashboardController {
     @FXML private ScrollPane contentPane;
     @FXML private Node fade1;
     @FXML private Node fade2;
+    @FXML private StackPane loadingOverlay;
 
     private static final String USER_TYPE = "ADMIN";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/AdminHomeContent.fxml";
@@ -61,6 +64,14 @@ public class AdminDashboardController {
     
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
+        long t0 = System.currentTimeMillis();
+        logger.info("[PERF] AdminDashboardController.initialize() started");
+
+        // FXML loaded before this point
+        long t1 = System.currentTimeMillis();
+        logger.info("[PERF] FXML loaded in {} ms", (t1 - t0));
+
+        logger.info("[PERF] Starting controller setup...");
         homeHBox.getStyleClass().add("selected");
 
         Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class); // Use AdminLoginController's preferences node
@@ -86,19 +97,42 @@ public class AdminDashboardController {
         // Setup click handlers for all menu items
         setupClickHandlers();
 
-        // Preload and cache all FXML content that may be accessed from the sidebar
-        preloadAllContent();
+        long t2 = System.currentTimeMillis();
+        logger.info("[PERF] Controller setup finished in {} ms", (t2 - t1));
 
-        // Apply theme to the main dashboard scene
-        Platform.runLater(() -> {
-            if (contentPane != null && contentPane.getScene() != null) {
-                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
-                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
-            } else {
-                logger.warn("AdminDashboardController: Scene not available for initial theme application.");
+        // Show loading overlay or set all content panes to show "Loading..."
+        showLoadingOverlay(true);
+
+        // Show home FXML immediately (without data)
+        loadHomeFxmlSkeleton();
+
+        // Run data load in background
+        Task<Void> dataLoadTask = new Task<>() {
+            @Override
+            protected Void call() {
+                logger.info("[PERF] Starting data load (background thread)...");
+                long dataStart = System.currentTimeMillis();
+                preloadAllContent();
+                long dataEnd = System.currentTimeMillis();
+                logger.info("[PERF] Data loaded in {} ms (background)", (dataEnd - dataStart));
+                return null;
             }
+        };
+        dataLoadTask.setOnSucceeded(event -> {
+            logger.info("[PERF] Populating UI (background data load complete)...");
+            long uiStart = System.currentTimeMillis();
+            // Hide loading overlay and update UI as needed
+            showLoadingOverlay(false);
+            loadContent(HOME_FXML);
+            long uiEnd = System.currentTimeMillis();
+            logger.info("[PERF] UI populated in {} ms", (uiEnd - uiStart));
+            logger.info("[PERF] AdminDashboardController.initialize() total time: {} ms", (uiEnd - t0));
         });
+        dataLoadTask.setOnFailed(event -> {
+            logger.error("[PERF] Data load failed", dataLoadTask.getException());
+            showLoadingOverlay(false);
+        });
+        new Thread(dataLoadTask).start();
     }
 
     // Set up click handlers for all sidebar menu items
@@ -144,59 +178,36 @@ public class AdminDashboardController {
     
     // Preload and cache all FXML content
     private void preloadAllContent() {
-        // Load and cache Home content first (already shown)
-        loadContent(HOME_FXML);
+        // Only load/cache FXML and data in this method, DO NOT TOUCH UI
+        // All UI updates must be done on FX thread after this task completes
 
-
-        // Preload and cache other content asynchronously to avoid blocking the UI
-        Platform.runLater(() -> {
-            System.out.println("Starting asynchronous preloading of interfaces...");
-
-            // Prioritize Student Management interface
-            preloadFxmlContent(SCHEDULE_FXML);
-            // Then load other interfaces
-            preloadFxmlContent(SETTINGS_FXML);
-            preloadFxmlContent(CALENDAR_FXML);
-            preloadFxmlContent(ABOUT_FXML);
-            preloadFxmlContent(STUDENT_MANAGEMENT_FXML);
-           preloadFxmlContent(PAYMENT_INFO_FXML);
-            preloadFxmlContent(SUBJECTS_FXML);
-            preloadFxmlContent(FACULTY_FXML);
-
-            System.out.println("All interfaces preloaded successfully");
-        });
+        // Optionally, you can cache FXML nodes here if you want, but do not call setContent or modify UI
+        preloadFxmlContent(SCHEDULE_FXML);
+        preloadFxmlContent(SETTINGS_FXML);
+        preloadFxmlContent(CALENDAR_FXML);
+        preloadFxmlContent(ABOUT_FXML);
+        preloadFxmlContent(STUDENT_MANAGEMENT_FXML);
+        preloadFxmlContent(PAYMENT_INFO_FXML);
+        preloadFxmlContent(SUBJECTS_FXML);
+        preloadFxmlContent(FACULTY_FXML);
     }
     
     // Preload and cache a specific FXML file
     private void preloadFxmlContent(String fxmlPath) {
         try {
-            if (fxmlPath != null && !contentCache.containsKey(fxmlPath)) {
-                System.out.println("Preloading interface: " + fxmlPath);
-
-                // Create FXMLLoader
-                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath)));
-
-                // Load FXML
-                Parent content = loader.load();
-
-                // Apply theme to this loaded content
-                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
-                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
-
-                if (content != null) {
-                    // Apply appropriate CSS classes based on the current theme
-                    content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
-                    content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+            // Only cache, do not update UI here
+            if (!contentCache.containsKey(fxmlPath)) {
+                var resource = getClass().getResource(fxmlPath);
+                if (resource != null) {
+                    Parent content = FXMLLoader.load(resource);
+                    contentCache.put(fxmlPath, content);
+                } else {
+                    System.err.println("Resource not found: " + fxmlPath);
                 }
-
-                // Cache the content for later use
-                contentCache.put(fxmlPath, content);
-                System.out.println("Successfully preloaded: " + fxmlPath);
             }
         } catch (IOException e) {
-            // Silently handle the exception, content will be loaded on-demand if needed
-            System.err.println("Error preloading " + fxmlPath + ": " + e.getMessage());
-            logger.error("Error preloading {}", fxmlPath, e);
+            System.err.println("Error preloading content: " + fxmlPath);
+            logger.error("Error preloading content: {}", fxmlPath, e);
         }
     }
     
@@ -439,4 +450,24 @@ public class AdminDashboardController {
         studentsHBox.getStyleClass().remove("selected");
     }
 
+    private void showLoadingOverlay(boolean show) {
+        // If you have a loading overlay StackPane, show/hide it here
+        // Or set all content panes to show "Loading..." text
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisible(show);
+        }
+        // If you don't have a loadingOverlay, implement as needed per your FXML
+    }
+
+    // Loads the home FXML skeleton immediately, without waiting for data
+    private void loadHomeFxmlSkeleton() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(HOME_FXML));
+            Parent homeContent = loader.load();
+            contentPane.setContent(homeContent);
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading home content"));
+            logger.error("Error loading home FXML skeleton", e);
+        }
+    }
 }
