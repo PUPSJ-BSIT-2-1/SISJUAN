@@ -221,8 +221,6 @@ public class StudentEnrollmentController implements Initializable {
                     }
                     connection.commit();
                     SessionData.getInstance().setUnitsEnrolled(currentSelectedUnits);
-                    enrollButton.setOnAction(_ -> redirectToPaymentInfo());
-                    System.out.println("Enrollment successful. Trying to redirect to PaymentInfo.fxml...");
                     return true;
                 } catch (SQLException e) {
                     // Log error properly
@@ -239,9 +237,10 @@ public class StudentEnrollmentController implements Initializable {
             }
         };
         enrollmentTask.setOnSucceeded(workerStateEvent -> {
-            if (enrollmentTask.getValue()) { 
+            if (enrollmentTask.getValue()) {
                 showAlert("Enrollment Successful", "Subjects enrolled successfully.","info");
                 refreshEnrollmentView(); // Refresh data and view after successful enrollment
+                redirectToPaymentInfo();
             } else {
                 // This case might not be hit if exceptions are thrown for failures
                 showAlert("Enrollment Failed", "Failed to enroll subjects. Please check details.","error");
@@ -265,14 +264,16 @@ public class StudentEnrollmentController implements Initializable {
     }
 
     private void redirectToPaymentInfo() {
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Redirect to Payment Information");
         alert.setHeaderText("Do you want to go to the Payment Information section?");
         alert.setContentText("Make sure you have enrolled all the subjects you want before proceeding.");
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().add(ButtonType.OK);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
+            // User confirmed: redirect and set controller
             try {
                 ScrollPane contentPane = (ScrollPane) root.getScene().lookup("#contentPane");
 
@@ -283,6 +284,7 @@ public class StudentEnrollmentController implements Initializable {
 
                     Parent newContent = loader.load();
                     StudentPaymentInfoController controller = loader.getController();
+                    controller.setEnrollmentController(this);
 
                     contentPane.setContent(newContent);
                     studentDashboardController.handleQuickActionClicks("/com/example/pupsis_main_dashboard/fxml/StudentPaymentInfo.fxml");

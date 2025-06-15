@@ -53,6 +53,7 @@ public class StudentDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
+    private StudentEnrollmentController currentEnrollmentController;
     // private final String identifier = RememberMeHandler.getCurrentUserEmail(); // Changed & moved to initialize
     
     // FXML paths as constants
@@ -194,8 +195,12 @@ public class StudentDashboardController {
                 // Check if a resource exists before trying to load it
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
-                    Parent content = FXMLLoader.load(resource);
-                    contentCache.put(fxmlPath, content);
+                    FXMLLoader loader = new FXMLLoader(resource);
+                    Parent content = loader.load(); // not FXMLLoader.load(resource)
+                    Object controller = loader.getController();
+
+                    // Inject dashboard controller
+                    setupControllerDependencies(controller);
                     logger.info("preloadFxmlContent({}) - LOADED and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - startTime));
                 } else {
                     logger.warn("Resource not found: {}", fxmlPath);
@@ -372,6 +377,7 @@ public class StudentDashboardController {
     void loadContent(String fxmlPath) {
         try {
             Parent contentNode;
+            Object controller;
             long loadStartTime = System.currentTimeMillis();
             if (contentCache.containsKey(fxmlPath)) {
                 contentNode = contentCache.get(fxmlPath);
@@ -381,8 +387,16 @@ public class StudentDashboardController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 contentNode = loader.load();
                 contentCache.put(fxmlPath, contentNode); // Cache after loading
-                StudentHomeContentController controller = loader.getController();
-                controller.setStudentDashboardController(this);
+                controller = loader.getController();
+                setupControllerDependencies(controller);
+
+                // IMPORTANT: Setup dependencies IMMEDIATELY after loading
+                if (controller != null) {
+                    setupControllerDependencies(controller);
+                    logger.info("Dependencies set up for controller: {}", controller.getClass().getSimpleName());
+                } else {
+                    logger.warn("Controller is null for FXML: {}", fxmlPath);
+                }
                 logger.info("loadContent({}) - Loaded from FXML and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadStartTime));
             }
             // Remove direct theme class assignment from content node
@@ -454,6 +468,12 @@ public class StudentDashboardController {
             clearAllSelections();
             registrationHBox.getStyleClass().add("selected");
         }
+
+        if (fxmlPath.equals(PAYMENT_INFO_FXML)) {
+            clearAllSelections();
+            paymentInfoHBox.getStyleClass().add("selected");
+        }
+
     }
 
     // Clear all selections from the sidebar items
@@ -468,4 +488,43 @@ public class StudentDashboardController {
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
     }
+
+    private void setupControllerDependencies(Object controller) {
+        if (controller == null) {
+            logger.warn("Cannot setup dependencies - controller is null");
+            return;
+        }
+
+        logger.info("Setting up dependencies for: {}", controller.getClass().getSimpleName());
+
+        try {
+            switch (controller) {
+                case StudentHomeContentController homeController -> {
+                    homeController.setStudentDashboardController(this);
+                    logger.info("Dashboard controller injected into StudentHomeContentController");
+                }
+                case StudentPaymentInfoController paymentController -> {
+                    paymentController.setStudentDashboardController(this);
+                    logger.info("Dashboard controller injected into StudentPaymentInfoController");
+
+                    if (this.currentEnrollmentController != null) {
+                        paymentController.setEnrollmentController(this.currentEnrollmentController);
+                        logger.info("Enrollment controller injected into StudentPaymentInfoController");
+                    } else {
+                        logger.warn("No enrollment controller available to inject");
+                    }
+                }
+                case StudentEnrollmentController enrollmentController -> {
+                    enrollmentController.setStudentDashboardController(this);
+                    this.currentEnrollmentController = enrollmentController;
+                    logger.info("Dashboard controller injected into StudentEnrollmentController and reference stored");
+                }
+                default -> logger.warn("Unknown controller type: {}", controller.getClass().getSimpleName());
+            }
+        } catch (Exception e) {
+            logger.error("Error setting up dependencies for controller: {}", controller.getClass().getSimpleName(), e);
+        }
+    }
+
+
 }
