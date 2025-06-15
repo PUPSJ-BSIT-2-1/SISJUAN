@@ -77,10 +77,37 @@ public class StudentDashboardController {
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
-        
-        // Preload and cache all FXML content that may be accessed from the sidebar
-        preloadAllContent();
-        
+
+        // Show home FXML immediately (without data)
+        loadHomeFxmlSkeleton();
+
+        // Show loading overlay if you have one (optional)
+        if (loadingIndicator != null) loadingIndicator.setVisible(true);
+
+        // Run data load in background
+        Task<Void> dataLoadTask = new Task<>() {
+            @Override
+            protected Void call() {
+                logger.info("[PERF] Starting data load (background thread)...");
+                long dataStart = System.currentTimeMillis();
+                preloadAllContent();
+                long dataEnd = System.currentTimeMillis();
+                logger.info("[PERF] Data loaded in {} ms (background)", (dataEnd - dataStart));
+                return null;
+            }
+        };
+        dataLoadTask.setOnSucceeded(event -> {
+            logger.info("[PERF] Populating UI (background data load complete)...");
+            // Hide loading overlay if you have one
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+            // Optionally, trigger data population for home content here if needed
+        });
+        dataLoadTask.setOnFailed(event -> {
+            logger.error("[PERF] Data load failed", dataLoadTask.getException());
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+        });
+        new Thread(dataLoadTask).start();
+
         // Load student info using getCurrentUserStudentNumber
         String identifier = RememberMeHandler.getCurrentUserStudentNumber(); // Changed
         if (identifier != null && !identifier.isEmpty()) {
@@ -104,6 +131,18 @@ public class StudentDashboardController {
         });
 
         logger.info("StudentDashboardController.initialize() - END. Duration: {} ms", (System.currentTimeMillis() - startTime));
+    }
+
+    // Loads the home FXML skeleton immediately, without waiting for data
+    private void loadHomeFxmlSkeleton() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(HOME_FXML));
+            Parent homeContent = loader.load();
+            contentPane.setContent(homeContent);
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading home content"));
+            logger.error("Error loading home FXML skeleton", e);
+        }
     }
     
     // Set up scroll pane fade effects based on scroll position
