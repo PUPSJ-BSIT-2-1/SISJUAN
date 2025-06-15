@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="370.0" style="-fx-background-color: derive(rgba(235,87,87,0.1), 0%, 0.2);" stylesheets="@../css/NotificationBar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="5.0" style="-fx-background-color: rgb(235,87,87);" styleClass="corner-line" />
+      <StackPane prefHeight="150.0" prefWidth="30.0">
+         <children>
+            <SVGPath content="M30 15C30 23.2843 23.2843 30 15 30C6.71573 30 0 23.2843 0 15C0 6.71573 6.71573 0 15 0C23.2843 0 30 6.71573 30 15Z" fill="#eb5757" />
+            <SVGPath content="M14.5117 4.78125L10 9.29297L5.48828 4.78125C5.27995 4.57292 4.94661 4.57292 4.73828 4.78125C4.52995 4.98958 4.52995 5.32292 4.73828 5.53125L9.25 10.043L4.73828 14.5547C4.52995 14.763 4.52995 15.0963 4.73828 15.3047C4.84245 15.4089 4.97995 15.4609 5.11745 15.4609C5.25495 15.4609 5.39245 15.4089 5.49661 15.3047L10 10.793L14.5117 15.3047C14.6159 15.4089 14.7534 15.4609 14.8909 15.4609C15.0284 15.4609 15.1659 15.4089 15.27 15.3047C15.4784 15.0963 15.4784 14.763 15.27 14.5547L10.7583 10.043L15.27 5.53125C15.4784 5.32292 15.4784 4.98958 15.27 4.78125C15.0617 4.57292 14.7284 4.57292 14.5117 4.78125Z" fill="WHITE" />
+         </children>
+         <HBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </HBox.margin>
+      </StackPane>
+      <VBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="270.0">
+         <children>
+            <Label prefWidth="270.0" text="Error">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="errorMessage" prefWidth="270.0" text="Lorem ipsum." />
+         </children>
+      </VBox>
+   </children>
+   <styleClass>
+      <String fx:value="root" />
+      <String fx:value="root" />
+   </styleClass>
+</HBox>
