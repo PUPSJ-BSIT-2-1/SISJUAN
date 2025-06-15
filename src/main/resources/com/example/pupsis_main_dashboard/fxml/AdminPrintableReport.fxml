@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefWidth="1050.0" styleClass="printable-list" stylesheets="@../css/AdminPrintableReport.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminPrintableReportController">
+<BorderPane prefWidth="1100.0" styleClass="printable-list" stylesheets="@../css/AdminPrintableReport.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminPrintableReportController">
 
     <!-- HEADER -->
     <top>

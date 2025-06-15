@@ -1,6 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Grades;
+import com.example.pupsis_main_dashboard.models.Schedule;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import javafx.collections.FXCollections;
@@ -85,6 +86,7 @@ public class StudentGradingModuleController {
         TableColumn<?, ?>[] columns = new TableColumn[]{subCode, subDescription, facultyName, units, sectionCode, finGrade, gradeStatus};
         for (TableColumn<?, ?> col : columns) {
             col.setReorderable(false);
+            col.setSortable(false);
         }
 
         studentsTable.setRowFactory(_ -> {
@@ -93,7 +95,7 @@ public class StudentGradingModuleController {
             return row;
         });
 
-        for (TableColumn<Grades, String> col : Arrays.asList(subCode, subDescription, facultyName, units, sectionCode, finGrade, gradeStatus)) {
+        for (TableColumn<Grades, String> col : Arrays.asList(subCode, subDescription, facultyName, sectionCode, finGrade, gradeStatus)) {
             setWrappingHeaderCellFactory(col);
         }
 
@@ -102,24 +104,23 @@ public class StudentGradingModuleController {
     }
 
     private void setWrappingHeaderCellFactory(TableColumn<Grades, String> column) {
+        Label headerLabel = new Label();
+        headerLabel.setWrapText(true);
+        headerLabel.setMaxWidth(Double.MAX_VALUE);
+        headerLabel.setStyle("-fx-alignment: center; -fx-text-alignment: center;");
+        StackPane headerPane = new StackPane(headerLabel);
+        headerPane.setPrefHeight(Control.USE_COMPUTED_SIZE);
+        headerPane.setAlignment(Pos.CENTER);
 
-        AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
-        root.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                isDarkTheme.set(newScene.getRoot().getStyleClass().contains("dark-theme"));
-                newScene.getRoot().getStyleClass().addListener((ListChangeListener<String>) change ->
-                        isDarkTheme.set(change.getList().contains("dark-theme")));
-            }
-        });
+        column.setGraphic(headerPane);
 
         column.setCellFactory(_ -> new TableCell<>() {
             private final Label label = new Label();
 
             {
-                String textColor = isDarkTheme.get() ? "#e0e0e0" : "#000000";
                 label.setWrapText(true);
                 label.setMaxWidth(Double.MAX_VALUE);
-                label.setStyle("-fx-alignment: center; -fx-text-alignment: center; -fx-text-fill: " + textColor + ";");
+                label.setStyle("-fx-alignment: center; -fx-text-alignment: center;");
 
                 StackPane pane = new StackPane(label);
                 pane.setPrefHeight(Control.USE_COMPUTED_SIZE);
@@ -134,7 +135,7 @@ public class StudentGradingModuleController {
                     setGraphic(null);
                 } else {
                     label.setText(item);
-                    setGraphic(label);
+                    setGraphic(label.getParent());  // StackPane as parent
                 }
             }
         });
