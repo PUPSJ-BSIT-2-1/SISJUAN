@@ -59,7 +59,7 @@
 
                     <!-- Row 4 -->
                     <Label styleClass="view-text" text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                    <ComboBox fx:id="departmentComboBox" prefHeight="20.0" prefWidth="150.0"  GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <ComboBox fx:id="departmentComboBox" prefHeight="20.0" prefWidth="150.0" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="5">
                         <GridPane.margin>
                             <Insets />
                         </GridPane.margin>
@@ -80,7 +80,7 @@
 
                     <!-- Row 8 -->
                     <Label styleClass="view-text" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-                    <ComboBox fx:id="statusComboBox" prefHeight="27.0" prefWidth="200.0" promptText="Status" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                    <ComboBox fx:id="statusComboBox" prefHeight="27.0" prefWidth="200.0" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="9">
                   <GridPane.margin>
                      <Insets />
                   </GridPane.margin></ComboBox>

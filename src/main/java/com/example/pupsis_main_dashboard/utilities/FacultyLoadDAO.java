@@ -19,16 +19,41 @@ public class FacultyLoadDAO {
     /**
      * Adds a faculty load entry (assignment of a subject to faculty).
      *
-     * @param facultyId      the faculty identifier (int)
      * @param subjectId      the subject identifier (int)
      * @param sectionId      the section identifier (int) from the 'section' table
      * @param semesterId     the semester identifier (int)
      * @param academicYearId the academic year identifier (int)
      * @return true if insert is successful, false otherwise
      */
-    public boolean addFacultyLoad(int facultyId, int subjectId, int sectionId, int semesterId, int academicYearId) {
-        String sql = "INSERT INTO faculty_load (faculty_id, subject_id, section_id, semester_id, academic_year_id) VALUES (?, ?, ?, ?, ?)";
+    public boolean isAssignmentDuplicate(int subjectId, int sectionId, int semesterId, int academicYearId) {
+        String sql = "SELECT COUNT(*) FROM faculty_load " +
+                "WHERE subject_id = ? AND section_id = ? AND semester_id = ? AND academic_year_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, subjectId);
+            stmt.setInt(2, sectionId);
+            stmt.setInt(3, semesterId);
+            stmt.setInt(4, academicYearId);
 
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking assignment duplication: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean addFacultyLoad(int facultyId, int subjectId, int sectionId, int semesterId, int academicYearId) {
+        // Optionally, check duplication here too
+        if (isAssignmentDuplicate(subjectId, sectionId, semesterId, academicYearId)) {
+            System.err.println("Assignment already exists!");
+            return false;
+        }
+
+        String sql = "INSERT INTO faculty_load (faculty_id, subject_id, section_id, semester_id, academic_year_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, facultyId);
             stmt.setInt(2, subjectId);
@@ -112,7 +137,6 @@ public class FacultyLoadDAO {
         }
         return assignments;
     }
-
 
     // Simple record to represent a faculty load entry.
     public record FacultyLoad(int facultyId, int subjectId, int sectionId, int semesterId, int academicYearId) {}

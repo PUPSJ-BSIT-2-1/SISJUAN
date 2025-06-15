@@ -19,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import javafx.geometry.Bounds;
+
 
 public class AdminFacultyManagementController {
 
@@ -40,8 +43,9 @@ public class AdminFacultyManagementController {
     @FXML private TableColumn<Faculty, String> departmentColumn;
     @FXML private TableColumn<Faculty, String> emailColumn;
     @FXML private TableColumn<Faculty, String> contactColumn;
-    @FXML private TableColumn<Faculty, Void> detailsColumn;
-    @FXML private TableColumn<Faculty, Void> viewAssignmentsColumn;
+    @FXML private TableColumn<Faculty, Void> actionsColumn;
+    @FXML private HBox utilityMenuBox;
+
     @FXML private HBox backButton;
     @FXML private TextField searchField;
 
@@ -53,6 +57,7 @@ public class AdminFacultyManagementController {
     private ScrollPane contentPane;
     private String schoolYear;
     private String semester;
+
 
     public void initialize() {
         new Thread(() -> {
@@ -91,35 +96,130 @@ public class AdminFacultyManagementController {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> handleSearch());
 
         facultyTable.setItems(facultyList);
-        detailsColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button("➕");
+
+        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn};
+        for (var col : columns) {
+            col.setReorderable(false);
+            col.setSortable(false);
+        }
+
+        actionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button menuBtn = new Button("⋮"); // Unicode vertical ellipsis
 
             {
-                btn.getStyleClass().add("details-button");
-                btn.setOnAction(event -> {
+                menuBtn.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-font-size: 16;" +
+                                "-fx-cursor: hand;" +
+                                "-fx-padding: 0 8 0 8;"
+                );
+                menuBtn.setFocusTraversable(false);
+
+                menuBtn.setOnAction(event -> {
                     Faculty faculty = getTableView().getItems().get(getIndex());
-                    showFacultyDetailsModal(faculty);
+                    ContextMenu menu = new ContextMenu();
+
+                    // Assign Subject option
+                    MenuItem assignItem = new MenuItem("Assign Subject");
+                    assignItem.setOnAction(e -> handleAssignSubject(faculty));
+
+                    // Faculty Details option
+                    MenuItem detailsItem = new MenuItem("Faculty Details");
+                    detailsItem.setOnAction(e -> showFacultyDetailsModal(faculty));
+
+                    // View Assigned Subjects option
+                    MenuItem viewAssignmentsItem = new MenuItem("View Assigned Subjects");
+                    viewAssignmentsItem.setOnAction(e -> showAssignmentsForFaculty(faculty));
+
+                    // Add menu items
+                    menu.getItems().addAll(assignItem, detailsItem, viewAssignmentsItem);
+
+                    // Style menu items
+                    menu.getItems().forEach(item ->
+                            item.setStyle("-fx-font-size: 15; -fx-padding: 8 24 8 24;")
+                    );
+
+                    // ---- Improved: show menu INSIDE the box ----
+                    Bounds btnBounds = menuBtn.localToScreen(menuBtn.getBoundsInLocal());
+                    Bounds tableBounds = facultyTable.localToScreen(facultyTable.getBoundsInLocal());
+
+                    double popupX = btnBounds.getMinX();
+                    double popupY = btnBounds.getMaxY();
+                    double menuWidth = 210; // match your design
+
+                    if (popupX + menuWidth > tableBounds.getMaxX()) {
+                        popupX = Math.max(tableBounds.getMinX(), tableBounds.getMaxX() - menuWidth);
+                    }
+
+                    menu.setStyle("-fx-background-color: white;" +
+                            "-fx-background-radius: 12;" +
+                            "-fx-border-radius: 12;" +
+                            "-fx-border-color: #E2E2E2;" +
+                            "-fx-effect: dropshadow(three-pass-box,rgba(157,34,53,0.10),8,0,0,2);" +
+                            "-fx-min-width: 210;");
+
+                    menu.show(menuBtn, popupX, popupY);
+
                 });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
+                setGraphic(empty ? null : menuBtn);
             }
         });
+        // --- Utility menu for export/print ---
+        ContextMenu exportPrintMenu = new ContextMenu();
 
-        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn, detailsColumn};
-        for (var col : columns) {
-            col.setReorderable(false);
-            col.setSortable(false);
-        }
-        addViewAssignmentsButtonToTable();
+        MenuItem exportItem = new MenuItem("Export CSV");
+        exportItem.setOnAction(e -> handleExportCSV());
+
+        MenuItem printItem = new MenuItem("Print");
+        printItem.setOnAction(e -> handlePrintReport());
+
+        exportPrintMenu.getItems().addAll(exportItem, printItem);
+
+        // Custom style for this specific menu (add styleClass if needed)
+        exportPrintMenu.getStyleClass().add("export-print-context-menu");
+
+        utilityMenuBox.setOnMouseClicked(event -> {
+            // === BEGIN Smart Positioning ===
+            double menuWidth = 170; // Should match your CSS
+            double menuHeight = 98; // 2 items at 49px each (adjust if needed)
+            Scene scene = utilityMenuBox.getScene();
+
+            // Coordinates of the three-dot HBox in the scene and screen
+            Bounds boundsInScene = utilityMenuBox.localToScene(utilityMenuBox.getBoundsInLocal());
+            double sceneX = boundsInScene.getMinX();
+            double sceneYBottom = boundsInScene.getMaxY();
+            double sceneYTop = boundsInScene.getMinY();
+
+            double screenX = scene.getWindow().getX() + scene.getX() + sceneX;
+            double screenYBelow = scene.getWindow().getY() + scene.getY() + sceneYBottom;
+            double screenYAbove = screenYBelow - menuHeight - utilityMenuBox.getHeight();
+
+            // App window edges
+            double windowRight = scene.getWindow().getX() + scene.getWidth();
+            double windowBottom = scene.getWindow().getY() + scene.getHeight();
+
+            // If menu would be out of bottom edge, show above; else show below
+            double menuShowY = (screenYBelow + menuHeight > windowBottom - 10)
+                    ? screenYAbove // show above
+                    : screenYBelow; // show below
+
+            // If right edge would exceed window, shift left
+            double menuShowX = screenX;
+            if (menuShowX + menuWidth > windowRight - 8) {
+                menuShowX = windowRight - menuWidth - 8;
+            }
+
+            exportPrintMenu.show(utilityMenuBox, menuShowX, menuShowY);
+            // === END Smart Positioning ===
+        });
+
     }
+
 
     private void showAssignmentsForFaculty(Faculty faculty) {
         try {
@@ -140,34 +240,6 @@ public class AdminFacultyManagementController {
             e.printStackTrace();
             // Optionally show an error dialog
         }
-    }
-
-    private void addViewAssignmentsButtonToTable() {
-        viewAssignmentsColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button viewBtn = new Button();
-
-            {
-                // Use Unicode for eye icon (works even without custom graphics)
-                viewBtn.setText(" \uD83D\uDC41\uFE0F"); // 👁️
-                viewBtn.setStyle("-fx-background-color: transparent; -fx-font-size: 18;"); // No background, bigger icon
-
-                viewBtn.setOnAction(event -> {
-                    Faculty faculty = getTableView().getItems().get(getIndex());
-                    // Call your show assignments method here!
-                    showAssignmentsForFaculty(faculty);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(viewBtn);
-                }
-            }
-        });
     }
 
 
@@ -203,9 +275,8 @@ public class AdminFacultyManagementController {
     }
 
     @FXML
-    private void handleAssignSubject() {
-        Faculty selectedFaculty = facultyTable.getSelectionModel().getSelectedItem();
-        if (selectedFaculty == null) {
+    private void handleAssignSubject(Faculty faculty) {
+        if (faculty == null) {
             showAlert("Warning", "Please select a faculty member first.", Alert.AlertType.WARNING);
             return;
         }
@@ -236,14 +307,14 @@ public class AdminFacultyManagementController {
 
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            String facultyFullName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
+            String facultyFullName = faculty.getFirstName() + " " + faculty.getLastName(); // use parameter
             dialogStage.setTitle("Assign Subject to " + facultyFullName);
             dialogStage.setScene(new Scene(root));
             controller.setDialogStage(dialogStage);
             dialogStage.showAndWait();
 
             if (controller.isAssigned()) {
-                int facultyId = selectedFaculty.getActualFacultyId();
+                int facultyId = faculty.getActualFacultyId(); // use parameter
                 String subjectCode = controller.getSelectedSubjectCode();
                 int sectionId = controller.getSelectedSectionId();
 
@@ -254,20 +325,12 @@ public class AdminFacultyManagementController {
                     return;
                 }
 
-                // Get current semester and academic year IDs
                 int semesterId = SchoolYearAndSemester.getCurrentSemesterId();
                 int academicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
 
                 if (semesterId == -1 || academicYearId == -1) {
                     showAlert("Error", "Could not determine current semester or academic year ID.", Alert.AlertType.ERROR);
                     return;
-                }
-
-                for (FacultyLoadDAO.FacultyLoad load : facultyLoadDAO.getAllFacultyLoad()) {
-                    if (load.facultyId() == facultyId && load.subjectId() == subjectId && load.sectionId() == sectionId && load.semesterId() == semesterId && load.academicYearId() == academicYearId) {
-                        showAlert("Error", "Subject is already assigned to this faculty member.", Alert.AlertType.ERROR);
-                        return;
-                    }
                 }
 
                 boolean success = facultyLoadDAO.addFacultyLoad(
@@ -279,12 +342,17 @@ public class AdminFacultyManagementController {
                 );
 
                 if (success) {
-                    String successFacultyName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
+                    String successFacultyName = faculty.getFirstName() + " " + faculty.getLastName();
                     showAlert("Success", "Subject assigned successfully to " + successFacultyName, Alert.AlertType.INFORMATION);
                     loadFacultyData();
                 } else {
-                    showAlert("Error", "Failed to assign subject. Check logs for details.", Alert.AlertType.ERROR);
+                    showAlert(
+                            "Assignment already exists!",
+                            "You cannot assign the same subject/section/semester/academic year to more than one faculty.",
+                            Alert.AlertType.ERROR
+                    );
                 }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -295,6 +363,7 @@ public class AdminFacultyManagementController {
             showAlert("Database Error", "A database error occurred: " + se.getMessage(), Alert.AlertType.ERROR);
         }
     }
+
 
     @FXML
     private void handleBackToDashboard() {

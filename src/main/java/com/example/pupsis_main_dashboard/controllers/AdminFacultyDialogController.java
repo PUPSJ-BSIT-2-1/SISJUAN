@@ -1,9 +1,9 @@
 package com.example.pupsis_main_dashboard.controllers;
+import com.example.pupsis_main_dashboard.models.Department;
+import com.example.pupsis_main_dashboard.models.FacultyStatus;
 
 import com.example.pupsis_main_dashboard.models.Faculty;
 import com.example.pupsis_main_dashboard.utilities.FacultyDAO;
-import com.example.pupsis_main_dashboard.models.Department;
-import com.example.pupsis_main_dashboard.models.FacultyStatus;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
