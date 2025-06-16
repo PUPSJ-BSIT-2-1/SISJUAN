@@ -13,23 +13,25 @@ import javafx.util.Duration;
 
 public class NotificationUtil {
 
-
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(NotificationUtil.class);
 
-    public static void show(Stage ownerStage, String message, String type, String position) {
-        String fxmlPath = switch (type.toLowerCase()) {
-            case "success" -> "/com/example/pupsis_main_dashboard/fxml/SuccessNotificationBar.fxml";
-            case "error" -> "/com/example/pupsis_main_dashboard/fxml/ErrorNotificationBar.fxml";
-            case "info" -> "/com/example/pupsis_main_dashboard/fxml/InfoNotificationBar.fxml";
-            case "warning" -> "/com/example/pupsis_main_dashboard/fxml/WarningNotificationBar.fxml";
-            default -> null;
-        };
+    public static void showSuccess(Stage ownerStage, String message) {
+        show(ownerStage, "/com/example/pupsis_main_dashboard/fxml/SuccessNotificationBar.fxml", message, "top-center");
+    }
 
-        if (fxmlPath == null) {
-            System.err.println("Unknown notification type: " + type);
-            return;
-        }
+    public static void showError(Stage ownerStage, String message) {
+        show(ownerStage, "/com/example/pupsis_main_dashboard/fxml/ErrorNotificationBar.fxml", message, "top-center");
+    }
 
+    public static void showWarning(Stage ownerStage, String message) {
+        show(ownerStage, "/com/example/pupsis_main_dashboard/fxml/WarningNotificationBar.fxml", message, "top-center");
+    }
+
+    public static void showInfo(Stage ownerStage, String message) {
+        show(ownerStage, "/com/example/pupsis_main_dashboard/fxml/InfoNotificationBar.fxml", message, "top-center");
+    }
+
+    private static void show(Stage ownerStage, String fxmlPath, String message, String position) {
         try {
             FXMLLoader loader = new FXMLLoader(NotificationUtil.class.getResource(fxmlPath));
             HBox root = loader.load();
@@ -43,7 +45,7 @@ public class NotificationUtil {
             popup.setAutoHide(false);
             popup.setHideOnEscape(true);
 
-            // --- Positioning Logic ---
+            // Positioning logic
             double x = 0;
             double y = 0;
             Scene scene = ownerStage.getScene();
@@ -78,11 +80,12 @@ public class NotificationUtil {
                     y = ownerStage.getY() + (scene.getHeight() / 2) - (root.getPrefHeight() / 2);
                 }
                 default -> {
-                    // Fallback to top-right
-                    x = ownerStage.getX() + scene.getWidth() - root.getPrefWidth() - 30;
+                    // Default to top-center
+                    x = ownerStage.getX() + (scene.getWidth() / 2) - (root.getPrefWidth() / 2);
                     y = ownerStage.getY() + 30;
                 }
             }
+
             popup.show(ownerStage, x, y);
 
             Timeline timeline = new Timeline(
