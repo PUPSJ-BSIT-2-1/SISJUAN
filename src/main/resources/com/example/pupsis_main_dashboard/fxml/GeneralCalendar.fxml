@@ -60,10 +60,10 @@
                      </children>
                   </VBox>
                   <Region prefHeight="54.0" prefWidth="221.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" prefHeight="42.0" prefWidth="186.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                  <HBox alignment="CENTER" prefHeight="65.0" prefWidth="247.0" spacing="15.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="monthButton" alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="151.0" styleClass="combo-box" text="MAY" />
-                        <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" prefHeight="35.0" prefWidth="64.0" styleClass="combo-box" text="2025" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="yearButton" onMouseClicked="#populateYearPicker" prefHeight="35.0" prefWidth="72.0" styleClass="combo-box" text="2025" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <Region prefHeight="58.0" prefWidth="254.0" HBox.hgrow="ALWAYS" />

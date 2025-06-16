@@ -26,14 +26,14 @@
     <center>
         <TableView fx:id="paymentTransactionTable" prefHeight="500" styleClass="printable-table">
             <columns>
-                <TableColumn fx:id="transactionIDColumn" prefWidth="111.99999618530273" text="Transaction ID" />
-                <TableColumn fx:id="dateTimeColumn" prefWidth="156.8000030517578" text="Date &amp; Time" />
-                <TableColumn fx:id="studentNumberColumn" prefWidth="152.79998779296875" text="Student Number" />
-                <TableColumn fx:id="paymentMethodColumn" prefWidth="198.40005493164062" text="Payment Method" />
-                <TableColumn fx:id="amountColumn" prefWidth="133.5999755859375" text="Amound Paid" />
-                <TableColumn fx:id="assessmentColumn" prefWidth="122.39996337890625" text="Assessment" />
-                <TableColumn fx:id="balanceColumn" prefWidth="109.5999755859375" text="Balance" />
-                <TableColumn fx:id="statusColumn" prefWidth="77.5999755859375" text="Status" />
+                <TableColumn fx:id="transactionIDColumn" prefWidth="111.99999618530273" text="  Transaction ID" />
+                <TableColumn fx:id="dateTimeColumn" prefWidth="156.8000030517578" text="    Date &amp; Time" />
+                <TableColumn fx:id="studentNumberColumn" prefWidth="152.79998779296875" text="    Student Number" />
+                <TableColumn fx:id="paymentMethodColumn" prefWidth="198.40005493164062" text="  Payment Method" />
+                <TableColumn fx:id="amountColumn" prefWidth="133.5999755859375" text="   Amount Paid" />
+                <TableColumn fx:id="assessmentColumn" prefWidth="122.39996337890625" text="   Assessment" />
+                <TableColumn fx:id="balanceColumn" prefWidth="109.5999755859375" text="   Balance" />
+                <TableColumn fx:id="statusColumn" prefWidth="77.5999755859375" text="   Status" />
             </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

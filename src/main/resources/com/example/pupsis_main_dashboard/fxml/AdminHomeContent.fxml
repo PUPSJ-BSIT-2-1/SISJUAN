@@ -126,6 +126,9 @@
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
             </VBox>
             <VBox alignment="CENTER" styleClass="stat-box" HBox.hgrow="ALWAYS">
                <children>
@@ -143,9 +146,54 @@
             </VBox>
          </children>
          <VBox.margin>
-            <Insets top="10.0" />
+            <Insets bottom="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
+      <VBox prefHeight="349.0" prefWidth="810.0" styleClass="events-container">
+         <children>
+            <HBox>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+               <children>
+                  <Label prefHeight="27.0" prefWidth="209.0" styleClass="section-header" text="Announcements" />
+                  <HBox prefHeight="28.0" prefWidth="454.0" />
+                  <Button fx:id="sendAnnouncementButton" prefHeight="26.0" prefWidth="139.0" styleClass="action-button" text="Send Announcement" />
+               </children>
+            </HBox>
+            <ScrollPane styleClass="vbox-scroll-pane">
+               <content>
+                  <VBox fx:id="announcementVBox" prefHeight="298.0" prefWidth="750.0" styleClass="events-list">
+                     <children>
+                        <Label styleClass="event-date" text="May 25, 2025" />
+                        <Label styleClass="event-title" text="Final Examination Period Begins" />
+                        <Label styleClass="event-description" text="All departments to submit room requirements by May 22" />
+                        <Label styleClass="event-date" text="June 5, 2025">
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="event-title" text="Semester Ends" />
+                        <Label styleClass="event-description" text="Faculty deadline for grade submission is June 10" />
+                        <Label styleClass="event-date" text="June 15, 2025">
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="event-title" text="Summer Classes Begin" />
+                        <Label styleClass="event-description" text="Registration closes on June 12" />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
       <VBox>
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
@@ -200,51 +248,6 @@
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
-            </VBox>
-            <VBox prefHeight="349.0" prefWidth="810.0" styleClass="events-container">
-               <children>
-                  <HBox>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                     <children>
-                        <Label prefHeight="27.0" prefWidth="209.0" styleClass="section-header" text="Announcements" />
-                        <HBox prefHeight="28.0" prefWidth="454.0" />
-                        <Button fx:id="sendAnnouncementButton" prefHeight="26.0" prefWidth="139.0" styleClass="action-button" text="Send Announcement" />
-                     </children>
-                  </HBox>
-                  <ScrollPane styleClass="vbox-scroll-pane">
-                     <content>
-                        <VBox fx:id="announcementVBox" prefHeight="298.0" prefWidth="750.0" styleClass="events-list">
-                           <children>
-                              <Label styleClass="event-date" text="May 25, 2025" />
-                              <Label styleClass="event-title" text="Final Examination Period Begins" />
-                              <Label styleClass="event-description" text="All departments to submit room requirements by May 22" />
-                              <Label styleClass="event-date" text="June 5, 2025">
-                                 <VBox.margin>
-                                    <Insets top="15.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Label styleClass="event-title" text="Semester Ends" />
-                              <Label styleClass="event-description" text="Faculty deadline for grade submission is June 10" />
-                              <Label styleClass="event-date" text="June 15, 2025">
-                                 <VBox.margin>
-                                    <Insets top="15.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Label styleClass="event-title" text="Summer Classes Begin" />
-                              <Label styleClass="event-description" text="Registration closes on June 12" />
-                           </children>
-                           <padding>
-                              <Insets top="10.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
             </VBox>
          </children>
       </VBox>

@@ -21,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -60,7 +61,6 @@ public class AdminFacultyManagementController {
     private String schoolYear;
     private String semester;
 
-
     public void initialize() {
         new Thread(() -> {
             schoolYear = SchoolYearAndSemester.determineCurrentSemester();
@@ -99,23 +99,22 @@ public class AdminFacultyManagementController {
 
         facultyTable.setItems(facultyList);
 
-        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn};
+        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn, actionsColumn};
         for (var col : columns) {
             col.setReorderable(false);
             col.setSortable(false);
         }
 
         actionsColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button menuBtn = new Button("⋮"); // Unicode vertical ellipsis
+            private final Button menuBtn = new Button("");
 
             {
-                menuBtn.setStyle(
-                        "-fx-background-color: transparent;" +
-                                "-fx-font-size: 16;" +
-                                "-fx-cursor: hand;" +
-                                "-fx-padding: 0 8 0 8;"
-                );
-                menuBtn.setFocusTraversable(false);
+                final SVGPath menuIcon = new SVGPath();
+                menuIcon.setContent("M12 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z");
+                menuBtn.getStyleClass().add("export-menu-bar");
+                menuBtn.setGraphic(menuIcon);
+                menuBtn.setTooltip(new Tooltip("More Options"));
+                menuBtn.setPrefSize(32, 32);
 
                 menuBtn.setOnAction(event -> {
                     Faculty faculty = getTableView().getItems().get(getIndex());
@@ -136,29 +135,19 @@ public class AdminFacultyManagementController {
                     // Add menu items
                     menu.getItems().addAll(assignItem, detailsItem, viewAssignmentsItem);
 
-                    // Style menu items
-                    menu.getItems().forEach(item ->
-                            item.setStyle("-fx-font-size: 15; -fx-padding: 8 24 8 24;")
-                    );
-
                     // ---- Improved: show menu INSIDE the box ----
                     Bounds btnBounds = menuBtn.localToScreen(menuBtn.getBoundsInLocal());
                     Bounds tableBounds = facultyTable.localToScreen(facultyTable.getBoundsInLocal());
 
                     double popupX = btnBounds.getMinX();
                     double popupY = btnBounds.getMaxY();
-                    double menuWidth = 210; // match your design
+                    double menuWidth = 150; // match your design
 
                     if (popupX + menuWidth > tableBounds.getMaxX()) {
                         popupX = Math.max(tableBounds.getMinX(), tableBounds.getMaxX() - menuWidth);
                     }
 
-                    menu.setStyle("-fx-background-color: white;" +
-                            "-fx-background-radius: 12;" +
-                            "-fx-border-radius: 12;" +
-                            "-fx-border-color: #E2E2E2;" +
-                            "-fx-effect: dropshadow(three-pass-box,rgba(157,34,53,0.10),8,0,0,2);" +
-                            "-fx-min-width: 210;");
+                    menu.getStyleClass().add("export-menu-bar");
 
                     menu.show(menuBtn, popupX, popupY);
 
@@ -183,40 +172,34 @@ public class AdminFacultyManagementController {
         exportPrintMenu.getItems().addAll(exportItem, printItem);
 
         // Custom style for this specific menu (add styleClass if needed)
-        exportPrintMenu.getStyleClass().add("export-print-context-menu");
+        exportPrintMenu.getStyleClass().add("export-menu-bar");
+        exportPrintMenu.setPrefWidth(210);
+        exportPrintMenu.setPrefHeight(150);
 
         utilityMenuBox.setOnMouseClicked(event -> {
             // === BEGIN Smart Positioning ===
-            double menuWidth = 170; // Should match your CSS
-            double menuHeight = 98; // 2 items at 49px each (adjust if needed)
+            double menuWidth = 115; // Should match your CSS
             Scene scene = utilityMenuBox.getScene();
 
             // Coordinates of the three-dot HBox in the scene and screen
             Bounds boundsInScene = utilityMenuBox.localToScene(utilityMenuBox.getBoundsInLocal());
             double sceneX = boundsInScene.getMinX();
-            double sceneYBottom = boundsInScene.getMaxY();
-            double sceneYTop = boundsInScene.getMinY();
+            double sceneY = boundsInScene.getMinY() + boundsInScene.getHeight();
 
             double screenX = scene.getWindow().getX() + scene.getX() + sceneX;
-            double screenYBelow = scene.getWindow().getY() + scene.getY() + sceneYBottom;
-            double screenYAbove = screenYBelow - menuHeight - utilityMenuBox.getHeight();
+            double screenY = scene.getWindow().getY() + scene.getY() + sceneY + 10; // Moved down a little bit
 
             // App window edges
             double windowRight = scene.getWindow().getX() + scene.getWidth();
             double windowBottom = scene.getWindow().getY() + scene.getHeight();
 
-            // If menu would be out of bottom edge, show above; else show below
-            double menuShowY = (screenYBelow + menuHeight > windowBottom - 10)
-                    ? screenYAbove // show above
-                    : screenYBelow; // show below
-
-            // If right edge would exceed window, shift left
+            // If right edge exceeds a window, shift left
             double menuShowX = screenX;
-            if (menuShowX + menuWidth > windowRight - 8) {
-                menuShowX = windowRight - menuWidth - 8;
+            if (menuShowX + menuWidth > windowRight - 10) {
+                menuShowX = windowRight - menuWidth - 10;
             }
 
-            exportPrintMenu.show(utilityMenuBox, menuShowX, menuShowY);
+            exportPrintMenu.show(utilityMenuBox, menuShowX, screenY);
             // === END Smart Positioning ===
         });
 

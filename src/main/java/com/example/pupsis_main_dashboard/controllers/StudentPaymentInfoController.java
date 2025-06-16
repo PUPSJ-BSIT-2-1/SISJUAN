@@ -739,7 +739,7 @@ public class StudentPaymentInfoController {
 
             @Override
             protected void failed() {
-                logger.error("Error determining enrollment status", getException());
+                logger.error("Error determining enrollment statusError determining enrollment status", getException());
             }
         };
 

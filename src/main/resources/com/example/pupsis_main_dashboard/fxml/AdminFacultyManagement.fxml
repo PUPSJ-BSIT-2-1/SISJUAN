@@ -25,6 +25,21 @@
          </children>
       </VBox>
         <Region HBox.hgrow="ALWAYS" />
+
+
+        <HBox fx:id="backButton" alignment="CENTER" onMouseClicked="#handleBackToDashboard" prefHeight="63.0" prefWidth="76.0" spacing="3.0" styleClass="back-to-faculty-section">
+            <children>
+                <SVGPath content="M10 19.438L8.955 20.5l-7.666-7.79a1.02 1.02 0 0 1 0-1.42L8.955 3.5L10 4.563L2.682 12z" scaleX="0.8" scaleY="0.8" styleClass="icons">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </SVGPath>
+                <Label alignment="CENTER" styleClass="utility-label" text="Back" />
+            </children>
+         <HBox.margin>
+            <Insets bottom="5.0" top="5.0" />
+         </HBox.margin>
+        </HBox>
     </HBox>
 
     <!-- Search Bar -->
@@ -37,7 +52,7 @@
 
           <!-- Button Bar -->
        <!-- Main Actions Row -->
-       <HBox alignment="CENTER_RIGHT" prefHeight="49.0" prefWidth="452.0" spacing="10.0">
+       <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="450.0" spacing="10.0">
          <HBox alignment="CENTER" onMouseClicked="#handleAddFaculty" prefHeight="26.0" prefWidth="70.0" spacing="3.0" styleClass="main-action-button">
             <children>
                <SVGPath content="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2v-6Z" scaleX="0.8" scaleY="0.8" styleClass="icons">
@@ -102,6 +117,15 @@
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
          </HBox>
+           <!-- Three-dot menu for Export/Print -->
+           <HBox fx:id="utilityMenuBox" alignment="CENTER" pickOnBounds="true" prefHeight="26.0" prefWidth="44.0" spacing="3.0" styleClass="main-action-button">
+            <children>
+               <SVGPath content="M12 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z" scaleX="0.8" scaleY="0.8" styleClass="main-action-icon" />
+            </children>
+            <HBox.margin>
+               <Insets bottom="10.0" top="10.0" />
+            </HBox.margin>
+           </HBox>
 
          <HBox.margin>
             <Insets right="15.0" />
@@ -110,47 +134,16 @@
     </HBox>
 
     <!-- Table of Faculty -->
-    <TableView fx:id="facultyTable" prefHeight="429.0" prefWidth="810">
+    <TableView fx:id="facultyTable" prefHeight="510.0" prefWidth="810">
         <columns>
             <TableColumn fx:id="idColumn" minWidth="4.800018310546875" prefWidth="68.80001831054688" text="Fac ID" />
             <TableColumn fx:id="nameColumn" prefWidth="205.59994506835938" text="Faculty Name" />
-            <TableColumn fx:id="departmentColumn" prefWidth="120.79998779296875" text="Department" />
-            <TableColumn fx:id="emailColumn" prefWidth="208.79998779296875" text="Email" />
-            <TableColumn fx:id="contactColumn" prefWidth="112.0001220703125" text="Contact" />
-            <TableColumn fx:id="actionsColumn" prefWidth="50" text="" />
+            <TableColumn fx:id="departmentColumn" prefWidth="127.20001220703125" text="Department" />
+            <TableColumn fx:id="emailColumn" prefWidth="213.5999755859375" text="Email" />
+            <TableColumn fx:id="contactColumn" prefWidth="120.79998779296875" text="Contact" />
+            <TableColumn fx:id="actionsColumn" prefWidth="57.5999755859375" text="" />
         </columns>
     </TableView>
-
-    <!-- Utility Row -->
-    <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="810.0" spacing="10.0" styleClass="button-container">
-        <!-- Three-dot menu for Export/Print -->
-        <HBox fx:id="utilityMenuBox"
-              alignment="CENTER"
-              prefHeight="34.0"
-              prefWidth="50.0"
-              spacing="3.0"
-              styleClass="utility-button"
-              pickOnBounds="true">
-            <children>
-                <Label text="⋮"
-                       style="-fx-font-size: 22; -fx-background-color: transparent; -fx-cursor: hand;" />
-            </children>
-        </HBox>
-
-
-        <HBox fx:id="backButton" alignment="CENTER" layoutX="683.0" layoutY="30.0" onMouseClicked="#handleBackToDashboard"
-              prefHeight="34.0" prefWidth="85.0" spacing="3.0" styleClass="utility-button">
-            <children>
-                <SVGPath content="M10 19.438L8.955 20.5l-7.666-7.79a1.02 1.02 0 0 1 0-1.42L8.955 3.5L10 4.563L2.682 12z"
-                         scaleX="0.8" scaleY="0.8" styleClass="icons">
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
-                </SVGPath>
-                <Label alignment="CENTER" styleClass="utility-label" text="Back" />
-            </children>
-        </HBox>
-    </HBox>
 
 
 </VBox>

@@ -61,7 +61,7 @@ public class StudentGradingModuleController {
 
     public void initialize() {
         studentsTable.setEditable(false);
-        populateYearSection();
+        populateYear();
         populateSemester();
         studentsTable.setPlaceholder(new Label("Loading data...")); // Initial placeholder
         Task<Void> loadTask = new Task<>() {
@@ -88,6 +88,8 @@ public class StudentGradingModuleController {
             col.setReorderable(false);
             col.setSortable(false);
         }
+
+        studentsTable.setSelectionModel(null);
 
         studentsTable.setRowFactory(_ -> {
             TableRow<Grades> row = new TableRow<>();
@@ -256,12 +258,11 @@ public class StudentGradingModuleController {
         semesterComboBox.setItems(semesters);
     }
 
-    private void populateYearSection() {
+    private void populateYear() {
         Task<ObservableList<String>> task = new Task<>() {
             @Override
             protected ObservableList<String> call() throws Exception {
                 ObservableList<String> sections = FXCollections.observableArrayList();
-                sections.add("All Sections"); // Add the "All Sections" option first
                 String sql = "SELECT DISTINCT year_level FROM section ORDER BY year_level; ";
                 try (Connection conn = DBConnection.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -346,7 +347,8 @@ public class StudentGradingModuleController {
 
     private void filterGrades() {
         String selectedSemester = semesterComboBox.getValue();
-        String selectedSection = yearSectionComboBox.getValue();
+        String selectedYear = yearSectionComboBox.getItems().getFirst();
+        String indexOneYear = selectedYear.substring(0, 1);
         ObservableList<Grades> filteredGrades = FXCollections.observableArrayList();
 
         String searchGrades = """
@@ -364,7 +366,8 @@ public class StudentGradingModuleController {
             fac.firstname || ' ' || fac.lastname AS faculty_name,
             g.grade_id,
             g.final_grade,
-            gs.status_name AS grade_status_name
+            gs.status_name AS grade_status_name,
+            sec.section_name
             FROM student_load sl
             JOIN students s ON sl.student_pk_id = s.student_id
             JOIN faculty_load fl ON sl.faculty_load = fl.load_id
@@ -377,7 +380,7 @@ public class StudentGradingModuleController {
             LEFT JOIN grade_statuses gs ON g.grade_status_id = gs.grade_status_id
             LEFT JOIN scholastic_statuses scs ON s.scholastic_status_id = scs.scholastic_status_id
             JOIN semesters sem ON sl.semester_id = sem.semester_id
-            WHERE s.student_id = ? AND s.current_year_section_id = ? AND sem.semester_name = ?
+            WHERE s.student_id = ? AND sl.academic_year_id = ? AND sem.semester_name = ?
             ORDER BY s.student_id, sub.subject_id, g.grade_id DESC;
             """;
 
@@ -394,8 +397,8 @@ public class StudentGradingModuleController {
             studentsTable.setPlaceholder(new Label("User session error."));
             return;
         }
-        if (selectedSemester == null || selectedSection == null) {
-            logger.info("Semester or Section not selected for filtering.");
+        if (selectedSemester == null) {
+            logger.info("Semester is not selected for filtering.");
             loadGrades(); 
             return;
         }
@@ -416,17 +419,17 @@ public class StudentGradingModuleController {
                 }
             }
 
-            int selectedSectionId;
+            int selectedYearId;
             try {
-                selectedSectionId = Integer.parseInt(selectedSection);
+                selectedYearId = Integer.parseInt(indexOneYear);
             } catch (NumberFormatException e) {
-                logger.error("Invalid section format in ComboBox: {}", selectedSection, e);
+                logger.error("Invalid section format in ComboBox: {}", selectedYear, e);
                 studentsTable.setPlaceholder(new Label("Invalid section filter value."));
                 return;
             }
 
             stmt3_searchGrades.setInt(1, studentID);
-            stmt3_searchGrades.setObject(2, selectedSectionId, Types.INTEGER); 
+            stmt3_searchGrades.setObject(2, selectedYearId, Types.INTEGER);
             stmt3_searchGrades.setString(3, selectedSemester);    
 
             boolean hasResults = false;
@@ -454,7 +457,7 @@ public class StudentGradingModuleController {
                             rs.getString("subject_description"),
                             rs.getString("faculty_name"),
                             rs.getString("units"),
-                            rs.getString("section_code"),
+                            rs.getString("section_name"),
                             finalGradeDisplay, // Use the processed display string
                             rs.getString("grade_status_name") != null ? rs.getString("grade_status_name") : "No Grade"
                     ));

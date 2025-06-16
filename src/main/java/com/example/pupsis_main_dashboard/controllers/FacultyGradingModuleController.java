@@ -9,13 +9,11 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.*;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.collections.transformation.FilteredList;
@@ -27,7 +25,6 @@ import javafx.scene.Parent;
 import java.io.IOException;
 
 import javafx.scene.Node;
-import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 
 public class FacultyGradingModuleController implements Initializable {
@@ -37,7 +34,6 @@ public class FacultyGradingModuleController implements Initializable {
     @FXML private TableColumn<Subject, String> semCol;
     @FXML private TableColumn<Subject, String> subjCodeCol;
     @FXML private TableColumn<Subject, String> subjDescCol;
-    @FXML private Label validationLabel;
     @FXML private StackPane searchIconContainer;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
@@ -73,20 +69,6 @@ public class FacultyGradingModuleController implements Initializable {
 
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
-
-        validationLabel.setText(facultyId);
-
-        // Try to get student ID with a small delay to ensure SessionData is populated
-        Platform.runLater(() -> {
-            facultyId = SessionData.getInstance().getFacultyId();
-            if (facultyId != null && !facultyId.isEmpty()) {
-                // Load data asynchronously
-                Task<ObservableList<Subject>> loadTask = getObservableListTask();
-                new Thread(loadTask).start();
-            } else {
-                subjectsTable.setPlaceholder(new Label("No faculty ID available"));
-            }
-        });
     }
 
     private String attemptToRetrieveStudentId() {

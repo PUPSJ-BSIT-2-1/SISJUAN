@@ -1,5 +1,5 @@
 .root {
-    -fx-font-family: "Inter", sans-serif;
+    -fx-font-family: "Inter", "sans-serif";
     -fx-background-color: transparent; /* Light grey background for the app (default for .root elements) */
 }
 
@@ -165,7 +165,6 @@
     -fx-background-color: #e57373; /* slightly lighter red/orange */
     -fx-cursor: hand;
 }
-
 
 .radio-button {
     -fx-font-size: 12px;
@@ -348,7 +347,6 @@
     -fx-text-fill: #800000;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-cursor: hand;
 }
 
 .view-accounts:hover {

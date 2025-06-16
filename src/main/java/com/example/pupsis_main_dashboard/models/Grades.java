@@ -14,7 +14,7 @@ public class Grades {
     private final StringProperty finalGrade;
     private final StringProperty remarks;
 
-    public Grades(String scholasticStatus,String subCode, String subDesc, String facultyName, String units, String sectionCode, String finalGrade, String remarks) {
+    public Grades(String scholasticStatus, String subCode, String subDesc, String facultyName, String units, String sectionCode, String finalGrade, String remarks) {
         this.scholasticStatus = new SimpleStringProperty(scholasticStatus);
         this.subCode = new SimpleStringProperty(subCode);
         this.subDesc = new SimpleStringProperty(subDesc);
