@@ -10,11 +10,15 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox prefHeight="390.0" prefWidth="498.0" spacing="10" styleClass="view-faculty-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDetailsController">
-
-    <Label styleClass="view-header" text="Faculty Details">
+   <HBox prefHeight="70.0" prefWidth="454.0" styleClass="red-card">
       <VBox.margin>
          <Insets bottom="15.0" />
-      </VBox.margin></Label>
+      </VBox.margin>
+      <children>
+      
+          <Label styleClass="view-header" text="Faculty Details" />
+      </children>
+   </HBox>
 
     <GridPane hgap="10" vgap="10">
         <Label styleClass="view-text" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0">

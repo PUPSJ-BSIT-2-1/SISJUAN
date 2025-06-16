@@ -13,8 +13,10 @@ public class Grades {
     private final StringProperty sectionCode;
     private final StringProperty finalGrade;
     private final StringProperty remarks;
+    private final int yearID;
+    private final int semesterID;
 
-    public Grades(String scholasticStatus, String subCode, String subDesc, String facultyName, String units, String sectionCode, String finalGrade, String remarks) {
+    public Grades(String scholasticStatus, String subCode, String subDesc, String facultyName, String units, String sectionCode, String finalGrade, String remarks, int yearID, int semesterID) {
         this.scholasticStatus = new SimpleStringProperty(scholasticStatus);
         this.subCode = new SimpleStringProperty(subCode);
         this.subDesc = new SimpleStringProperty(subDesc);
@@ -23,6 +25,8 @@ public class Grades {
         this.sectionCode = new SimpleStringProperty(sectionCode);
         this.finalGrade = new SimpleStringProperty(finalGrade != null ? finalGrade : "");
         this.remarks = new SimpleStringProperty(remarks != null ? remarks : "");
+        this.yearID = yearID;
+        this.semesterID = semesterID;
     }
 
     // setters
@@ -91,6 +95,23 @@ public class Grades {
         return remarks.get();
     }
 
+    public int getYearID() {
+        return yearID;
+    }
+
+    public int getSemesterID() {
+        return semesterID;
+    }
+
+    public String getSemesterName() {
+        return switch (semesterID) {
+            case 1 -> "1st Semester";
+            case 2 -> "Summer Semester";
+            case 3 -> "2nd Semester";
+            default -> "Unknown Semester";
+        };
+    }
+
     // string properties
     public StringProperty scholasticStatusProperty() {
         return scholasticStatus;
@@ -123,4 +144,5 @@ public class Grades {
     public StringProperty remarksProperty() {
         return remarks;
     }
+
 }

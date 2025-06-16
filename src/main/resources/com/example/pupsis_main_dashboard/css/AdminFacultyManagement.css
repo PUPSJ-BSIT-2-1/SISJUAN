@@ -908,3 +908,12 @@
     -fx-text-fill: black;
     -fx-cursor: hand;
 }
+
+.faculty-registration-container {
+    -fx-background-color: white;
+    -fx-padding: 5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+}
