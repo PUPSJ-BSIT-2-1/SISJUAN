@@ -529,11 +529,7 @@ public class AdminClassScheduleController {
                         scheduleTable.refresh();
 
                         Platform.runLater(this::populateFacultyIDComboBox);
-                        //StageAndSceneUtils.showAlert("Success", "Schedule added successfully!", Alert.AlertType.INFORMATION);
-
-                        Stage stage = (Stage) borderPane.getScene().getWindow();
-
-                        NotificationUtil.show(stage,"Schedule added successfully!", "success", "top-center");
+                        StageAndSceneUtils.showAlert("Success", "Schedule added successfully!", Alert.AlertType.INFORMATION);
                         handleCancelSchedule(); // clear form
                     }
                 }
