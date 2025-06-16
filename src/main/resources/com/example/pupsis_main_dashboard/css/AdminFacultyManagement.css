@@ -785,6 +785,56 @@
     -fx-cursor: hand;
 }
 
+/*
+for pop ups menuBar
+*/
+
+.popup-menu {
+    -fx-padding: 0;
+    -fx-background-color: white;
+    -fx-border-color: #B00020;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.13), 12, 0.1, 0, 4);
+}
+.popup-menu-item {
+    -fx-font-size: 15px;
+    -fx-padding: 14 24 14 24;
+    -fx-cursor: hand;
+}
+.popup-menu-item:hover {
+    -fx-background-color: #F5F5F5;
+}
+
+.custom-popup {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, #888, 8, 0.2, 0, 2);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-color: #ececec;
+    -fx-border-width: 1;
+}
+
+.export-print-context-menu {
+    -fx-background-color: white;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-border-color: #E2E2E2;
+    -fx-effect: dropshadow(three-pass-box,rgba(157,34,53,0.13),8,0,0,2);
+    -fx-padding: 8 0 8 0;
+    -fx-min-width: 170px;
+}
+.export-print-context-menu .menu-item {
+    -fx-padding: 12 36 12 36;
+    -fx-font-size: 15px;
+}
+.export-print-context-menu .menu-item:focused,
+.export-print-context-menu .menu-item:hover {
+    -fx-background-color: #D3B1B1;
+    -fx-text-fill: #9D2235;
+}
+
+/* end of the MenuBar pop up* /
 .faculty-registration-container {
     -fx-background-color: white;
     -fx-border-radius: 10;
