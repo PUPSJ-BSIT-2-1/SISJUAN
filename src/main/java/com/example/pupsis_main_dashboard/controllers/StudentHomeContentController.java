@@ -3,14 +3,19 @@ package com.example.pupsis_main_dashboard.controllers;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.event.ActionEvent;
 import javafx.concurrent.Task;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -44,7 +49,9 @@ public class StudentHomeContentController {
     @FXML
     private Label numAnnouncements;
     @FXML
-    private ListView<String> listAnnouncements;
+    private VBox announcementVBox;
+    @FXML
+    private VBox eventsVBox;
 
     private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentGradingModule.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/StudentClassSchedule.fxml";
@@ -91,7 +98,6 @@ public class StudentHomeContentController {
         semGPA.setText("Loading...");
         totalSubjects.setText("Loading...");
         numAnnouncements.setText("Loading...");
-        listAnnouncements.getItems().clear(); // Clear previous items
         // Consider adding a ProgressIndicator as well
 
         Task<HomeContentData> loadHomeDataTask = new Task<>() {
@@ -122,10 +128,8 @@ public class StudentHomeContentController {
                 int currentAcademicYearId = com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester.getCurrentAcademicYearId();
                 String totalSubjectsText = calculateTotalSubjectsLogic(studentNumberForQueries, currentAcademicYearId, semesterInfo.id());
                 String gwaText = calculateCurrentGWALogic();
-                List<String> announcements = populateAnnouncementsLogic();
-                String numAnnouncementsText = String.valueOf(announcements.size());
 
-                return new HomeContentData(studentFirstName, fullStudentName, yearLevelText, semesterInfo, statusText, gwaText, totalSubjectsText, announcements, numAnnouncementsText);
+                return new HomeContentData(studentFirstName, fullStudentName, yearLevelText, semesterInfo, statusText, gwaText, totalSubjectsText);
             }
         };
 
@@ -138,8 +142,8 @@ public class StudentHomeContentController {
             status.setText(data.statusText);
             semGPA.setText(data.gwaText);
             totalSubjects.setText(data.totalSubjectsText);
-            listAnnouncements.getItems().setAll(data.announcements);
-            numAnnouncements.setText(data.numAnnouncementsText);
+            loadAnnouncements();
+            loadUpcomingEvents();
 
             logger.info("Home content loaded for student: {} (identifier: {})", 
                         data.fullStudentName, RememberMeHandler.getCurrentUserStudentNumber());
@@ -156,7 +160,6 @@ public class StudentHomeContentController {
             semGPA.setText("N/A");
             totalSubjects.setText("N/A");
             numAnnouncements.setText("N/A");
-            listAnnouncements.getItems().setAll("Failed to load announcements.");
         });
 
         new Thread(loadHomeDataTask).start();
@@ -256,7 +259,7 @@ public class StudentHomeContentController {
     // Helper record for semester information
     private record SemesterInfo(int id, String name) {}
 
-    // Method to determine current semester
+    // Method to determine the current semester
     private SemesterInfo determineCurrentSemesterInfoLogic(String studentNumber) throws SQLException {
         String query = "SELECT sem.semester_id, sem.semester_name FROM students s JOIN section sec ON s.current_year_section_id = sec.section_id JOIN semesters sem ON sec.semester_id = sem.semester_id WHERE s.student_number = ?";
 
@@ -323,22 +326,119 @@ public class StudentHomeContentController {
         return gwa == 0 ? "N/A" : String.format("%.2f", gwa);
     }
 
-    // Method to populate announcements
-    private List<String> populateAnnouncementsLogic() {
-        List<String> announcements = new ArrayList<>();
-        String query = "SELECT announcement FROM public.announcement ORDER BY date DESC LIMIT 5;";
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query);
+    private void loadUpcomingEvents() {
+        String sql = "SELECT se.*, MIN(sd.event_date) AS first_date " +
+                "FROM school_events se " +
+                "JOIN school_dates sd ON se.event_id = sd.event_id " +
+                "WHERE sd.event_date >= CURRENT_DATE " +
+                "GROUP BY se.event_id " + // Corrected GROUP BY
+                "ORDER BY first_date " +
+                "LIMIT 10;";
+        logger.info("loadUpcomingEvents: Attempting to load upcoming events with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
             while (rs.next()) {
-                announcements.add(rs.getString("announcement"));
+                eventCount++;
+                String eventName = rs.getString("event_description");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("event_description");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
             }
+
+            logger.info("loadUpcomingEvents: Found {} upcoming events.", eventCount);
+            Platform.runLater(() -> {
+                eventsVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No upcoming events.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    eventsVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadUpcomingEvents: No events found, displaying 'No upcoming events' message.");
+                }
+            });
+
         } catch (SQLException e) {
-            logger.error("Error populating announcements: {}", e.getMessage());
-            announcements.add("Failed to load announcements.");
+            logger.error("loadUpcomingEvents: SQL error while loading upcoming events. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading events.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                eventsVBox.getChildren().setAll(errorLabel);
+            });
         }
-        return announcements;
+    }
+
+    private void loadAnnouncements() {
+        String sql = """
+            SELECT an.*, an.date AS first_date
+            FROM announcement an
+            WHERE an.date >= CURRENT_DATE AND an.is_student = true OR
+            an.is_all = true
+            ORDER BY an.date
+            LIMIT 5;
+            """;
+        logger.info("loadAnnouncements: Attempting to load announcements with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("title");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("message");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
+            }
+
+            logger.info("loadAnnouncements: Found {} announcements.", eventCount);
+            numAnnouncements.setText(String.valueOf(eventCount));
+            Platform.runLater(() -> {
+                announcementVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No announcements.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    announcementVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadAnnouncements: No events found, displaying 'No announcements' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadAnnouncements: SQL error while loading announcements.. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading announcements.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                announcementVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
+
+    /**
+     * Creates a VBox containing event details for display in the UI.
+     */
+    private VBox createEventBox(String eventName, LocalDate eventDate, String description) {
+        VBox eventBox = new VBox(5);
+        eventBox.getStyleClass().add("event-box");
+
+        Label nameLabel = new Label(eventName);
+        nameLabel.getStyleClass().add("event-name");
+
+        Label dateLabel = new Label(eventDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")));
+        dateLabel.getStyleClass().add("event-date");
+
+        Label descLabel = new Label(description);
+        descLabel.getStyleClass().add("event-description");
+        descLabel.setWrapText(true);
+
+        eventBox.getChildren().addAll(nameLabel, dateLabel, descLabel);
+        return eventBox;
     }
 
     // Static inner class to hold data for the home content UI
@@ -350,12 +450,10 @@ public class StudentHomeContentController {
         final String statusText;
         final String gwaText;
         final String totalSubjectsText;
-        final List<String> announcements;
-        final String numAnnouncementsText;
 
         public HomeContentData(String studentFirstName, String fullStudentName, String yearLevelText, 
                                SemesterInfo semesterInfo, String statusText, String gwaText, 
-                               String totalSubjectsText, List<String> announcements, String numAnnouncementsText) {
+                               String totalSubjectsText) {
             this.studentFirstName = studentFirstName;
             this.fullStudentName = fullStudentName;
             this.yearLevelText = yearLevelText;
@@ -363,8 +461,6 @@ public class StudentHomeContentController {
             this.statusText = statusText;
             this.gwaText = gwaText;
             this.totalSubjectsText = totalSubjectsText;
-            this.announcements = announcements;
-            this.numAnnouncementsText = numAnnouncementsText;
         }
     }
 }

@@ -2,20 +2,25 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -58,6 +63,13 @@ public class AdminHomeContentController {
     @FXML
     private VBox eventsVBox;
 
+    @FXML VBox announcementVBox;
+
+    @FXML
+    private Button sendAnnouncementButton;
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdminHomeContentController.class);
+
     // TODO: Add ListView for recent activity, documents if needed
     // @FXML
     // private ListView<?> recentActivityListView;
@@ -72,12 +84,12 @@ public class AdminHomeContentController {
         // Populate data from the database or services
         loadDashboardData();
 
-        // Set admin name from session or preferences
+        // Set the admin name from session or preferences
         String adminIdentifier = com.example.pupsis_main_dashboard.utilities.RememberMeHandler.getCurrentUserFacultyNumber();
         String adminName = getAdminFullName(adminIdentifier);
         facultyNameLabel.setText(adminName != null ? adminName : "Admin User");
 
-        populateEventsVBox();
+        sendAnnouncementButton.setOnAction(event -> handleSendAnnouncementButton());
     }
 
     private String getAdminFullName(String identifier) {
@@ -165,8 +177,14 @@ public class AdminHomeContentController {
             }
             enrollmentCountLabel.setText(String.format("%.0f%%", enrollmentRate));
 
-            // Load upcoming events and current semester
-            loadEventsAndSemesterData(stmt);
+            // Load upcoming events
+            loadUpcomingEvents();
+
+            // Load announcements
+            loadAnnouncements();
+
+            // Load current semester
+            loadSemesterData();
 
             // Load scholastic status distribution
             if (programCompletionRates != null) { // Check if the VBox is injected
@@ -193,28 +211,7 @@ public class AdminHomeContentController {
 
     }
 
-    private void loadEventsAndSemesterData(Statement stmt) throws SQLException {
-        // Load Upcoming Events
-        ObservableList<String> eventItems = FXCollections.observableArrayList();
-        String eventsSql = "SELECT se.event_description, sd.event_date " +
-                           "FROM public.school_events se " +
-                           "JOIN public.school_dates sd ON se.event_id = sd.event_id " +
-                           "WHERE sd.event_date >= CURRENT_DATE " +
-                           "ORDER BY sd.event_date ASC LIMIT 5";
-        ResultSet eventsRs = stmt.executeQuery(eventsSql);
-        DateTimeFormatter eventDateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-        while (eventsRs.next()) {
-            String description = eventsRs.getString("event_description");
-            LocalDate eventDate = eventsRs.getDate("event_date").toLocalDate();
-            eventItems.add(description + " (" + eventDate.format(eventDateFormatter) + ")");
-        }
-        if (upcomingEventsListView != null) {
-            upcomingEventsListView.setItems(eventItems);
-            if (eventItems.isEmpty()) {
-                upcomingEventsListView.setPlaceholder(new Label("No upcoming events."));
-            }
-        }
-        eventsRs.close();
+    private void loadSemesterData() {
 
         // Load Current Semester
         String currentSemester = SchoolYearAndSemester.determineCurrentSemester();
@@ -280,57 +277,138 @@ public class AdminHomeContentController {
         }
     }
 
-    private void populateEventsVBox() {
-        eventsVBox.getChildren().clear();
-        GeneralCalendarController gcc = new GeneralCalendarController();
-        gcc.loadSchoolEvents();
-        List<String> allEvents = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : gcc.eventsMap.entrySet()) {
-            allEvents.addAll(entry.getValue());
-        }
-        allEvents.sort(Comparator.comparing(ev -> LocalDate.parse(ev.split(",")[0])));
-        // Group events by (eventType, eventDesc), collect their dates
-        Map<String, List<LocalDate>> grouped = new LinkedHashMap<>();
-        Map<String, String[]> eventDetails = new HashMap<>();
-        for (String event : allEvents) {
-            String[] parts = event.split(",");
-            LocalDate date = LocalDate.parse(parts[0]);
-            String eventType = parts[1];
-            String eventDesc = parts[2];
-            String key = eventType + "||" + eventDesc;
-            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(date);
-            eventDetails.put(key, new String[]{eventType, eventDesc});
-        }
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
-        int count = 0;
-        for (Map.Entry<String, List<LocalDate>> entry : grouped.entrySet()) {
-            if (count >= 10) break;
-            List<LocalDate> dates = entry.getValue();
-            dates.sort(Comparator.naturalOrder());
-            String dateStr;
-            if (dates.size() == 1) {
-                dateStr = dates.get(0).format(dateFormatter);
-            } else {
-                LocalDate start = dates.get(0);
-                LocalDate end = dates.get(dates.size()-1);
-                if (start.getMonth().equals(end.getMonth()) && start.getYear() == end.getYear()) {
-                    dateStr = start.format(DateTimeFormatter.ofPattern("MMMM d")) + "-" + end.format(DateTimeFormatter.ofPattern("d, yyyy"));
-                } else {
-                    dateStr = start.format(dateFormatter) + " - " + end.format(dateFormatter);
-                }
+    private void loadUpcomingEvents() {
+        String sql = """
+            SELECT se.*, st.*, MIN(sd.event_date) AS first_date\s
+            FROM school_events se\s
+            JOIN school_dates sd ON se.event_id = sd.event_id\s
+            JOIN event_types st ON st.event_type_id = se.event_type_id
+            WHERE sd.event_date >= CURRENT_DATE\s
+            GROUP BY se.event_id, st.event_type_id
+            ORDER BY first_date\s
+            LIMIT 10;
+            """;
+        logger.info("loadUpcomingEvents: Attempting to load upcoming events with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("type_name");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("event_description");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
             }
-            String[] details = eventDetails.get(entry.getKey());
-            String eventType = details[0];
-            String eventDesc = details[1];
-            Label dateLabel = new Label(dateStr);
-            dateLabel.getStyleClass().add("event-date");
-            Label titleLabel = new Label(eventType);
-            titleLabel.getStyleClass().add("event-title");
-            Label descLabel = new Label(eventDesc);
-            descLabel.getStyleClass().add("event-description");
-            VBox.setMargin(dateLabel, new Insets(15, 0, 0, 0));
-            eventsVBox.getChildren().addAll(dateLabel, titleLabel, descLabel);
-            count++;
+
+            logger.info("loadUpcomingEvents: Found {} upcoming events.", eventCount);
+            Platform.runLater(() -> {
+                eventsVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No upcoming events.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    eventsVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadUpcomingEvents: No events found, displaying 'No upcoming events' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadUpcomingEvents: SQL error while loading upcoming events. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading events.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                eventsVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
+
+    private void loadAnnouncements() {
+        String sql = """
+            SELECT an.*, an.date AS first_date
+            FROM announcement an
+            WHERE an.date >= CURRENT_DATE
+            ORDER BY an.date
+            LIMIT 5;
+            """;
+        logger.info("loadAnnouncements: Attempting to load announcements with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("title");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("message");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
+            }
+
+            logger.info("loadAnnouncements: Found {} announcements.", eventCount);
+            Platform.runLater(() -> {
+                announcementVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No announcements.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    announcementVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadAnnouncements: No events found, displaying 'No announcements' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadAnnouncements: SQL error while loading announcements.. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading announcements.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                announcementVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
+
+    /**
+     * Creates a VBox containing event details for display in the UI.
+     */
+    private VBox createEventBox(String eventName, LocalDate eventDate, String description) {
+        VBox eventBox = new VBox(5);
+        eventBox.getStyleClass().add("event-box");
+
+        Label nameLabel = new Label(eventName);
+        nameLabel.getStyleClass().add("event-name");
+
+        Label dateLabel = new Label(eventDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")));
+        dateLabel.getStyleClass().add("event-date");
+
+        Label descLabel = new Label(description);
+        descLabel.getStyleClass().add("event-description");
+        descLabel.setWrapText(true);
+
+        eventBox.getChildren().addAll(nameLabel, dateLabel, descLabel);
+        return eventBox;
+    }
+
+    private void handleSendAnnouncementButton() {
+        try {
+            // Get the message from the text field
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminAnnouncementDialog.fxml"));
+            Parent root = loader.load();
+
+            AdminAnnouncementDialogController controller = loader.getController();
+            Stage dialogStage = new Stage();
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
+            controller.setDialogStageForAnnouncement(dialogStage);
+            dialogStage.showAndWait();
+
+        } catch (Exception e) {
+            logger.error("handleSendAnnouncementButton: Error while loading AdminSendAnnouncement.fxml. Error: {}", e.getMessage(), e);
         }
     }
 
