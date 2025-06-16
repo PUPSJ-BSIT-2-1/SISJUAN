@@ -169,8 +169,7 @@ public class StudentEnrollmentController implements Initializable {
                     connection.setAutoCommit(false);
 
                     // Updated INSERT: Remove load_id as PK, use composite PK, and check for duplicates
-                    String insertSql = "INSERT INTO student_load (student_pk_id, subject_id, semester_id, academic_year_id, faculty_load) " +
-                            "VALUES (?, ?, ?, ?, ?)";
+                    String insertSql = "INSERT INTO student_load (student_pk_id, subject_id, semester_id, academic_year_id, faculty_load, section_id) VALUES (?, ?, ?, ?, ?, ?)";
                     String duplicateCheckSql = "SELECT 1 FROM student_load WHERE student_pk_id = ? AND subject_id = ? AND semester_id = ? AND academic_year_id = ?";
 
                     try (PreparedStatement stmt = connection.prepareStatement(insertSql);
@@ -188,7 +187,7 @@ public class StudentEnrollmentController implements Initializable {
                                 int subjectId = Integer.parseInt(subjectIdStr);
                                 int facultyLoad = Integer.parseInt(scheduleStr);
 
-                                // Duplicate check
+                                // Set parameters for duplicate check (dupStmt)
                                 dupStmt.setInt(1, studentDbId);
                                 dupStmt.setInt(2, subjectId);
                                 dupStmt.setInt(3, currentContext.semesterId());
@@ -201,14 +200,16 @@ public class StudentEnrollmentController implements Initializable {
                                     }
                                 }
 
+                                // Set parameters for insert (stmt)
                                 stmt.setInt(1, studentDbId); // student_pk_id
                                 stmt.setInt(2, subjectId); // subject_id
                                 stmt.setInt(3, currentContext.semesterId()); // semester_id
                                 stmt.setInt(4, currentContext.academicYearId()); // academic_year_id
                                 stmt.setInt(5, facultyLoad); // faculty_load (offeringId)
+                                stmt.setInt(6, currentContext.sectionId()); // section_id
 
-                                logger.debug("Adding to batch: student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, faculty_load={}",
-                                        studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), facultyLoad);
+                                logger.debug("Adding to batch: student_pk_id={}, subject_id={}, semester_id={}, academic_year_id={}, faculty_load={}, section_id={}",
+                                        studentDbId, subjectId, currentContext.semesterId(), currentContext.academicYearId(), facultyLoad, currentContext.sectionId());
                                 stmt.addBatch();
                             } catch (NumberFormatException e) {
                                 logger.error("Invalid enrollment data: subjectId='{}' or schedule='{}' cannot be parsed as integers", enrollment.subjectId(), enrollment.schedule(), e);
@@ -334,10 +335,10 @@ public class StudentEnrollmentController implements Initializable {
                     }
                     // A schedule is considered actual if it's not a placeholder message.
                     return subject.availableSchedules().stream().anyMatch(s ->
-                            !s.equalsIgnoreCase("No schedules available") &&
-                            !s.equalsIgnoreCase("No schedules available for this offering") &&
-                            !s.equalsIgnoreCase("No specific schedules listed") &&
-                            !s.equalsIgnoreCase("Schedule TBD")
+                        !s.equalsIgnoreCase("No schedules available") &&
+                        !s.equalsIgnoreCase("No schedules available for this offering") &&
+                        !s.equalsIgnoreCase("No specific schedules listed") &&
+                        !s.equalsIgnoreCase("Schedule TBD")
                     );
                 })
                 .collect(Collectors.toList());
@@ -669,12 +670,16 @@ public class StudentEnrollmentController implements Initializable {
                 "WHERE fl.semester_id = ? " +
                 "AND s.year_level = ? " +
                 "AND s.semester_id = ? " +
+                "AND fl.section_id = ? " +
                 "AND s.subject_id NOT IN (" +
                 "  SELECT subject_id FROM student_load sl WHERE sl.student_pk_id = ? AND sl.semester_id = ?" +
                 ")";
 
-        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [semesterId={}, yearLevel={}, semesterIdSubject={}, studentId={}, semesterIdSubQuery={}]",
-            availableQuery, context.semesterId(), context.yearLevel(), context.semesterId(), context.studentId(), context.semesterId());
+        logger.info("[DEBUG] Available Subjects Query Params: semesterId={}, yearLevel={}, semesterIdSubject={}, sectionId={}, studentId={}, semesterIdSubQuery={}",
+            context.semesterId(), context.yearLevel(), context.semesterId(), context.sectionId(), context.studentId(), context.semesterId());
+
+        logger.debug("fetchEnrollmentSubjectLists (Phase 2 - Available Details): Query: {}, Params: [semesterId={}, yearLevel={}, semesterIdSubject={}, sectionId={}, studentId={}, semesterIdSubQuery={}]",
+            availableQuery, context.semesterId(), context.yearLevel(), context.semesterId(), context.sectionId(), context.studentId(), context.semesterId());
 
         try (Connection connAvailableDetails = DBConnection.getConnection(); // Separate connection for available subject details
              PreparedStatement pstmtAvailable = connAvailableDetails.prepareStatement(availableQuery)) {
@@ -682,8 +687,9 @@ public class StudentEnrollmentController implements Initializable {
             pstmtAvailable.setInt(1, context.semesterId());
             pstmtAvailable.setInt(2, context.yearLevel());
             pstmtAvailable.setInt(3, context.semesterId());
-            pstmtAvailable.setInt(4, context.studentId());
-            pstmtAvailable.setInt(5, context.semesterId());
+            pstmtAvailable.setInt(4, context.sectionId());
+            pstmtAvailable.setInt(5, context.studentId());
+            pstmtAvailable.setInt(6, context.semesterId());
 
             try (ResultSet rs = pstmtAvailable.executeQuery()) {
                 while (rs.next()) {
@@ -818,10 +824,11 @@ public class StudentEnrollmentController implements Initializable {
         }
 
         String sql = "SELECT " +
-                "    sec.year_level, " +  
+                "    sec.year_level, " +
                 "    sec.section_name AS student_year_section, " +
                 "    sem.semester_name AS section_semester, " +
                 "    s.student_id, " +
+                "    sec.section_id, " + // <--- add this line
                 "    sec.semester_id, " +     
                 "    sec.academic_year_id " + 
                 "FROM " +
@@ -847,9 +854,10 @@ public class StudentEnrollmentController implements Initializable {
                     String studentYearSectionStr = rs.getString("student_year_section");
                     String semester = rs.getString("section_semester");
                     int studentId = rs.getInt("student_id");
+                    int sectionId = rs.getInt("section_id"); // <--- get correct section id
                     int semesterId = rs.getInt("semester_id");
                     int academicYearId = rs.getInt("academic_year_id");
-                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelInt, semester, studentId, studentYearSectionStr, semesterId, semesterId, academicYearId);
+                    StudentEnrollmentContext context = new StudentEnrollmentContext(yearLevelInt, semester, studentId, studentYearSectionStr, sectionId, semesterId, academicYearId);
                     logger.debug("fetchStudentEnrollmentContext: Fetched context: {}", context);
                     return context;
                 } else {
