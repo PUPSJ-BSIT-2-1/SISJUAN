@@ -2,22 +2,28 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class AdminHomeContentController {
 
@@ -54,6 +60,16 @@ public class AdminHomeContentController {
     @FXML
     private VBox programCompletionRates;
 
+    @FXML
+    private VBox eventsVBox;
+
+    @FXML VBox announcementVBox;
+
+    @FXML
+    private Button sendAnnouncementButton;
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdminHomeContentController.class);
+
     // TODO: Add ListView for recent activity, documents if needed
     // @FXML
     // private ListView<?> recentActivityListView;
@@ -68,14 +84,31 @@ public class AdminHomeContentController {
         // Populate data from the database or services
         loadDashboardData();
 
-        // TODO: Populate these labels with actual data from the database or services
-        facultyNameLabel.setText("Admin User"); // Placeholder
-        // totalStudentsLabel.setText("0"); // Will be set by loadDashboardData()
-        // totalFacultyLabel.setText("0"); // Will be set by loadDashboardData()
-        // totalCoursesLabel.setText("0"); // Will be set by loadDashboardData()
-        // enrollmentCountLabel.setText("0%"); // Will be set by loadDashboardData()
-        // pendingActionsLabel.setText("0"); // Will be set by loadDashboardData()
-        // academicCalendarLabel.setText("N/A"); // Will be set by loadDashboardData()
+        // Set the admin name from session or preferences
+        String adminIdentifier = com.example.pupsis_main_dashboard.utilities.RememberMeHandler.getCurrentUserFacultyNumber();
+        String adminName = getAdminFullName(adminIdentifier);
+        facultyNameLabel.setText(adminName != null ? adminName : "Admin User");
+
+        sendAnnouncementButton.setOnAction(event -> handleSendAnnouncementButton());
+    }
+
+    private String getAdminFullName(String identifier) {
+        if (identifier == null || identifier.trim().isEmpty()) return null;
+        String fullName = null;
+        String sql = "SELECT firstname, lastname FROM faculty WHERE faculty_number = ? OR LOWER(email) = LOWER(?) LIMIT 1";
+        try (Connection conn = com.example.pupsis_main_dashboard.utilities.DBConnection.getConnection();
+             java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, identifier);
+            stmt.setString(2, identifier.toLowerCase());
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    fullName = rs.getString("firstname") + " " + rs.getString("lastname");
+                }
+            }
+        } catch (Exception e) {
+            // Optionally log error
+        }
+        return fullName;
     }
 
     private void loadDashboardData() {
@@ -144,8 +177,14 @@ public class AdminHomeContentController {
             }
             enrollmentCountLabel.setText(String.format("%.0f%%", enrollmentRate));
 
-            // Load upcoming events and current semester
-            loadEventsAndSemesterData(stmt);
+            // Load upcoming events
+            loadUpcomingEvents();
+
+            // Load announcements
+            loadAnnouncements();
+
+            // Load current semester
+            loadSemesterData();
 
             // Load scholastic status distribution
             if (programCompletionRates != null) { // Check if the VBox is injected
@@ -172,28 +211,7 @@ public class AdminHomeContentController {
 
     }
 
-    private void loadEventsAndSemesterData(Statement stmt) throws SQLException {
-        // Load Upcoming Events
-        ObservableList<String> eventItems = FXCollections.observableArrayList();
-        String eventsSql = "SELECT se.event_description, sd.event_date " +
-                           "FROM public.school_events se " +
-                           "JOIN public.school_dates sd ON se.event_id = sd.event_id " +
-                           "WHERE sd.event_date >= CURRENT_DATE " +
-                           "ORDER BY sd.event_date ASC LIMIT 5";
-        ResultSet eventsRs = stmt.executeQuery(eventsSql);
-        DateTimeFormatter eventDateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-        while (eventsRs.next()) {
-            String description = eventsRs.getString("event_description");
-            LocalDate eventDate = eventsRs.getDate("event_date").toLocalDate();
-            eventItems.add(description + " (" + eventDate.format(eventDateFormatter) + ")");
-        }
-        if (upcomingEventsListView != null) {
-            upcomingEventsListView.setItems(eventItems);
-            if (eventItems.isEmpty()) {
-                upcomingEventsListView.setPlaceholder(new Label("No upcoming events."));
-            }
-        }
-        eventsRs.close();
+    private void loadSemesterData() {
 
         // Load Current Semester
         String currentSemester = SchoolYearAndSemester.determineCurrentSemester();
@@ -256,6 +274,141 @@ public class AdminHomeContentController {
 
         if (!hasData) {
             contentVBox.getChildren().add(new Label("No scholastic status data available."));
+        }
+    }
+
+    private void loadUpcomingEvents() {
+        String sql = """
+            SELECT se.*, st.*, MIN(sd.event_date) AS first_date\s
+            FROM school_events se\s
+            JOIN school_dates sd ON se.event_id = sd.event_id\s
+            JOIN event_types st ON st.event_type_id = se.event_type_id
+            WHERE sd.event_date >= CURRENT_DATE\s
+            GROUP BY se.event_id, st.event_type_id
+            ORDER BY first_date\s
+            LIMIT 10;
+            """;
+        logger.info("loadUpcomingEvents: Attempting to load upcoming events with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("type_name");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("event_description");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
+            }
+
+            logger.info("loadUpcomingEvents: Found {} upcoming events.", eventCount);
+            Platform.runLater(() -> {
+                eventsVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No upcoming events.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    eventsVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadUpcomingEvents: No events found, displaying 'No upcoming events' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadUpcomingEvents: SQL error while loading upcoming events. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading events.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                eventsVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
+
+    private void loadAnnouncements() {
+        String sql = """
+            SELECT an.*, an.date AS first_date
+            FROM announcement an
+            WHERE an.date >= CURRENT_DATE
+            ORDER BY an.date
+            LIMIT 5;
+            """;
+        logger.info("loadAnnouncements: Attempting to load announcements with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("title");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("message");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
+            }
+
+            logger.info("loadAnnouncements: Found {} announcements.", eventCount);
+            Platform.runLater(() -> {
+                announcementVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No announcements.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    announcementVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadAnnouncements: No events found, displaying 'No announcements' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadAnnouncements: SQL error while loading announcements.. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading announcements.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                announcementVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
+
+    /**
+     * Creates a VBox containing event details for display in the UI.
+     */
+    private VBox createEventBox(String eventName, LocalDate eventDate, String description) {
+        VBox eventBox = new VBox(5);
+        eventBox.getStyleClass().add("event-box");
+
+        Label nameLabel = new Label(eventName);
+        nameLabel.getStyleClass().add("event-name");
+
+        Label dateLabel = new Label(eventDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")));
+        dateLabel.getStyleClass().add("event-date");
+
+        Label descLabel = new Label(description);
+        descLabel.getStyleClass().add("event-description");
+        descLabel.setWrapText(true);
+
+        eventBox.getChildren().addAll(nameLabel, dateLabel, descLabel);
+        return eventBox;
+    }
+
+    private void handleSendAnnouncementButton() {
+        try {
+            // Get the message from the text field
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminAnnouncementDialog.fxml"));
+            Parent root = loader.load();
+
+            AdminAnnouncementDialogController controller = loader.getController();
+            Stage dialogStage = new Stage();
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root, Color.TRANSPARENT));
+            controller.setDialogStageForAnnouncement(dialogStage);
+            dialogStage.showAndWait();
+
+        } catch (Exception e) {
+            logger.error("handleSendAnnouncementButton: Error while loading AdminSendAnnouncement.fxml. Error: {}", e.getMessage(), e);
         }
     }
 

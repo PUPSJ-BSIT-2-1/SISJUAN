@@ -1,7 +1,13 @@
 .root {
     -fx-font-family: "Inter";
     -fx-background-radius: 20;
-    -fx-background-color: transparent;
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .root {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 20;
     -fx-border-radius: 10;
 }
 
@@ -100,6 +106,13 @@
 .table-row-cell:filled:selected .table-cell,
 .table-row-cell:filled:selected .text {
     -fx-text-fill: white;
+}
+
+.table-view .scro .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
 }
 
 .styled-button {
@@ -481,6 +494,8 @@
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+    -fx-border-width: 2px;
+    -fx-border-color: #ddd;
 }
 
 .dark-theme .subject-form {
@@ -675,4 +690,10 @@
 .dark-theme .cancel-button:hover {
     -fx-background-color: #777777;
     -fx-cursor: hand;
+}
+
+.view-header {
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }

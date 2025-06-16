@@ -64,7 +64,7 @@ public class AdminAssignSubjectDialogController {
         });
     }
 
-    // Called by AdminFacultyManagementController to provide subject list
+    // Called by AdminFacultyManagementController to provide a subject list
     public void setSubjects(List<String> subjects) {
         subjectComboBox.setItems(FXCollections.observableArrayList(subjects));
     }
@@ -79,7 +79,7 @@ public class AdminAssignSubjectDialogController {
         semesterTextField.setText(semester);
     }
 
-    // For AdminFacultyManagementController to get selected subject ID
+    // For AdminFacultyManagementController to get a selected subject ID
     public String getSelectedSubjectCode() {
         return subjectComboBox.getValue();
     }
@@ -100,7 +100,7 @@ public class AdminAssignSubjectDialogController {
         return assigned;
     }
 
-    // Cancel button action: close dialog without assigning
+    // Cancel button action: close the dialog without assigning
     @FXML
     private void handleCancel() {
         assigned = false;

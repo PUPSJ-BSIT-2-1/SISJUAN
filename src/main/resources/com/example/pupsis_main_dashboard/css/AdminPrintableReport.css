@@ -5,6 +5,8 @@
     -fx-padding: 20;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
 }
 
 .dark-theme .printable-list {
@@ -274,4 +276,36 @@
 .dark-theme .cancel-button:hover {
     -fx-background-color: #777777;
     -fx-cursor: hand;
+}
+
+.icon {
+    -fx-fill: #6b6b6b;
+}
+
+.dark-theme .icon {
+    -fx-fill: #b0b0b0;
+}
+
+.search-student {
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #6b6b6b;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .search-student {
+    -fx-background-color: #3a3a3a;
+    -fx-border-width: 1px;
+    -fx-border-color: #b0b0b0;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
 }

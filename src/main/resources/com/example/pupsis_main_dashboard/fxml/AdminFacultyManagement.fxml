@@ -112,8 +112,8 @@
     <!-- Table of Faculty -->
     <TableView fx:id="facultyTable" prefHeight="429.0" prefWidth="810">
         <columns>
-            <TableColumn fx:id="idColumn" minWidth="4.800018310546875" prefWidth="68.80001831054688" text="ID" />
-            <TableColumn fx:id="nameColumn" prefWidth="205.59994506835938" text="Name" />
+            <TableColumn fx:id="idColumn" minWidth="4.800018310546875" prefWidth="68.80001831054688" text="Fac ID" />
+            <TableColumn fx:id="nameColumn" prefWidth="205.59994506835938" text="Faculty Name" />
             <TableColumn fx:id="departmentColumn" prefWidth="120.79998779296875" text="Department" />
             <TableColumn fx:id="emailColumn" prefWidth="208.79998779296875" text="Email" />
             <TableColumn fx:id="contactColumn" prefWidth="112.0001220703125" text="Contact" />

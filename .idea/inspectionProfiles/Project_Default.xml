@@ -7,7 +7,8 @@
     <inspection_tool class="DuplicateBranchesInSwitch" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <Languages>
-        <language minSize="319" name="Java" />
+        <language minSize="11" name="Style Sheets" />
+        <language minSize="334" name="Java" />
       </Languages>
     </inspection_tool>
     <inspection_tool class="LanguageDetectionInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
@@ -16,5 +17,6 @@
       <option name="processLiterals" value="true" />
       <option name="processComments" value="true" />
     </inspection_tool>
+    <inspection_tool class="SqlNoDataSourceInspection" enabled="true" level="INFORMATION" enabled_by_default="true" />
   </profile>
 </component>

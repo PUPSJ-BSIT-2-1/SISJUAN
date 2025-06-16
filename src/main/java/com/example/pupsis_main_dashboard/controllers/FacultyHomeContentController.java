@@ -40,8 +40,10 @@ public class FacultyHomeContentController {
     @FXML private VBox todayScheduleVBox;
     @FXML private PieChart classDistributionChart;
     @FXML private VBox eventsVBox;
+    @FXML private VBox announcementVBox;
     @FXML private Button inputGradesButton;
     @FXML private Button checkScheduleButton;
+    @FXML private Button viewClassListButton;
     private String facultyId;
     private static final Logger logger = LoggerFactory.getLogger(FacultyHomeContentController.class);
 
@@ -71,6 +73,10 @@ public class FacultyHomeContentController {
 
         if (checkScheduleButton != null) {
             checkScheduleButton.setOnAction(this::checkScheduleButtonClick);
+        }
+
+        if (viewClassListButton != null) {
+            viewClassListButton.setOnAction(this::viewClassListButtonClick);
         }
     }
 
@@ -124,6 +130,14 @@ public class FacultyHomeContentController {
             facultyDashboardController.handleQuickActionClicks(SCHEDULE_FXML);
         }
     }
+
+    private void viewClassListButtonClick(javafx.event.ActionEvent actionEvent) {
+        if (facultyDashboardController != null) {
+            String CLASS_PREVIEW_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassPreview.fxml";
+            facultyDashboardController.loadContent(CLASS_PREVIEW_FXML);
+            facultyDashboardController.handleQuickActionClicks(CLASS_PREVIEW_FXML);
+        }
+    }
     
     /**
      * Loads faculty data including name, teaching load, schedule, and events.
@@ -169,6 +183,7 @@ public class FacultyHomeContentController {
             executor.submit(() -> {
                 try {
                     loadUpcomingEvents();
+                    loadAnnouncements();
                 } finally {
                     latch.countDown();
                 }
@@ -205,13 +220,8 @@ public class FacultyHomeContentController {
      */
     private void loadTeachingLoad() {
         logger.info("loadTeachingLoad: Attempting to load teaching load for facultyId: {}", facultyId);
-        String totalClassesQuery = "SELECT COUNT(DISTINCT fl.load_id) AS total_classes " +
-                                   "FROM faculty_load fl " +
-                                   "WHERE fl.faculty_id = ? AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
-        String totalStudentsQuery = "SELECT COUNT(DISTINCT sl.student_pk_id) AS total_students " +
-                                    "FROM student_load sl " +
-                                    "JOIN faculty_load fl ON sl.faculty_load = fl.load_id " +
-                                    "WHERE fl.faculty_id = ? AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
+        String totalClassesQuery = "SELECT COUNT(DISTINCT fl.load_id) AS total_classes FROM faculty_load fl WHERE fl.faculty_id = ?";
+        String totalStudentsQuery = "SELECT COUNT(DISTINCT sl.student_pk_id) AS total_students FROM student_load sl JOIN faculty_load fl ON sl.faculty_load = fl.load_id WHERE fl.faculty_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement psClasses = conn.prepareStatement(totalClassesQuery);
@@ -262,7 +272,7 @@ public class FacultyHomeContentController {
                      "JOIN subjects s ON fl.subject_id = s.subject_id " +
                      "LEFT JOIN room r ON sch.room_id = r.room_id " +
                      "JOIN section sec ON sec.section_id = fl.section_id " +
-                     "WHERE fl.faculty_id = ? AND sch.days LIKE '%' || ? || '%' AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1)";
+                     "WHERE fl.faculty_id = ? AND sch.days LIKE '%' || ? || '%'";
         List<Node> scheduleNodes = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection();
@@ -368,7 +378,7 @@ public class FacultyHomeContentController {
                      "WHERE sd.event_date >= CURRENT_DATE " +
                      "GROUP BY se.event_id " + // Corrected GROUP BY
                      "ORDER BY first_date " +
-                     "LIMIT 3;";
+                     "LIMIT 10;";
         logger.info("loadUpcomingEvents: Attempting to load upcoming events with query: {}", sql);
         List<Node> eventNodes = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -406,6 +416,53 @@ public class FacultyHomeContentController {
             });
         }
     }
+
+    private void loadAnnouncements() {
+        String sql = """
+            SELECT an.*, an.date AS first_date
+            FROM announcement an
+            WHERE an.date >= CURRENT_DATE AND an.is_faculty = true OR
+            an.is_all = true
+            ORDER BY an.date
+            LIMIT 5;
+            """;
+        logger.info("loadAnnouncements: Attempting to load announcements with query: {}", sql);
+        List<Node> eventNodes = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            int eventCount = 0;
+            while (rs.next()) {
+                eventCount++;
+                String eventName = rs.getString("title");
+                LocalDate eventDate = rs.getDate("first_date").toLocalDate();
+                String description = rs.getString("message");
+
+                VBox eventEntry = createEventBox(eventName, eventDate, description);
+                eventNodes.add(eventEntry);
+            }
+
+            logger.info("loadAnnouncements: Found {} announcements.", eventCount);
+            Platform.runLater(() -> {
+                announcementVBox.getChildren().setAll(eventNodes);
+                if (eventNodes.isEmpty()) {
+                    Label noEventsLabel = new Label("No announcements.");
+                    noEventsLabel.setStyle("-fx-text-fill: #757575; -fx-font-style: italic;");
+                    announcementVBox.getChildren().add(noEventsLabel);
+                    logger.info("loadAnnouncements: No events found, displaying 'No announcements' message.");
+                }
+            });
+
+        } catch (SQLException e) {
+            logger.error("loadAnnouncements: SQL error while loading announcements.. Error: {}", e.getMessage(), e);
+            Platform.runLater(() -> {
+                Label errorLabel = new Label("Error loading announcements.");
+                errorLabel.setStyle("-fx-text-fill: #ff0000; -fx-font-style: italic;");
+                announcementVBox.getChildren().setAll(errorLabel);
+            });
+        }
+    }
     
     /**
      * Creates a VBox containing event details for display in the UI.
@@ -432,17 +489,17 @@ public class FacultyHomeContentController {
      * Creates a pie chart showing class distribution by subject.
      */
     private void createClassDistributionChart() {
-        String sql = "SELECT s.subject_code, COUNT(fl.load_id) AS class_count " +
-                     "FROM faculty_load fl " +
-                     "JOIN subjects s ON fl.subject_id = s.subject_id " +
-                     "WHERE fl.faculty_id = ? AND fl.semester_id = (SELECT semester_id FROM semesters ORDER BY semester_id DESC LIMIT 1) " +
-                     "GROUP BY s.subject_code " +
-                     "ORDER BY class_count DESC;";
-        logger.info("createClassDistributionChart: Attempting to load class distribution for facultyId: {} with query: {}", facultyId, sql);
+        String query = "SELECT s.subject_code, COUNT(fl.load_id) AS class_count " +
+                      "FROM faculty_load fl " +
+                      "JOIN subjects s ON fl.subject_id = s.subject_id " +
+                      "WHERE fl.faculty_id = ? " +
+                      "GROUP BY s.subject_code " +
+                      "ORDER BY class_count DESC;";
+        logger.info("createClassDistributionChart: Attempting to load class distribution for facultyId: {} with query: {}", facultyId, query);
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, Integer.parseInt(facultyId));
             ResultSet rs = stmt.executeQuery();
 

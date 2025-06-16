@@ -128,7 +128,7 @@
     -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
     -fx-border-radius: 8;
-    -fx-padding: 8;
+    -fx-padding: 10px;
 }
 
 .dark-theme .event-box {
@@ -496,6 +496,12 @@
 /* Events list style */
 .events-list {
     -fx-spacing: 10;
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.dark-theme .events-list {
+    -fx-background-color: #2b2b2b;
 }
 
 /* Quick actions container */
@@ -686,4 +692,36 @@
     -fx-border-width: 2;
     -fx-border-radius: 10;
     -fx-alignment: center;
+}
+
+.vbox-scroll-pane {
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: #f8fcfc;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.dark-theme .vbox-scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.vbox-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.vbox-scroll-pane > .content {
+    -fx-background-color: transparent;
+}
+
+.vbox-scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.vbox-scroll-pane > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.vbox-scroll-pane > .scroll-bar:vertical > .track {
+    -fx-background-color: transparent;
 }

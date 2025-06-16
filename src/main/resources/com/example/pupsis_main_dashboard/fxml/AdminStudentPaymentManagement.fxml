@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="@../css/AdminStudentPaymentManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminStudentPaymentManagementController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="810.0" spacing="10.0" styleClass="root">
+         <children>
+            <HBox prefHeight="90.0" prefWidth="810.0" styleClass="red-card">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="10.0" top="20.0" />
+               </padding>
+               <children>
+                  <VBox>
+                     <children>
+                        <Label styleClass="header" text="Student Payment Management">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="5.0" />
+                           </padding>
+                        </Label>
+                        <Label styleClass="sub-header" text="Processing and Monitoring of Tuition Transactions" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox prefWidth="100.0" spacing="10.0" styleClass="cards">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="cards">
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                     <children>
+                        <GridPane prefHeight="12.0" prefWidth="444.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="316.2" minWidth="10.0" prefWidth="115.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="292.00003814697266" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="412.80004272460934" minWidth="0.0" prefWidth="89.20001220703125" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="412.80004272460934" minWidth="0.0" prefWidth="89.20001220703125" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="412.80004272460934" minWidth="10.0" prefWidth="90.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="412.80004272460934" minWidth="0.0" prefWidth="90.9999877929688" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="409.39998168945317" minWidth="10.0" prefWidth="88.39993896484373" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label styleClass="table-header" text="Transaction ID" />
+                              <Label layoutX="10.0" layoutY="16.0" styleClass="table-header" text="Student Name" GridPane.columnIndex="1" />
+                              <Label layoutX="10.0" layoutY="16.0" prefHeight="20.0" prefWidth="68.0" styleClass="table-header" text="Total Due" GridPane.columnIndex="2" />
+                              <Label layoutX="10.0" layoutY="7.0" styleClass="table-header" GridPane.columnIndex="6" />
+                              <Label layoutX="570.0" layoutY="6.0" prefHeight="29.0" prefWidth="54.0" styleClass="table-header" text="Amount" GridPane.columnIndex="3" />
+                              <Label layoutX="293.0" layoutY="6.0" prefHeight="20.0" prefWidth="67.0" styleClass="table-header" text="Eligibility" GridPane.columnIndex="4" />
+                              <Label prefHeight="20.0" prefWidth="45.0" styleClass="table-header" text="Status" GridPane.columnIndex="5" />
+                              <AnchorPane GridPane.columnIndex="6">
+                                 <children>
+                                    <HBox fx:id="viewTransactionHistory" alignment="CENTER" layoutX="23.0" layoutY="1.0" prefHeight="22.0" prefWidth="35.0" styleClass="icon-container" AnchorPane.leftAnchor="30.0">
+                                       <children>
+                                          <SVGPath content="M5.079 5.069c3.795-3.79 9.965-3.75 13.783.069c3.82 3.82 3.86 9.993.064 13.788c-3.795 3.795-9.968 3.756-13.788-.064a9.812 9.812 0 0 1-2.798-8.28a.75.75 0 1 1 1.487.203a8.312 8.312 0 0 0 2.371 7.017c3.245 3.244 8.468 3.263 11.668.064c3.199-3.2 3.18-8.423-.064-11.668c-3.243-3.242-8.463-3.263-11.663-.068l.748.003a.75.75 0 1 1-.007 1.5l-2.546-.012a.75.75 0 0 1-.746-.747L3.575 4.33a.75.75 0 1 1 1.5-.008l.004.748Zm6.92 2.18a.75.75 0 0 1 .75.75v3.69l2.281 2.28a.75.75 0 1 1-1.06 1.061l-2.72-2.72V8a.75.75 0 0 1 .75-.75Z" scaleX="1.2" scaleY="1.2" styleClass="icon" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="studentPaymentContainer" layoutX="27.0" layoutY="27.0" prefWidth="100.0" spacing="5.0" styleClass="cards">
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                     <children>
+                        <!-- Sample Student Row -->
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.5999755859375" minWidth="10.0" prefWidth="115.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.5999755859375" minWidth="0.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.5999755859375" minWidth="0.0" prefWidth="89.20001220703125" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.5999755859375" minWidth="3.199981689453125" prefWidth="89.20001220703125" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="361.6000213623047" minWidth="10.0" prefWidth="90.9999877929688" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="223.79998168945315" minWidth="10.0" prefWidth="90.9999877929688" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="141.4000244140625" minWidth="10.0" prefWidth="88.39993896484373" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <padding>
+                              <Insets bottom="8.0" top="8.0" />
+                           </padding>
+                           <children>
+                              <Label prefHeight="19.0" prefWidth="129.0" text="0.0" GridPane.columnIndex="3">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="19.0" prefWidth="129.0" text="Eligible" GridPane.columnIndex="4">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="19.0" prefWidth="98.0" text="Pending" GridPane.columnIndex="5">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="CENTER" spacing="5.0" GridPane.columnIndex="6">
+                                 <children>
+                                    <Button mnemonicParsing="false" styleClass="accept-button" text="✓">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button mnemonicParsing="false" styleClass="reject-button" text="✗">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Label layoutX="426.0" layoutY="14.0" prefHeight="19.0" prefWidth="112.0" text="1,000" GridPane.columnIndex="2">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="14.0" prefHeight="19.0" prefWidth="193.0" text="John Doe" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="102.0" layoutY="14.0" prefHeight="19.0" prefWidth="134.0" text="TXN2025001">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </GridPane>
+                        <Separator prefWidth="200.0" />
+                        <!-- End Sample Student Row -->
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

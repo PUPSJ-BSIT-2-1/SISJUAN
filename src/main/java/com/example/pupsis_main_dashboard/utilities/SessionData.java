@@ -6,6 +6,7 @@ public class SessionData {
     private String studentNumber;
     private String facultyId;
     private int currentAcademicYearId;
+    private int unitsEnrolled;
 
     private SessionData() {}
 
@@ -26,6 +27,17 @@ public class SessionData {
 
     public String getStudentNumber() {
         return studentNumber;
+    }
+
+    public int getUnitsEnrolled() {
+        return unitsEnrolled;
+    }
+
+    public void setUnitsEnrolled(int unitsEnrolled) {
+        if (unitsEnrolled < 0) {
+            throw new IllegalArgumentException("Units enrolled cannot be negative");
+        }
+        this.unitsEnrolled = unitsEnrolled;
     }
 
     public void setStudentId(String studentId) {

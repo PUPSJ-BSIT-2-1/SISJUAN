@@ -1,5 +1,5 @@
 .root {
-    -background-color: transparent;
+    -fx-background-color: transparent;
 }
 
 .red-card {
@@ -53,7 +53,7 @@
 /* Dark theme styles */
 
 .dark-theme .root {
-    -background-color: transparent;
+    -background-color: #2b2b2b;
 }
 
 .dark-theme .red-card {
@@ -241,4 +241,64 @@
     -fx-font-size: 12px;
     -fx-font-family: "Inter";
     -fx-text-fill: #e0e0e0;
+}
+
+/* Calendar popup container */
+.semester-date-picker .date-picker-popup {
+    -fx-background-color: white;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup {
+    -fx-background-color: #2b2b2b;
+}
+
+/* Month-Year header bar */
+.semester-date-picker .date-picker-popup > .month-year-pane {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup > .month-year-pane {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+.semester-date-picker .date-picker-popup > .month-year-pane > .label {
+    -fx-text-fill: #343a40;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup > .month-year-pane > .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Date cells */
+.semester-date-picker .date-picker-popup .day-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-border-color: transparent;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup .day-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Hover effect on date cells */
+.semester-date-picker .date-picker-popup .day-cell:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup .day-cell:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+/* Selected date */
+.semester-date-picker .date-picker-popup .day-cell:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup .day-cell:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
 }

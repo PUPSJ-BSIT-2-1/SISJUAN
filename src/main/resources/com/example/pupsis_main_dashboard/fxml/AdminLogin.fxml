@@ -65,7 +65,7 @@
                          <Font name="Poppins Bold" size="24.0" />
                      </font>
                  </Label>
-                 <Label prefWidth="125.0" text="Enter your Admin Iz">
+                 <Label prefWidth="125.0" text="Enter your Admin ID">
                      <padding>
                          <Insets bottom="30.0" top="-5.0" />
                      </padding>

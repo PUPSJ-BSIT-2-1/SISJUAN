@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="584.0" prefWidth="451.0" styleClass="subject-form" stylesheets="@../css/AdminSubjectManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectDialogController">
+    <children>
+        <VBox alignment="TOP_LEFT" layoutX="50.4" layoutY="50.4" prefHeight="478.0" prefWidth="384.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <children>
+            <HBox styleClass="red-card">
+               <children>
+                  <Label styleClass="view-header" text="Assign Subject to Faculty" />
+               </children>
+            </HBox>
+                <Label styleClass="subject-form-text" text="Subject Code:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <TextField fx:id="subjectCodeField" promptText="Enter Subject Code" styleClass="subject-form-text-field" />
+
+                <Label styleClass="subject-form-text" text="Prerequisite:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <TextField fx:id="prerequisiteField" promptText="Enter Prerequisite" styleClass="subject-form-text-field" />
+
+                <Label styleClass="subject-form-text" text="Equivalent Code:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <TextField fx:id="equivCodeField" promptText="Enter Equivalent Code" styleClass="subject-form-text-field" />
+
+                <Label styleClass="subject-form-text" text="Description:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <TextField fx:id="descriptionField" promptText="Enter Description" styleClass="subject-form-text-field" />
+
+                <Label styleClass="subject-form-text" text="Units:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <TextField fx:id="unitField" promptText="Enter Units" styleClass="subject-form-text-field" />
+
+                <Label styleClass="subject-form-text" text="Year Level:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <ComboBox fx:id="yearLevelCombo" prefHeight="70.0" prefWidth="115.0" promptText="Year Level" styleClass="subject-combo-box">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></ComboBox>
+
+                <Label styleClass="subject-form-text" text="Semester:">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin></Label>
+                <ComboBox fx:id="semesterCombo" prefHeight="70.0" prefWidth="115.0" promptText="Semester" styleClass="subject-combo-box" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <Button fx:id="saveButton" prefWidth="70.0" styleClass="assign-button" text="Save" />
+                        <Button fx:id="cancelButton" prefWidth="70.0" styleClass="cancel-button" text="Cancel" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

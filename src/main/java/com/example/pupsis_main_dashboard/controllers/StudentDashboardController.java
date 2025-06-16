@@ -42,6 +42,7 @@ public class StudentDashboardController {
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox refreshHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private ScrollPane contentPane;
@@ -53,6 +54,7 @@ public class StudentDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(StudentDashboardController.class);
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
     private final Map<String, Parent> contentCache = new HashMap<>();
+    private StudentEnrollmentController currentEnrollmentController;
     // private final String identifier = RememberMeHandler.getCurrentUserEmail(); // Changed & moved to initialize
     
     // FXML paths as constants
@@ -77,10 +79,37 @@ public class StudentDashboardController {
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
-        
-        // Preload and cache all FXML content that may be accessed from the sidebar
-        preloadAllContent();
-        
+
+        // Show home FXML immediately (without data)
+        loadHomeFxmlSkeleton();
+
+        // Show loading overlay if you have one (optional)
+        if (loadingIndicator != null) loadingIndicator.setVisible(true);
+
+        // Run data load in background
+        Task<Void> dataLoadTask = new Task<>() {
+            @Override
+            protected Void call() {
+                logger.info("[PERF] Starting data load (background thread)...");
+                long dataStart = System.currentTimeMillis();
+                preloadAllContent();
+                long dataEnd = System.currentTimeMillis();
+                logger.info("[PERF] Data loaded in {} ms (background)", (dataEnd - dataStart));
+                return null;
+            }
+        };
+        dataLoadTask.setOnSucceeded(event -> {
+            logger.info("[PERF] Populating UI (background data load complete)...");
+            // Hide loading overlay if you have one
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+            // Optionally, trigger data population for home content here if needed
+        });
+        dataLoadTask.setOnFailed(event -> {
+            logger.error("[PERF] Data load failed", dataLoadTask.getException());
+            if (loadingIndicator != null) loadingIndicator.setVisible(false);
+        });
+        new Thread(dataLoadTask).start();
+
         // Load student info using getCurrentUserStudentNumber
         String identifier = RememberMeHandler.getCurrentUserStudentNumber(); // Changed
         if (identifier != null && !identifier.isEmpty()) {
@@ -104,6 +133,18 @@ public class StudentDashboardController {
         });
 
         logger.info("StudentDashboardController.initialize() - END. Duration: {} ms", (System.currentTimeMillis() - startTime));
+    }
+
+    // Loads the home FXML skeleton immediately, without waiting for data
+    private void loadHomeFxmlSkeleton() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(HOME_FXML));
+            Parent homeContent = loader.load();
+            contentPane.setContent(homeContent);
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading home content"));
+            logger.error("Error loading home FXML skeleton", e);
+        }
     }
     
     // Set up scroll pane fade effects based on scroll position
@@ -155,17 +196,12 @@ public class StudentDashboardController {
                 // Check if a resource exists before trying to load it
                 var resource = getClass().getResource(fxmlPath);
                 if (resource != null) {
-                    Parent content = FXMLLoader.load(resource);
-                    // Apply theme to this loaded content
-                    Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
-                    boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                    FXMLLoader loader = new FXMLLoader(resource);
+                    Parent content = loader.load(); // not FXMLLoader.load(resource)
+                    Object controller = loader.getController();
 
-                    if (content != null) {
-                        // Apply appropriate CSS classes based on the current theme
-                        content.getStyleClass().remove(darkModeEnabled ? "light-theme" : "dark-theme");
-                        content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
-                    }
-                    contentCache.put(fxmlPath, content);
+                    // Inject dashboard controller
+                    setupControllerDependencies(controller);
                     logger.info("preloadFxmlContent({}) - LOADED and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - startTime));
                 } else {
                     logger.warn("Resource not found: {}", fxmlPath);
@@ -338,10 +374,11 @@ public class StudentDashboardController {
         };
     }
 
-    // Load content into the contentPane
+    // Loads FXML content and applies the global theme to the root scene
     void loadContent(String fxmlPath) {
         try {
             Parent contentNode;
+            Object controller;
             long loadStartTime = System.currentTimeMillis();
             if (contentCache.containsKey(fxmlPath)) {
                 contentNode = contentCache.get(fxmlPath);
@@ -351,9 +388,24 @@ public class StudentDashboardController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 contentNode = loader.load();
                 contentCache.put(fxmlPath, contentNode); // Cache after loading
-                StudentHomeContentController controller = loader.getController();
-                controller.setStudentDashboardController(this);
+                controller = loader.getController();
+                setupControllerDependencies(controller);
+
+                // IMPORTANT: Setup dependencies IMMEDIATELY after loading
+                if (controller != null) {
+                    setupControllerDependencies(controller);
+                    logger.info("Dependencies set up for controller: {}", controller.getClass().getSimpleName());
+                } else {
+                    logger.warn("Controller is null for FXML: {}", fxmlPath);
+                }
                 logger.info("loadContent({}) - Loaded from FXML and CACHED. Duration: {} ms", fxmlPath, (System.currentTimeMillis() - loadStartTime));
+            }
+            // Remove direct theme class assignment from content node
+            // Instead, apply global theme to the scene root
+            if (contentPane.getScene() != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
             }
             contentPane.setContent(contentNode);
             resetScrollPosition();
@@ -417,6 +469,12 @@ public class StudentDashboardController {
             clearAllSelections();
             registrationHBox.getStyleClass().add("selected");
         }
+
+        if (fxmlPath.equals(PAYMENT_INFO_FXML)) {
+            clearAllSelections();
+            paymentInfoHBox.getStyleClass().add("selected");
+        }
+
     }
 
     // Clear all selections from the sidebar items
@@ -430,5 +488,81 @@ public class StudentDashboardController {
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
+    }
+
+    private void setupControllerDependencies(Object controller) {
+        if (controller == null) {
+            logger.warn("Cannot setup dependencies - controller is null");
+            return;
+        }
+
+        logger.info("Setting up dependencies for: {}", controller.getClass().getSimpleName());
+
+        try {
+            switch (controller) {
+                case StudentHomeContentController homeController -> {
+                    homeController.setStudentDashboardController(this);
+                    logger.info("Dashboard controller injected into StudentHomeContentController");
+                }
+                case StudentPaymentInfoController paymentController -> {
+                    paymentController.setStudentDashboardController(this);
+                    logger.info("Dashboard controller injected into StudentPaymentInfoController");
+
+                    if (this.currentEnrollmentController != null) {
+                        paymentController.setEnrollmentController(this.currentEnrollmentController);
+                        logger.info("Enrollment controller injected into StudentPaymentInfoController");
+                    } else {
+                        logger.warn("No enrollment controller available to inject");
+                    }
+                }
+                case StudentEnrollmentController enrollmentController -> {
+                    enrollmentController.setStudentDashboardController(this);
+                    this.currentEnrollmentController = enrollmentController;
+                    logger.info("Dashboard controller injected into StudentEnrollmentController and reference stored");
+                }
+                default -> logger.warn("Unknown controller type: {}", controller.getClass().getSimpleName());
+            }
+        } catch (Exception e) {
+            logger.error("Error setting up dependencies for controller: {}", controller.getClass().getSimpleName(), e);
+        }
+    }
+
+    @FXML
+    private void handleRefreshButton(MouseEvent event) {
+        logger.info("Refresh button clicked. Reloading dashboard data.");
+        if (loadingIndicator != null) loadingIndicator.setVisible(true);
+        // Save the currently selected sidebar HBox
+        HBox selectedHBox = getCurrentlySelectedSidebarHBox();
+        refreshAllDashboardData(selectedHBox);
+        if (loadingIndicator != null) loadingIndicator.setVisible(false);
+    }
+
+    private HBox getCurrentlySelectedSidebarHBox() {
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, registrationHBox, paymentInfoHBox, gradesHBox,
+            scheduleHBox, schoolCalendarHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null && item.getStyleClass().contains("selected")) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reload all dashboard data and refresh visible panels, preserving sidebar selection.
+     */
+    private void refreshAllDashboardData(HBox selectedHBox) {
+        contentCache.clear();
+        initialize();
+        // Restore sidebar selection
+        if (selectedHBox != null) {
+            updateSelectedSidebarItem(selectedHBox);
+        }
+        // Optionally reload the currently visible panel
+        if (contentPane != null && contentPane.getContent() != null) {
+            loadContent(getFxmlPathForHBox(selectedHBox != null ? selectedHBox : homeHBox));
+        }
     }
 }

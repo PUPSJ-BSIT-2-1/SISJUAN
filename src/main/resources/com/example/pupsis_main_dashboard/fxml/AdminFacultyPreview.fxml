@@ -96,10 +96,10 @@
             <Label styleClass="section-header" text="Recently Added Faculty" />
             <TableView fx:id="recentFacultyTable" prefHeight="300.0">
                 <columns>
-                    <TableColumn fx:id="idColumn" text="ID" />
-                    <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Name" />
-                    <TableColumn fx:id="deptColumn" prefWidth="216.0" text="Department" />
-                    <TableColumn fx:id="joinedColumn" minWidth="0.0" prefWidth="250.39995727539065" text="Date Joined" />
+                    <TableColumn fx:id="idColumn" text="     Fac ID" />
+                    <TableColumn fx:id="nameColumn" prefWidth="200.0" text="        Faculty Name" />
+                    <TableColumn fx:id="deptColumn" prefWidth="216.0" text="      Department" />
+                    <TableColumn fx:id="joinedColumn" minWidth="0.0" prefWidth="250.39995727539065" text="      Date Joined" />
                 </columns>
             <columnResizePolicy>
                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

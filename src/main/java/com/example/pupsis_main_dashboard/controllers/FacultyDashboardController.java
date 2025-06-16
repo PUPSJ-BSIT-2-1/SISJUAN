@@ -1,7 +1,6 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-//import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-
+import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
@@ -29,13 +28,14 @@ import java.util.prefs.Preferences;
 public class FacultyDashboardController {
 
     @FXML private HBox homeHBox;
-    @FXML private HBox subjectsHBox;
+    @FXML private HBox classListHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox schoolCalendarHBox;
     @FXML private HBox scheduleHBox;
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox refreshHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private Label departmentLabel;
@@ -56,6 +56,7 @@ public class FacultyDashboardController {
     private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
     private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
     private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassSchedule.fxml";
+    private static final String CLASS_LIST_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassPreview.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
@@ -125,6 +126,7 @@ public class FacultyDashboardController {
         preloadFxmlContent(SETTINGS_FXML);
         preloadFxmlContent(ABOUT_FXML);
         preloadFxmlContent(SCHEDULE_FXML);
+        preloadFxmlContent(CLASS_LIST_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -264,7 +266,7 @@ public class FacultyDashboardController {
     // Get FXML path based on clicked HBox
     private String getFxmlPathFromHBox(HBox clickedHBox) {
         return switch (clickedHBox.getId()) {
-            case "subjectsHBox" -> null;
+            case "classListHBox" -> CLASS_LIST_FXML;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" -> SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
@@ -274,18 +276,17 @@ public class FacultyDashboardController {
         };
     }
 
+    // Loads FXML content and applies the global theme to the root scene AND the loaded content node
     public void loadContent(String fxmlPath) {
         try {
             Parent content = contentCache.get(fxmlPath);
             if (content == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 content = loader.load();
-
                 if (fxmlPath.equals(HOME_FXML)) {
                     FacultyHomeContentController facultyHomeContentController = loader.getController();
                     facultyHomeContentController.setFacultyDashboardController(this, formattedName);
                 }
-
                 // Set faculty ID in SessionData when loading grading module
                 if (fxmlPath.equals(GRADES_FXML)) {
                     String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
@@ -299,14 +300,15 @@ public class FacultyDashboardController {
                 contentCache.put(fxmlPath, content);
                 addLayoutChangeListener(content);
             }
-
-            if (content != null) {
+            // Apply global theme to the scene root
+            if (contentPane.getScene() != null) {
                 Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
                 boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
+                // Also apply the theme class to the loaded content node
                 content.getStyleClass().removeAll("light-theme", "dark-theme");
                 content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
             }
-
             contentPane.setContent(content);
             resetScrollPosition();
         } catch (IOException e) {
@@ -364,17 +366,75 @@ public class FacultyDashboardController {
             clearAllSelections();
             schoolCalendarHBox.getStyleClass().add("selected");
         }
+
+        if (fxmlPath.equals(CLASS_LIST_FXML)) {
+            clearAllSelections();
+            classListHBox.getStyleClass().add("selected");
+        }
     }
 
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
-        subjectsHBox.getStyleClass().remove("selected");
+        classListHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
         scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
+    }
+
+    @FXML
+    private void handleRefreshButton(MouseEvent event) {
+        logger.info("Faculty Refresh button clicked. Reloading dashboard data.");
+        // Save the currently selected sidebar HBox
+        HBox selectedHBox = getCurrentlySelectedSidebarHBox();
+        refreshAllDashboardData(selectedHBox);
+    }
+
+    private HBox getCurrentlySelectedSidebarHBox() {
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, classListHBox, gradesHBox, scheduleHBox, schoolCalendarHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null && item.getStyleClass().contains("selected")) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reload all dashboard data and refresh visible panels, preserving sidebar selection.
+     */
+    private void refreshAllDashboardData(HBox selectedHBox) {
+        contentCache.clear();
+        initialize();
+        // Restore sidebar selection
+        if (selectedHBox != null) {
+            updateSelectedSidebarItem(selectedHBox);
+        }
+        // Optionally reload the currently visible panel
+        if (contentPane != null && contentPane.getContent() != null) {
+            loadContent(getFxmlPathForHBox(selectedHBox != null ? selectedHBox : homeHBox));
+        }
+    }
+
+    private String getFxmlPathForHBox(HBox hBox) {
+        return switch (hBox.getId()) {
+            case "classListHBox" -> CLASS_LIST_FXML;
+            case "gradesHBox" -> GRADES_FXML;
+            case "scheduleHBox" -> SCHEDULE_FXML;
+            case "schoolCalendarHBox" -> CALENDAR_FXML;
+            case "aboutHBox" -> ABOUT_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
+            default -> HOME_FXML;
+        };
+    }
+
+    private void updateSelectedSidebarItem(HBox selectedHBox) {
+        clearAllSelections();
+        selectedHBox.getStyleClass().add("selected");
     }
 }

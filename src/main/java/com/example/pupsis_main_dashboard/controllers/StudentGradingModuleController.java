@@ -1,6 +1,7 @@
 package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Grades;
+import com.example.pupsis_main_dashboard.models.Schedule;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import javafx.collections.FXCollections;
@@ -85,6 +86,7 @@ public class StudentGradingModuleController {
         TableColumn<?, ?>[] columns = new TableColumn[]{subCode, subDescription, facultyName, units, sectionCode, finGrade, gradeStatus};
         for (TableColumn<?, ?> col : columns) {
             col.setReorderable(false);
+            col.setSortable(false);
         }
 
         studentsTable.setRowFactory(_ -> {
@@ -93,7 +95,7 @@ public class StudentGradingModuleController {
             return row;
         });
 
-        for (TableColumn<Grades, String> col : Arrays.asList(subCode, subDescription, facultyName, units, sectionCode, finGrade, gradeStatus)) {
+        for (TableColumn<Grades, String> col : Arrays.asList(subCode, subDescription, facultyName, sectionCode, finGrade, gradeStatus)) {
             setWrappingHeaderCellFactory(col);
         }
 
@@ -102,24 +104,23 @@ public class StudentGradingModuleController {
     }
 
     private void setWrappingHeaderCellFactory(TableColumn<Grades, String> column) {
+        Label headerLabel = new Label();
+        headerLabel.setWrapText(true);
+        headerLabel.setMaxWidth(Double.MAX_VALUE);
+        headerLabel.setStyle("-fx-alignment: center; -fx-text-alignment: center;");
+        StackPane headerPane = new StackPane(headerLabel);
+        headerPane.setPrefHeight(Control.USE_COMPUTED_SIZE);
+        headerPane.setAlignment(Pos.CENTER);
 
-        AtomicBoolean isDarkTheme = new AtomicBoolean(root.getScene() != null && root.getScene().getRoot().getStyleClass().contains("dark-theme"));
-        root.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                isDarkTheme.set(newScene.getRoot().getStyleClass().contains("dark-theme"));
-                newScene.getRoot().getStyleClass().addListener((ListChangeListener<String>) change ->
-                        isDarkTheme.set(change.getList().contains("dark-theme")));
-            }
-        });
+        column.setGraphic(headerPane);
 
         column.setCellFactory(_ -> new TableCell<>() {
             private final Label label = new Label();
 
             {
-                String textColor = isDarkTheme.get() ? "#e0e0e0" : "#000000";
                 label.setWrapText(true);
                 label.setMaxWidth(Double.MAX_VALUE);
-                label.setStyle("-fx-alignment: center; -fx-text-alignment: center; -fx-text-fill: " + textColor + ";");
+                label.setStyle("-fx-alignment: center; -fx-text-alignment: center;");
 
                 StackPane pane = new StackPane(label);
                 pane.setPrefHeight(Control.USE_COMPUTED_SIZE);
@@ -134,7 +135,7 @@ public class StudentGradingModuleController {
                     setGraphic(null);
                 } else {
                     label.setText(item);
-                    setGraphic(label);
+                    setGraphic(label.getParent());  // StackPane as parent
                 }
             }
         });
@@ -184,10 +185,9 @@ public class StudentGradingModuleController {
                     studentID = rs2.getInt("student_id");
                     String currentSectionName = rs2.getString("section_name");
                     int studentActualYearLevel = rs2.getInt("year_level");
-                    String currentScholasticStatus = rs2.getString("current_scholastic_status");
-                    
+
                     // Update labels on JavaFX Application Thread
-                    final String finalCurrentScholasticStatus = currentScholasticStatus;
+                    final String finalCurrentScholasticStatus = rs2.getString("current_scholastic_status");
                     final int finalStudentActualYearLevel = studentActualYearLevel;
                     javafx.application.Platform.runLater(() -> {
                         yearLevel.setText(String.valueOf(finalStudentActualYearLevel));
@@ -215,7 +215,7 @@ public class StudentGradingModuleController {
                             Double.parseDouble(finalGradeStr); // Check if numeric
                             finalGradeDisplay = finalGradeStr; // It's numeric, so display it
                         } catch (NumberFormatException e) {
-                            // Non-numeric, keep finalGradeDisplay as "" (blank)
+                            // Non-numeric, keep the finalGradeDisplay as "" (blank)
                         }
                     }
 
@@ -236,7 +236,7 @@ public class StudentGradingModuleController {
                     if (studentsList.isEmpty()) {
                         studentsTable.setPlaceholder(new Label("No Grades available."));
                     } else {
-                        studentsTable.setPlaceholder(null); // Remove placeholder if data is loaded
+                        studentsTable.setPlaceholder(null); // Remove the placeholder if data is loaded
                     }
                 });
             } catch (SQLException e) {
@@ -262,18 +262,26 @@ public class StudentGradingModuleController {
             protected ObservableList<String> call() throws Exception {
                 ObservableList<String> sections = FXCollections.observableArrayList();
                 sections.add("All Sections"); // Add the "All Sections" option first
-                String sql = "SELECT DISTINCT section_name FROM section ORDER BY section_name";
+                String sql = "SELECT DISTINCT year_level FROM section ORDER BY year_level; ";
                 try (Connection conn = DBConnection.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql);
                      ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        sections.add(rs.getString("section_name"));
+                        int yearLevel = rs.getInt("year_level");
+                        String yearLevelStr = switch (yearLevel) {
+                            case 1 -> "1st Year";
+                            case 2 -> "2nd Year";
+                            case 3 -> "3rd Year";
+                            case 4 -> "4th Year";
+                            default -> "Unknown Year";
+                        };
+                        sections.add(yearLevelStr);
                     }
                 }
                 return sections;
             }
         };
-        task.setOnSucceeded(event -> yearSectionComboBox.setItems(task.getValue()));
+        task.setOnSucceeded(_ -> yearSectionComboBox.setItems(task.getValue()));
         new Thread(task).start();
     }
 

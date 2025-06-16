@@ -7,9 +7,9 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdminSubjectFormController {
+public class AdminSubjectDialogController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectFormController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectDialogController.class);
 
     @FXML private TextField subjectCodeField;
     @FXML private TextField prerequisiteField;
@@ -26,7 +26,7 @@ public class AdminSubjectFormController {
 
     @FXML
     public void initialize() {
-        logger.info("Initializing AdminSubjectFormController");
+        logger.info("Initializing AdminSubjectDialogController");
         // Initialize ComboBox values to match filtering options
         yearLevelCombo.getItems().addAll(
             "1st Year",

@@ -11,13 +11,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox prefHeight="706.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AdminSubjectModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectController">
+<VBox prefHeight="706.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/AdminSubjectManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminSubjectManagementController">
     <children>
         <HBox>
             <children>
                 <VBox prefHeight="100.0" prefWidth="810.0" styleClass="red-card">
                     <children>
-                        <Label styleClass="header" text="Subject and Curriculum Management" />
+                        <Label styleClass="header" text="Subject and Curriculum Management">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></Label>
                         <Label styleClass="sub-header" text="Academic Subject Planning and Oversight" />
                     </children>
                     <HBox.margin>
@@ -69,11 +72,11 @@
         </HBox>
         <TableView fx:id="tableView" prefHeight="458.0" prefWidth="810.0">
             <columns>
-                <TableColumn fx:id="subjectCodeColumn" prefWidth="114.39994621276855" text="Subject Code" />
-                <TableColumn fx:id="prerequisiteColumn" prefWidth="127.20001983642578" text="Prerequisite" />
+                <TableColumn fx:id="subjectCodeColumn" prefWidth="114.39994621276855" text="   Subject Code" />
+                <TableColumn fx:id="prerequisiteColumn" prefWidth="127.20001983642578" text="    Prerequisite" />
                 <TableColumn fx:id="equivSubjectCodeColumn" prefWidth="127.20001220703125" text="Equivalent Code" />
-                <TableColumn fx:id="descriptionColumn" prefWidth="326.39996337890625" text="Description" />
-                <TableColumn fx:id="unitColumn" minWidth="0.0" prefWidth="91.20004882812498" text="Units" />
+                <TableColumn fx:id="descriptionColumn" prefWidth="326.39996337890625" text="      Description" />
+                <TableColumn fx:id="unitColumn" minWidth="0.0" prefWidth="91.20004882812498" text="    Units" />
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

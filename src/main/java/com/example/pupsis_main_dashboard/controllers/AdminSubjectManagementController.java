@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import javafx.scene.paint.Color;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +30,14 @@ import java.sql.ResultSet;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class AdminSubjectController implements Initializable {
+public class AdminSubjectManagementController implements Initializable {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminSubjectManagementController.class);
 
     @FXML private TableView<SubjectManagement> tableView;
     @FXML private TableColumn<SubjectManagement, String> subjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> prerequisiteColumn;
+    @FXML private TableColumn<SubjectManagement, String> equivSubjectCodeColumn;
     @FXML private TableColumn<SubjectManagement, String> descriptionColumn;
     @FXML private TableColumn<SubjectManagement, Double> unitColumn;
     @FXML private ComboBox<String> yearSemComboBox;
@@ -53,7 +56,7 @@ public class AdminSubjectController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        logger.info("Initializing AdminSubjectController");
+        logger.info("Initializing AdminSubjectManagementController");
 
         tableView.setRowFactory(_ -> {
             TableRow<SubjectManagement> row = new TableRow<>();
@@ -61,7 +64,7 @@ public class AdminSubjectController implements Initializable {
             return row;
         });
 
-        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, descriptionColumn, unitColumn}; 
+        var columns = new TableColumn[]{subjectCodeColumn, prerequisiteColumn, equivSubjectCodeColumn, descriptionColumn, unitColumn};
         for (var col : columns) {
             col.setReorderable(false);
             col.setSortable(false);
@@ -244,7 +247,6 @@ public class AdminSubjectController implements Initializable {
     }
 
     private boolean isMatchesSearchText(SubjectManagement subject, String searchText) {
-        logger.debug("Checking if subject matches search text: {}", searchText);
         boolean matchesSearchText = true;
         if (searchText != null && !searchText.isEmpty()) {
             matchesSearchText = subject.getSubjectCode().toLowerCase().contains(searchText) ||
@@ -289,15 +291,15 @@ public class AdminSubjectController implements Initializable {
     // Helper method to show the subject form dialog
     private void showSubjectFormDialog(SubjectManagement subjectToEdit) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminSubjectForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminSubjectDialog.fxml"));
             Parent root = loader.load();
 
-            AdminSubjectFormController controller = loader.getController();
+            AdminSubjectDialogController controller = loader.getController();
 
             Stage stage = new Stage();
+            stage.initStyle(StageStyle.TRANSPARENT);
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(subjectToEdit == null ? "Add New Subject" : "Edit Subject");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, Color.TRANSPARENT));
 
             // This callback is executed when the form's save button is clicked.
             controller.showForm(subjectToEdit, () -> {
