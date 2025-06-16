@@ -2,6 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Schedule;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.NotificationUtil;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
@@ -19,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -527,7 +529,11 @@ public class AdminClassScheduleController {
                         scheduleTable.refresh();
 
                         Platform.runLater(this::populateFacultyIDComboBox);
-                        StageAndSceneUtils.showAlert("Success", "Schedule added successfully!", Alert.AlertType.INFORMATION);
+                        //StageAndSceneUtils.showAlert("Success", "Schedule added successfully!", Alert.AlertType.INFORMATION);
+
+                        Stage stage = (Stage) borderPane.getScene().getWindow();
+
+                        NotificationUtil.show(stage,"Schedule added successfully!", "success", "top-center");
                         handleCancelSchedule(); // clear form
                     }
                 }
