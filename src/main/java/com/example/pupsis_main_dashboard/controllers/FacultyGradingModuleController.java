@@ -4,6 +4,7 @@ import com.example.pupsis_main_dashboard.utilities.DBConnection;
 //import com.example.pupsis_main_dashboard.databaseOperations.dbConnection2;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.models.Subject;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -69,6 +70,18 @@ public class FacultyGradingModuleController implements Initializable {
 
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
+
+        // Try to get student ID with a small delay to ensure SessionData is populated
+        Platform.runLater(() -> {
+            facultyId = SessionData.getInstance().getFacultyId();
+            if (facultyId != null && !facultyId.isEmpty()) {
+                // Load data asynchronously
+                Task<ObservableList<Subject>> loadTask = getObservableListTask();
+                new Thread(loadTask).start();
+            } else {
+                subjectsTable.setPlaceholder(new Label("No faculty ID available"));
+            }
+        });
     }
 
     private String attemptToRetrieveStudentId() {

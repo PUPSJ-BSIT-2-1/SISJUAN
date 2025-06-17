@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SectionDAO {
-    private final Connection connection;
 
-    public SectionDAO() throws SQLException {
-        this.connection = DBConnection.getConnection();
-    }
+    // === REMOVED: private final Connection connection; ===
+    // === REMOVED: public SectionDAO() throws SQLException { ... } ===
 
     /**
      * Fetches all sections from the 'section' table.
@@ -25,12 +23,13 @@ public class SectionDAO {
      */
     public List<AdminAssignSubjectDialogController.SectionItem> getAllSectionItems() {
         List<AdminAssignSubjectDialogController.SectionItem> sections = new ArrayList<>();
-        // Assuming the section table has columns: section_id (INT), section_name (TEXT/VARCHAR)
         String sql = "SELECT section_id, section_name FROM section ORDER BY section_name ASC";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()
+        ) {
             while (rs.next()) {
                 int sectionId = rs.getInt("section_id");
                 String sectionName = rs.getString("section_name");
@@ -39,7 +38,6 @@ public class SectionDAO {
         } catch (SQLException e) {
             System.err.println("Error fetching sections: " + e.getMessage());
             e.printStackTrace();
-            // Return an empty list in case of error, or handle more gracefully
         }
         return sections;
     }

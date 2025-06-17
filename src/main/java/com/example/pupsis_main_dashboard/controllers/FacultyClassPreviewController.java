@@ -73,6 +73,18 @@ public class FacultyClassPreviewController implements Initializable {
 
         // Show loading indicator
         subjectsTable.setPlaceholder(new Label("Loading data..."));
+
+        // Try to get student ID with a small delay to ensure SessionData is populated
+        Platform.runLater(() -> {
+            facultyId = SessionData.getInstance().getFacultyId();
+            if (facultyId != null && !facultyId.isEmpty()) {
+                // Load data asynchronously
+                Task<ObservableList<Subject>> loadTask = getObservableListTask();
+                new Thread(loadTask).start();
+            } else {
+                subjectsTable.setPlaceholder(new Label("No faculty ID available"));
+            }
+        });
     }
 
     private String attemptToRetrieveStudentId() {

@@ -68,20 +68,35 @@ public class AdminFacultyManagementController {
             semester = SchoolYearAndSemester.getCurrentAcademicYear();
         }).start();
 
-        try {
-            facultyDAO = new FacultyDAO();
-            Task<List<Faculty>> loadFacultyTask = getLoadFacultyTask();
+        facultyDAO = new FacultyDAO();
+        facultyLoadDAO = new FacultyLoadDAO();
+        subjectDAO = new SubjectDAO();
+        sectionDAO = new SectionDAO();
 
-            facultyTable.setPlaceholder(new Label("Loading faculty data..."));
+        // === (1) BACKGROUND LOAD FACULTY DATA ===
+        Task<List<Faculty>> loadFacultyTask = new Task<>() {
+            @Override
+            protected List<Faculty> call() throws Exception {
+                return facultyDAO.getAllFaculty();
+            }
+        };
 
-            new Thread(loadFacultyTask).start();
+        loadFacultyTask.setOnSucceeded(event -> {
+            // This runs on JavaFX thread, safe to update ObservableList
+            facultyList.setAll(loadFacultyTask.getValue());
+        });
 
-            facultyLoadDAO = new FacultyLoadDAO();
-            subjectDAO = new SubjectDAO();
-            sectionDAO = new SectionDAO();
-        } catch (SQLException e) {
-            Platform.runLater(() -> showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR));
-        }
+        loadFacultyTask.setOnFailed(event -> {
+            Platform.runLater(() -> showAlert(
+                    "Database Error",
+                    "Failed to load faculty data. " + loadFacultyTask.getException().getMessage(),
+                    Alert.AlertType.ERROR
+            ));
+        });
+
+        facultyTable.setPlaceholder(new Label("Loading faculty data..."));
+
+        new Thread(loadFacultyTask).start();
 
         // Go back to the dashboard when the back button is clicked
         backButton.setOnMouseClicked(_ -> {

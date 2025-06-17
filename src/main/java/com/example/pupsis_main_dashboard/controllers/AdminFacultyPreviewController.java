@@ -41,12 +41,7 @@ public class AdminFacultyPreviewController {
 
     @FXML
     private void initialize() {
-        try {
-            facultyDAO = new FacultyDAO();
-        } catch (SQLException e) {
-            StageAndSceneUtils.showAlert("Error", "Failed to connect to database.", Alert.AlertType.ERROR);
-            return;
-        }
+        facultyDAO = new FacultyDAO();
 
         // Set the action for the "Manage Faculty" button
         manageButton.setOnAction(this::loadFacultyTab);
