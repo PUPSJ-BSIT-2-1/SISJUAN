@@ -14,10 +14,11 @@ public class ConnectionPool {
         config.setJdbcUrl(DBConnection.URL);
         config.setUsername(DBConnection.USER);
         config.setPassword(DBConnection.PASSWORD);
-        config.setMaximumPoolSize(10);
+        config.setMaximumPoolSize(25);
         config.setMinimumIdle(2);
         config.setIdleTimeout(30000);
         config.setMaxLifetime(600000);
+        config.setLeakDetectionThreshold(3000); // logs if a connection is held >3s
         config.setPoolName("PUPSISMainDashboardHikariCP");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");

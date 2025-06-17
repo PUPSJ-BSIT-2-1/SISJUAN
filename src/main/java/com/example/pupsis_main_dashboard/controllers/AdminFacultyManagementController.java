@@ -9,6 +9,7 @@ import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -60,6 +61,7 @@ public class AdminFacultyManagementController {
     private String schoolYear;
     private String semester;
 
+    @FXML
     public void initialize() {
         new Thread(() -> {
             schoolYear = SchoolYearAndSemester.determineCurrentSemester();
@@ -68,7 +70,12 @@ public class AdminFacultyManagementController {
 
         try {
             facultyDAO = new FacultyDAO();
-            loadFacultyData();
+            Task<List<Faculty>> loadFacultyTask = getLoadFacultyTask();
+
+            facultyTable.setPlaceholder(new Label("Loading faculty data..."));
+
+            new Thread(loadFacultyTask).start();
+
             facultyLoadDAO = new FacultyLoadDAO();
             subjectDAO = new SubjectDAO();
             sectionDAO = new SectionDAO();
@@ -203,6 +210,29 @@ public class AdminFacultyManagementController {
             // === END Smart Positioning ===
         });
 
+    }
+
+    private Task<List<Faculty>> getLoadFacultyTask() {
+        Task<List<Faculty>> loadFacultyTask = new Task<>() {
+            @Override
+            protected List<Faculty> call() throws Exception {
+                return facultyDAO.getAllFaculty();
+            }
+        };
+
+        loadFacultyTask.setOnSucceeded(event -> {
+            // This runs on JavaFX thread, safe to update ObservableList
+            facultyList.setAll(loadFacultyTask.getValue());
+        });
+
+        loadFacultyTask.setOnFailed(event -> {
+            Platform.runLater(() -> showAlert(
+                    "Database Error",
+                    "Failed to load faculty data. " + loadFacultyTask.getException().getMessage(),
+                    Alert.AlertType.ERROR
+            ));
+        });
+        return loadFacultyTask;
     }
 
 
