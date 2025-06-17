@@ -26,6 +26,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.StageStyle;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -60,23 +65,44 @@ public class AdminFacultyManagementController {
     private String schoolYear;
     private String semester;
 
+    @FXML
     public void initialize() {
         new Thread(() -> {
             schoolYear = SchoolYearAndSemester.determineCurrentSemester();
             semester = SchoolYearAndSemester.getCurrentAcademicYear();
         }).start();
 
-        try {
-            facultyDAO = new FacultyDAO();
-            loadFacultyData();
-            facultyLoadDAO = new FacultyLoadDAO();
-            subjectDAO = new SubjectDAO();
-            sectionDAO = new SectionDAO();
-        } catch (SQLException e) {
-            Platform.runLater(() -> showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR));
-        }
+        facultyDAO = new FacultyDAO();
+        facultyLoadDAO = new FacultyLoadDAO();
+        subjectDAO = new SubjectDAO();
+        sectionDAO = new SectionDAO();
 
-        // Go back to the dashboard when the back button is clicked
+        // === (1) BACKGROUND LOAD FACULTY DATA ===
+        Task<List<Faculty>> loadFacultyTask = new Task<>() {
+            @Override
+            protected List<Faculty> call() throws Exception {
+                return facultyDAO.getAllFaculty();
+            }
+        };
+
+        loadFacultyTask.setOnSucceeded(event -> {
+            // This runs on JavaFX thread, safe to update ObservableList
+            facultyList.setAll(loadFacultyTask.getValue());
+        });
+
+        loadFacultyTask.setOnFailed(event -> {
+            Platform.runLater(() -> showAlert(
+                    "Database Error",
+                    "Failed to load faculty data. " + loadFacultyTask.getException().getMessage(),
+                    Alert.AlertType.ERROR
+            ));
+        });
+
+        facultyTable.setPlaceholder(new Label("Loading faculty data..."));
+
+        new Thread(loadFacultyTask).start();
+
+    // Go back to the dashboard when the back button is clicked
         backButton.setOnMouseClicked(_ -> {
             handleBackToDashboard();
             resetScrollPosition();
