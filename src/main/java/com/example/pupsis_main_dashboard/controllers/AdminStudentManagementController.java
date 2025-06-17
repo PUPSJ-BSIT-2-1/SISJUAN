@@ -9,15 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -314,6 +306,7 @@ public class AdminStudentManagementController implements Initializable {
                 }
             }
         }
+
         studentList.getChildren().removeAll(nodesToRemove);
         currentDisplayedStudents.removeAll(selectedStudents);
         if (currentDisplayedStudents.isEmpty()) {
@@ -342,25 +335,21 @@ public class AdminStudentManagementController implements Initializable {
 
             final int finalSuccessCount = successCount;
             Platform.runLater(() -> {
-                Dialog<Void> dialog = new Dialog<>();
-                dialog.setTitle("Batch Acceptance Report");
-                dialog.setHeaderText("Processed " + selectedStudents.size() + " students. " + finalSuccessCount + " accepted.");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Batch Acceptance Report");
+                alert.setHeaderText("Processed " + selectedStudents.size() + " students. " + finalSuccessCount + " accepted.");
 
                 VBox dialogContent = new VBox(10);
-                dialogContent.setPadding(new Insets(10));
+                dialogContent.setPadding(new Insets(20));
+
                 ListView<String> resultListView = new ListView<>();
                 resultListView.getItems().addAll(acceptanceResults);
-                resultListView.setPrefHeight(200); 
-                
-                ScrollPane resultScrollPane = new ScrollPane(resultListView);
-                resultScrollPane.setFitToWidth(true);
-                resultScrollPane.setPrefHeight(200);
-                VBox.setVgrow(resultScrollPane, Priority.ALWAYS);
+                resultListView.setPrefSize(380,180);
+                resultListView.getStyleClass().add("result-list");
 
-                dialogContent.getChildren().add(resultScrollPane);
-                dialog.getDialogPane().setContent(dialogContent);
-                dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-                dialog.showAndWait();
+                dialogContent.getChildren().add(resultListView);
+                alert.getDialogPane().setContent(dialogContent);
+                alert.showAndWait();
 
                 loadPendingStudents(); 
             });
