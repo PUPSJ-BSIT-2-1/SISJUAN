@@ -879,7 +879,7 @@
 }
 
 .export-menu-bar-icon {
-    -fx-fill: #e0e0e0;
+    -fx-fill: black;
 }
 
 .dark-theme .export-menu-bar-icon {
@@ -901,7 +901,7 @@
     -fx-border-radius: 10px;
     -fx-border-color: #555555;
     -fx-border-width: 2px;
-    -fx-text-fill: #e0e0e0;
+    -fx-text-fill: black;
 }
 
 .export-menu-bar .menu-item {
@@ -918,7 +918,7 @@
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
     -fx-font-size: 13px;
-    -fx-text-fill: #e0e0e0;
+    -fx-text-fill: black;
     -fx-font-weight: bold;
 }
 

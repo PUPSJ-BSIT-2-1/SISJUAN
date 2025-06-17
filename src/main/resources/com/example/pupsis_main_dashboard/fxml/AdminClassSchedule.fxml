@@ -170,7 +170,7 @@
                                     <children>
                                         <StackPane>
                                             <children>
-                                                <Button fx:id="createButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="118.0" styleClass="create-button" text="Create Shedule">
+                                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#handleCreateSchedule" prefHeight="40.0" prefWidth="118.0" styleClass="create-button" text="Create Shedule">
                                                     <StackPane.margin>
                                                         <Insets />
                                                     </StackPane.margin>
