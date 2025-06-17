@@ -2,6 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.utilities.EmailService;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,6 +21,7 @@ public class GeneralVerificationCodeController {
     private String expectedCode;
     private Stage stage;
     private Runnable onSuccessCallback;
+    private String email;
 
     // Initialize the controller and set up the digit fields
     public void initialize() {
@@ -75,7 +77,8 @@ public class GeneralVerificationCodeController {
         this.expectedCode = code;
         this.stage = stage;
         this.onSuccessCallback = callback;
-        infoMessage.setText("Enter verification code sent to " + maskEmail(email));
+        this.email = email;
+        infoMessage.setText("Please enter the verification code that was sent to your registered email address: " + maskEmail(email) + ".");
     }
 
     // Mask the email address for display purposes
@@ -110,7 +113,6 @@ public class GeneralVerificationCodeController {
     // Handle the action when the user clicks the resend code button
     @FXML private void handleResendCode() {
         String newCode = String.format("%06d", (int)(Math.random() * 1000000));
-        String email = infoMessage.getText().substring(infoMessage.getText().lastIndexOf(" ") + 1);
         new Thread(() -> {
             try {
                 emailService.sendVerificationEmail(email, newCode);

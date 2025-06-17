@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox alignment="TOP_CENTER" prefHeight="394.0" prefWidth="400.0" styleClass="verification-container" stylesheets="@../css/GeneralVerificationCode.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GeneralVerificationCodeController">
+<VBox alignment="TOP_CENTER" maxHeight="400.0" maxWidth="395.0" prefHeight="400.0" prefWidth="395.0" styleClass="verification-container" stylesheets="@../css/GeneralVerificationCode.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GeneralVerificationCodeController">
     <clip>
         <Rectangle arcHeight="15" arcWidth="15" height="400" width="400" />
     </clip>
@@ -35,13 +35,13 @@
       <VBox.margin>
          <Insets top="20.0" />
       </VBox.margin></Label>
-   <Label fx:id="infoMessage" prefHeight="50.0" prefWidth="238.0" textOverrun="CLIP" wrapText="true" VBox.vgrow="NEVER">
+   <Label fx:id="infoMessage" alignment="CENTER" contentDisplay="CENTER" prefHeight="58.0" prefWidth="287.0" styleClass="subtitle" textOverrun="CLIP" wrapText="true" VBox.vgrow="NEVER">
       <VBox.margin>
          <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
       </VBox.margin>
    </Label>
     
-          <HBox alignment="CENTER" prefHeight="63.0" prefWidth="292.0" spacing="10" VBox.vgrow="NEVER">
+          <HBox alignment="CENTER" prefHeight="63.0" spacing="10" VBox.vgrow="NEVER">
         <TextField fx:id="digit1" styleClass="verification-digit" />
         <TextField fx:id="digit2" styleClass="verification-digit" />
         <TextField fx:id="digit3" styleClass="verification-digit" />
@@ -59,10 +59,13 @@
       </VBox.margin>
    </Button>
     
-          <Label fx:id="errorLabel" styleClass="error-label" />
+          <Label fx:id="errorLabel" styleClass="error-label">
+      <VBox.margin>
+         <Insets bottom="3.0" />
+      </VBox.margin></Label>
     
-          <Button onAction="#handleVerification" prefHeight="38.0" prefWidth="290.0" styleClass="verify-button" text="Verify" />
-   <padding>
-      <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
-   </padding>
+          <Button onAction="#handleVerification" prefHeight="38.0" prefWidth="290.0" styleClass="verify-button" text="Verify">
+      <VBox.margin>
+         <Insets />
+      </VBox.margin></Button>
 </VBox>
