@@ -126,4 +126,9 @@ public class GeneralVerificationCodeController {
             }
         }).start();
     }
+
+    @FXML
+    public void closeVerification() {
+        stage.close();
+    }
 }

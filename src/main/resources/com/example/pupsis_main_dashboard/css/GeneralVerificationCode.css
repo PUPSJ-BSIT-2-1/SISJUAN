@@ -7,6 +7,7 @@
 .title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
+    -fx-alignment: center;
 }
 
 /* Subtitle text styling */
@@ -57,9 +58,15 @@
     -fx-pref-width: 40;
     -fx-background-radius: 5;
     -fx-border-radius: 10;
+    -fx-alignment: center;
 }
 
 /* Verification container styling */
 .verification-container {
     -fx-background-color: #ffffff;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
 }

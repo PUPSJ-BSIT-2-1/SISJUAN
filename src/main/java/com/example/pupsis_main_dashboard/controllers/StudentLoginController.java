@@ -28,6 +28,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import jakarta.mail.MessagingException;
@@ -124,7 +125,7 @@ public class StudentLoginController {
         
         confirmReg.setOnAction(_ -> handleConfirmRegistration());
         registerButton.setOnAction(_ -> animateVBox(centerVBox, -417));
-        backButton.setOnMouseClicked(_ -> animateVBox(centerVBox, 0)); // CRITICAL: Must be this for registration panel back button
+        backButton.setOnMouseClicked(_ -> animateVBox(centerVBox, 0)); // CRITICAL: Must be this for the registration panel back button
         
         monthComboBox.valueProperty().addListener((_, _, newValue) -> {
             if (newValue != null) {
@@ -358,7 +359,7 @@ public class StudentLoginController {
         } catch (SQLException e) {
             logger.error("Error during authentication for student {}", studentNumber, e);
         }
-        return null; // Return null if user not found or password doesn't match
+        return null; // Return null if user not found or the password doesn't match
     }
 
     private void handleLogin(VBox leftSide, boolean isRegistration) {
@@ -429,9 +430,9 @@ public class StudentLoginController {
     }
 
     private void handleConfirmRegistration() {
-        String firstNameInput = firstName.getText().trim();
-        String middleNameInput = middleName.getText().trim();
-        String lastNameInput = lastName.getText().trim();
+        String firstNameInput = toTitleCase(firstName.getText().trim());
+        String middleNameInput = toTitleCase(middleName.getText().trim());
+        String lastNameInput = toTitleCase(lastName.getText().trim());
         String emailInput = email.getText().trim();
         String addressInput = address.getText().trim(); 
         String month = monthComboBox.getValue();
@@ -482,13 +483,14 @@ public class StudentLoginController {
                         GeneralVerificationCodeController vcController = loader.getController();
 
                         Stage dialogStage = new Stage();
+                        dialogStage.initStyle(StageStyle.TRANSPARENT);
                         dialogStage.initModality(Modality.APPLICATION_MODAL);
                         if (mainLoginPane.getScene() != null) { 
                             dialogStage.initOwner(mainLoginPane.getScene().getWindow());
                         }
                         dialogStage.setTitle("Enter Verification Code");
                         
-                        Scene scene = new Scene(root);
+                        Scene scene = new Scene(root, Color.TRANSPARENT);
                         if (mainLoginPane.getScene() != null && mainLoginPane.getScene().getRoot().getStyleClass().contains("dark-theme")) {
                             scene.getRoot().getStyleClass().add("dark-theme"); 
                         }
@@ -505,15 +507,15 @@ public class StudentLoginController {
 
                                     Platform.runLater(() -> {
                                         animateBlur(mainLoginPane, false);
-                                        
+
                                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                         alert.setTitle("Registration Successful");
                                         alert.setHeaderText("Your account has been created!");
 
                                         GridPane grid = new GridPane();
-                                        grid.setHgap(10);
-                                        grid.setVgap(10);
-                                        grid.setPadding(new Insets(20, 20, 10, 10)); 
+                                        grid.setHgap(20);
+                                        grid.setVgap(20);
+                                        grid.setPadding(new Insets(25, 25, 25, 25));
 
                                         TextArea credentialsTextArea = new TextArea(
                                             "Student Number: " + studentNum + "\n" +
@@ -523,7 +525,7 @@ public class StudentLoginController {
                                         );
                                         credentialsTextArea.setEditable(false);
                                         credentialsTextArea.setWrapText(true);
-                                        
+                                        credentialsTextArea.setPrefSize(380, 120);
                                         credentialsTextArea.setPrefRowCount(5); 
                                         credentialsTextArea.setPrefColumnCount(30); 
                                         
@@ -1043,4 +1045,22 @@ public class StudentLoginController {
             });
         }
     }
+
+    public static String toTitleCase(String input) {
+        if (input == null || input.isEmpty()) return "";
+
+        String[] words = input.trim().toLowerCase().split("\\s+");
+        StringBuilder titleCase = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                titleCase.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1))
+                        .append(" ");
+            }
+        }
+
+        return titleCase.toString().trim();
+    }
+
 }

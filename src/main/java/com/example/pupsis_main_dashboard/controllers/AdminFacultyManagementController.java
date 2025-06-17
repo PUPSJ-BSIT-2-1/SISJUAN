@@ -19,7 +19,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
@@ -111,6 +110,7 @@ public class AdminFacultyManagementController {
             {
                 final SVGPath menuIcon = new SVGPath();
                 menuIcon.setContent("M12 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z");
+                menuIcon.getStyleClass().add("export-menu-bar-icon");
                 menuBtn.getStyleClass().add("export-menu-bar");
                 menuBtn.setGraphic(menuIcon);
                 menuBtn.setTooltip(new Tooltip("More Options"));
@@ -229,7 +229,7 @@ public class AdminFacultyManagementController {
 
     private void showFacultyDetailsModal(Faculty faculty) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyDetailsTableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyDetailsView.fxml"));
             Parent root = loader.load();
 
             AdminFacultyDetailsController controller = loader.getController();

@@ -694,7 +694,12 @@
 }
 
 .dark-theme .view-faculty-container {
-    -fx-background-color: transparent;
+    -fx-background-color: #2b2b2b;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
 }
 
 .view-header {
@@ -873,6 +878,14 @@
     -fx-cursor: hand;
 }
 
+.export-menu-bar-icon {
+    -fx-fill: #e0e0e0;
+}
+
+.dark-theme .export-menu-bar-icon {
+    -fx-fill: #e0e0e0;
+}
+
 .export-menu-bar {
     -fx-background-color: white;
     -fx-background-radius: 10px;
@@ -880,6 +893,15 @@
     -fx-border-color: #ddd;
     -fx-border-width: 2px;
     -fx-text-fill: black;
+}
+
+.dark-theme .export-menu-bar {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-text-fill: #e0e0e0;
 }
 
 .export-menu-bar .menu-item {
@@ -891,9 +913,24 @@
     -fx-font-weight: bold;
 }
 
+.dark-theme .export-menu-bar .menu-item {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
+}
+
 .export-menu-bar .menu-item:hover {
     -fx-background-color: #e0e0e0;
     -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.dark-theme .export-menu-bar .menu-item:hover {
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
     -fx-cursor: hand;
 }
 
@@ -903,10 +940,21 @@
     -fx-text-fill: black;
 }
 
+.dark-theme .export-menu-bar .menu-item:focused {
+    -fx-background-color: #555555;
+    -fx-cursor: hand;
+    -fx-text-fill: #e0e0e0;
+}
+
 .export-menu-bar .menu-item:showing {
     -fx-background-color: #e0e0e0;
     -fx-text-fill: black;
     -fx-cursor: hand;
+}
+
+.dark-theme .export-menu-bar .menu-item:showing {
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
 }
 
 .faculty-registration-container {
@@ -917,3 +965,63 @@
     -fx-border-color: #ddd;
     -fx-border-width: 2px;
 }
+
+.faculty-registration-container .scroll-pane {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.dark-theme .faculty-registration-container {
+    -fx-background-color: transparent;
+}
+
+
+.basic-information-header {
+    -fx-font-size: 13px;
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .basic-information-header {
+    -fx-text-fill: #b22222;
+}
+
+.faculty-line {
+    -fx-fill: #e0e0e0;
+}
+
+.dark-theme .faculty-line {
+    -fx-fill: #e0e0e0;
+}
+
+.faculty-labels {
+    -fx-font-size: 10px;
+    -fx-text-fill: #a29e9e;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .faculty-labels {
+    -fx-text-fill: #e0e0e0;
+}
+
+.faculty-values {
+    -fx-font-size: 14px;
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .faculty-values {
+    -fx-text-fill: #e0e0e0;
+}
+
+.faculty-icons {
+    -fx-fill: #800000;
+}
+
+.dark-theme .faculty-icons {
+    -fx-fill: #b22222;
+}
+
