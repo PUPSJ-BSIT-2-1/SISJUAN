@@ -10,14 +10,14 @@
     "devModule": "Main Dashboard",
     "devName": "Borgy Misael K. Palermo",
     "devRole": "Database Administrator (DBA)",
-    "devImage": "Images/devs/PALERMO.jpg",
+    "devImage": "Images/devs/PALERMO.png",
     "devDesc": "Database management fixing the database, the columns and primary key or foreign and their relationship with each table and teaching them how to use the db. In quality assurance I check the project goal, how it will be tested, when it will be tested, checked the ui the bugs or anything that can make a system fail or flaws."
   },
   {
     "devModule": "Main Dashboard",
     "devName": "Rj Jack A. Florida",
     "devRole": "Project Coordinator",
-    "devImage": "Images/PUPSJ.png",
+    "devImage": "Images/PUPSJ/FLORIDA.jpg",
     "devDesc": "Promotes collaboration by ensuring all team members are well-informed, actively heard, and aligned with project goals. Facilitates open communication, keeps track of team contributions, encourages input from everyone, and helps maintain clear and consistent communication within the group."
   },
   {
