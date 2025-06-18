@@ -336,12 +336,15 @@ public class GeneralSettingsController {
             return false;
         }
 
-        String query = String.format("UPDATE %s SET password_hash = ? WHERE %s = ?", tableName, idColumnName);
+        String query = String.format("UPDATE %s SET password = ? WHERE %s = ?", tableName, idColumnName);
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, newPasswordHash);
             statement.setString(2, identifier);
+
+            System.out.println("Password updated in DB for identifier " + identifier);
+
 
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
