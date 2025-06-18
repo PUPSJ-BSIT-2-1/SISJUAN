@@ -17,7 +17,7 @@
     "devModule": "Main Dashboard",
     "devName": "Rj Jack A. Florida",
     "devRole": "Project Coordinator",
-    "devImage": "Images/PUPSJ Logo.png",
+    "devImage": "Images/PUPSJ.png",
     "devDesc": "Promotes collaboration by ensuring all team members are well-informed, actively heard, and aligned with project goals. Facilitates open communication, keeps track of team contributions, encourages input from everyone, and helps maintain clear and consistent communication within the group."
   },
   {
@@ -52,14 +52,14 @@
     "devModule": "Grading",
     "devName": "Cydoel M. Tomas",
     "devRole": "Full Stack Developer",
-    "devImage": "Images/devs/GONZALES.jpg",
+    "devImage": "Images/devs/TOMAS.jpg",
     "devDesc": "Designed and implemented the Grading Module interface, including CSS styling and key functional components. Established a secure cloud database connection to enable seamless data retrieval and updates for grading operations. Thoroughly tested and ensured the functionality of all GUI elements, delivering a user-friendly and efficient grading experience."
   },
   {
     "devModule": "Registration",
     "devName": "Tyronne Jake S. Medina",
     "devRole": "Backend Developer",
-    "devImage": "Images/devs/MEDINA.jpg",
+    "devImage": "Images/devs/MEDINA.png",
     "devDesc": "As the backend developer for the PUPSJ SIS project, Tyronne is responsible for building and maintaining the server-side logic of the registration module. He ensures that data is securely processed, stored, and retrieved while integrating seamlessly with the database. Tyronne works closely with both the frontend and database teams to guarantee reliable performance and smooth functionality throughout the registration process."
   },
   {
