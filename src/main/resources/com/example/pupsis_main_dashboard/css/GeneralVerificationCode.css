@@ -1,17 +1,21 @@
 /* Root container styling */
 .root {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: transparent;
 }
 
 /* Title text styling */
 .title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
+    -fx-alignment: center;
 }
 
 /* Subtitle text styling */
 .subtitle {
-    -fx-text-fill: #666;
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+    -fx-alignment: center;
+
 }
 
 /* Code input field styling */
@@ -57,9 +61,15 @@
     -fx-pref-width: 40;
     -fx-background-radius: 5;
     -fx-border-radius: 10;
+    -fx-alignment: center;
 }
 
 /* Verification container styling */
 .verification-container {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #fff;
+    -fx-border-color: #c2c0c0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
 }

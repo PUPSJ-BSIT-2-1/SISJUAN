@@ -70,10 +70,10 @@
                  </Label>
                  <Label prefWidth="125.0" styleClass="small-text" text="Enter your Student ID">
                      <padding>
-                         <Insets bottom="30.0" top="-5.0" />
+                         <Insets bottom="10.0" top="-5.0" />
                      </padding>
                  </Label>
-                 <Label fx:id="errorLabel" styleClass="error-message">
+                 <Label fx:id="errorLabel" alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="315.0" styleClass="error-message" wrapText="true">
                      <VBox.margin>
                          <Insets bottom="10.0" />
                      </VBox.margin>

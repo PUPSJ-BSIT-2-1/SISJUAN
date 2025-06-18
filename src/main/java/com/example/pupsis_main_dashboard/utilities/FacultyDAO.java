@@ -10,16 +10,19 @@ import java.util.List;
 
 public class FacultyDAO {
 
-    private final Connection connection;
+    // (Removed: private final Connection connection;)
 
-    public FacultyDAO() throws SQLException {
-        this.connection = DBConnection.getConnection();
+    public FacultyDAO() {
+        // No need to initialize a connection field.
     }
 
     // Helper: Check if a faculty_number already exists
     public boolean facultyNumberExists(String facultyNumber) {
         String sql = "SELECT COUNT(*) FROM faculty WHERE faculty_number = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setString(1, facultyNumber);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -37,8 +40,10 @@ public class FacultyDAO {
     public int addFaculty(Faculty faculty) {
         String sql = "INSERT INTO faculty (faculty_number, firstname, middlename, lastname, department_id, email, contactnumber, birthdate, faculty_status_id, date_joined) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setString(1, faculty.getFacultyId());
             stmt.setString(2, faculty.getFirstName());
             stmt.setString(3, faculty.getMiddleName());
@@ -63,7 +68,6 @@ public class FacultyDAO {
 
             return stmt.executeUpdate(); // 1 for success
         } catch (SQLException e) {
-            // Duplicate key violation (faculty_number unique constraint)
             if (e.getSQLState() != null && e.getSQLState().startsWith("23")) {
                 // SQLState 23505 = unique_violation (PostgreSQL)
                 System.err.println("Duplicate Faculty Number: " + e.getMessage());
@@ -86,10 +90,11 @@ public class FacultyDAO {
                 "LEFT JOIN departments d ON f.department_id = d.department_id " +
                 "LEFT JOIN faculty_statuses fs ON f.faculty_status_id = fs.faculty_status_id " +
                 "ORDER BY f.lastname ASC";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()
+        ) {
             while (rs.next()) {
                 Faculty faculty = new Faculty(
                         rs.getString("faculty_number"),      // facultyId (textual)
@@ -122,7 +127,10 @@ public class FacultyDAO {
                 "faculty_status_id = ?, date_joined = ? " +
                 "WHERE faculty_id = ?"; // Use actual integer PK for WHERE clause
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setString(1, faculty.getFacultyId()); // faculty_number
             stmt.setString(2, faculty.getFirstName());
             stmt.setString(3, faculty.getMiddleName());
@@ -163,12 +171,14 @@ public class FacultyDAO {
     // Delete Faculty
     public int deleteFaculty(int actualFacultyId) {
         String sql = "DELETE FROM faculty WHERE faculty_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setInt(1, actualFacultyId);
             int affected = stmt.executeUpdate();
             return affected; // 1 if deleted, 0 if not found
         } catch (SQLException e) {
-            // PostgreSQL foreign key violation is SQLState "23503"
             if ("23503".equals(e.getSQLState())) {
                 return -1; // Foreign key violation (still referenced)
             }
@@ -178,14 +188,15 @@ public class FacultyDAO {
         }
     }
 
-
     // Department List
     public static List<Department> getAllDepartments() throws SQLException {
-        Connection conn = DBConnection.getConnection();
         List<Department> departments = new ArrayList<>();
         String sql = "SELECT department_id, department_name FROM departments ORDER BY department_name ASC";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()
+        ) {
             while (rs.next()) {
                 departments.add(new Department(
                         rs.getInt("department_id"),
@@ -198,11 +209,13 @@ public class FacultyDAO {
 
     // FacultyStatus List
     public static List<FacultyStatus> getAllFacultyStatuses() throws SQLException {
-        Connection conn = DBConnection.getConnection();
         List<FacultyStatus> statuses = new ArrayList<>();
         String sql = "SELECT faculty_status_id, status_name FROM faculty_statuses ORDER BY status_name ASC";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()
+        ) {
             while (rs.next()) {
                 statuses.add(new FacultyStatus(
                         rs.getInt("faculty_status_id"),
@@ -212,5 +225,4 @@ public class FacultyDAO {
         }
         return statuses;
     }
-
 }

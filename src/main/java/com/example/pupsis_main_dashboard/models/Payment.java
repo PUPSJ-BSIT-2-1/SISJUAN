@@ -20,11 +20,12 @@ public class Payment {
     private final StringProperty createdAt;
     private final StringProperty approvedAt;
     private final StringProperty eligibility;
+    private final StringProperty email;
 
     public Payment(int paymentId, String transactionId, String studentNumber, String firstName, String lastName,
                    String sectionName, String semesterName, String academicYearName, Double balance,
                    Double amount, Double assessment, String status, String paymentSource,
-                   String createdAt, String approvedAt, String eligibility) {
+                   String createdAt, String approvedAt, String eligibility, String email) {
         this.paymentId = new SimpleIntegerProperty(paymentId);
         this.transactionId = new SimpleStringProperty(transactionId);
         this.studentNumber = new SimpleStringProperty(studentNumber);
@@ -41,14 +42,27 @@ public class Payment {
         this.createdAt = new SimpleStringProperty(createdAt);
         this.approvedAt = new SimpleStringProperty(approvedAt);
         this.eligibility = new SimpleStringProperty(eligibility);
+        this.email = new SimpleStringProperty(email);
     }
 
     public String getFullName() {
-        return lastName.get() + ", " + firstName.get();
+        return firstName.get() + " " + lastName.get();
     }
 
     public Integer getPaymentId() {
         return paymentId.get();
+    }
+
+    public String getEmail() {
+        return email.get();
+    }
+
+    public void setEmail(String email) {
+        this.email.set(email);
+    }
+
+    public StringProperty emailProperty() {
+        return email;
     }
 
     public IntegerProperty paymentIdProperty() {

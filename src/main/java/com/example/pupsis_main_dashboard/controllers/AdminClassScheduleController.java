@@ -2,6 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Schedule;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.NotificationUtil;
 import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
@@ -19,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,10 +202,12 @@ public class AdminClassScheduleController {
                 try {
                     loadSchedules();
                     // Populate ComboBoxes on a separate thread after loading schedules
-                    populateFacultyIDComboBox();
-                    populateFilterFacultyComboBox();
-                    populateFilterRoomComboBox(); // This also populates roomComboBox for selection
-                    populateTimeComboBox();
+                    Platform.runLater(() -> {
+                        populateFacultyIDComboBox();
+                        populateFilterFacultyComboBox();
+                        populateFilterRoomComboBox(); // This also populates roomComboBox for selection
+                        populateTimeComboBox();
+                    });
                 } catch (Exception e) {
                     logger.error("Error during initial data loading task", e);
                 }
@@ -264,7 +268,6 @@ public class AdminClassScheduleController {
                     String facultyDisplayValue = facultyName + " (" + facultyNumber + ")";
 
                     Schedule schedule = new Schedule(loadId, facultyDisplayValue, subjectCode, facultyNumber, subjectCode, subDesc, facultyName, facultyNumber, sectionName, days, startTime, endTime, room, unitsStr, lectureHour, laboratoryHour, editButton);
-                    createButton.setOnAction(_ -> handleCreateSchedule());
                     editButton.setOnAction(_ -> handleEditSchedule(schedule, borderPane, scheduleContainer));
                     deleteButton.setOnAction(_ -> handleDeleteSchedule(schedule));
                     schedules.add(schedule);
@@ -703,10 +706,7 @@ public class AdminClassScheduleController {
                 int rowsAffected = pstmt.executeUpdate();
 
                 if (rowsAffected > 0) {
-                    schedules.remove(schedule);
-                    allSchedules.remove(schedule);
-                    scheduleTable.setItems(schedules);
-                    scheduleTable.refresh();
+                    loadSchedules();
                     handleCancelSchedule();
                     Platform.runLater(this::populateFacultyIDComboBox);
                     // Show a success message
@@ -720,6 +720,7 @@ public class AdminClassScheduleController {
             }
         }
     }
+
     // This method sets up the listeners for the start and end time combo boxes.
     private void setupTimeComboBoxListeners() {
         ChangeListener<Object> timeChangeListener = (_, _, _) -> updateHourFields();

@@ -9,26 +9,35 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="370.0" style="-fx-background-color: rgba(84,87,247,0.1);" stylesheets="@../css/NotificationBar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="370.0" styleClass="info" stylesheets="@../css/NotificationBar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane prefHeight="200.0" prefWidth="5.0" style="-fx-background-color: #5457f7;" styleClass="corner-line" />
+      <Pane prefHeight="200.0" prefWidth="5.0" styleClass="info-corner-line" />
       <StackPane prefHeight="150.0" prefWidth="30.0">
          <children>
-            <SVGPath content="M30 15C30 23.2843 23.2843 30 15 30C6.71573 30 0 23.2843 0 15C0 6.71573 6.71573 0 15 0C23.2843 0 30 6.71573 30 15Z" fill="#5458f7" />
-            <SVGPath content="M2.27998 0.66C2.74665 0.553333 3.15332 0.666667 3.49998 1C3.75332 1.28 3.87998 1.58667 3.87998 1.92C3.87998 2.13333 3.83332 2.33333 3.73998 2.52C3.49998 2.97333 3.10665 3.21333 2.55998 3.24C2.05332 3.24 1.67332 3.01333 1.41998 2.56C1.31332 2.36 1.25998 2.14667 1.25998 1.92C1.25998 1.72 1.30665 1.52667 1.39998 1.34C1.57332 0.966667 1.86665 0.74 2.27998 0.66ZM2.13998 5.28C3.25998 5.2 3.79332 5.16 3.73998 5.16H3.79998V8.94C3.79998 11.46 3.81332 12.7333 3.83998 12.76C3.87998 12.8 3.91332 12.82 3.93998 12.82C4.01998 12.86 4.31332 12.88 4.81998 12.88H5.19998V14H5.03998L3.89998 13.96C3.23332 13.9467 2.54665 13.9467 1.83998 13.96C1.02665 13.9867 0.613316 14 0.599983 14H0.419983V12.88H0.839983C1.53332 12.88 1.90665 12.8333 1.95998 12.74C1.97332 12.7267 1.97998 11.8067 1.97998 9.98C1.97998 8.06 1.95332 7.03333 1.89998 6.9C1.85998 6.78 1.77998 6.69333 1.65998 6.64C1.47332 6.54667 1.15998 6.5 0.719983 6.5H0.499983V5.38H0.539983L2.13998 5.28Z" fill="WHITE" />
+            <SVGPath content="M30 15C30 23.2843 23.2843 30 15 30C6.71573 30 0 23.2843 0 15C0 6.71573 6.71573 0 15 0C23.2843 0 30 6.71573 30 15Z" fill="#5458f7" styleClass="bg-info" />
+            <SVGPath content="M2.27998 0.66C2.74665 0.553333 3.15332 0.666667 3.49998 1C3.75332 1.28 3.87998 1.58667 3.87998 1.92C3.87998 2.13333 3.83332 2.33333 3.73998 2.52C3.49998 2.97333 3.10665 3.21333 2.55998 3.24C2.05332 3.24 1.67332 3.01333 1.41998 2.56C1.31332 2.36 1.25998 2.14667 1.25998 1.92C1.25998 1.72 1.30665 1.52667 1.39998 1.34C1.57332 0.966667 1.86665 0.74 2.27998 0.66ZM2.13998 5.28C3.25998 5.2 3.79332 5.16 3.73998 5.16H3.79998V8.94C3.79998 11.46 3.81332 12.7333 3.83998 12.76C3.87998 12.8 3.91332 12.82 3.93998 12.82C4.01998 12.86 4.31332 12.88 4.81998 12.88H5.19998V14H5.03998L3.89998 13.96C3.23332 13.9467 2.54665 13.9467 1.83998 13.96C1.02665 13.9867 0.613316 14 0.599983 14H0.419983V12.88H0.839983C1.53332 12.88 1.90665 12.8333 1.95998 12.74C1.97332 12.7267 1.97998 11.8067 1.97998 9.98C1.97998 8.06 1.95332 7.03333 1.89998 6.9C1.85998 6.78 1.77998 6.69333 1.65998 6.64C1.47332 6.54667 1.15998 6.5 0.719983 6.5H0.499983V5.38H0.539983L2.13998 5.28Z" fill="WHITE" styleClass="icon-info" />
          </children>
          <HBox.margin>
             <Insets left="10.0" right="10.0" />
          </HBox.margin>
       </StackPane>
-      <VBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="270.0">
+      <VBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="311.0">
          <children>
-            <Label prefWidth="270.0" text="Info">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <Label fx:id="infoMessage" prefWidth="270.0" text="Lorem ipsum." />
+            <HBox>
+               <children>
+                  <Label prefHeight="18.0" prefWidth="288.0" styleClass="info-header" text="Info">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <HBox fx:id="close" alignment="TOP_CENTER" onMouseClicked="#closeNotif" prefHeight="10.0" prefWidth="18.0">
+                     <children>
+                        <SVGPath content="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94L6.28 5.22Z" styleClass="info-x-icon" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <Label fx:id="message" prefHeight="18.0" prefWidth="303.0" styleClass="info-label" text="Lorem ipsum." />
          </children>
       </VBox>
    </children>

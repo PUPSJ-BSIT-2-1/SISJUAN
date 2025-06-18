@@ -38,7 +38,6 @@ public class FacultyClassPreviewController implements Initializable {
     @FXML private TableColumn<Subject, String> semCol;
     @FXML private TableColumn<Subject, String> subjCodeCol;
     @FXML private TableColumn<Subject, String> subjDescCol;
-    @FXML private Label validationLabel;
     @FXML private StackPane searchIconContainer;
 
     private final ObservableList<Subject> subjectsList = FXCollections.observableArrayList();
@@ -81,7 +80,6 @@ public class FacultyClassPreviewController implements Initializable {
             if (facultyId != null && !facultyId.isEmpty()) {
                 // Load data asynchronously
                 Task<ObservableList<Subject>> loadTask = getObservableListTask();
-                validationLabel.setText(facultyId);
                 new Thread(loadTask).start();
             } else {
                 subjectsTable.setPlaceholder(new Label("No faculty ID available"));

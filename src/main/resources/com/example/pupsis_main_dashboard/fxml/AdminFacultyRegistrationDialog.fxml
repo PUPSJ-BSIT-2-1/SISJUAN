@@ -13,14 +13,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="590.0" prefWidth="500.0" styleClass="faculty-registration-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDialogController">
+<VBox prefHeight="585.0" prefWidth="510.0" styleClass="faculty-registration-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyDialogController">
    <children>
-        <VBox prefHeight="591.0" prefWidth="495.0">
+        <VBox prefHeight="595.0" prefWidth="495.0" styleClass="arrow">
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
             <children>
-            <HBox prefHeight="63.0" prefWidth="478.0" styleClass="red-card">
+            <HBox prefHeight="63.0" prefWidth="510.0" styleClass="red-card">
                <VBox.margin>
                   <Insets bottom="15.0" />
                </VBox.margin>
@@ -34,7 +34,7 @@
                </children>
             </HBox>
 
-                      <GridPane hgap="10" vgap="10">
+                      <GridPane hgap="10" prefHeight="410.0" prefWidth="446.0" vgap="10">
                     <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" maxWidth="115.20001220703125" minWidth="99.20000457763672" prefWidth="112.79998779296875" />
                         <ColumnConstraints maxWidth="349.9999954223633" minWidth="333.9999877929688" prefWidth="336.4000122070313" />
@@ -57,12 +57,7 @@
                     <TextField fx:id="lastNameField" promptText="Enter Last Name" styleClass="assign-sub-text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
                           <!-- Row 4 -->
-                    <Label styleClass="view-text" text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-                    <ComboBox fx:id="departmentComboBox" prefHeight="20.0" prefWidth="200.0" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                        <GridPane.margin>
-                            <Insets />
-                        </GridPane.margin>
-                    </ComboBox>
+                    <Label styleClass="view-text" text="Department:" GridPane.rowIndex="8" />
 
       
                           <!-- Row 5 -->
@@ -88,17 +83,18 @@
                           <!-- Row 9 -->
                     <Label styleClass="view-text" text="Date Joined:" GridPane.columnIndex="0" />
                     <DatePicker fx:id="dateJoinedPicker" prefWidth="200.0" promptText="Date Joined" styleClass="register-date-picker" GridPane.columnIndex="1" />
+               <ComboBox fx:id="departmentComboBox" prefHeight="43.0" prefWidth="200.0" promptText="Department" styleClass="status-combo-box" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints prefHeight="30.0" />
+                  <RowConstraints maxHeight="32.20001220703125" minHeight="0.0" prefHeight="30.0" />
+                  <RowConstraints maxHeight="44.39999999999998" minHeight="0.0" prefHeight="30.0" />
                </rowConstraints>
                <VBox.margin>
                   <Insets right="10.0" />

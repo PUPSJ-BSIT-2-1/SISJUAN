@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
@@ -10,9 +9,9 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="370.0" style="-fx-background-color: derive(rgba(235,87,87,0.1), 0%, 0.2);" stylesheets="@../css/NotificationBar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="370.0" styleClass="error" stylesheets="@../css/NotificationBar.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.GeneralNotificationController">
    <children>
-      <Pane prefHeight="200.0" prefWidth="5.0" style="-fx-background-color: rgb(235,87,87);" styleClass="corner-line" />
+      <Pane prefHeight="200.0" prefWidth="5.0" styleClass="error-corner-line" />
       <StackPane prefHeight="150.0" prefWidth="30.0">
          <children>
             <SVGPath content="M30 15C30 23.2843 23.2843 30 15 30C6.71573 30 0 23.2843 0 15C0 6.71573 6.71573 0 15 0C23.2843 0 30 6.71573 30 15Z" fill="#eb5757" />
@@ -22,19 +21,24 @@
             <Insets left="10.0" right="10.0" />
          </HBox.margin>
       </StackPane>
-      <VBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="270.0">
+      <VBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="313.0">
          <children>
-            <Label prefWidth="270.0" text="Error">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <Label fx:id="errorMessage" prefWidth="270.0" text="Lorem ipsum." />
+            <HBox prefHeight="18.0" prefWidth="315.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="288.0" styleClass="error-header" text="Error">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <HBox fx:id="close" alignment="TOP_CENTER" onMouseClicked="#closeNotif" prefHeight="10.0" prefWidth="18.0">
+                     <children>
+                        <SVGPath content="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94L6.28 5.22Z" styleClass="error-x-icon" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <Label fx:id="message" prefHeight="18.0" prefWidth="304.0" styleClass="error-label" text="Lorem ipsum." />
          </children>
       </VBox>
    </children>
-   <styleClass>
-      <String fx:value="root" />
-      <String fx:value="root" />
-   </styleClass>
 </HBox>

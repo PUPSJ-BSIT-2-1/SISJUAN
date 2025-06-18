@@ -9,6 +9,7 @@ import com.example.pupsis_main_dashboard.utilities.SchoolYearAndSemester;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,6 +35,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import javafx.geometry.Bounds;
+
 
 public class AdminFacultyManagementController {
 
@@ -42,8 +46,9 @@ public class AdminFacultyManagementController {
     @FXML private TableColumn<Faculty, String> departmentColumn;
     @FXML private TableColumn<Faculty, String> emailColumn;
     @FXML private TableColumn<Faculty, String> contactColumn;
-    @FXML private TableColumn<Faculty, Void> detailsColumn;
-    @FXML private TableColumn<Faculty, Void> viewAssignmentsColumn;
+    @FXML private TableColumn<Faculty, Void> actionsColumn;
+    @FXML private HBox utilityMenuBox;
+
     @FXML private HBox backButton;
     @FXML private TextField searchField;
 
@@ -56,21 +61,42 @@ public class AdminFacultyManagementController {
     private String schoolYear;
     private String semester;
 
+    @FXML
     public void initialize() {
         new Thread(() -> {
             schoolYear = SchoolYearAndSemester.determineCurrentSemester();
             semester = SchoolYearAndSemester.getCurrentAcademicYear();
         }).start();
 
-        try {
-            facultyDAO = new FacultyDAO();
-            loadFacultyData();
-            facultyLoadDAO = new FacultyLoadDAO();
-            subjectDAO = new SubjectDAO();
-            sectionDAO = new SectionDAO();
-        } catch (SQLException e) {
-            Platform.runLater(() -> showAlert("Database Error", "Failed to connect to the database.", Alert.AlertType.ERROR));
-        }
+        facultyDAO = new FacultyDAO();
+        facultyLoadDAO = new FacultyLoadDAO();
+        subjectDAO = new SubjectDAO();
+        sectionDAO = new SectionDAO();
+
+        // === (1) BACKGROUND LOAD FACULTY DATA ===
+        Task<List<Faculty>> loadFacultyTask = new Task<>() {
+            @Override
+            protected List<Faculty> call() throws Exception {
+                return facultyDAO.getAllFaculty();
+            }
+        };
+
+        loadFacultyTask.setOnSucceeded(event -> {
+            // This runs on JavaFX thread, safe to update ObservableList
+            facultyList.setAll(loadFacultyTask.getValue());
+        });
+
+        loadFacultyTask.setOnFailed(event -> {
+            Platform.runLater(() -> showAlert(
+                    "Database Error",
+                    "Failed to load faculty data. " + loadFacultyTask.getException().getMessage(),
+                    Alert.AlertType.ERROR
+            ));
+        });
+
+        facultyTable.setPlaceholder(new Label("Loading faculty data..."));
+
+        new Thread(loadFacultyTask).start();
 
         // Go back to the dashboard when the back button is clicked
         backButton.setOnMouseClicked(_ -> {
@@ -93,35 +119,137 @@ public class AdminFacultyManagementController {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> handleSearch());
 
         facultyTable.setItems(facultyList);
-        detailsColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button("➕");
+
+        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn, actionsColumn};
+        for (var col : columns) {
+            col.setReorderable(false);
+            col.setSortable(false);
+        }
+
+        actionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button menuBtn = new Button("");
 
             {
-                btn.getStyleClass().add("details-button");
-                btn.setOnAction(event -> {
+                final SVGPath menuIcon = new SVGPath();
+                menuIcon.setContent("M12 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0-6a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z");
+                menuIcon.getStyleClass().add("export-menu-bar-icon");
+                menuBtn.getStyleClass().add("export-menu-bar");
+                menuBtn.setGraphic(menuIcon);
+                menuBtn.setTooltip(new Tooltip("More Options"));
+                menuBtn.setPrefSize(32, 32);
+
+                menuBtn.setOnAction(event -> {
                     Faculty faculty = getTableView().getItems().get(getIndex());
-                    showFacultyDetailsModal(faculty);
+                    ContextMenu menu = new ContextMenu();
+
+                    // Assign Subject option
+                    MenuItem assignItem = new MenuItem("Assign Subject");
+                    assignItem.setOnAction(e -> handleAssignSubject(faculty));
+
+                    // Faculty Details option
+                    MenuItem detailsItem = new MenuItem("Faculty Details");
+                    detailsItem.setOnAction(e -> showFacultyDetailsModal(faculty));
+
+                    // View Assigned Subjects option
+                    MenuItem viewAssignmentsItem = new MenuItem("View Assigned Subjects");
+                    viewAssignmentsItem.setOnAction(e -> showAssignmentsForFaculty(faculty));
+
+                    // Add menu items
+                    menu.getItems().addAll(assignItem, detailsItem, viewAssignmentsItem);
+
+                    // ---- Improved: show menu INSIDE the box ----
+                    Bounds btnBounds = menuBtn.localToScreen(menuBtn.getBoundsInLocal());
+                    Bounds tableBounds = facultyTable.localToScreen(facultyTable.getBoundsInLocal());
+
+                    double popupX = btnBounds.getMinX();
+                    double popupY = btnBounds.getMaxY();
+                    double menuWidth = 150; // match your design
+
+                    if (popupX + menuWidth > tableBounds.getMaxX()) {
+                        popupX = Math.max(tableBounds.getMinX(), tableBounds.getMaxX() - menuWidth);
+                    }
+
+                    menu.getStyleClass().add("export-menu-bar");
+
+                    menu.show(menuBtn, popupX, popupY);
+
                 });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
+                setGraphic(empty ? null : menuBtn);
             }
         });
+        // --- Utility menu for export/print ---
+        ContextMenu exportPrintMenu = new ContextMenu();
 
-        var columns = new TableColumn[]{idColumn, nameColumn, departmentColumn, emailColumn, contactColumn, detailsColumn};
-        for (var col : columns) {
-            col.setReorderable(false);
-            col.setSortable(false);
-        }
-        addViewAssignmentsButtonToTable();
+        MenuItem exportItem = new MenuItem("Export CSV");
+        exportItem.setOnAction(e -> handleExportCSV());
+
+        MenuItem printItem = new MenuItem("Print");
+        printItem.setOnAction(e -> handlePrintReport());
+
+        exportPrintMenu.getItems().addAll(exportItem, printItem);
+
+        // Custom style for this specific menu (add styleClass if needed)
+        exportPrintMenu.getStyleClass().add("export-menu-bar");
+        exportPrintMenu.setPrefWidth(210);
+        exportPrintMenu.setPrefHeight(150);
+
+        utilityMenuBox.setOnMouseClicked(event -> {
+            // === BEGIN Smart Positioning ===
+            double menuWidth = 115; // Should match your CSS
+            Scene scene = utilityMenuBox.getScene();
+
+            // Coordinates of the three-dot HBox in the scene and screen
+            Bounds boundsInScene = utilityMenuBox.localToScene(utilityMenuBox.getBoundsInLocal());
+            double sceneX = boundsInScene.getMinX();
+            double sceneY = boundsInScene.getMinY() + boundsInScene.getHeight();
+
+            double screenX = scene.getWindow().getX() + scene.getX() + sceneX;
+            double screenY = scene.getWindow().getY() + scene.getY() + sceneY + 10; // Moved down a little bit
+
+            // App window edges
+            double windowRight = scene.getWindow().getX() + scene.getWidth();
+            double windowBottom = scene.getWindow().getY() + scene.getHeight();
+
+            // If right edge exceeds a window, shift left
+            double menuShowX = screenX;
+            if (menuShowX + menuWidth > windowRight - 10) {
+                menuShowX = windowRight - menuWidth - 10;
+            }
+
+            exportPrintMenu.show(utilityMenuBox, menuShowX, screenY);
+            // === END Smart Positioning ===
+        });
+
     }
+
+    private Task<List<Faculty>> getLoadFacultyTask() {
+        Task<List<Faculty>> loadFacultyTask = new Task<>() {
+            @Override
+            protected List<Faculty> call() throws Exception {
+                return facultyDAO.getAllFaculty();
+            }
+        };
+
+        loadFacultyTask.setOnSucceeded(event -> {
+            // This runs on JavaFX thread, safe to update ObservableList
+            facultyList.setAll(loadFacultyTask.getValue());
+        });
+
+        loadFacultyTask.setOnFailed(event -> {
+            Platform.runLater(() -> showAlert(
+                    "Database Error",
+                    "Failed to load faculty data. " + loadFacultyTask.getException().getMessage(),
+                    Alert.AlertType.ERROR
+            ));
+        });
+        return loadFacultyTask;
+    }
+
 
     private void showAssignmentsForFaculty(Faculty faculty) {
         try {
@@ -143,38 +271,10 @@ public class AdminFacultyManagementController {
         }
     }
 
-    private void addViewAssignmentsButtonToTable() {
-        viewAssignmentsColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button viewBtn = new Button();
-
-            {
-                // Use Unicode for eye icon (works even without custom graphics)
-                viewBtn.setText(" \uD83D\uDC41\uFE0F"); // 👁️
-                viewBtn.setStyle("-fx-background-color: transparent; -fx-font-size: 18;"); // No background, bigger icon
-
-                viewBtn.setOnAction(event -> {
-                    Faculty faculty = getTableView().getItems().get(getIndex());
-                    // Call your show assignments method here!
-                    showAssignmentsForFaculty(faculty);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(viewBtn);
-                }
-            }
-        });
-    }
-
 
     private void showFacultyDetailsModal(Faculty faculty) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyDetailsTableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/pupsis_main_dashboard/fxml/AdminFacultyDetailsView.fxml"));
             Parent root = loader.load();
 
             AdminFacultyDetailsController controller = loader.getController();
@@ -204,9 +304,8 @@ public class AdminFacultyManagementController {
     }
 
     @FXML
-    private void handleAssignSubject() {
-        Faculty selectedFaculty = facultyTable.getSelectionModel().getSelectedItem();
-        if (selectedFaculty == null) {
+    private void handleAssignSubject(Faculty faculty) {
+        if (faculty == null) {
             showAlert("Warning", "Please select a faculty member first.", Alert.AlertType.WARNING);
             return;
         }
@@ -243,7 +342,7 @@ public class AdminFacultyManagementController {
             dialogStage.showAndWait();
 
             if (controller.isAssigned()) {
-                int facultyId = selectedFaculty.getActualFacultyId();
+                int facultyId = faculty.getActualFacultyId(); // use parameter
                 String subjectCode = controller.getSelectedSubjectCode();
                 int sectionId = controller.getSelectedSectionId();
 
@@ -254,20 +353,12 @@ public class AdminFacultyManagementController {
                     return;
                 }
 
-                // Get current semester and academic year IDs
                 int semesterId = SchoolYearAndSemester.getCurrentSemesterId();
                 int academicYearId = SchoolYearAndSemester.getCurrentAcademicYearId();
 
                 if (semesterId == -1 || academicYearId == -1) {
                     showAlert("Error", "Could not determine current semester or academic year ID.", Alert.AlertType.ERROR);
                     return;
-                }
-
-                for (FacultyLoadDAO.FacultyLoad load : facultyLoadDAO.getAllFacultyLoad()) {
-                    if (load.facultyId() == facultyId && load.subjectId() == subjectId && load.sectionId() == sectionId && load.semesterId() == semesterId && load.academicYearId() == academicYearId) {
-                        showAlert("Error", "Subject is already assigned to this faculty member.", Alert.AlertType.ERROR);
-                        return;
-                    }
                 }
 
                 boolean success = facultyLoadDAO.addFacultyLoad(
@@ -279,12 +370,17 @@ public class AdminFacultyManagementController {
                 );
 
                 if (success) {
-                    String successFacultyName = selectedFaculty.getFirstName() + " " + selectedFaculty.getLastName();
+                    String successFacultyName = faculty.getFirstName() + " " + faculty.getLastName();
                     showAlert("Success", "Subject assigned successfully to " + successFacultyName, Alert.AlertType.INFORMATION);
                     loadFacultyData();
                 } else {
-                    showAlert("Error", "Failed to assign subject. Check logs for details.", Alert.AlertType.ERROR);
+                    showAlert(
+                            "Assignment already exists!",
+                            "You cannot assign the same subject/section/semester/academic year to more than one faculty.",
+                            Alert.AlertType.ERROR
+                    );
                 }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -295,6 +391,7 @@ public class AdminFacultyManagementController {
             showAlert("Database Error", "A database error occurred: " + se.getMessage(), Alert.AlertType.ERROR);
         }
     }
+
 
     @FXML
     private void handleBackToDashboard() {

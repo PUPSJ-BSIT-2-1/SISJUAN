@@ -134,13 +134,13 @@
          <children>
             <TableView id="mainGradingTable" fx:id="studentsTable" prefHeight="499.0" prefWidth="810.0" styleClass="grades-table">
                <columns>
-                  <TableColumn fx:id="subCode" editable="false" maxWidth="140.0" minWidth="73.60001373291016" prefWidth="97.60000610351562" resizable="false" text="Subject Code" />
-                  <TableColumn fx:id="subDescription" editable="false" maxWidth="246.4000244140625" minWidth="160.0" prefWidth="186.39999389648438" resizable="false" text="    Description" />
-                  <TableColumn fx:id="facultyName" editable="false" maxWidth="233.5999755859375" minWidth="112.800048828125" prefWidth="136.0" resizable="false" text="Faculty Name" />
-                  <TableColumn fx:id="units" editable="true" maxWidth="128.800048828125" minWidth="30.39996337890625" prefWidth="75.20001220703125" resizable="false" text="Units" />
-                  <TableColumn fx:id="sectionCode" maxWidth="174.4000244140625" minWidth="32.0" prefWidth="96.0" resizable="false" text="Section" />
-                  <TableColumn fx:id="finGrade" editable="true" maxWidth="148.79998779296875" minWidth="38.4000244140625" prefWidth="101.5999755859375" resizable="false" text="Final Grade" />
-                  <TableColumn fx:id="gradeStatus" editable="true" maxWidth="166.40008544921875" minWidth="3.9998779296875" prefWidth="99.2000732421875" resizable="false" text="Remarks" />
+                  <TableColumn fx:id="subCode" editable="false" maxWidth="140.0" minWidth="73.60001373291016" prefWidth="95.20001220703125" resizable="false" text="Subject Code" />
+                  <TableColumn fx:id="subDescription" editable="false" maxWidth="246.4000244140625" minWidth="160.0" prefWidth="202.4000244140625" resizable="false" text="    Description" />
+                  <TableColumn fx:id="facultyName" editable="false" maxWidth="233.5999755859375" minWidth="112.800048828125" prefWidth="123.199951171875" resizable="false" text="Faculty Name" />
+                  <TableColumn fx:id="units" editable="true" maxWidth="128.800048828125" minWidth="30.39996337890625" prefWidth="70.4000244140625" resizable="false" text="Units" />
+                  <TableColumn fx:id="sectionCode" maxWidth="174.4000244140625" minWidth="32.0" prefWidth="90.4000244140625" resizable="false" text="Section" />
+                  <TableColumn fx:id="finGrade" editable="true" maxWidth="148.79998779296875" minWidth="38.4000244140625" prefWidth="99.20013427734375" resizable="false" text="Final Grade" />
+                  <TableColumn fx:id="gradeStatus" editable="true" maxWidth="166.40008544921875" minWidth="3.9998779296875" prefWidth="103.9998779296875" resizable="false" text="Remarks" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

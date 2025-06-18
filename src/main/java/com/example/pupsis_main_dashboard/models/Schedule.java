@@ -28,7 +28,7 @@ public class Schedule {
     private final StringProperty schedule;
     private final StringProperty scheduleForFaculty;
     private final StringProperty scheduleWithFaculty;
-    private final Button editButton;
+    private Button editButton;
     private final StringProperty stringUnits;
 
     // Existing constructor for detailed/admin view
@@ -134,7 +134,7 @@ public class Schedule {
     public void setSubID(String subjectID) { this.subjectID.set(subjectID != null ? subjectID : ""); }
     public void setFacultyNumber(String facultyNumber) { this.facultyNumber.set(facultyNumber != null ? facultyNumber : ""); }
     public void setSchedule(String schedule) { this.schedule.set(this.yearSection.get() + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get()); }
-
+    public void setEditButton(Button editButton) { this.editButton = editButton; }
     // Getters
     public int getLoadID() { return loadID.get(); }
     public String getFaculty() { return faculty.get(); }

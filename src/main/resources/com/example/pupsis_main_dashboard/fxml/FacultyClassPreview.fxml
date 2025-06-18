@@ -64,9 +64,6 @@
                                     <Insets />
                                  </HBox.margin></TextField>
                               <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="530.0">
-                                 <children>
-                                    <Label fx:id="validationLabel" alignment="CENTER" prefHeight="18.0" prefWidth="90.0" styleClass="validation-label" text="Faculty ID" />
-                                 </children>
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>

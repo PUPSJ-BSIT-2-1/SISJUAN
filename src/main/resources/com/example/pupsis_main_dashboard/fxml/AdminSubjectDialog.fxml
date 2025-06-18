@@ -18,53 +18,56 @@
             <children>
             <HBox styleClass="red-card">
                <children>
-                  <Label styleClass="view-header" text="Assign Subject to Faculty" />
+                  <Label styleClass="view-header" text="Subject Registration" />
                </children>
             </HBox>
                 <Label styleClass="subject-form-text" text="Subject Code:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
                 <TextField fx:id="subjectCodeField" promptText="Enter Subject Code" styleClass="subject-form-text-field" />
 
                 <Label styleClass="subject-form-text" text="Prerequisite:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
                 <TextField fx:id="prerequisiteField" promptText="Enter Prerequisite" styleClass="subject-form-text-field" />
 
                 <Label styleClass="subject-form-text" text="Equivalent Code:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
                 <TextField fx:id="equivCodeField" promptText="Enter Equivalent Code" styleClass="subject-form-text-field" />
 
                 <Label styleClass="subject-form-text" text="Description:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
                 <TextField fx:id="descriptionField" promptText="Enter Description" styleClass="subject-form-text-field" />
 
                 <Label styleClass="subject-form-text" text="Units:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
                 <TextField fx:id="unitField" promptText="Enter Units" styleClass="subject-form-text-field" />
 
                 <Label styleClass="subject-form-text" text="Year Level:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
                 <ComboBox fx:id="yearLevelCombo" prefHeight="70.0" prefWidth="115.0" promptText="Year Level" styleClass="subject-combo-box">
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="3.0" top="3.0" />
                </VBox.margin></ComboBox>
 
                 <Label styleClass="subject-form-text" text="Semester:">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets />
                </VBox.margin></Label>
-                <ComboBox fx:id="semesterCombo" prefHeight="70.0" prefWidth="115.0" promptText="Semester" styleClass="subject-combo-box" />
+                <ComboBox fx:id="semesterCombo" prefHeight="70.0" prefWidth="115.0" promptText="Semester" styleClass="subject-combo-box">
+               <VBox.margin>
+                  <Insets bottom="3.0" top="3.0" />
+               </VBox.margin></ComboBox>
 
                 <HBox alignment="CENTER_RIGHT" spacing="10.0">
                     <children>

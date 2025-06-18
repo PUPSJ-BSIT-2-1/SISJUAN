@@ -264,11 +264,9 @@ public class StudentEnrollmentController implements Initializable {
 
     private void redirectToPaymentInfo() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Redirect to Payment Information");
-        alert.setHeaderText("Do you want to go to the Payment Information section?");
-        alert.setContentText("Make sure you have enrolled all the subjects you want before proceeding.");
-        alert.getButtonTypes().clear();
-        alert.getButtonTypes().add(ButtonType.OK);
+        alert.setTitle("Redirecting to Payment Information");
+        alert.setHeaderText(null);
+        alert.setContentText("You will be redirected to the Payment Information section. Make sure you have enrolled all the subjects you want.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {

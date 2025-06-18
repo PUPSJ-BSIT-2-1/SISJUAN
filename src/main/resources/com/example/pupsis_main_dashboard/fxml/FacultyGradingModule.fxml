@@ -8,12 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyGradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyGradingModuleController">
+<AnchorPane prefHeight="713.0" prefWidth="810.0" styleClass="root" stylesheets="@../css/FacultyGradingModule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.FacultyGradingModuleController">
    <children>
       <BorderPane prefWidth="810.0">
          <top>
@@ -52,7 +51,7 @@
          <center>
             <HBox BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefWidth="810.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox prefHeight="641.0" prefWidth="810.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="56.0" prefWidth="810.0" spacing="10.0" styleClass="small-cards">
                            <children>
@@ -65,9 +64,6 @@
                                     <Insets />
                                  </HBox.margin></TextField>
                               <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="530.0">
-                                 <children>
-                                    <Label fx:id="validationLabel" alignment="CENTER" prefHeight="18.0" prefWidth="90.0" styleClass="validation-label" text="Faculty ID" />
-                                 </children>
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -77,9 +73,9 @@
                               </HBox>
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER" prefHeight="500.0" prefWidth="750.0" styleClass="small-cards">
+                        <HBox alignment="CENTER" prefHeight="557.0" prefWidth="810.0" styleClass="small-cards">
                            <children>
-                              <TableView id="mainGradingTable" fx:id="subjectsTable" prefWidth="700.0">
+                              <TableView id="mainGradingTable" fx:id="subjectsTable" prefHeight="489.0" prefWidth="700.0">
                                  <columns>
                                     <TableColumn fx:id="yearSecCol" editable="false" maxWidth="141.0" minWidth="141.0" prefWidth="141.0" resizable="false" text="Year &amp; Section" />
                                     <TableColumn fx:id="semCol" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Semester" />
@@ -97,14 +93,6 @@
                </children>
             </HBox>
          </center>
-         <bottom>
-            <Pane prefHeight="80.0" prefWidth="200.0" styleClass="cards" BorderPane.alignment="CENTER">
-               <padding>
-
-                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-               </padding>
-            </Pane>
-         </bottom>
       </BorderPane>
    </children>
 </AnchorPane>

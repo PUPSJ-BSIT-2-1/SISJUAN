@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="392.0" prefWidth="606.0" spacing="12.0" styleClass="view-faculty-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyAssignmentsDialogController">
+<VBox prefHeight="392.0" prefWidth="637.0" spacing="12.0" styleClass="view-faculty-container" stylesheets="@../css/AdminFacultyManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyAssignmentsDialogController">
     <padding>
         <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
@@ -21,10 +21,10 @@
         <TableView fx:id="assignmentsTable" prefHeight="260.0" prefWidth="500.0">
             <columns>
                 <TableColumn fx:id="subjectCodeColumn" prefWidth="101.60003280639648" text="Subject Code" />
-                <TableColumn fx:id="subjectDescColumn" prefWidth="183.9999542236328" text="Description" />
-                <TableColumn fx:id="sectionColumn" prefWidth="86.39996337890625" text="Section" />
-                <TableColumn fx:id="semesterColumn" prefWidth="109.5999755859375" text="Semester" />
-                <TableColumn fx:id="yearLevelColumn" prefWidth="76.79998779296875" text="Year" />
+                <TableColumn fx:id="subjectDescColumn" prefWidth="203.20001983642578" text="Description" />
+                <TableColumn fx:id="sectionColumn" prefWidth="94.39996337890625" text="Section" />
+                <TableColumn fx:id="semesterColumn" prefWidth="107.20004272460938" text="Semester" />
+                <TableColumn fx:id="yearLevelColumn" prefWidth="70.39999389648438" text="Year" />
             </columns>
         </TableView>
         <HBox alignment="CENTER_RIGHT">

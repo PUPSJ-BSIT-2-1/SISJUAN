@@ -6,11 +6,6 @@ import java.util.List;
 
 public class SubjectDAO {
 
-    private final Connection connection;
-
-    public SubjectDAO() throws SQLException {
-        this.connection = DBConnection.getConnection();
-    }
 
     /**
      * Retrieves all subject codes ordered alphabetically.
@@ -21,9 +16,11 @@ public class SubjectDAO {
         List<String> subjectCodes = new ArrayList<>();
         String sql = "SELECT subject_code FROM subjects ORDER BY subject_code ASC";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()
+        ) {
             while (rs.next()) {
                 subjectCodes.add(rs.getString("subject_code"));
             }
@@ -44,7 +41,10 @@ public class SubjectDAO {
     public int getSubjectIdByCode(String subjectCode) throws SQLException {
         String sql = "SELECT subject_id FROM subjects WHERE subject_code = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setString(1, subjectCode);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {

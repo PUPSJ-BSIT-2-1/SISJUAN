@@ -2,7 +2,9 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.models.Payment;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.EmailService;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
+import jakarta.mail.MessagingException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -30,6 +32,7 @@ public class AdminStudentPaymentManagementController {
     @FXML private VBox studentPaymentContainer;
     @FXML private HBox viewTransactionHistory;
     private VBox paymentContainer;
+    private EmailService emailService;
 
     
     private final List<Payment> currentDisplayedPayments = new ArrayList<>();
@@ -38,9 +41,10 @@ public class AdminStudentPaymentManagementController {
     private void initialize() {
         logger.info("Initializing AdminStudentPaymentManagementController...");
 
+        emailService = new EmailService();
+
         paymentContainer = new VBox();
         paymentContainer.setSpacing(5);
-
 
         if (studentPaymentContainer != null) {
             studentPaymentContainer.getChildren().clear(); // Clear the FXML container
@@ -77,6 +81,7 @@ public class AdminStudentPaymentManagementController {
               p.student_number,
               s.firstname,
               s.lastname,
+              s.email,
               fhe.status_name,
               sec.section_name,
               sem.semester_name,
@@ -119,7 +124,8 @@ public class AdminStudentPaymentManagementController {
                             rs.getString("payment_source"),
                             rs.getString("created_at"),
                             rs.getString("approved_at"),
-                            rs.getString("status_name")
+                            rs.getString("status_name"),
+                            rs.getString("email")
                     );
 
                     pendingPayments.add(payment);
@@ -224,13 +230,13 @@ public class AdminStudentPaymentManagementController {
             } else {
                 logger.warn("Could not find student payment row in UI list for optimistic removal: {}", payment.getPaymentId());
             }
-            handlePaymentStatusUpdate(payment.getPaymentId(), "Approved");
+            handlePaymentStatusUpdate(payment.getPaymentId(), payment.getEmail(), "Approved", payment.getFullName());
         });
 
         Button rejectButton = new Button("✗");
         rejectButton.getStyleClass().add("reject-button");
         rejectButton.setFont(Font.font("System Bold", 14));
-        rejectButton.setOnAction(_ -> handlePaymentStatusUpdate(payment.getPaymentId(), "Rejected"));
+        rejectButton.setOnAction(_ -> handlePaymentStatusUpdate(payment.getPaymentId(), payment.getEmail(),"Rejected", payment.getFullName()));
 
         HBox actionsBox = new HBox(5, acceptButton, rejectButton);
         actionsBox.setAlignment(Pos.CENTER);
@@ -247,7 +253,7 @@ public class AdminStudentPaymentManagementController {
         return gridPane;
     }
 
-    private void handlePaymentStatusUpdate(int paymentId, String newStatus) {
+    private void handlePaymentStatusUpdate(int paymentId, String email, String newStatus, String name) {
 
         logger.info("{} student payment: {}", newStatus, paymentId);
         new Thread(() -> {
@@ -272,6 +278,11 @@ public class AdminStudentPaymentManagementController {
                             String alertMessage = "The student payment has been " + newStatus.toLowerCase() + ".";
                             StageAndSceneUtils.showAlert(alertTitle, alertMessage, Alert.AlertType.INFORMATION);
                             loadPendingStudentPayments();
+                            try {
+                                sendPaymentStatusEmail(email, name, newStatus);
+                            } catch (MessagingException e) {
+                                logger.error("Messaging error while sending email notification: {}", e.getMessage(), e);
+                            }
                         });
                     } else {
                         logger.warn("No rows affected while updating payment ID {} to {}.", paymentId, newStatus);
@@ -292,4 +303,32 @@ public class AdminStudentPaymentManagementController {
             }
         }).start();
     }
+
+    public void sendPaymentStatusEmail(String recipient, String studentName, String status) throws MessagingException {
+        String subject;
+        String body;
+
+        if ("approved".equalsIgnoreCase(status)) {
+            subject = "Payment Approved – PUPSIS";
+            body = "Dear " + studentName + ",\n\n"
+                    + "We are pleased to inform you that your tuition payment has been successfully processed and approved.\n\n"
+                    + "You may now proceed with the next steps in your enrollment process.\n\n"
+                    + "Thank you for completing your payment on time.\n\n"
+                    + "Sincerely,\n"
+                    + "PUPSJ Payment Services Team";
+        } else if ("rejected".equalsIgnoreCase(status)) {
+            subject = "Payment Rejected – PUPSIS";
+            body = "Dear " + studentName + ",\n\n"
+                    + "We regret to inform you that your recent tuition payment could not be processed and has been rejected.\n\n"
+                    + "This may be due to an incorrect payment reference, insufficient funds, or a system issue.\n\n"
+                    + "Please review your payment details and try again. If you need assistance, contact the registrar's office.\n\n"
+                    + "Sincerely,\n"
+                    + "PUPSJ Payment Services Team";
+        } else {
+            throw new IllegalArgumentException("Invalid payment status: " + status);
+        }
+
+        emailService.sendNotificationEmail(recipient, subject, body);
+    }
+
 }
