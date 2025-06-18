@@ -184,7 +184,7 @@ public class GeneralAboutsController extends Developer {
                 true,
                 CycleMethod.NO_CYCLE,
                 new Stop(0.0, Color.rgb(128, 0, 0, 0.9)), // Faded maroon start
-                new Stop(0.6, Color.TRANSPARENT)
+                new Stop(0.5, Color.TRANSPARENT)
         );
         gradientBackground.setFill(gradient);
         gradientBackground.setArcWidth(20);
@@ -208,13 +208,13 @@ public class GeneralAboutsController extends Developer {
     private void populateModule() {
         String[] modules = {
                 "Main Dashboard",
-                "Registration",
-                "Payment",
-                "Room Assignment",
-                "Grading",
                 "Class Schedule",
+                "Room Assignment",
+                "Registration",
+                "Grading",
                 "Subject",
-                "Faculty"
+                "Faculty",
+                "Payment"
         };
         modulePicker.getItems().addAll(modules);
     }

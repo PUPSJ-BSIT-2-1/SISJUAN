@@ -495,12 +495,18 @@ public class StudentPaymentInfoController {
         subtitle.getStyleClass().add("custom-dialog-subheader");
 
         VBox instructionsBox = new VBox(8);
-        instructionsBox.getChildren().addAll(
-                new Label("• Enter the exact total amount shown below"),
-                new Label("• Select your preferred payment method"),
-                new Label("• Click 'Submit Payment' to process"),
-                new Label("• Payment will be reviewed by administration")
+        List<String> instructions = Arrays.asList(
+                "• Enter the exact total amount shown below.",
+                "• Select your preferred payment method.",
+                "• Click 'Submit Payment' to process.",
+                "• Payment will be reviewed by administration"
         );
+
+        for (String instruction : instructions) {
+            Label instructionLabel = new Label(instruction);
+            instructionLabel.getStyleClass().add("custom-dialog-description");
+            instructionsBox.getChildren().add(instructionLabel);
+        }
         instructionsBox.getStyleClass().add("custom-dialog-description");
 
         Label totalFeesLabel = new Label("💰 Total Amount: " + String.format("₱%,.2f", totalFees));

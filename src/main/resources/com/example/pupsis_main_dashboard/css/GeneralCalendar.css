@@ -143,6 +143,18 @@
     -fx-padding: 8, 0, 0, 0;
 }
 
+.custom-dialog-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.custom-dialog-button:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
 /* Content container for event dialog */
 .custom-dialog-content {
     -fx-background-color: white;
@@ -342,6 +354,8 @@
 
 .dark-theme .custom-dialog-button {
     -fx-background-color: #b22222;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
     -fx-text-fill: #e0e0e0;
 }
 

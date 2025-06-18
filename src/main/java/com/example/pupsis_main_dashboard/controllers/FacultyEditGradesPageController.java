@@ -564,7 +564,7 @@ public class FacultyEditGradesPageController implements Initializable {
                 AND CAST(fl.faculty_id AS TEXT) = ?
                 """);
 
-                    // Only add section filter if selectedYearSection is not null and not "All"
+                    // Only add section filter if the selectedYearSection is not null and not "All"
                     if (selectedYearSection != null) {
                         queryBuilder.append(" AND CAST(sec.section_name AS TEXT) = ?");
                     }
@@ -589,7 +589,7 @@ public class FacultyEditGradesPageController implements Initializable {
                                 String gradeStatusFromDB = rs.getString("grade_status");
                                 String formattedGrade = formatGradeFromDB(finalGradeFromDB);
 
-                                // Auto-create grade record if it doesn't exist
+                                // Auto-create a grade record if it doesn't exist
                                 String gradeId = rs.getString("grade_id");
                                 if (gradeId == null) {
                                     gradeId = createGradeRecord(conn, rs);
