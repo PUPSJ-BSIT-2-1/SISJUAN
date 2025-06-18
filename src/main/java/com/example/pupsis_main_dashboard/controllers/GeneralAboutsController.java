@@ -213,6 +213,7 @@ public class GeneralAboutsController extends Developer {
                 "Room Assignment",
                 "Grading",
                 "Class Schedule",
+                "Subject",
                 "Faculty"
         };
         modulePicker.getItems().addAll(modules);
