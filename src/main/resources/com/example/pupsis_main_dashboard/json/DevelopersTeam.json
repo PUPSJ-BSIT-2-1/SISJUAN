@@ -52,14 +52,14 @@
     "devModule": "Grading",
     "devName": "Cydoel M. Tomas",
     "devRole": "Full Stack Developer",
-    "devImage": "Images/devs/GONZALES.jpg",
+    "devImage": "Images/devs/TOMAS.jpg",
     "devDesc": "Designed and implemented the Grading Module interface, including CSS styling and key functional components. Established a secure cloud database connection to enable seamless data retrieval and updates for grading operations. Thoroughly tested and ensured the functionality of all GUI elements, delivering a user-friendly and efficient grading experience."
   },
   {
     "devModule": "Registration",
     "devName": "Tyronne Jake S. Medina",
     "devRole": "Backend Developer",
-    "devImage": "Images/PUP Logo.png",
+    "devImage": "Images/devs/MEDINA.png",
     "devDesc": "As the backend developer for the PUPSJ SIS project, Tyronne is responsible for building and maintaining the server-side logic of the registration module. He ensures that data is securely processed, stored, and retrieved while integrating seamlessly with the database. Tyronne works closely with both the frontend and database teams to guarantee reliable performance and smooth functionality throughout the registration process."
   },
   {
@@ -94,7 +94,7 @@
     "devModule": "Subject Module",
     "devName": "Renielyn B. Lenon",
     "devRole": "Frontend Developer",
-    "devImage": "Images/devs/REN.jpg",
+    "devImage": "Images/devs/LENON.jpg",
     "devDesc": "As the frontend developer of the PUPSJ SIS project, Ren is both a programmer and UI/UX designer. She works on the Subject Module, where admins can add subjects and set prerequisites, while students and faculty can view subject information. She collaborates with the backend and database teams to ensure a smooth and consistent user experience."
   },
   {
@@ -164,7 +164,7 @@
     "devModule": "Schedule Module",
     "devName": "Jhanna Lou Lapido",
     "devRole": "Backend Developer",
-    "devImage": "Images/devs/BUGAYONG.jpg",
+    "devImage": "Images/devs/LAPIDO.png",
     "devDesc": "Lou is a backend developer for the PUP-SJ SIS, responsible for implementing server-side logic and data processing. They collaborated with the room assignment team to streamline the process and ensure smooth integration, particularly for the Class Schedule module."
   },
   {
@@ -181,5 +181,4 @@
     "devImage": "Images/devs/CARVAJAL.jpg",
     "devDesc": "As the frontend developer , he focused on building a clear and organized interface for managing student payments. The module allows users to see their total fees, select a payment method, and process transactions smoothly. I designed it with usability in mind."
   }
-
 ]
