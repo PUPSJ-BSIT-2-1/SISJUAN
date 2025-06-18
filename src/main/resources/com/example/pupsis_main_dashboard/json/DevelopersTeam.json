@@ -17,7 +17,7 @@
     "devModule": "Main Dashboard",
     "devName": "Rj Jack A. Florida",
     "devRole": "Project Coordinator",
-    "devImage": "Images/PUPSJ.png",
+    "devImage": "Images/PUPSJ/FLORIDA.jpg",
     "devDesc": "Promotes collaboration by ensuring all team members are well-informed, actively heard, and aligned with project goals. Facilitates open communication, keeps track of team contributions, encourages input from everyone, and helps maintain clear and consistent communication within the group."
   },
   {
@@ -154,14 +154,14 @@
     "devDesc": "Conducted testing of the Faculty Module to identify and resolve bugs, ensuring all features functioned as intended. Verified interface responsiveness and usability, and ensured the overall quality and reliability of the module."
   },
   {
-    "devModule": "Class Schedule",
+    "devModule": "Schedule",
     "devName": "Kathleen I. Pinto",
     "devRole": "Frontend Developer",
     "devImage": "Images/devs/PINTO.JPG",
     "devDesc": "She is responsible for designing and developing the user interface of the Schedule Management module. Also created the class schedule list used in the system, ensuring that all time slots were properly organized and free from any conflicts or overlaps."
   },
   {
-    "devModule": "Class Schedule",
+    "devModule": "Schedule",
     "devName": "Jhanna Lou Lapido",
     "devRole": "Backend Developer",
     "devImage": "Images/devs/LAPIDO.png",
@@ -181,5 +181,4 @@
     "devImage": "Images/devs/CARVAJAL.jpg",
     "devDesc": "As the frontend developer , he focused on building a clear and organized interface for managing student payments. The module allows users to see their total fees, select a payment method, and process transactions smoothly. I designed it with usability in mind."
   }
-
 ]
