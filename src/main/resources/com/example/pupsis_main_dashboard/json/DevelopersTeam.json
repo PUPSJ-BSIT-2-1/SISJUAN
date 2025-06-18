@@ -91,91 +91,91 @@
     "devDesc": "Jesalyn creates and updates clear, easy-to-follow documentation for the Room Assignment module. She ensures that all instructions and records are accurate and accessible, helping users understand and navigate the system effectively. Her work supports smooth classroom scheduling and efficient system use.\n"
   },
   {
-    "devModule": "Subject Module",
+    "devModule": "Subject",
     "devName": "Renielyn B. Lenon",
     "devRole": "Frontend Developer",
     "devImage": "Images/devs/LENON.jpg",
     "devDesc": "As the frontend developer of the PUPSJ SIS project, Ren is both a programmer and UI/UX designer. She works on the Subject Module, where admins can add subjects and set prerequisites, while students and faculty can view subject information. She collaborates with the backend and database teams to ensure a smooth and consistent user experience."
   },
   {
-    "devModule": "Subject Module",
+    "devModule": "Subject",
     "devName": "Francis R. Salonga",
     "devRole": "Backend Developer",
     "devImage": "Images/devs/SALONGA.jpg",
     "devDesc": "Being one of the backend developers for the PUPSJ SIS project, Francis is incharge of the functionality of the program. Specifically the Subject module, wherein subjects are shown to the students and the faculty, whilst the administrators are able to add, delete and edit subjects as they will,  guaranteeing a user-friendly and consistent experience for users."
   },
   {
-    "devModule": "Subject Module",
+    "devModule": "Subject",
     "devName": "Krissha Rhane R. Monte",
     "devRole": "Frontend Developer",
     "devImage": "Images/devs/MONTE.jpeg",
     "devDesc": "As the Front-End Developer, she works on the parts of the system that users see and interact with. She also takes the role of a UI/UX Designer, helping to plan simple and clear layouts to make the system easy to use. She makes sure that all buttons and elements are responsive, properly aligned, and working as expected."
   },
   {
-    "devModule": "Registration Module",
+    "devModule": "Registration",
     "devName": "Bernardo G. Sales III",
     "devRole": "UI Designer",
     "devImage": "Images/devs/SALES.JPG",
     "devDesc": "As the UI designer, he is working closely with Jim on the registration module of our Student Information System. He is specialized in designing clean, intuitive interfaces that complement Jim’s frontend development, ensuring a seamless and visually engaging user experience. Bernardo’s focus on user-centered design, layout consistency, and interface usability has played a key role in enhancing the overall look and functionality of the system."
   },
   {
-    "devModule": "Registration Module",
+    "devModule": "Registration",
     "devName": "Ron Aris J. Tañag",
     "devRole": "UI Designer",
     "devImage": "Images/devs/TAÑAG.jpg",
     "devDesc": "He is a skilled UI designer working with Bernardo Sales III to ensure a consistent and user-friendly design across the Student Information System. His creative input and attention to detail complement Bernardo’s work, resulting in a cohesive and visually appealing interface."
   },
   {
-    "devModule": "Registration Module",
+    "devModule": "Registration",
     "devName": "Joshua D. Poche",
     "devRole": "UI Designer",
     "devImage": "Images/devs/POCHE.jpg",
     "devDesc": "Same as Sales and Tañag, I ensure the interface behaves in a predictable and intuitive way. And also creating layouts, colors, typography, icons, buttons, and other graphical elements."
   },
   {
-    "devModule": "Faculty Module",
+    "devModule": "Faculty",
     "devName": "John Paul G. Austria",
     "devRole": "FullStack Developer",
     "devImage": "Images/devs/AUSTRIA.jpg",
     "devDesc": "Developed and maintained the backend functionalities for the Faculty Dashboard and Faculty Management modules. Responsible for database integration and ensuring smooth data flow between the PostgreSQL database and the JavaFX application. Collaborated closely with frontend and UI/UX team members to deliver a user-friendly experience."
   },
   {
-    "devModule": "Faculty Module",
+    "devModule": "Faculty",
     "devName": "Leonardo B. Basbas",
     "devRole": "Frontend Developer",
     "devImage": "Images/devs/BASBAS.jpg",
     "devDesc": "As the frontend developer, he is responsible for designing the layout of the Faculty Module. His tasks include creating intuitive designs and supporting the module’s overall functionality."
   },
   {
-    "devModule": "Faculty Module",
+    "devModule": "Faculty",
     "devName": "Kurth Auen M. Del Castillo",
     "devRole": "Quality Assurance",
     "devImage": "Images/devs/DEL CASTILLO.JPG",
     "devDesc": "Conducted testing of the Faculty Module to identify and resolve bugs, ensuring all features functioned as intended. Verified interface responsiveness and usability, and ensured the overall quality and reliability of the module."
   },
   {
-    "devModule": "Schedule Module",
+    "devModule": "Schedule",
     "devName": "Kathleen I. Pinto",
     "devRole": "Frontend Developer",
     "devImage": "Images/devs/PINTO.JPG",
     "devDesc": "She is responsible for designing and developing the user interface of the Schedule Management module. Also created the class schedule list used in the system, ensuring that all time slots were properly organized and free from any conflicts or overlaps."
   },
   {
-    "devModule": "Schedule Module",
+    "devModule": "Schedule",
     "devName": "Jhanna Lou Lapido",
     "devRole": "Backend Developer",
     "devImage": "Images/devs/LAPIDO.png",
     "devDesc": "Lou is a backend developer for the PUP-SJ SIS, responsible for implementing server-side logic and data processing. They collaborated with the room assignment team to streamline the process and ensure smooth integration, particularly for the Class Schedule module."
   },
   {
-    "devModule": "Payment Module",
+    "devModule": "Payment",
     "devName": "Rachel Bautista",
     "devRole": "UI Designer",
     "devImage": "Images/devs/BAUTISTA.jpg",
     "devDesc": " As the UI Designer, she created a user-friendly interface for the Payment Module to ensure important information is easy to access and understand. Rachel balanced visual design with function, making sure the payment process is straightforward. This was designed with real student needs in mind."
   },
   {
-    "devModule": "Payment Module",
+    "devModule": "Payment",
     "devName": "Marc Justine Carvajal",
     "devRole": "Frontend Developer",
     "devImage": "Images/devs/CARVAJAL.jpg",
