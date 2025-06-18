@@ -77,13 +77,7 @@ public class EmailService {
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setText(body);
 
-            // HTML part (optional, but good for richer formatting if desired later)
-            MimeBodyPart htmlPart = new MimeBodyPart();
-            String htmlContent = "<html><body><p>" + body.replace("\n", "<br>") + "</p></body></html>";
-            htmlPart.setContent(htmlContent, "text/html");
-
             multipart.addBodyPart(textPart);
-            multipart.addBodyPart(htmlPart); // Choose one or both based on needs
 
             message.setContent(multipart);
 
