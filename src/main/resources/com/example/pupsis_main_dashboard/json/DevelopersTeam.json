@@ -37,9 +37,9 @@
   {
     "devModule": "Grading",
     "devName": "Micah Athena D. Bugayong",
-    "devRole": "UI/UX Designer",
+    "devRole": "UX Designer",
     "devImage": "Images/devs/BUGAYONG.jpg",
-    "devDesc": "She assisted in developing the Student View Module by designing and coding intuitive, responsive front-end components to improve the student experience when accessing academic records and grades. She also ensured a smooth interface and reliable functionality through thorough testing and bug fixing to meet quality standards."
+    "devDesc": "She focused on enhancing the user experience in the Grading module by designing intuitive workflows and ensuring students can easily access and understand their academic records. Micah evaluated usability, addressed pain points in navigation, and collaborated on testing to ensure the interface meets real user needs."
   },
   {
     "devModule": "Grading",
@@ -78,17 +78,17 @@
   },
   {
     "devModule": "Room Assignment",
-    "devName": "Eunice Marie S. Marquez",
-    "devRole": "UI/UX Designer",
+    "devName": "Eunice Julianna S. Marquez",
+    "devRole": "Quality Assurance (QA)",
     "devImage": "Images/devs/MARQUEZ.JPG",
-    "devDesc": "She handles and organize the Room Assignment module. She makes sure classrooms can be assigned correctly and schedules don’t overlap. She organizes the system’s data to keep everything running smoothly. Any issues are also handled to avoid errors."
+    "devDesc": "She ensures the Room Assignment module functions correctly and meets system requirements. She tests for bugs, checks for schedule conflicts, and verifies that classrooms are assigned accurately. Her role is essential in maintaining the reliability and stability of the system."
   },
   {
     "devModule": "Room Assignment",
-    "devName": "Jesalyn Anne S. Segotier",
-    "devRole": "Documentation Analyst",
+    "devName": "Jesalyn S. Segotier",
+    "devRole": "Quality Assurance (QA)",
     "devImage": "Images/devs/SEGOTIER.jpg",
-    "devDesc": "Jesalyn creates and updates clear, easy-to-follow documentation for the Room Assignment module. She ensures that all instructions and records are accurate and accessible, helping users understand and navigate the system effectively. Her work supports smooth classroom scheduling and efficient system use.\n"
+    "devDesc": "Jesalyn is responsible for testing the Room Assignment module to ensure it runs smoothly and without errors. She checks for bugs, verifies that classroom scheduling is accurate, and helps maintain the quality and reliability of the system by reporting issues and assisting with improvements."
   },
   {
     "devModule": "Subject",
@@ -149,7 +149,7 @@
   {
     "devModule": "Faculty",
     "devName": "Kurth Auen M. Del Castillo",
-    "devRole": "Quality Assurance",
+    "devRole": "Quality Assurance (QA)",
     "devImage": "Images/devs/DEL CASTILLO.JPG",
     "devDesc": "Conducted testing of the Faculty Module to identify and resolve bugs, ensuring all features functioned as intended. Verified interface responsiveness and usability, and ensured the overall quality and reliability of the module."
   },
@@ -170,9 +170,9 @@
   {
     "devModule": "Payment",
     "devName": "Rachel Bautista",
-    "devRole": "UI Designer",
+    "devRole": "UX Designer",
     "devImage": "Images/devs/BAUTISTA.jpg",
-    "devDesc": " As the UI Designer, she created a user-friendly interface for the Payment Module to ensure important information is easy to access and understand. Rachel balanced visual design with function, making sure the payment process is straightforward. This was designed with real student needs in mind."
+    "devDesc": "As the UX Designer, she focused on creating an intuitive and efficient experience for users interacting with the Payment Module. Rachel prioritized user needs, ensuring the process of viewing and completing payments was smooth, clear, and accessible. Her design decisions were based on usability and practical student interactions."
   },
   {
     "devModule": "Payment",
