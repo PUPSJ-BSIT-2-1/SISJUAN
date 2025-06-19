@@ -21,7 +21,7 @@
    </ImageView>
 
    <!-- Title -->
-   <Label fx:id="labelHeader" layoutX="286.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="label-header" text="Welcome to PUPSIS Portal" />
+   <Label fx:id="labelHeader" alignment="CENTER" layoutX="246.0" layoutY="310.0" prefHeight="71.0" prefWidth="802.0" styleClass="label-header" text="Welcome to SISJUAN Portal" />
    <HBox alignment="CENTER" layoutX="220.0" layoutY="58.0" prefHeight="68.0" prefWidth="840.0" styleClass="navigation-bar">
       <padding>
          <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
@@ -29,7 +29,7 @@
       <ImageView fitHeight="47.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
          <Image url="@../Images/PUPSJ Logo.png" />
       </ImageView>
-      <Label styleClass="pupsis" text="PUPSIS">
+      <Label styleClass="pupsis" text="SISJUAN">
          <HBox.margin>
             <Insets left="10.0" />
          </HBox.margin>
