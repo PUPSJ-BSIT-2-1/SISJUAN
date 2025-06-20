@@ -111,10 +111,7 @@ public class FacultyClassListController {
                         WHERE subj.subject_code = ?
                         AND sec.section_name = ?;
                     """;
-                    try (PreparedStatement pstmt = conn.prepareStatement(
-                            query,
-                            ResultSet.TYPE_FORWARD_ONLY,
-                            ResultSet.CONCUR_READ_ONLY)) {
+                    try (PreparedStatement pstmt = conn.prepareStatement(query)) {
 
                         pstmt.setFetchSize(70);
                         pstmt.setString(1, subjectCode);
@@ -128,9 +125,9 @@ public class FacultyClassListController {
                                         String.format("%s, %s %s",
                                                 rs.getString("lastname"),
                                                 rs.getString("firstname"),
-                                                rs.getString("middlename").isEmpty() ? "" : rs.getString("middlename").charAt(0) + "."),
+                                                rs.getString("middlename") == null ? "" : rs.getString("middlename")),
                                         rs.getString("email"),
-                                        rs.getString("address"),
+                                        rs.getString("address") == null ? "" : rs.getString("address"),
                                         rs.getString("status_name"),
                                         rs.getString("birthday") == null ? "" : rs.getString("birthday").substring(0, 10)
                                 );
