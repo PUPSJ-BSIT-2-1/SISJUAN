@@ -2,6 +2,7 @@ package com.example.pupsis_main_dashboard.controllers;
 
 import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
@@ -76,7 +77,8 @@ public class AdminDashboardController {
         homeHBox.getStyleClass().add("selected");
 
         Preferences prefs = Preferences.userNodeForPackage(AdminLoginController.class); // Use AdminLoginController's preferences node
-        String facultyId = prefs.get("faculty_id", null); // Retrieve stored faculty_id
+        //String facultyId = prefs.get("faculty_id", null); // Retrieve stored faculty_id
+        String facultyId = RememberMeHandler.getCurrentUserIdentifier();
         System.out.println("Admin faculty_id: " + facultyId);
         if (facultyId != null && !facultyId.isEmpty()) {
             loadFacultyInfo(facultyId);
@@ -234,13 +236,13 @@ public class AdminDashboardController {
             FROM public.faculty f
             LEFT JOIN public.departments d ON f.department_id = d.department_id
             LEFT JOIN public.faculty_statuses fs ON f.faculty_status_id = fs.faculty_status_id
-            WHERE f.faculty_id = ? AND f.admin_type = TRUE
+            WHERE f.faculty_id = (SELECT f.faculty_id FROM public.faculty f WHERE f.faculty_number = ?) AND f.admin_type = TRUE
             """;
         
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             
-            stmt.setInt(1, Integer.parseInt(facultyIdStr)); // faculty_id is int2, so parse and set as int
+            stmt.setString(1, facultyIdStr); // faculty_id is int2, so parse and set as int
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
