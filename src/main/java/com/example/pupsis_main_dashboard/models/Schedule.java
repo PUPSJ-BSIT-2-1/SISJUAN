@@ -28,13 +28,14 @@ public class Schedule {
     private final StringProperty schedule;
     private final StringProperty scheduleForFaculty;
     private final StringProperty scheduleWithFaculty;
-    private final Button editButton;
+    private Button editButton;
     private final StringProperty stringUnits;
 
+    // Existing constructor for detailed/admin view
     public Schedule(int loadID, String faculty, String subjectID, String facultyNumber,
                     String subCode, String subDesc, String facultyName, String facultyID,
                     String yearSection, String days, String startTime, String endTime,
-                    String room, Integer units, Integer lectureHour, Integer laboratoryHour,
+                    String room, String units, Integer lectureHour, Integer laboratoryHour,
                     Button editButton) {
 
         this.loadID = new SimpleIntegerProperty(loadID);
@@ -50,18 +51,61 @@ public class Schedule {
         this.startTime = new SimpleStringProperty(nonNull(startTime));
         this.endTime = new SimpleStringProperty(nonNull(endTime));
         this.room = new SimpleStringProperty(nonNull(room));
-        this.units = new SimpleIntegerProperty(nonNullInt(units));
+        this.units = new SimpleIntegerProperty(nonNullInt(Integer.valueOf(units)));
         this.lectureHour = new SimpleIntegerProperty(nonNullInt(lectureHour));
         this.laboratoryHour = new SimpleIntegerProperty(nonNullInt(laboratoryHour));
         this.stringLectureHour = new SimpleStringProperty(String.valueOf(nonNullInt(lectureHour)));
         this.stringLaboratoryHour = new SimpleStringProperty(String.valueOf(nonNullInt(laboratoryHour)));
-        this.stringUnits = new SimpleStringProperty(String.valueOf(nonNullInt(units)));
+        this.stringUnits = new SimpleStringProperty(String.valueOf(nonNullInt(Integer.valueOf(units))));
 
-        this.schedule = new SimpleStringProperty(this.yearSection.get() + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get());
+        // Calculated properties
+        // Ensure yearSection is non-null before using in concatenation for scheduleWithFaculty
+        String displayYearSection = this.yearSection.get() != null ? this.yearSection.get() : "";
+        this.schedule = new SimpleStringProperty(displayYearSection + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get());
         this.scheduleForFaculty = new SimpleStringProperty(this.startTime.get() + " - " + this.endTime.get());
-        this.scheduleWithFaculty = new SimpleStringProperty(this.yearSection.get() + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get() + " " + this.facultyName.get());
+        this.scheduleWithFaculty = new SimpleStringProperty(displayYearSection + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get() + " " + this.facultyName.get());
 
         this.editButton = editButton;
+    }
+
+    // New constructor for student view (10 arguments)
+    public Schedule(String subCode, String subDesc, Integer units, String days, 
+                    String startTime, String endTime, String room, String facultyName, 
+                    Integer lectureHour, Integer laboratoryHour) {
+        
+        this.loadID = new SimpleIntegerProperty(0); // Default
+        this.faculty = new SimpleStringProperty(""); // Default
+        this.subjectID = new SimpleStringProperty(""); // Default
+        this.facultyNumber = new SimpleStringProperty(""); // Default
+        this.facultyID = new SimpleStringProperty(""); // Default
+        this.yearSection = new SimpleStringProperty(""); // Default - year/section context comes from student, not per schedule item here
+
+        this.subCode = new SimpleStringProperty(nonNull(subCode));
+        this.subDesc = new SimpleStringProperty(nonNull(subDesc));
+        this.units = new SimpleIntegerProperty(nonNullInt(units));
+        this.days = new SimpleStringProperty(nonNull(days));
+        this.startTime = new SimpleStringProperty(nonNull(startTime));
+        this.endTime = new SimpleStringProperty(nonNull(endTime));
+        this.room = new SimpleStringProperty(nonNull(room));
+        this.facultyName = new SimpleStringProperty(nonNull(facultyName));
+        this.lectureHour = new SimpleIntegerProperty(nonNullInt(lectureHour));
+        this.laboratoryHour = new SimpleIntegerProperty(nonNullInt(laboratoryHour));
+
+        // Derived string properties for display
+        this.stringUnits = new SimpleStringProperty(String.valueOf(nonNullInt(units)));
+        this.stringLectureHour = new SimpleStringProperty(String.valueOf(nonNullInt(lectureHour)));
+        this.stringLaboratoryHour = new SimpleStringProperty(String.valueOf(nonNullInt(laboratoryHour)));
+        
+        // Calculated schedule strings - adapt as needed for student view
+        // For student view, yearSection is not directly part of this constructor's individual schedule items
+        // It's a general context for the student. So, scheduleWithFaculty might not include yearSection here.
+        String scheduleDisplay = String.format("%s %s - %s", 
+            nonNull(days), nonNull(startTime), nonNull(endTime)).trim();
+        this.schedule = new SimpleStringProperty(scheduleDisplay);
+        this.scheduleForFaculty = new SimpleStringProperty(scheduleDisplay); // Or adapt if faculty view is different
+        this.scheduleWithFaculty = new SimpleStringProperty(String.format("%s (%s)", scheduleDisplay, nonNull(facultyName)).trim());
+
+        this.editButton = null; // No edit button for student view
     }
 
     private String nonNull(String value) {
@@ -89,7 +133,8 @@ public class Schedule {
     public void setLaboratoryHour(int laboratoryHour) { this.laboratoryHour.set(laboratoryHour); }
     public void setSubID(String subjectID) { this.subjectID.set(subjectID != null ? subjectID : ""); }
     public void setFacultyNumber(String facultyNumber) { this.facultyNumber.set(facultyNumber != null ? facultyNumber : ""); }
-
+    public void setSchedule(String schedule) { this.schedule.set(this.yearSection.get() + " " + this.days.get() + " " + this.startTime.get() + " - " + this.endTime.get()); }
+    public void setEditButton(Button editButton) { this.editButton = editButton; }
     // Getters
     public int getLoadID() { return loadID.get(); }
     public String getFaculty() { return faculty.get(); }

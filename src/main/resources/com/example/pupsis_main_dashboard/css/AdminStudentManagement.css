@@ -1,13 +1,13 @@
+.root {
+    -fx-background-color: transparent;
+}
+
 .red-card {
     -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%) !important;
     -fx-background-radius: 10;
     -fx-border-color: transparent;
 }
-.header {
-    -fx-font-size: 24px;
-    -fx-font-family: "Inter 18pt SemiBold";
-    -fx-text-fill: white;
-}
+
 .cards {
     -fx-background-color: #f8fcfc;
     -fx-background-radius: 10;
@@ -15,9 +15,290 @@
     -fx-border-width: 2;
     -fx-border-radius: 10;
 }
-.table-header{
+
+.table-header {
     -fx-background-color: #f8fcfc;
     -fx-text-fill: #000000;
     -fx-font-family: "Inter 18pt SemiBold";
     -fx-font-size: 14px;
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cccccc;
+}
+/* Dark theme styles */
+
+.dark-theme .root {
+    -background-color: #2b2b2b;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3)) !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+}
+
+.dark-theme .cards {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.dark-theme .table-header {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-font-size: 14px;
+}
+
+/* === Modern Button Styles === */
+
+/* Base style for accept and reject buttons */
+.accept-button, .reject-button {
+    -fx-background-radius: 5px; /* Rounded corners */
+    -fx-padding: 5px 10px;      /* Padding around text */
+    -fx-font-size: 14px;        /* Font size */
+    -fx-font-weight: bold;      /* Bold text, matches FXML */
+    -fx-text-fill: white;       /* White text color */
+    -fx-border-width: 0;        /* No border by default */
+    -fx-cursor: hand;           /* Hand cursor on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0.0, 0, 1); /* Subtle shadow */
+    -fx-min-width: 30px;        /* Ensure buttons have some width for the symbols */
+    -fx-alignment: CENTER;
+}
+
+/* Accept Button - Green */
+.accept-button {
+    -fx-background-color: #28a745; /* Green background (Bootstrap success green) */
+}
+
+.accept-button:hover {
+    -fx-background-color: #218838; /* Darker green on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.0, 0, 2);
+}
+
+.accept-button:pressed {
+    -fx-background-color: #1e7e34; /* Even darker green when pressed */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.0, 0, 1);
+}
+
+/* Reject Button - Red */
+.reject-button {
+    -fx-background-color: #dc3545; /* Red background (Bootstrap danger red) */
+}
+
+.reject-button:hover {
+    -fx-background-color: #c82333; /* Darker red on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.0, 0, 2);
+}
+
+.reject-button:pressed {
+    -fx-background-color: #bd2130; /* Even darker red when pressed */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.0, 0, 1);
+}
+
+.semester-date-picker {
+    -fx-background-color: white;
+}
+
+.dark-theme .semester-date-picker {
+    -fx-background-color: #2b2b2b;
+}
+
+.semester-date-picker .text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1 0 1 1px;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5 0 0 5px;
+    -fx-background-radius: 5 0 0 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 3 3 3 10;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .semester-date-picker .text-field {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Style the DatePicker arrow button */
+.semester-date-picker .arrow-button {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 0 5px 5px 0;
+    -fx-background-radius: 0 5px 5px 0;
+}
+
+.dark-theme .semester-date-picker .arrow-button {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+.semester-date-picker .arrow {
+    -fx-background-color: #343a40;
+    -fx-border-color: #343a40;
+}
+
+.dark-theme .semester-date-picker .arrow {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+}
+
+.semester-confirm-button, .batch-accept-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+}
+
+.semester-confirm-button:hover, .batch-accept-button:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
+.dark-theme .semester-confirm-button,
+.dark-theme .batch-accept-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .semester-confirm-button:hover,
+.dark-theme .batch-accept-button:hover {
+    -fx-background-color: #e57373;
+    -fx-cursor: hand;
+}
+
+.student-check-box {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.student-check-box .box {
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+}
+
+
+.dark-theme .student-check-box {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .student-check-box .box {
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Calendar popup container */
+.semester-date-picker .date-picker-popup {
+    -fx-background-color: white;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup {
+    -fx-background-color: #2b2b2b;
+}
+
+/* Month-Year header bar */
+.semester-date-picker .date-picker-popup > .month-year-pane {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup > .month-year-pane {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+.semester-date-picker .date-picker-popup > .month-year-pane > .label {
+    -fx-text-fill: #343a40;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup > .month-year-pane > .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Date cells */
+.semester-date-picker .date-picker-popup .day-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-border-color: transparent;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup .day-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Hover effect on date cells */
+.semester-date-picker .date-picker-popup .day-cell:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup .day-cell:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+/* Selected date */
+.semester-date-picker .date-picker-popup .day-cell:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+}
+
+.dark-theme .semester-date-picker .date-picker-popup .day-cell:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
 }

@@ -1,0 +1,521 @@
+.root {
+    -fx-font-family: "Inter", "sans-serif";
+    -fx-background-color: transparent; /* Light grey background for the app (default for .root elements) */
+}
+
+.dark-theme .root {
+    -fx-background-color: transparent;
+}
+
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-padding : 15px;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-padding: 15px;
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.dark-theme .cards {
+    -fx-background-color: #2b2b2b;
+    -fx-background-radius: 10;
+    -fx-border-color: #444;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #dddddd;
+}
+
+.cards-header {
+    -fx-font-size: 17px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .cards-header {
+    -fx-text-fill: #e0e0e0;
+}
+
+.icons {
+    -fx-fill: #800000;
+}
+
+.dark-theme .icons {
+    -fx-fill: #b22222;
+}
+
+.stat-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #646464;
+}
+
+.dark-theme .stat-label {
+    -fx-text-fill: #bbbbbb;
+}
+
+.stat-value {
+    -fx-font-size: 13px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.dark-theme .stat-value {
+    -fx-text-fill: #e0e0e0;
+}
+
+.breakdown-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: black;
+}
+
+.dark-theme .breakdown-label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.total-breakdown-amount {
+    -fx-font-size: 15px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #008000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .total-breakdown-amount {
+    -fx-text-fill: #00ff00;
+}
+
+.total-breakdown-label {
+    -fx-font-size: 15px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .total-breakdown-label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.submit-button {
+    -fx-background-color: #800000;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.submit-button:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
+.dark-theme .submit-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+}
+
+.dark-theme .submit-button:hover {
+    -fx-background-color: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.radio-button {
+    -fx-font-size: 12px;
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.radio-button .radio {
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-padding: 4px;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+}
+
+.dark-theme .radio-button {
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .radio-button .radio {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2px;
+    -fx-padding: 4px;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+}
+
+.payment-text-field {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 5;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5;
+    -fx-padding: 5 5 5 10;
+}
+
+.dark-theme .payment-text-field {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #e0e0e0;
+}
+
+/* Style for Eligible to FHE Act. */
+.like-icon {
+    -fx-fill: white;
+}
+
+.eligible-card {
+    -fx-background-color: #1a752e;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+}
+
+.eligible-card-label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.dark-theme .eligible-card {
+    -fx-background-color: #2f8f43;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+}
+
+.dark-theme .eligible-card-label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+
+.official-label {
+    -fx-font-size: 20px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+}
+
+.dark-theme .official-label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.enrolled-icon {
+    -fx-fill: #006400; /* Dark green */
+}
+
+.dark-theme .enrolled-icon {
+    -fx-fill: #00ff00; /* Light green */
+}
+
+.not-enrolled-icon {
+    -fx-fill: #800000; /* Dark red */
+}
+
+.dark-theme .not-enrolled-icon {
+    -fx-fill: #ff0000; /* Light red */
+}
+
+.information-icon {
+    -fx-fill: #7f8c8d; /* Dark gray */
+}
+
+.dark-theme .information-icon {
+    -fx-fill: #b0b0b0; /* Light gray */
+}
+
+.view-schedule-button {
+    -fx-background-color: #800000;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.view-schedule-button:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand;
+}
+
+.view-schedule-button .text {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .view-schedule-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+}
+
+.dark-theme .view-schedule-button .text {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .view-schedule-button:hover {
+    -fx-background-color: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.not-eligible-card {
+    -fx-background-color: #800000;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+}
+
+.not-eligible-card-label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.dark-theme .not-eligible-card {
+    -fx-background-color: #b22222;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+}
+
+.dark-theme .not-eligible-card-label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.view-accounts {
+    -fx-background-color: transparent;
+    -fx-underline: true;
+    -fx-text-fill: #800000;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.view-accounts:hover {
+    -fx-underline: true;
+    -fx-text-fill: #5e0000;
+    -fx-cursor: hand;
+}
+
+.dark-theme .view-accounts {
+    -fx-background-color: transparent;
+    -fx-underline: true;
+    -fx-text-fill: #b22222;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.dark-theme .view-accounts:hover {
+    -fx-underline: true;
+    -fx-text-fill: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+
+/* ============== CSS FOR PAYMENT HISTORY ============== */
+
+.back-to-payment-section {
+    -fx-background-color: transparent;
+    -fx-underline: true;
+    -fx-text-fill: #f8fcfc;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .back-to-payment-section {
+    -fx-background-color: transparent;  /* Set the background color to transparent */
+    -fx-underline: true;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.back-to-payment-section:hover {
+    -fx-underline: true;
+    -fx-text-fill: #f8fcfc;
+    -fx-cursor: hand;
+}
+
+.dark-theme .back-to-payment-section:hover {
+    -fx-underline: true;
+    -fx-text-fill: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+
+.table-view {
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: #f8fcfc;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-text-fill: black;
+    -fx-alignment: center;
+}
+
+.dark-theme .table-view {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #2b2b2b;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-text-fill: #e0e0e0;
+    -fx-alignment: center;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8fcfc;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2 0;
+    -fx-text-fill: black;
+}
+
+.dark-theme .table-view .column-header-background {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #2b2b2b;
+    -fx-border-width: 0 0 2 0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-size: 35;
+    -fx-border-insets: 0 12 1 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+}
+
+.dark-theme .table-view .column-header, .dark-theme .table-view .filler {
+    -fx-size: 35;
+    -fx-border-insets: 0 12 1 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: #e0e0e0;
+}
+
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-font-style: italic;
+    -fx-text-fill: black;
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.table-view .cell {
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.dark-theme .table-view .cell {
+    -fx-text-fill: #e0e0e0;
+}
+
+.table-row-cell {
+    -fx-background-color: #f8fcfc;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: black;
+    -fx-text-fill: black;
+    -fx-padding: 7px 0 7px 0;
+}
+
+.dark-theme .table-row-cell {
+    -fx-background-color: #2b2b2b;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f8fcfc;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 7px 0 7px 0;
+}
+
+.table-view .table-row-cell .table-cell {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.semester-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #800000;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.semester-button:hover {
+    -fx-text-fill: #5e0000;
+    -fx-cursor: hand;
+}
+
+.dark-theme .semester-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #b22222;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+
+.dark-theme .semester-button:hover {
+    -fx-text-fill: #e57373;
+    -fx-cursor: hand;
+}

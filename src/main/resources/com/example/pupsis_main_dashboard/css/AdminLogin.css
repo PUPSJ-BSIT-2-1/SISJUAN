@@ -1,0 +1,158 @@
+/* Style for input fields with white background, rounded corners, and specific text colors */
+.fields {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+    -fx-pref-width: 200;
+    -fx-text-fill: black;
+    -fx-prompt-text-fill: #a0a0a0; 
+}
+
+/* Style for buttons with maroon background, white text, and rounded corners */
+.buttons {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-pref-height: 30;
+}
+
+/* Changes button background color and cursor on hover */
+.buttons:hover {
+    -fx-background-color: #5e0000;
+    -fx-cursor: hand; 
+}
+
+/* Changes button background color when focused */
+.buttons:focused {
+    -fx-background-color: #5e0000;
+}
+
+/* General font style with "Inter" font family and dark gray text color */
+.font {
+    -fx-font-family: "Inter";
+    -fx-text-fill: #333333; 
+}
+
+/* Style for large text with font size 24 */
+.big-text {
+    -fx-font-size: 24;
+    /* -fx-text-fill will be inherited from .font or overridden by dark theme */
+}
+
+/* Style for PUP San Juan label with bold font and gray text color */
+.pup-sanjuan-label {
+    -fx-font-family: "system-ui";
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: #505050; 
+}
+
+/* Adds a drop shadow effect and hand cursor on hover for back button */
+.back-button:hover {
+    -fx-effect: dropshadow(gaussian, #a6a6a6, 20, 0.5, 0, 0);
+    -fx-cursor: hand; 
+}
+
+/* Style for error messages with red text color */
+.error-message {
+    -fx-text-fill: #ff0000;
+}
+
+/* Style for border pane with light gray background and rounded corners */
+.border-pane {
+    -fx-background-color: #e6e6e6; 
+    -fx-background-radius: 20;
+}
+
+/* ============== DARK THEME STYLES for FacultyLogin.css ============== */
+
+/* Placeholder for dark theme root styles */
+.dark-theme {
+    /* This will be the outermost background if the root of the scene gets .dark-theme */
+    /* If mainLoginPane is the one getting the class, its background is defined below */
+}
+
+/* Style for border pane in dark theme with dark gray background */
+.dark-theme .border-pane {
+    -fx-background-color: #1e1e1e; 
+}
+
+/* General font style for dark theme with light gray text color */
+.dark-theme .font {
+    -fx-text-fill: #c5c5c5; 
+}
+
+/* Style for large text in dark theme with lighter gray text color */
+.dark-theme .big-text {
+    -fx-text-fill: #e0e0e0; 
+}
+
+/* Style for PUP San Juan label in dark theme with medium gray text color */
+.dark-theme .pup-sanjuan-label {
+    -fx-text-fill: #b0b0b0; 
+}
+
+/* Style for input fields in dark theme with dark background and light text */
+.dark-theme .fields {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #888888;
+    -fx-border-color: #555555; 
+    -fx-border-width: 1px;
+    -fx-border-radius: 8;
+}
+
+/* Style for focused input fields in dark theme with red border */
+.dark-theme .fields:focused {
+    -fx-border-color: #e57373; 
+    -fx-background-color: #333333;
+}
+
+/* Style for buttons in dark theme with red background and white text */
+.dark-theme .buttons {
+    -fx-background-color: #800000; 
+    -fx-text-fill: #ffffff;
+}
+
+/* Style for hovered buttons in dark theme with lighter red background */
+.dark-theme .buttons:hover {
+    -fx-background-color: #e57373; 
+}
+
+/* Style for focused buttons in dark theme with lighter red background */
+.dark-theme .buttons:focused {
+    -fx-background-color: #e57373;
+}
+
+/* Style for error messages in dark theme with bright red text color */
+.dark-theme .error-message {
+    -fx-text-fill: #ff6b6b; 
+}
+
+/* Adds a drop shadow effect for back button in dark theme on hover */
+.dark-theme .back-button:hover {
+    -fx-effect: dropshadow(gaussian, #606060, 20, 0.5, 0, 0); 
+}
+
+/* Hide scrollbars in ComboBox popups for both light and dark themes */
+.combo-box-popup .list-view .scroll-bar:vertical,
+.combo-box-popup .list-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+    -fx-padding: 0;
+}
+
+.combo-box-popup .list-view .scroll-bar .increment-button,
+.combo-box-popup .list-view .scroll-bar .decrement-button,
+.combo-box-popup .list-view .scroll-bar .thumb {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+    -fx-pref-width: 0;
+    -fx-padding: 0;
+}
+.root{
+    -fx-background-radius: 22;
+}

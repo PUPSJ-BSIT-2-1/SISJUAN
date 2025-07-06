@@ -1,0 +1,583 @@
+.root {
+    -fx-font-family: "Inter";
+    -fx-background-radius: 20;
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+}
+
+/*changes all labels on the root level to "Inter"*/
+.label {
+    -fx-font-family: 'Inter';
+}
+
+/*rounds the root border*/
+.rounded-border-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+/* Apply to all text elements in TableView */
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(0, 0, 0, 0.25);
+    -fx-text-fill: black;
+}
+
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+/* Column headers */
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #cdd0d1;
+    -fx-font-size: 12px; /* Ensures header text is 12px */
+    -fx-text-fill: black;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 15px, 10px, 0px, 10px;
+    -fx-text-fill: black;
+}
+
+/* Table cells */
+.table-view .table-cell {
+    -fx-border-width: 0 0 1 0;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-text-fill: black;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: 'Inter';
+    -fx-alignment: CENTER;
+    -fx-padding: 10px 0px 10px 0px;
+    -fx-text-fill: black;
+}
+
+/* Hover effect for table rows */
+.table-row-cell:hover {
+    -fx-background-color: #a03030; /* maroon for hover */
+    -fx-text-fill: white;        /* White text */     /* White text */
+    -fx-background-radius: 10px;
+}
+
+/* Make sure text inside cells changes color */
+.table-row-cell:hover .text {
+    -fx-fill: white;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.table-view .grade-status-cell {
+    -fx-padding: 8px;
+    -fx-alignment: center;
+}
+
+.table-row-cell:hover .grade-status-passed {
+    -fx-background-color: #218838;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:hover .grade-status-failed {
+    -fx-background-color: #c82333;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:hover .grade-status-other {
+    -fx-background-color: #5a6268;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:hover .grade-status-passed .label,
+.table-row-cell:hover .grade-status-failed .label,
+.table-row-cell:hover .grade-status-other .label {
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
+}
+
+/* Menu Button Base Styling */
+.menu-button {
+    -fx-background-color: #962323;
+    -fx-border-radius: 8px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 2;
+    -fx-background-radius: 8;
+    -fx-pref-width: 116;
+}
+
+.menu-button .text {
+    -fx-fill: white;
+}
+
+.menu-button .arrow {
+    -fx-background-color: white;
+}
+
+.menu-button .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Menu Popup Container */
+.menu-button .context-menu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 2; /* Small padding for visual separation */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+.menu-button > .menu-popup {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Individual Menu Items */
+.menu-button .menu-item {
+    -fx-background-color: rgba(128, 0, 0, 0.50); /* maroon with 0.1 opacity */
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-background-insets: 1px; /* Small inset for visual separation */
+    -fx-border-color: rgba(128, 0, 0, 0.10);
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-button .menu-item:hover {
+    -fx-background-color: rgba(128, 0, 0, 1); /* maroon with 0.12 opacity on hover */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1), 4, 0, 0, 0);
+}
+
+/* Ensure text stays white and visible */
+.menu-button .menu-item .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold; /* Make text more visible */
+    -fx-font-family: 'Inter';
+}
+
+/* Note: JavaFX doesn't support :last-child, so we'll keep the border for all items */
+
+/* Alternative approach if the above doesn't work - force specific background */
+.menu-button .menu-item:focused {
+    -fx-background-color: rgba(128, 0, 0, 0.80);
+    -fx-text-fill: white;
+}
+
+.menu-button .menu-item:selected {
+    -fx-background-color: rgba(128, 0, 0, 1);
+    -fx-text-fill: white;
+}
+
+/* Disabled state for Menu Button */
+.menu-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #800000; /* Gray color when disabled */
+    -fx-cursor: default;
+}
+
+.menu-button:disabled .text {
+    -fx-fill: #ffffff; /* Lighter text color when disabled */
+}
+
+.menu-button:disabled .arrow {
+    -fx-background-color: #cccccc; /* Lighter arrow color when disabled */
+}
+
+/* Ensure disabled menu items are visually different */
+.menu-button .menu-item:disabled {
+    -fx-opacity: 0.7;
+    -fx-background-color: rgba(128, 128, 128, 0.5); /* Gray with transparency */
+}
+
+.menu-button .menu-item:disabled .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Remove hover effects for disabled items */
+.menu-button .menu-item:disabled:hover {
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-cursor: default;
+    -fx-effect: none;
+    -fx-background-color: rgba(128, 128, 128, 0.5);
+}
+
+.small-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.mini-cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 8;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+}
+
+.cards {
+    -fx-background-color: #f8fcfc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e3e5e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+#gradesHeaderLbl {
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+    -fx-pref-height: 40;
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+}
+
+#gradesHeaderLbl:focused {
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-pref-height: 50;
+    -fx-font-size: 24px;
+}
+
+#subDesclbl {
+    -fx-font-size: 9px;
+    -fx-text-fill: #6c757d;
+}
+
+#subDesclbl:focused {
+    -fx-font-size: 9px;
+    -fx-text-fill: #6c757d;
+}
+
+#subjDescLbl{
+    -fx-font-size: 14px;
+    -fx-text-fill: #000000;
+}
+
+.table-row-cell .grade-status-passed,
+.table-row-cell .grade-status-failed,
+.table-row-cell .grade-status-other {
+    -fx-text-fill: white !important;
+}
+
+.table-row-cell .grade-status-passed .label,
+.table-row-cell .grade-status-failed .label,
+.table-row-cell .grade-status-other .label {
+    -fx-text-fill: white !important;
+}
+.grade-status-passed {
+    -fx-background-color: #28a745;
+    -fx-background-radius: 12px;
+    -fx-min-width: 20px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-failed {
+    -fx-background-color: #dc3545;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.grade-status-other {
+    -fx-background-color: #6c757d;
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.table-view .grade-status-cell {
+    -fx-padding: 8px;
+    -fx-alignment: center;
+}
+
+.table-row-cell:hover .grade-status-passed {
+    -fx-background-color: #218838;
+    -fx-font-weight: bold;/* Darker green on hover */
+}
+
+.table-row-cell:hover .grade-status-failed {
+    -fx-background-color: #c82333;
+    -fx-font-weight: bold;/* Darker red on hover */
+}
+
+.table-row-cell:hover .grade-status-other {
+    -fx-background-color: #5a6268;
+    -fx-font-weight: bold;/* Darker gray on hover */
+}
+
+.grade-status-passed {
+    -fx-background-color: #28a745;
+    -fx-background-radius: 15px;
+    -fx-text-fill: white;
+    -fx-padding: 4px 8px;
+    -fx-alignment: center;
+    -fx-font-size: 11px;
+    -fx-font-family: 'Inter';
+    -fx-content-display: center;
+    -fx-pref-width: -1; /* Auto-size to content */
+    -fx-max-width: 100px;
+    -fx-min-width: 50px;
+}
+
+.grade-status-failed {
+    -fx-background-color: #dc3545;
+    -fx-background-radius: 15px;
+    -fx-text-fill: white;
+    -fx-padding: 4px 8px;
+    -fx-alignment: center;
+    -fx-font-size: 11px;
+    -fx-font-family: 'Inter';
+    -fx-content-display: center;
+    -fx-pref-width: -1; /* Auto-size to content */
+    -fx-max-width: 100px;
+    -fx-min-width: 50px;
+}
+
+.grade-status-other {
+    -fx-background-color: #6c757d;
+    -fx-background-radius: 15px;
+    -fx-text-fill: white;
+    -fx-padding: 4px 8px;
+    -fx-alignment: center;
+    -fx-font-size: 11px;
+    -fx-font-family: 'Inter';
+    -fx-content-display: center;
+    -fx-pref-width: -1; /* Auto-size to content */
+    -fx-max-width: 100px;
+    -fx-min-width: 50px;
+}
+
+.grade-status-passed .label,
+.grade-status-failed .label,
+.grade-status-other .label {
+    -fx-text-fill: white;
+}
+.icon {
+    -fx-fill: #6b6b6b;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.search-text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #6b6b6b;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 5px;
+    -fx-font-weight: bold;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+/* =============== DARK THEME STYLES =============== */
+
+.dark-theme .root {
+    -fx-background-color: transparent;
+}
+
+.dark-theme .small-cards {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #4a4a4a;
+}
+
+.dark-theme .icon {
+    -fx-fill: #b0b0b0;
+}
+
+.dark-theme .text {
+    -fx-fill: white;
+}
+
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #cccccc;
+}
+
+.dark-theme .search-text-field {
+    -fx-background-color: #3a3a3a;
+    -fx-border-width: 1px;
+    -fx-border-color: #555555;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .table-view {
+    -fx-background-color: transparent;
+    -fx-table-header-border-color: rgba(255, 255, 255, 0.25);
+    -fx-text-fill: #e6e6e6;
+}
+
+.dark-theme .table-view .column-header {
+    -fx-background-color: transparent;
+
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Table cells in dark theme */
+.dark-theme .table-view .table-cell {
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Rows in dark theme */
+.dark-theme .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Selection color in dark theme */
+.dark-theme .table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #a03030; /* Darker red for selection in dark mode */
+    -fx-text-fill: white;
+}
+
+/* Hover effect for table rows in dark theme */
+.dark-theme .table-row-cell:hover {
+    -fx-background-color: #b22222; /* Consistent with other dark theme hover colors */
+    -fx-text-fill: white;
+}
+
+/* Make sure text inside cells changes color in dark theme */
+.dark-theme .table-row-cell:hover .text {
+    -fx-fill: white;
+}
+
+.total-student {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .total-student {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #b22222;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .mini-cards {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 8;
+    -fx-border-color: #555555;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+}
+
+.back-button {
+    -fx-background-color: maroon;
+    -fx-background-radius: 8;
+    -fx-border-color: maroon;
+    -fx-border-radius: 8;
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.back-button:hover {
+    -fx-background-color: #5e0000; /* Darker maroon on hover */
+}
+
+.dark-theme .back-button {
+    -fx-background-color: #b22222;
+    -fx-border-color: #b22222;
+}
+
+.dark-theme .back-button:hover {
+    -fx-background-color: #e57373; /* Lighter maroon on hover */
+}
+.dark-theme .table-row-cell .grade-status-passed,
+.dark-theme .table-row-cell .grade-status-failed,
+.dark-theme .table-row-cell .grade-status-other {
+    -fx-text-fill: white !important;
+}
+
+.dark-theme .table-row-cell .grade-status-passed .label,
+.dark-theme .table-row-cell .grade-status-failed .label,
+.dark-theme .table-row-cell .grade-status-other .label {
+    -fx-text-fill: white !important;
+}

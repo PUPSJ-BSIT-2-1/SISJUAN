@@ -70,15 +70,15 @@
                  </Label>
                  <Label prefWidth="125.0" styleClass="small-text" text="Enter your Student ID">
                      <padding>
-                         <Insets bottom="30.0" top="-5.0" />
+                         <Insets bottom="10.0" top="-5.0" />
                      </padding>
                  </Label>
-                 <Label fx:id="errorLabel" styleClass="error-message">
+                 <Label fx:id="errorLabel" alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="315.0" styleClass="error-message" wrapText="true">
                      <VBox.margin>
                          <Insets bottom="10.0" />
                      </VBox.margin>
                  </Label>
-                 <TextField fx:id="studentIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="254.0" promptText="Student ID/Email" styleClass="fields">
+                 <TextField fx:id="studentIdField" onKeyPressed="#handleKeyPress" prefHeight="30.0" prefWidth="254.0" promptText="Student ID" styleClass="fields">
                      <padding>
                          <Insets left="15.0" />
                      </padding>
@@ -86,7 +86,7 @@
                          <Insets bottom="10.0" />
                      </VBox.margin>
                  </TextField>
-                 <PasswordField fx:id="loginPasswordField" promptText="Password" styleClass="fields">
+                 <PasswordField fx:id="loginPasswordField" onKeyPressed="#handleKeyPress" promptText="Password" styleClass="fields">
                      <padding>
                          <Insets left="15.0" />
                      </padding>
@@ -99,7 +99,7 @@
                   <Insets bottom="50.0" />
                </VBox.margin>
                <children>
-                  <ToggleButton fx:id="rememberMeCheckBox" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" styleClass="switch-toggle-button" stylesheets="@../css/ToggleSwitch.css" text="ToggleButton">
+                  <ToggleButton fx:id="rememberMeCheckBox" mnemonicParsing="false" prefHeight="26.0" prefWidth="52.0" styleClass="switch-toggle-button" stylesheets="@../css/GeneralToggleSwitch.css" text="ToggleButton">
                       <graphic>
                           <Region styleClass="thumb" />
                       </graphic>

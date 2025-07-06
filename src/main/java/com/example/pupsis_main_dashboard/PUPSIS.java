@@ -5,8 +5,9 @@
 
 package com.example.pupsis_main_dashboard;
 
-import com.example.pupsis_main_dashboard.controllers.SettingsController;
+import com.example.pupsis_main_dashboard.controllers.GeneralSettingsController;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
+import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -20,7 +21,7 @@ import java.util.prefs.Preferences;
 
 public class PUPSIS extends Application {
     private static final Logger logger = LoggerFactory.getLogger(PUPSIS.class);
-    private static final String DARK_MODE_CSS_PATH = "/com/example/pupsis_main_dashboard/css/DarkMode.css";
+    private static final String DARK_MODE_CSS_PATH = "/com/example/pupsis_main_dashboard/css/GeneralDarkMode.css";
     private static final String DARK_THEME_CLASS = "dark-theme";
     private static final String LIGHT_THEME_CLASS = "light-theme";
 
@@ -65,14 +66,38 @@ public class PUPSIS extends Application {
     }
 
     public static void applyGlobalTheme(Scene scene) {
-        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean darkModeEnabled = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
+        boolean darkModeEnabled = false; // Default to light theme
+        if (currentUserIdentifier != null && !currentUserIdentifier.isEmpty()) {
+            String userType = RememberMeHandler.getUserTypeFromIdentifier(currentUserIdentifier);
+            if (userType != null && !userType.equals("UNKNOWN") && !userType.isEmpty()) {
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(userType.toUpperCase());
+                darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+            } else {
+                logger.warn("applyGlobalTheme: Could not determine user type for identifier '{}'. Defaulting to light theme.", currentUserIdentifier);
+            }
+        } else {
+            // No current user identified (e.g. on FrontPage), default to light theme.
+            // logger.info("applyGlobalTheme: No current user identifier. Defaulting to light theme.");
+        }
         applyThemeToSingleScene(scene, darkModeEnabled);
     }
 
     public static void triggerGlobalThemeUpdate() {
-        Preferences settingsPrefs = Preferences.userNodeForPackage(SettingsController.class);
-        boolean darkModeEnabled = settingsPrefs.getBoolean(SettingsController.THEME_PREF, false);
+        String currentUserIdentifier = RememberMeHandler.getCurrentUserIdentifier();
+        boolean darkModeEnabled = false; // Default to light theme
+        if (currentUserIdentifier != null && !currentUserIdentifier.isEmpty()) {
+            String userType = RememberMeHandler.getUserTypeFromIdentifier(currentUserIdentifier);
+            if (userType != null && !userType.equals("UNKNOWN") && !userType.isEmpty()) {
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(userType.toUpperCase());
+                darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+            } else {
+                 logger.warn("triggerGlobalThemeUpdate: Could not determine user type for identifier '{}'. Defaulting to light theme for update.", currentUserIdentifier);
+            }
+        } else {
+             // No current user, perhaps this update should be skipped or use a general default.
+             // logger.info("triggerGlobalThemeUpdate: No current user identifier. Defaulting to light theme for update.");
+        }
 
         for (Window window : Window.getWindows()) {
             if (window instanceof Stage) {
@@ -90,7 +115,7 @@ public class PUPSIS extends Application {
 
         try {
             Stage initializedStage = utility.loadStage(
-                    "fxml/FrontPage.fxml",
+                    "fxml/GeneralFrontPage.fxml",
                     "PUPSIS",
                     Objects.requireNonNull(getClass().getResource("/com/example/pupsis_main_dashboard/Images/PUPSJ Logo.png")).toExternalForm(),
                     StageAndSceneUtils.WindowSize.MEDIUM

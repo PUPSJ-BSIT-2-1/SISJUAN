@@ -10,7 +10,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -86,41 +86,53 @@ public class NotificationManager {
                     notification.getMessage()
                 );
                 System.out.println("Email notification sent to: " + userEmail);
-            } catch (jakarta.mail.MessagingException e) {
+            } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
         });
     }
     
     private String getCurrentUserEmail() {
-        // Get current user email using RememberMeHandler's static method
-        String email = RememberMeHandler.getCurrentUserEmail();
-        if (email == null || email.isEmpty()) {
+        // Get current user identifier using RememberMeHandler's static method
+        String identifier = RememberMeHandler.getCurrentUserIdentifier();
+        if (identifier == null || identifier.isEmpty()) {
+            System.err.println("NotificationManager: User identifier not found.");
             return null;
         }
         
-        boolean isEmail = email.contains("@");
-        
-        // If identifier is already an email, return it
-        if (isEmail) {
-            return email;
-        }
-        
-        // Otherwise, query the database for the email
-        String query = "SELECT email FROM students WHERE student_id = ?";
+        // Otherwise, query the database for the email from students or faculty table
+        String email = null;
+        // Try students table
+        String studentQuery = "SELECT email FROM students WHERE student_number = ?";
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, email);
+             PreparedStatement statement = connection.prepareStatement(studentQuery)) {
+            statement.setString(1, identifier);
             ResultSet result = statement.executeQuery();
-            
             if (result.next()) {
-                return result.getString("email");
+                email = result.getString("email");
+                if (email != null && !email.isEmpty()) return email;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("NotificationManager: Error querying students table for email: " + e.getMessage());
         }
         
-        return null;
+        // Try faculty table if not found in students
+        String facultyQuery = "SELECT email FROM faculty WHERE faculty_number = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(facultyQuery)) {
+            statement.setString(1, identifier);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                email = result.getString("email");
+            }
+        } catch (SQLException e) {
+            System.err.println("NotificationManager: Error querying faculty table for email: " + e.getMessage());
+        }
+
+        if (email == null) {
+            System.err.println("NotificationManager: Email not found in DB for identifier: " + identifier);
+        }
+        return email;
     }
     
     private void showEmailErrorPopup(String errorMessage) {

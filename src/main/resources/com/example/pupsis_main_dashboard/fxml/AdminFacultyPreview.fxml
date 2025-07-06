@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<!-- <?import javafx.scene.text.*?> -->
+
+<BorderPane prefHeight="600" prefWidth="810" styleClass="root" stylesheets="@../css/AdminFacultyPreview.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminFacultyPreviewController">
+
+    <!-- Top Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="red-card">
+         <VBox>
+            <children>
+               <Label styleClass="header" text="Faculty Statistics Overview">
+                  <padding>
+                     <Insets bottom="3.0" />
+                  </padding>
+               </Label>
+               <Label styleClass="sub-header" text="Summary of Active and Newly Added Faculty" />
+            </children>
+         </VBox>
+        </HBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="20">
+            <padding>
+                <Insets bottom="30" left="30" right="30" top="30" />
+            </padding>
+
+
+            <!-- Summary Stats -->
+            <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="803.0" spacing="10.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="247.0" styleClass="highlight-box">
+               <children>
+                  <SVGPath content="M4 6V8H26V24H12V26H30V24H28V6H4ZM8.00195 9C5.80327 9 4 10.8027 4 13C4 15.1987 5.80407 17 8.00195 17C10.1971 17 12 15.1987 12 13C12 10.8027 10.1979 9 8.00195 9ZM14 10V12H19V10H14ZM21 10V12H24V10H21ZM8.00195 11C9.11597 11 10 11.8833 10 13C10 14.1193 9.11677 15 8.00195 15C6.88183 15 6 14.1193 6 13C6 11.8833 6.88264 11 8.00195 11ZM14 14V16H24V14H14ZM4 18V26H6V20H9V26H11V20.6582L13.0645 21.75C13.6488 22.0602 14.3516 22.0589 14.9355 21.75V21.752L18.4668 19.8848L17.5332 18.1152L14.002 19.9824L10.9062 18.3477C10.4751 18.12 9.99351 18 9.50391 18H4Z" styleClass="total-faculties-icons" />
+                  <Label fx:id="totalFacultyLabel" styleClass="total-faculties" text="Total Faculty:">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="129.0">
+               <children>
+                  <SVGPath content="M14 6V4h-4v2h4zM4 8v11h16V8H4zm16-2c1.11 0 2 .89 2 2v11c0 1.11-.89 2-2 2H4c-1.11 0-2-.89-2-2l.01-11c0-1.11.88-2 1.99-2h4V4c0-1.11.89-2 2-2h4c1.11 0 2 .89 2 2v2h4z" layoutX="7.0" layoutY="6.0" styleClass="icons" />
+                  <Label fx:id="fullTimeFacultyLabel" styleClass="full-time-label" text="Full-Time: ">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="300.0" layoutY="10.0" prefHeight="51.0" prefWidth="127.0">
+               <children>
+                  <SVGPath content="M4 19V8v11v-.375V19Zm0 2q-.825 0-1.413-.588T2 19V8q0-.825.588-1.413T4 6h4V4q0-.825.588-1.413T10 2h4q.825 0 1.413.588T16 4v2h4q.825 0 1.413.588T22 8v4.275q-.45-.325-.95-.563T20 11.3V8H4v11h7.075q.075.525.225 1.025t.375.975H4Zm6-15h4V4h-4v2Zm8 17q-2.075 0-3.538-1.463T13 18q0-2.075 1.463-3.538T18 13q2.075 0 3.538 1.463T23 18q0 2.075-1.463 3.538T18 23Zm.5-5.2V15h-1v3.2l2.15 2.15l.7-.7l-1.85-1.85Z" styleClass="icons" />
+                  <Label fx:id="partTimeFacultyLabel" styleClass="part-time-label" text="Part-Time: ">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="460.0" layoutY="10.0" prefHeight="51.0" prefWidth="194.0">
+               <children>
+                  <SVGPath content="M19 4h-2V3a1 1 0 0 0-2 0v1H9V3a1 1 0 0 0-2 0v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m1 15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7h16Zm0-9H4V7a1 1 0 0 1 1-1h2v1a1 1 0 0 0 2 0V6h6v1a1 1 0 0 0 2 0V6h2a1 1 0 0 1 1 1Z" styleClass="icons" />
+                  <Label fx:id="currentDateLabel" styleClass="date-label" text="Date:">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </HBox>
+            </HBox>
+
+            <!-- Recent Faculty Section -->
+            <Label styleClass="section-header" text="Recently Added Faculty" />
+            <TableView fx:id="recentFacultyTable" prefHeight="300.0">
+                <columns>
+                    <TableColumn fx:id="idColumn" text="     Fac ID" />
+                    <TableColumn fx:id="nameColumn" prefWidth="200.0" text="        Faculty Name" />
+                    <TableColumn fx:id="deptColumn" prefWidth="216.0" text="      Department" />
+                    <TableColumn fx:id="joinedColumn" minWidth="0.0" prefWidth="250.39995727539065" text="      Date Joined" />
+                </columns>
+            <columnResizePolicy>
+               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+            </TableView>
+
+            <!-- Search and Button -->
+            <HBox alignment="CENTER" spacing="15">
+                <Label styleClass="search-label" text="🔍 Search:" />
+                <TextField fx:id="searchField" prefWidth="200" promptText="Enter keyword..." styleClass="search-text-field" />
+                <Button fx:id="manageButton" styleClass="action-button" text="Manage Faculty" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

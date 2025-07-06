@@ -1,0 +1,186 @@
+.root {
+    -fx-background-radius: 10; /* Rounded corners */
+    -fx-border-radius: 10;
+}
+
+.sucess-corner-line {
+    -fx-background-color: #2ecc71;
+    -fx-background-radius: 10 0 0 10;
+    -fx-border-radius: 10 0 0 10;
+}
+
+.success {
+    -fx-background-color: #eafaf1;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.success-header {
+    -fx-text-fill: #145a32;
+}
+
+.success-label {
+    -fx-text-fill: #145a32;
+}
+
+
+.error-corner-line {
+    -fx-background-color: #e74c3c;
+    -fx-background-radius: 10 0 0 10;
+    -fx-border-radius: 10 0 0 10;
+}
+
+.error {
+    -fx-background-color: #fdecea;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.error-header {
+    -fx-text-fill: #9f3a38;
+}
+
+.error-label {
+    -fx-text-fill: #9f3a38;
+}
+
+.warning-corner-line {
+    -fx-background-color: #f1c40f;
+    -fx-background-radius: 10 0 0 10;
+    -fx-border-radius: 10 0 0 10;
+}
+
+.warning {
+    -fx-background-color: #fff9e6;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.warning-header {
+    -fx-text-fill: #7d6608;
+}
+
+.warning-label {
+    -fx-text-fill: #7d6608;
+}
+
+.info-corner-line {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 10 0 0 10;
+    -fx-border-radius: 10 0 0 10;
+}
+
+.info {
+    -fx-background-color: #eaf4fb;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.info-header {
+    -fx-text-fill: #1b4f72;
+}
+
+.info-label {
+    -fx-text-fill: #1b4f72;
+}
+
+.dark-theme .success-corner-line {
+    -fx-background-color: #27ae60;
+}
+
+.dark-theme .success {
+    -fx-background-color: #1e2f26;
+}
+
+.dark-theme .success-header {
+    -fx-text-fill: #a9dfbf;
+}
+
+.dark-theme .success-label {
+    -fx-text-fill: #a9dfbf;
+}
+
+.dark-theme .error-corner-line {
+    -fx-background-color: #c0392b;
+}
+
+.dark-theme .error {
+    -fx-background-color: #2b1e1e;
+}
+
+.dark-theme .error-header {
+    -fx-text-fill: #f5b7b1;
+}
+
+.dark-theme .error-label {
+    -fx-text-fill: #f5b7b1;
+}
+
+.dark-theme .warning-corner-line {
+    -fx-background-color: #f39c12;
+}
+
+.dark-theme .warning {
+    -fx-background-color: #332b16;
+}
+
+.dark-theme .warning-header {
+    -fx-text-fill: #f8c471;
+}
+
+.dark-theme .warning-label {
+    -fx-text-fill: #f8c471;
+}
+
+.dark-theme .info-corner-line {
+    -fx-background-color: #2980b9;
+}
+
+.dark-theme .info {
+    -fx-background-color: #1e2a33;
+}
+
+.dark-theme .info-header {
+    -fx-text-fill: #aed6f1;
+}
+
+.dark-theme .info-label {
+    -fx-text-fill: #aed6f1;
+}
+
+.success-x-icon {
+    -fx-fill: #145a32;
+}
+
+.error-x-icon {
+    -fx-fill: #9f3a38;
+}
+
+.warning-x-icon {
+    -fx-fill: #7d6608;
+}
+
+.info-x-icon {
+    -fx-fill: #1b4f72;
+}
+
+.dark-theme .success-x-icon {
+    -fx-fill: #a9dfbf;
+}
+
+.dark-theme .error-x-icon {
+    -fx-fill: #f5b7b1;
+}
+
+.dark-theme .warning-x-icon {
+    -fx-fill: #f8c471;
+}
+
+.dark-theme .info-x-icon {
+    -fx-fill: #aed6f1;
+}
+
+
+
+
+

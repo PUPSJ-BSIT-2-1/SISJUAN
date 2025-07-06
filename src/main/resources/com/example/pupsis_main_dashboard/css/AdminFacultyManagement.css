@@ -1,0 +1,1027 @@
+/* AdminFacultyManagement.css */
+
+/* Root container */
+.root {
+    -fx-background-color: transparent; /* Overall transparent */
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Back button */
+.back-button {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 22;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.back-button:hover {
+    -fx-background-color: #333333;
+}
+
+/* Tooltip */
+.tooltip {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+/* Main action button (Add, Edit, Delete, Refresh, and Assign) */
+.main-action-button {
+    -fx-background-color: #8E170A;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+}
+
+.main-action-button:hover {
+    -fx-background-color: #B8382B; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.main-action-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.main-action-icon {
+    -fx-fill: white;
+}
+
+.main-action-icon:hover {
+    -fx-fill: white;
+}
+
+.more-buttons {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+}
+
+.more-buttons:hover {
+    -fx-background-color: #5e0000; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.more-buttons-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.more-buttons-icon {
+    -fx-fill: white;
+}
+
+.more-buttons-icon:hover {
+    -fx-fill: white;
+}
+
+.dark-theme .more-buttons {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+}
+
+.dark-theme .more-buttons:hover {
+    -fx-background-color: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.dark-theme .more-buttons-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.dark-theme .more-buttons-icon {
+    -fx-fill: white;
+}
+
+.dark-theme .more-buttons-icon:hover {
+    -fx-fill: white;
+}
+
+/* Utility buttons (Export CSV, Print Report) */
+.utility-button {
+    -fx-background-color: #3c5888;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.utility-button:hover {
+    -fx-background-color: #4d6ea6; /* lighter blue */
+    -fx-cursor: hand;
+}
+
+.utility-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.icons {
+    -fx-fill: white;
+}
+
+.details-button {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+}
+
+.details-button:hover {
+    -fx-background-color: #5e0000; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.red-card {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-padding : 20px;
+}
+
+.button-container {
+    -fx-background-color: linear-gradient(to right, maroon 0%, maroon 60%, rgba(128, 0, 0, 0.5) 100%);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-alignment: center-right;
+    -fx-padding : 20px;
+}
+
+.header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: white;
+}
+
+.search-text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #6b6b6b;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+.table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 3px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+/* Table Header Cells with Gridlines */
+.table-view .column-header {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #ccc; /* Light gray for subtle grid look */
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #bbb;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10;
+}
+
+.table-view .table-cell, .table-cell {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: center;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+/* Remove hover effect */
+.table-row-cell:hover {
+    -fx-background-color: maroon;
+}
+
+/* Style selected row */
+.table-row-cell:filled:selected {
+    -fx-background-color: #a03030;
+}
+
+.table-row-cell:filled:selected .table-cell,
+.table-row-cell:filled:selected .text {
+    -fx-text-fill: white;
+}
+
+/* ======================= DARK THEME STYLES =========================== */
+
+/* Dark Theme */
+
+/* Root container */
+.dark-theme .root {
+    -fx-background-color: transparent; /* Overall transparent */
+    -fx-font-family: "Inter";
+}
+
+/* Back button */
+.dark-theme .back-button {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 22;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.dark-theme .back-button:hover {
+    -fx-background-color: #333333;
+}
+
+/* Tooltip */
+.dark-theme .tooltip {
+    -fx-background-color: #800000;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Main action button (Add, Edit, Delete, Refresh, and Assign) */
+.dark-theme .main-action-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.dark-theme .main-action-button:hover {
+    -fx-background-color: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+.dark-theme .main-action-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* Utility buttons (Export CSV, Print Report) */
+.dark-theme .utility-button {
+    -fx-background-color: #3c5888;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 18;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.dark-theme .utility-button:hover {
+    -fx-background-color: #4a6aa3; /* slightly lighter */
+    -fx-cursor: hand;
+}
+
+.dark-theme .utility-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.dark-theme .icons {
+    -fx-fill: white;
+}
+
+.details-button {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+}
+
+.details-button:hover {
+    -fx-background-color: #e57373; /* slightly lighter red/orange */
+    -fx-cursor: hand;
+}
+
+/* TableView Styles */
+.dark-theme .table-view {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 12px;
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #555; /* Dark gray for subtle grid look */
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+/* Table Header Cells with Gridlines */
+.dark-theme .table-view .column-header {
+    -fx-background-color: #333333;
+    -fx-border-color: #555; /* Dark gray for subtle grid look */
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+}
+
+.dark-theme .table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #555;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-border-width: 0 0 1 0;
+}
+
+.dark-theme .table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-font-style: italic;
+    -fx-padding: 10;
+}
+
+.dark-theme .table-view .table-cell, .dark-theme .table-cell {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Inter';
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-table-cell-border-color: transparent;
+}
+
+.dark-theme .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+/* Remove hover effect */
+.dark-theme .table-row-cell:hover {
+    -fx-background-color: #6b0000;
+    -fx-text-fill: white;
+}
+
+/* Style selected row */
+.dark-theme .table-row-cell:filled:selected {
+    -fx-background-color: #8a2929;
+    -fx-text-fill: #f0f0f0;
+}
+
+.dark-theme .table-row-cell:filled:selected .table-cell,
+.dark-theme .table-row-cell:filled:selected .text {
+    -fx-text-fill: #f0f0f0;
+}
+
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+/* Red card */
+.dark-theme .red-card {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-padding: 20px;
+}
+
+.dark-theme .button-container {
+    -fx-background-color: linear-gradient(to right, #b22222 0%, #b22222 60%, rgba(178, 34, 34, 0.3));
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-alignment: center-right;
+    -fx-padding: 20px;
+}
+
+.dark-theme .header {
+    -fx-font-size: 24px;
+    -fx-font-family: "Inter 18pt SemiBold";
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .sub-header {
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .search-text-field {
+    -fx-background-color: #3a3a3a;
+    -fx-border-width: 1px;
+    -fx-border-color: #b0b0b0;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3px;
+    -fx-font-weight: bold;
+}
+
+/* ================= ASSIGN SUBJECT TO FACULTY ======================= */
+
+.assign-sub-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+
+}
+
+.dark-theme .assign-sub-container {
+    -fx-background-color: #3a3a3a;
+}
+
+.assign-header {
+    -fx-font-size: 18;
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+.dark-theme .assign-header {
+    -fx-text-fill: #b22222;
+}
+
+.assign-sub-text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 6px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .assign-sub-text-field {
+    -fx-background-color: #3a3a3a;
+    -fx-border-width: 1px;
+    -fx-border-color: #555;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3 3 3 10;
+    -fx-font-weight: bold;
+}
+
+.assign-sub-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.dark-theme .assign-sub-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0 ;
+}
+
+.assign-button {
+    -fx-background-color: #800000; /* Dark green */
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #f8fcfc;
+    -fx-padding: 7px;
+}
+
+.assign-button:hover {
+    -fx-background-color: #5e0000; /* Darker green */
+    -fx-cursor: hand;
+}
+
+.dark-theme .assign-button {
+    -fx-background-color: #b22222;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #f8fcfc;
+    -fx-padding: 10px;
+}
+
+.dark-theme .assign-button:hover {
+    -fx-background-color: #e57373;
+    -fx-cursor: hand;
+}
+
+.cancel-button {
+    -fx-background-color: #e5e5e5;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #2b2b2b;
+    -fx-padding: 7px;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #a0a0a0;
+    -fx-cursor: hand;
+}
+
+.dark-theme .cancel-button {
+    -fx-background-color: #3a3a3a;
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 10px;
+}
+
+.dark-theme .cancel-button:hover {
+    -fx-background-color: #777777;
+    -fx-cursor: hand;
+}
+
+.assign-combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+    -fx-padding: 3px;
+}
+
+.assign-combo-box .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+.assign-combo-box .arrow {
+    -fx-background-color: #343a40;
+    -fx-text-fill: #343a40;
+}
+
+.assign-combo-box:hover {
+    -fx-border-color: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.assign-combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.assign-combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.assign-combo-box .list-cell:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.dark-theme .assign-combo-box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 3px;
+}
+
+.dark-theme .assign-combo-box:hover {
+    -fx-border-color: #888888;
+}
+
+.dark-theme .assign-combo-box .arrow {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .assign-combo-box .list-view {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .assign-combo-box .list-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .assign-combo-box .list-cell:hover {
+    -fx-background-color: #555555;
+    -fx-cursor: hand;
+}
+
+/* ================= VIEW INFORMATION FACULTY ======================= */
+
+.view-faculty-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+}
+
+.dark-theme .view-faculty-container {
+    -fx-background-color: #2b2b2b;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+}
+
+.view-header {
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .view-header {
+    -fx-text-fill: #b22222;
+}
+
+.view-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.dark-theme .view-text {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0 ;
+}
+
+/* ================= FACULTY REGISTRATION ======================= */
+
+/* Style the DatePicker text field */
+.register-date-picker .text-field {
+    -fx-background-color: white;
+    -fx-border-width: 1 0 1 1px;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 5 0 0 5px;
+    -fx-background-radius: 5 0 0 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-padding: 7px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .register-date-picker .text-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Style the DatePicker arrow button */
+.register-date-picker .arrow-button {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-radius: 0 5px 5px 0;
+    -fx-background-radius: 0 5px 5px 0;
+}
+
+.dark-theme .register-date-picker .arrow-button {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #555555;
+}
+
+.register-date-picker .arrow {
+    -fx-background-color: #343a40;
+}
+
+.dark-theme .register-date-picker .arrow {
+    -fx-background-color: #e0e0e0;
+}
+
+.status-combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+    -fx-padding: 3px;
+}
+
+.status-combo-box .arrow {
+    -fx-background-color: #343a40;
+    -fx-text-fill: #343a40;
+}
+
+.status-combo-box:hover {
+    -fx-border-color: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.status-combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #343a40;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.status-combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.status-combo-box .list-cell:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.dark-theme .status-combo-box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .status-combo-box:hover {
+    -fx-border-color: #888888;
+}
+
+.dark-theme .status-combo-box .arrow {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dark-theme .status-combo-box .list-view {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .status-combo-box .list-cell {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+    -fx-font-family: "Inter";
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.dark-theme .status-combo-box .list-cell:hover {
+    -fx-background-color: #555555;
+    -fx-cursor: hand;
+}
+
+.back-to-faculty-section {
+    -fx-background-color: transparent;
+    -fx-underline: true;
+    -fx-text-fill: #f8fcfc;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .back-to-faculty-section {
+    -fx-background-color: transparent;  /* Set the background color to transparent */
+    -fx-underline: true;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.back-to-faculty-section:hover {
+    -fx-underline: true;
+    -fx-text-fill: #f8fcfc;
+    -fx-cursor: hand;
+}
+
+.dark-theme .back-to-faculty-section:hover {
+    -fx-underline: true;
+    -fx-text-fill: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.export-menu-bar-icon {
+    -fx-fill: black;
+}
+
+.dark-theme .export-menu-bar-icon {
+    -fx-fill: #e0e0e0;
+}
+
+.export-menu-bar {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+    -fx-text-fill: black;
+}
+
+.dark-theme .export-menu-bar {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-text-fill: black;
+}
+
+.export-menu-bar .menu-item {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 13px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .export-menu-bar .menu-item {
+    -fx-background-color: #3a3a3a;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 13px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.export-menu-bar .menu-item:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.dark-theme .export-menu-bar .menu-item:hover {
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
+    -fx-cursor: hand;
+}
+
+.export-menu-bar .menu-item:focused {
+    -fx-background-color: #e0e0e0;
+    -fx-cursor: hand;
+    -fx-text-fill: black;
+}
+
+.dark-theme .export-menu-bar .menu-item:focused {
+    -fx-background-color: #555555;
+    -fx-cursor: hand;
+    -fx-text-fill: #e0e0e0;
+}
+
+.export-menu-bar .menu-item:showing {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.dark-theme .export-menu-bar .menu-item:showing {
+    -fx-background-color: #555555;
+    -fx-text-fill: #e0e0e0;
+}
+
+.faculty-registration-container {
+    -fx-background-color: white;
+    -fx-padding: 5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+}
+
+.faculty-registration-container .scroll-pane {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.dark-theme .faculty-registration-container {
+    -fx-background-color: transparent;
+}
+
+
+.basic-information-header {
+    -fx-font-size: 13px;
+    -fx-text-fill: #800000;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .basic-information-header {
+    -fx-text-fill: #b22222;
+}
+
+.faculty-line {
+    -fx-fill: #e0e0e0;
+}
+
+.dark-theme .faculty-line {
+    -fx-fill: #e0e0e0;
+}
+
+.faculty-labels {
+    -fx-font-size: 10px;
+    -fx-text-fill: #a29e9e;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .faculty-labels {
+    -fx-text-fill: #e0e0e0;
+}
+
+.faculty-values {
+    -fx-font-size: 14px;
+    -fx-text-fill: #343a40;
+    -fx-font-weight: bold;
+}
+
+.dark-theme .faculty-values {
+    -fx-text-fill: #e0e0e0;
+}
+
+.faculty-icons {
+    -fx-fill: #800000;
+}
+
+.dark-theme .faculty-icons {
+    -fx-fill: #b22222;
+}
+

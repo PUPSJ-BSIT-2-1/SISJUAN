@@ -16,7 +16,7 @@ module com.example.pupsis_main_dashboard {
     requires java.prefs;
     requires mysql.connector.j;
     requires jbcrypt;
-    requires java.mail;
+    requires com.zaxxer.hikari;
 
     opens com.example.pupsis_main_dashboard to javafx.fxml;
     exports com.example.pupsis_main_dashboard;
@@ -25,4 +25,7 @@ module com.example.pupsis_main_dashboard {
     exports com.example.pupsis_main_dashboard.utilities to com.fasterxml.jackson.databind;
     exports com.example.pupsis_main_dashboard.models to com.fasterxml.jackson.databind;
     opens com.example.pupsis_main_dashboard.models to javafx.base, com.fasterxml.jackson.databind;
+    opens com.example.pupsis_main_dashboard.utilities to javafx.graphics, javafx.fxml;
+
+
 }

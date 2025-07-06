@@ -77,13 +77,7 @@ public class EmailService {
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setText(body);
 
-            // HTML part (optional, but good for richer formatting if desired later)
-            MimeBodyPart htmlPart = new MimeBodyPart();
-            String htmlContent = "<html><body><p>" + body.replace("\n", "<br>") + "</p></body></html>";
-            htmlPart.setContent(htmlContent, "text/html");
-
             multipart.addBodyPart(textPart);
-            multipart.addBodyPart(htmlPart); // Choose one or both based on needs
 
             message.setContent(multipart);
 
@@ -93,6 +87,47 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new MessagingException("Error while sending notification email", e);
         }
+    }
+
+    public void sendAcceptanceEmail(String recipient, String studentName, String sectionName) throws MessagingException {
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username, "PUPSIS Admissions Office"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setSubject("Congratulations on Your Acceptance to PUPSJ!");
+
+            MimeMultipart multipart = getMimeMultipart(studentName, sectionName);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+        } catch (UnsupportedEncodingException e) {
+            throw new MessagingException("Encoding error while sending acceptance email", e);
+        }
+    }
+
+    private MimeMultipart getMimeMultipart(String studentName, String sectionName) throws MessagingException {
+        String body = "Dear " + studentName + ",\n\n"
+                + "We are pleased to inform you that you have been officially accepted into the Polytechnic University of the Philippines – San Juan Branch.\n\n"
+                + "You have been assigned to the following section: " + sectionName + ".\n\n"
+                + "In the coming days, you will receive additional information regarding your enrollment procedures, orientation schedule, and other important next steps. Please ensure you regularly check your email for updates.\n\n"
+                + "We’re excited to welcome you to the PUPSJ community and look forward to supporting you throughout your academic journey.\n\n"
+                + "Sincerely,\n"
+                + "PUPSJ Admissions Office";
+
+
+        MimeBodyPart textPart = new MimeBodyPart();
+        textPart.setText(body);
+
+        MimeMultipart multipart = new MimeMultipart();
+        multipart.addBodyPart(textPart);
+        return multipart;
     }
 
     private static MimeMultipart getMimeMultipart(String code) throws MessagingException {

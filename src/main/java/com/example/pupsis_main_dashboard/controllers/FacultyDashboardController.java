@@ -1,10 +1,8 @@
 package com.example.pupsis_main_dashboard.controllers;
 
-//import com.example.pupsis_main_dashboard.utility.ControllerUtils;
-
+import com.example.pupsis_main_dashboard.PUPSIS;
 import com.example.pupsis_main_dashboard.utilities.DBConnection;
 import com.example.pupsis_main_dashboard.utilities.SessionData;
-import com.example.pupsis_main_dashboard.utilities.RememberMeHandler;
 import com.example.pupsis_main_dashboard.utilities.StageAndSceneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,6 +14,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -23,18 +23,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 public class FacultyDashboardController {
 
     @FXML private HBox homeHBox;
-    @FXML private HBox registrationHBox;
-    @FXML private HBox subjectsHBox;
+    @FXML private HBox classListHBox;
     @FXML private HBox gradesHBox;
     @FXML private HBox schoolCalendarHBox;
     @FXML private HBox scheduleHBox;
     @FXML private HBox settingsHBox;
     @FXML private HBox aboutHBox;
     @FXML private HBox logoutHBox;
+    @FXML private HBox refreshHBox;
     @FXML private Label studentNameLabel;
     @FXML private Label studentIdLabel;
     @FXML private Label departmentLabel;
@@ -43,29 +44,45 @@ public class FacultyDashboardController {
     @FXML private Node fade2;
 
     private final StageAndSceneUtils stageUtils = new StageAndSceneUtils();
+    private final Logger logger = LoggerFactory.getLogger(FacultyDashboardController.class);
     private final Map<String, Parent> contentCache = new HashMap<>();
+    private String formattedName;
     
     // FXML paths as constants
+    private static final String USER_TYPE = "FACULTY";
     private static final String HOME_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyHomeContent.fxml";
-    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/GradingModule.fxml";
-    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/SchoolCalendar.fxml";
-    private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/SettingsContent.fxml";
-    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/AboutContent.fxml";
-    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyRoomAssignment.fxml";
+    private static final String GRADES_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyGradingModule.fxml";
+    private static final String CALENDAR_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralCalendar.fxml";
+    private static final String SETTINGS_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralSettings.fxml";
+    private static final String ABOUT_FXML = "/com/example/pupsis_main_dashboard/fxml/GeneralAbouts.fxml";
+    private static final String SCHEDULE_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassSchedule.fxml";
+    private static final String CLASS_LIST_FXML = "/com/example/pupsis_main_dashboard/fxml/FacultyClassPreview.fxml";
 
     // Initialize the controller and set up the dashboard
     @FXML public void initialize() {
         homeHBox.getStyleClass().add("selected");
 
-        String identifier = RememberMeHandler.getCurrentUserEmail();
+        String identifier = SessionData.getInstance().getFacultyId();
         if (identifier != null && !identifier.isEmpty()) {
             // Get faculty info from the database
             loadFacultyInfo(identifier);
+            // Ensure facultyId is in SessionData if successfully loaded
+            if (SessionData.getInstance().getFacultyId() == null || SessionData.getInstance().getFacultyId().isEmpty()) {
+                 // Assuming 'identifier' is the faculty_number or email used to fetch, 
+                 // and loadFacultyInfo might populate SessionData or we use the identifier directly.
+                 // If loadFacultyInfo internally sets it, this might be redundant or need adjustment
+                 // based on how loadFacultyInfo and getFacultyData work.
+                 // For now, let's assume 'identifier' is what we want to ensure is in SessionData as facultyId.
+                 // A better place might be within loadFacultyInfo or getFacultyData after successful fetch.
+                 // However, to ensure it's set if 'identifier' was valid:
+                 SessionData.getInstance().setFacultyId(identifier); 
+            }
         } else {
             // Handle case when no user is logged in
             studentNameLabel.setText("User not logged in");
             studentIdLabel.setText("");
             departmentLabel.setText("");
+            this.formattedName = "N/A, N/A"; // Initialize formattedName to prevent NullPointerException
         }
         
         // Initialize fade1 as fully transparent and fade2 as visible
@@ -74,7 +91,7 @@ public class FacultyDashboardController {
         
         // Setup scroll pane fade effects
         setupScrollPaneFadeEffects();
-        
+
         // Preload and cache all FXML content that may be accessed from the sidebar
         preloadAllContent();
     }
@@ -109,6 +126,7 @@ public class FacultyDashboardController {
         preloadFxmlContent(SETTINGS_FXML);
         preloadFxmlContent(ABOUT_FXML);
         preloadFxmlContent(SCHEDULE_FXML);
+        preloadFxmlContent(CLASS_LIST_FXML);
     }
     
     // Preload and cache a specific FXML file
@@ -125,83 +143,88 @@ public class FacultyDashboardController {
             }
         } catch (IOException e) {
             System.err.println("Error preloading content: " + fxmlPath);
-            e.printStackTrace();
+            logger.error("Error preloading content: {}", fxmlPath, e);
         }
     }
     
     // Load faculty information from a database
     private void loadFacultyInfo(String identifier) {
-        // Get and display faculty name and ID
-        getFacultyData(identifier);
-    }
-    
-    // Load faculty data from the database
-    private void getFacultyData(String identifier) {
-        boolean isEmail = identifier.contains("@");
-        
-        try (Connection connection = DBConnection.getConnection()) {
-            // First, try by ID if the identifier is not an email
-            if (!isEmail) {
-                String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE faculty_id = ?";
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, identifier);
-                    ResultSet rs = stmt.executeQuery();
-                    
-                    if (rs.next()) {
-                        updateFacultyUI(rs);
-                        return;
-                    }
-                }
+        Map<String, String> facultyData = getFacultyData(identifier);
+        if (facultyData != null && !facultyData.isEmpty()) {
+            this.formattedName = facultyData.getOrDefault("formattedName", "N/A, N/A");
+            studentNameLabel.setText(this.formattedName.replace(", ", "\n")); // Display with newline
+            studentIdLabel.setText(facultyData.getOrDefault("facultyNumber", "N/A"));
+            departmentLabel.setText(facultyData.getOrDefault("departmentName", "N/A"));
 
+            // Ensure facultyId is set in SessionData after successful retrieval
+            String facultyIdFromDB = facultyData.get("facultyId");
+            if (facultyIdFromDB != null && !facultyIdFromDB.isEmpty()) {
+                SessionData.getInstance().setFacultyId(facultyIdFromDB);
+            } else {
+                // Fallback if facultyId itself isn't in facultyData but identifier was used
+                // This part might need refinement based on what 'identifier' represents (e.g. email vs faculty_number vs actual ID)
+                // If 'identifier' is the actual faculty_id or faculty_number that SessionData expects, use it.
+                // For now, assuming facultyData should contain the definitive 'facultyId'.
+                logger.warn("Faculty ID not found in facultyData after loading info for identifier: {}", identifier);
             }
-            
-            // If not found by ID or is an email, try with email (case-insensitive)
-            String query = "SELECT faculty_id, firstname, lastname, department FROM faculty WHERE LOWER(email) = LOWER(?)";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, identifier);
-                ResultSet rs = stmt.executeQuery();
-                
-                if (rs.next()) {
-                    updateFacultyUI(rs);
-                    return;
-                }
-            }
-            
-            // If we get here, faculty not found
-            Platform.runLater(() -> {
-                studentNameLabel.setText("Unknown Faculty");
-                studentIdLabel.setText("ID not found");
-                departmentLabel.setText("Department not found");
-            });
-            
-        } catch (SQLException e) {
-            // Handle database error
-            Platform.runLater(() -> {
-                studentNameLabel.setText("Error loading data");
-                studentIdLabel.setText("");
-                departmentLabel.setText("");
-            });
+
+        } else {
+            studentNameLabel.setText("Faculty not found");
+            studentIdLabel.setText("");
+            departmentLabel.setText("");
+            this.formattedName = "Unknown, User"; // Default if faculty data is not found
         }
     }
-    
-    // Update the UI with faculty data
-    private void updateFacultyUI(ResultSet rs) throws SQLException {
-        String facultyId = rs.getString("faculty_id");
-        String firstName = rs.getString("firstname");
-        String lastName = rs.getString("lastname");
-        String department = rs.getString("department");
+
+    // Load faculty data from the database
+    private Map<String, String> getFacultyData(String identifier) {
+        String query;
+        Map<String, String> facultyData = new HashMap<>();
+        boolean isNumericId = identifier.matches("\\d+");
+
+        if (isNumericId) {
+            query = "SELECT f.faculty_id, f.faculty_number, f.firstname, f.lastname, d.department_name " +
+                    "FROM faculty f JOIN departments d ON f.department_id = d.department_id " +
+                    "WHERE f.faculty_id = ?";
+        } else {
+            query = "SELECT f.faculty_id, f.faculty_number, f.firstname, f.lastname, d.department_name " +
+                    "FROM faculty f JOIN departments d ON f.department_id = d.department_id " +
+                    "WHERE f.faculty_number = ? OR LOWER(f.email) = LOWER(?)";
+        }
         
-        String formattedName = formatFacultyName(firstName, lastName);
-        
-        Platform.runLater(() -> {
-            studentNameLabel.setText(formattedName);
-            SessionData data = SessionData.getInstance();
-            data.setFacultyId(facultyId);
-            studentIdLabel.setText(facultyId);
-            departmentLabel.setText(department != null ? department : "Department not set");
-        });
+        logger.info("Executing getFacultyData with query: {} and identifier: {}", query, identifier);
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            if (isNumericId) {
+                pstmt.setInt(1, Integer.parseInt(identifier));
+            } else {
+                pstmt.setString(1, identifier);
+                pstmt.setString(2, identifier.toLowerCase());
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String firstName = rs.getString("firstname");
+                String lastName = rs.getString("lastname");
+                facultyData.put("formattedName", formatFacultyName(firstName, lastName));
+                facultyData.put("facultyNumber", rs.getString("faculty_number"));
+                facultyData.put("departmentName", rs.getString("department_name"));
+                facultyData.put("facultyId", rs.getString("faculty_id")); // Ensure facultyId from DB is included
+                logger.info("Faculty data found for identifier '{}': Name={}, Number={}, Dept={}, DB_ID={}", 
+                    identifier, facultyData.get("formattedName"), facultyData.get("facultyNumber"), facultyData.get("departmentName"), facultyData.get("facultyId"));
+            } else {
+                logger.warn("No faculty data found for identifier: {}", identifier);
+            }
+        } catch (SQLException e) {
+            logger.error("SQL error fetching faculty data for identifier: {}", identifier, e);
+        } catch (NumberFormatException e) {
+            logger.error("NumberFormatException for identifier: {} when expecting numeric ID.", identifier, e);
+        }
+        return facultyData;
     }
-    
+
     // Format the faculty name as "LastName, FirstName"
     private String formatFacultyName(String firstName, String lastName) {
         StringBuilder formattedName = new StringBuilder();
@@ -243,10 +266,7 @@ public class FacultyDashboardController {
     // Get FXML path based on clicked HBox
     private String getFxmlPathFromHBox(HBox clickedHBox) {
         return switch (clickedHBox.getId()) {
-            case "registrationHBox" ->
-                    null;
-            case "paymentInfoHBox" ->null;
-            case "subjectsHBox" -> null;
+            case "classListHBox" -> CLASS_LIST_FXML;
             case "gradesHBox" -> GRADES_FXML;
             case "scheduleHBox" -> SCHEDULE_FXML;
             case "schoolCalendarHBox" -> CALENDAR_FXML;
@@ -256,35 +276,45 @@ public class FacultyDashboardController {
         };
     }
 
-public void loadContent(String fxmlPath) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent content = loader.load();
+    // Loads FXML content and applies the global theme to the root scene AND the loaded content node
+    public void loadContent(String fxmlPath) {
+        try {
+            Parent content = contentCache.get(fxmlPath);
+            if (content == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                content = loader.load();
+                if (fxmlPath.equals(HOME_FXML)) {
+                    FacultyHomeContentController facultyHomeContentController = loader.getController();
+                    facultyHomeContentController.setFacultyDashboardController(this, formattedName);
+                }
+                // Set faculty ID in SessionData when loading grading module
+                if (fxmlPath.equals(GRADES_FXML)) {
+                    String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
+                    SessionData.getInstance().setStudentId(facultyId); // if needed
+                }
 
-        if (fxmlPath.equals(HOME_FXML)) {
-            FacultyHomeContentController facultyHomeContentController = loader.getController();
-            facultyHomeContentController.setFacultyDashboardController(this);
+                if (fxmlPath.equals(SCHEDULE_FXML)) {
+                    String facultyId = SessionData.getInstance().getFacultyId();
+                    SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
+                }
+                contentCache.put(fxmlPath, content);
+                addLayoutChangeListener(content);
+            }
+            // Apply global theme to the scene root
+            if (contentPane.getScene() != null) {
+                Preferences userPrefs = Preferences.userNodeForPackage(GeneralSettingsController.class).node(USER_TYPE);
+                boolean darkModeEnabled = userPrefs.getBoolean(GeneralSettingsController.THEME_PREF, false);
+                PUPSIS.applyThemeToSingleScene(contentPane.getScene(), darkModeEnabled);
+                // Also apply the theme class to the loaded content node
+                content.getStyleClass().removeAll("light-theme", "dark-theme");
+                content.getStyleClass().add(darkModeEnabled ? "dark-theme" : "light-theme");
+            }
+            contentPane.setContent(content);
+            resetScrollPosition();
+        } catch (IOException e) {
+            contentPane.setContent(new Label("Error loading content"));
         }
-
-        // Set faculty ID in SessionData when loading grading module
-        if (fxmlPath.equals(GRADES_FXML)) {
-            String facultyId = SessionData.getInstance().getFacultyId(); // ← Better
-            SessionData.getInstance().setStudentId(facultyId); // if needed
-        }
-
-        if (fxmlPath.equals(SCHEDULE_FXML)) {
-            String facultyId = SessionData.getInstance().getFacultyId();
-            SessionData.getInstance().setFacultyId(facultyId); // redundant unless needed again
-        }
-
-        contentPane.setContent(content);
-        contentCache.put(fxmlPath, content);
-        addLayoutChangeListener(content);
-        resetScrollPosition();
-    } catch (IOException e) {
-        contentPane.setContent(new Label("Error loading content"));
     }
-}
     
     // Add layout change listener to content
     private void addLayoutChangeListener(Parent content) {
@@ -322,20 +352,89 @@ public void loadContent(String fxmlPath) {
         StageAndSceneUtils.clearCache();
         if (logoutHBox.getScene() != null && logoutHBox.getScene().getWindow() != null) {
             Stage currentStage = (Stage) logoutHBox.getScene().getWindow();
-            stageUtils.loadStage(currentStage, "fxml/FacultyLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+            StageAndSceneUtils.loadStage(currentStage, "fxml/FacultyLogin.fxml", StageAndSceneUtils.WindowSize.MEDIUM);
+        }
+    }
+
+    public void handleQuickActionClicks(String fxmlPath) {
+        if (fxmlPath.equals(SCHEDULE_FXML)) {
+            clearAllSelections();
+            scheduleHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(GRADES_FXML)) {
+            clearAllSelections();
+            schoolCalendarHBox.getStyleClass().add("selected");
+        }
+
+        if (fxmlPath.equals(CLASS_LIST_FXML)) {
+            clearAllSelections();
+            classListHBox.getStyleClass().add("selected");
         }
     }
 
     // Clear all selections from the sidebar items
     private void clearAllSelections() {
         homeHBox.getStyleClass().remove("selected");
-        registrationHBox.getStyleClass().remove("selected");
-        subjectsHBox.getStyleClass().remove("selected");
+        classListHBox.getStyleClass().remove("selected");
         gradesHBox.getStyleClass().remove("selected");
         scheduleHBox.getStyleClass().remove("selected");
         schoolCalendarHBox.getStyleClass().remove("selected");
         settingsHBox.getStyleClass().remove("selected");
         aboutHBox.getStyleClass().remove("selected");
         logoutHBox.getStyleClass().remove("selected");
+    }
+
+    @FXML
+    private void handleRefreshButton(MouseEvent event) {
+        logger.info("Faculty Refresh button clicked. Reloading dashboard data.");
+        // Save the currently selected sidebar HBox
+        HBox selectedHBox = getCurrentlySelectedSidebarHBox();
+        refreshAllDashboardData(selectedHBox);
+    }
+
+    private HBox getCurrentlySelectedSidebarHBox() {
+        List<HBox> sidebarItems = Arrays.asList(
+            homeHBox, classListHBox, gradesHBox, scheduleHBox, schoolCalendarHBox, settingsHBox, aboutHBox
+        );
+        for (HBox item : sidebarItems) {
+            if (item != null && item.getStyleClass().contains("selected")) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reload all dashboard data and refresh visible panels, preserving sidebar selection.
+     */
+    private void refreshAllDashboardData(HBox selectedHBox) {
+        contentCache.clear();
+        initialize();
+        // Restore sidebar selection
+        if (selectedHBox != null) {
+            updateSelectedSidebarItem(selectedHBox);
+        }
+        // Optionally reload the currently visible panel
+        if (contentPane != null && contentPane.getContent() != null) {
+            loadContent(getFxmlPathForHBox(selectedHBox != null ? selectedHBox : homeHBox));
+        }
+    }
+
+    private String getFxmlPathForHBox(HBox hBox) {
+        return switch (hBox.getId()) {
+            case "classListHBox" -> CLASS_LIST_FXML;
+            case "gradesHBox" -> GRADES_FXML;
+            case "scheduleHBox" -> SCHEDULE_FXML;
+            case "schoolCalendarHBox" -> CALENDAR_FXML;
+            case "aboutHBox" -> ABOUT_FXML;
+            case "settingsHBox" -> SETTINGS_FXML;
+            default -> HOME_FXML;
+        };
+    }
+
+    private void updateSelectedSidebarItem(HBox selectedHBox) {
+        clearAllSelections();
+        selectedHBox.getStyleClass().add("selected");
     }
 }

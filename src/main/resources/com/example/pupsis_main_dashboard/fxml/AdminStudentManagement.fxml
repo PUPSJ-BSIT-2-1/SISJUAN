@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -11,21 +12,72 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="200.0" prefWidth="810.0" spacing="10.0" stylesheets="@../css/AdminStudentManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminStudentManagementController">
+<VBox prefHeight="200.0" prefWidth="810.0" spacing="10.0" styleClass="root" stylesheets="@../css/AdminStudentManagement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pupsis_main_dashboard.controllers.AdminStudentManagementController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" styleClass="red-card">
-         <children>
-            <Label styleClass="header" text="Student Management" />
-         </children>
+      <HBox prefHeight="90.0" prefWidth="810.0" styleClass="red-card">
          <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            <Insets bottom="20.0" left="20.0" right="10.0" top="20.0" />
          </padding>
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="header" text="Student Information Management">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="5.0" />
+                     </padding>
+                  </Label>
+                  <Label styleClass="sub-header" text="Review, evaluate, and approve student applications." />
+               </children>
+            </VBox>
+         </children>
       </HBox>
       <VBox prefWidth="100.0" spacing="10.0" styleClass="cards">
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
          <children>
+            <VBox alignment="CENTER_LEFT" layoutX="27.0" layoutY="27.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="cards">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+                  <GridPane hgap="10.0" prefWidth="743.0" vgap="10.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label styleClass="table-header" text="1st Semester End Date:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <DatePicker fx:id="firstSemEndDatePicker" prefWidth="150.0" styleClass="semester-date-picker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label styleClass="table-header" text="1st Semester Start Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <DatePicker fx:id="firstSemStartDatePicker" prefWidth="150.0" styleClass="semester-date-picker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="confirmFirstSemDatesButton" mnemonicParsing="false" onAction="#handleConfirmSemesterStartDate" prefHeight="26.0" prefWidth="150.0" styleClass="semester-confirm-button" text="Confirm 1st Sem Dates" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <Label styleClass="table-header" text="2nd Semester Start Date:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <DatePicker fx:id="secondSemStartDatePicker" prefWidth="150.0" styleClass="semester-date-picker" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                        <Label styleClass="table-header" text="2nd Semester End Date:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <DatePicker fx:id="secondSemEndDatePicker" prefWidth="150.0" styleClass="semester-date-picker" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Button fx:id="confirmSecondSemDatesButton" mnemonicParsing="false" onAction="#handleConfirmSemesterEndDate" prefHeight="26.0" prefWidth="150.0" styleClass="semester-confirm-button" text="Confirm 2nd Sem Dates" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <Button fx:id="batchAcceptButton" mnemonicParsing="false" onAction="#handleBatchAcceptSelected" prefHeight="26.0" prefWidth="220.0" styleClass="batch-accept-button" text="Batch Accept Selected" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0" styleClass="cards">
                <padding>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -33,10 +85,10 @@
                <children>
                   <GridPane>
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="259.6000061035156" minWidth="10.0" prefWidth="200.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="215.40000610351564" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="316.2" minWidth="10.0" prefWidth="309.7999755859375" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="215.40000610351564" minWidth="10.0" prefWidth="59.19998779296873" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="244.79998779296875" minWidth="10.0" prefWidth="224.80001220703127" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="151.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -44,13 +96,13 @@
                      <children>
                         <Label styleClass="table-header" text="Student Name" />
                         <Label layoutX="10.0" layoutY="16.0" styleClass="table-header" text="Status" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="16.0" prefHeight="18.0" prefWidth="84.0" styleClass="table-header" text="Section" GridPane.columnIndex="2" />
+                        <Label layoutX="10.0" layoutY="16.0" prefHeight="18.0" prefWidth="129.0" styleClass="table-header" text="Section" GridPane.columnIndex="2" />
                         <Label layoutX="10.0" layoutY="7.0" styleClass="table-header" GridPane.columnIndex="3" />
                      </children>
                   </GridPane>
                </children>
             </VBox>
-            <VBox fx:id="studentList" layoutX="27.0" layoutY="27.0" prefWidth="100.0" spacing="5.0" styleClass="cards">
+            <VBox fx:id="studentListContainer" layoutX="27.0" layoutY="27.0" prefWidth="100.0" spacing="5.0" styleClass="cards">
                <padding>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </padding>
