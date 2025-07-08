@@ -1,4 +1,4 @@
-# PUPSJ Student Portal
+# SISUAN
 
 ![Java](https://img.shields.io/badge/Language-Java-orange)
 ![JavaFX](https://img.shields.io/badge/Framework-JavaFX-blue)
@@ -6,7 +6,7 @@
 ![Supabase](https://img.shields.io/badge/Hosted%20On-Supabase-3ECF8E?logo=supabase&logoColor=white)
 ![License](https://img.shields.io/badge/License-Academic-lightgrey)
 
-The **PUPSJ Student Portal** is a desktop application developed for the Polytechnic University of the Philippines – San Juan Campus. It is designed to provide a centralized platform for students, faculty, and administrators to manage academic and administrative tasks efficiently.
+The **SISJUAN Portal** is a desktop application developed for the Polytechnic University of the Philippines – San Juan Campus. It is designed to provide a centralized platform for students, faculty, and administrators to manage academic and administrative tasks efficiently.
 
 ## ✨ Features
 
@@ -62,13 +62,8 @@ The system supports multiple user roles with role-specific functionalities:
 ### Setup Instructions
 
 1. Clone the repository:
-   git clone https://github.com/PUPSJ-BSIT-2-1/PUPSISMainDashboard.git
+   git clone https://github.com/PUPSJ-BSIT-2-1/SISJUAN.git
 2. Open the project in your IDE. 
 3. Configure the database connection in the appropriate config file or controller.
 4. Add JavaFX libraries to your project setup.
 5. Run the main application class.
-
-### Resources
-🎓 [How to apply for JetBrains Education to access JetBrains licensed products](https://docs.google.com/document/d/1cbgdUefiEWQ4Foq3Q5nGUtfgU6kKiZ5xkK33xzJElcE/edit?tab=t.tttu3fjvgg7b)
-
-💻 [How to import a GitHub repo into IntelliJ IDEA](https://docs.google.com/document/d/1cbgdUefiEWQ4Foq3Q5nGUtfgU6kKiZ5xkK33xzJElcE/edit?tab=t.ni9ng2lq75rw)
