@@ -1,4 +1,4 @@
-module com.example.pupsis_main_dashboard {
+module com.sisjuan {
     requires javafx.controls;
     requires javafx.fxml;
     requires com.fasterxml.jackson.databind;
@@ -18,14 +18,12 @@ module com.example.pupsis_main_dashboard {
     requires jbcrypt;
     requires com.zaxxer.hikari;
 
-    opens com.example.pupsis_main_dashboard to javafx.fxml;
-    exports com.example.pupsis_main_dashboard;
-    exports com.example.pupsis_main_dashboard.controllers;
-    opens com.example.pupsis_main_dashboard.controllers to javafx.fxml, com.fasterxml.jackson.databind;
-    exports com.example.pupsis_main_dashboard.utilities to com.fasterxml.jackson.databind;
-    exports com.example.pupsis_main_dashboard.models to com.fasterxml.jackson.databind;
-    opens com.example.pupsis_main_dashboard.models to javafx.base, com.fasterxml.jackson.databind;
-    opens com.example.pupsis_main_dashboard.utilities to javafx.graphics, javafx.fxml;
-
-
+    opens com.sisjuan to javafx.fxml;
+    exports com.sisjuan;
+    exports com.sisjuan.controllers;
+    opens com.sisjuan.controllers to javafx.fxml, com.fasterxml.jackson.databind;
+    exports com.sisjuan.utilities to com.fasterxml.jackson.databind;
+    exports com.sisjuan.models to com.fasterxml.jackson.databind;
+    opens com.sisjuan.models to javafx.base, com.fasterxml.jackson.databind;
+    opens com.sisjuan.utilities to javafx.graphics, javafx.fxml;
 }

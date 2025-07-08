@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="scheduleContainer" prefHeight="450.0" prefWidth="648.0" styleClass="add-schedule-container" stylesheets="@../css/AdminClassSchedule.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sisjuan.controllers.AdminAnnouncementDialogController">
+        <children>
+            <HBox prefHeight="34.0" prefWidth="586.0" styleClass="red-card">
+                <children>
+                    <Label fx:id="scheduleHeader" alignment="BASELINE_LEFT" contentDisplay="CENTER" prefHeight="46.0" prefWidth="363.0" styleClass="add-schedule-header" text="Create New Schedule">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+                    <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="386.0" />
+                </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+            </HBox>
+            <HBox prefHeight="55.0" prefWidth="586.0">
+                <children>
+                    <VBox prefHeight="54.0" prefWidth="750.0">
+                        <children>
+                            <Label styleClass="add-schedule-label" text="Announcement Title" />
+                  <TextField fx:id="title" prefHeight="39.0" prefWidth="282.0" styleClass="add-schedule-text-field" />
+                        </children>
+                        <HBox.margin>
+                            <Insets />
+                        </HBox.margin>
+                    </VBox>
+                </children>
+                <VBox.margin>
+                    <Insets bottom="15.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox layoutX="22.0" layoutY="68.0" prefHeight="140.0" prefWidth="744.0">
+                <children>
+                    <VBox prefHeight="93.0" prefWidth="744.0">
+                        <children>
+                            <Label styleClass="add-schedule-label" text="Message" />
+                  <TextArea fx:id="message" prefHeight="137.0" prefWidth="744.0" styleClass="add-schedule-text-field" />
+                        </children>
+                        <HBox.margin>
+                            <Insets />
+                        </HBox.margin>
+                    </VBox>
+                </children>
+                <VBox.margin>
+                    <Insets bottom="15.0" />
+                </VBox.margin>
+            </HBox>
+            <HBox layoutX="22.0" layoutY="143.0" prefHeight="60.0" prefWidth="586.0">
+                <children>
+                    <VBox prefHeight="60.0" prefWidth="337.0">
+                        <children>
+                            <Label styleClass="add-schedule-label" text="Date" />
+                  <DatePicker fx:id="date" prefHeight="26.0" prefWidth="330.0" styleClass="semester-date-picker" />
+                        </children>
+                        <HBox.margin>
+                            <Insets right="10.0" />
+                        </HBox.margin>
+                    </VBox>
+                    <VBox prefHeight="45.0" prefWidth="270.0">
+                        <children>
+                            <Label styleClass="add-schedule-label" text="Target Audience" />
+                            <HBox prefHeight="18.0" prefWidth="402.0" spacing="40.0">
+                                <children>
+                                    <CheckBox fx:id="all" mnemonicParsing="false" styleClass="add-schedule-check-box" text="All" />
+                                    <CheckBox fx:id="faculty" mnemonicParsing="false" styleClass="add-schedule-check-box" text="Faculty" />
+                                    <CheckBox fx:id="student" mnemonicParsing="false" styleClass="add-schedule-check-box" text="Student" />
+                                </children>
+                            </HBox>
+                        </children>
+                        <HBox.margin>
+                            <Insets />
+                        </HBox.margin>
+                    </VBox>
+                </children>
+                <VBox.margin>
+                    <Insets bottom="15.0" />
+                </VBox.margin>
+            </HBox>
+            <StackPane>
+                <children>
+                    <HBox fx:id="createScheduleButtonsContainer" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="46.0" prefWidth="586.0">
+                        <children>
+                            <StackPane>
+                                <children>
+                                    <Button fx:id="createButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="65.0" styleClass="create-button" text="Create">
+                                        <StackPane.margin>
+                                            <Insets />
+                                        </StackPane.margin>
+                                    </Button>
+                                </children>
+                                <HBox.margin>
+                                    <Insets right="10.0" />
+                                </HBox.margin>
+                            </StackPane>
+                            <Button fx:id="cancelButton" mnemonicParsing="false" prefWidth="65.0" styleClass="cancel-button" text="Cancel">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </Button>
+                        </children>
+                    </HBox>
+                </children>
+            </StackPane>
+        </children>
+    </VBox>
