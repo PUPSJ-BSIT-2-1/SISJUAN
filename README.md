@@ -1,4 +1,4 @@
-# SISUAN
+# SISUAN: Student Information System PUP San Juan
 
 ![Java](https://img.shields.io/badge/Language-Java-orange)
 ![JavaFX](https://img.shields.io/badge/Framework-JavaFX-blue)
