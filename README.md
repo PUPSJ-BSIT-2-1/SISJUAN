@@ -47,7 +47,7 @@ The system supports multiple user roles with role-specific functionalities:
 - **Frontend & UI:** JavaFX
 - **Programming Language:** Java
 - **Database:** PostgreSQL (via Supabase)
-- **IDE Used:** IntelliJ IDEA / NetBeans
+- **IDE Used:** IntelliJ IDEA
 - **Version Control:** Git & GitHub
 
 ## 🚀 Getting Started
@@ -57,7 +57,7 @@ The system supports multiple user roles with role-specific functionalities:
 - Java JDK 17 or higher
 - JavaFX SDK
 - PostgreSQL or Supabase credentials
-- Java IDE (e.g., IntelliJ IDEA, NetBeans)
+- Java IDE (e.g., IntelliJ IDEA)
 
 ### Setup Instructions
 
