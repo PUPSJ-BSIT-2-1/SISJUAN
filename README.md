@@ -22,13 +22,11 @@ It provides a **centralized platform** for students, faculty, and administrators
 
 ## ✨ Features  
 
-## ✨ Features  
-
-| 👩‍🎓 Student | 👨‍🏫 Faculty | 🧑‍💼 Admin |
-|--------------|--------------|------------|
-| View personal profile and class schedule | View assigned subjects and schedules | Manage student and faculty accounts |
-| Access grades and academic calendar | Input and update student grades | Oversee enrollment, payment, and subject offerings |
-| Check enrollment and payment status | Manage class records | Assign rooms and faculty |
+| Student                                   | Faculty                                 | Admin                                    |
+|:-----------------------------------------:|:---------------------------------------:|:----------------------------------------:|
+| View personal profile and class schedule  | View assigned subjects and schedules    | Manage student and faculty accounts      |
+| Access grades and academic calendar       | Input and update student grades         | Oversee enrollment, payment, and subject offerings |
+| Check enrollment and payment status       | Manage class records                    | Assign rooms and faculty                 |
 
 ---
 
@@ -50,13 +48,25 @@ It provides a **centralized platform** for students, faculty, and administrators
 
 ## 🛠️ Tech Stack  
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java">
-  <img src="https://img.shields.io/badge/JavaFX-2C2255?style=for-the-badge&logo=java&logoColor=white" alt="JavaFX">
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
-  <img src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
-  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
-</p>
+<div align="center">
+  <!-- General descriptive badge for the tech stack -->
+  <img src="https://img.shields.io/badge/Tech-Stack%20Overview-blue?style=for-the-badge" alt="Tech Stack Overview">
+  <img src="https://img.shields.io/badge/Includes-Java%2C%20JavaFX%2C%20PostgreSQL%2C%20Supabase%2C%20GitHub-green?style=for-the-badge" alt="Technologies Included">
+</div>
+
+<br />
+
+<div align="center">
+
+| Layer                    | Technology    | Short Description                                           |
+|:------------------------:|:-------------:|:-----------------------------------------------------------:|
+| **Programming Language** | Java          | Core language used for backend and system logic.            |
+| **UI Framework**         | JavaFX        | Handles desktop GUI, providing rich user interfaces.        |
+| **Database**             | PostgreSQL    | Stores structured data securely for the application.        |
+| **Backend-as-a-Service** | Supabase      | Provides hosted PostgreSQL database and real-time features. |
+| **Version Control**      | GitHub        | Source code management and collaboration platform.          |
+
+</div
 
 ---
 
