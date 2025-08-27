@@ -22,10 +22,8 @@ It provides a **centralized platform** for students, faculty, and administrators
 
 ## ✨ Features  
 
-## ✨ Features  
-
 | 👩‍🎓 Student | 👨‍🏫 Faculty | 🧑‍💼 Admin |
-|--------------|--------------|------------|
+|:---:|:---:|:---:|
 | View personal profile and class schedule | View assigned subjects and schedules | Manage student and faculty accounts |
 | Access grades and academic calendar | Input and update student grades | Oversee enrollment, payment, and subject offerings |
 | Check enrollment and payment status | Manage class records | Assign rooms and faculty |
