@@ -72,18 +72,13 @@ It provides a **centralized platform** for students, faculty, and administrators
 
 ## 🚀 Getting Started  
 
-<details>
-  <summary><b>📌 Prerequisites</b></summary>
-
+### 📌 Prerequisites
 - Java JDK 17 or higher  
 - JavaFX SDK  
 - PostgreSQL or Supabase credentials  
 - Java IDE (e.g., IntelliJ IDEA)  
-</details>
 
-<details>
-  <summary><b>⚙️ Setup Instructions</b></summary>
-
+### ⚙️ Setup Instructions
 1. Clone the repository:  
    ```bash
    git clone https://github.com/PUPSJ-BSIT-2-1/SISJUAN.git
@@ -91,19 +86,14 @@ It provides a **centralized platform** for students, faculty, and administrators
 3. Configure the database connection in the config file or controller.
 4. Add JavaFX libraries to your project setup.
 5. Run the main application class.
-</details>
 
 ---
 
 <div align="center">
 
-  <h3>📢 Support the project and help improve campus resource management! 📢</h3>
+  <h3>🎓 Support the SISJUAN Project – Enhancing Academic Management! 🎓</h3>
 
-  <p>
-    <img 
-      src="https://img.shields.io/badge/Built for-Campus Efficiency-blue?style=for-the-badge" 
-      alt="Built for Campus Efficiency">
-  </p>
+  <p> <img src="https://img.shields.io/badge/Designed for-Academic Excellence-blue?style=for-the-badge" alt="Built for Campus Efficiency"> </p>
 
   <p>
     <a href="https://github.com/PUPSJ-BSIT-2-1/SISJUAN/stargazers">
@@ -118,7 +108,8 @@ It provides a **centralized platform** for students, faculty, and administrators
     </a>
   </p>
 
-  <sub>© 2025 SISJUAN - Polytechnic University of the Philippines San Juan Campus</sub>
+  <sub>© 2025 SISJUAN - Polytechnic University of the Philippines, San Juan Campus</sub>
 
 </div>
+
 
